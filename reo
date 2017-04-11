@@ -1,0 +1,802 @@
+#!/usr/bin/env python3
+#
+# Could use just '#!/usr/bin/env python' if you're NOT on Ubuntu or any other
+# distribution that has python2 as the main python version.
+#
+# reo
+# Copyright (C) 2016-2017 Mufeed Ali
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Now, beginning with the Imports.
+from __future__ import absolute_import, division
+from __future__ import print_function, unicode_literals
+import sys
+import logging
+from os.path import expanduser  # for detecting home folder
+import re  # regular expressions
+import os  # base stuff
+from shutil import which  # for checks.
+import subprocess  # for running dict and others in background
+import argparse  # for CommandLine-Interface (CLI).
+import random  # for Random Words
+# logging is the most important. You have to let users know everything.
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - " +
+                    "[%(levelname)s] [%(threadName)s] (%(module)s:" +
+                    "%(lineno)d) %(message)s")
+
+# Readying ArgParser
+parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
+parser.add_argument("-g", "--gladefile", type=str,
+                    help="set custom GLADEFILE (file from which UI is taken" +
+                    ", useful for testing custom UIs)")
+parser.add_argument("-c", "--check", action="store_true",
+                    help="Basic dependancy checks.")
+parser.add_argument("-d", "--adversion", action="store_true",
+                    help="Advanced Version Info")
+parser.add_argument("-gd", "--dark", action="store_true",
+                    help="Use GNOME dark theme")
+parsed = parser.parse_args()
+PATH = os.path.dirname(os.path.realpath(__file__))
+
+
+def wncheck():
+    try:
+        check = subprocess.Popen(["dict", "-d", "wn", "test"],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE)
+        checkt = check.stdout.read().decode()
+    except Exception:
+        print("eroor with dict.")
+    if not checkt.find('1 definition found\n\nFrom WordNet (r)' +
+                       ' 3.1 (2011) [wn]:\n') == -1:
+        wnver = '3.1'
+    elif not checkt.find('1 definition found\n\nFrom WordNet (r)' +
+                         ' 3.0 (2006) [wn]:\n') == -1:
+        wnver = '3.0'
+    return wnver
+
+
+wnver = wncheck()
+if wnver == '3.1':
+    wn = open(PATH + '/wn3.1', 'r')
+elif wnver == '3.0':
+    wn = open(PATH + '/wn3.0', 'r')
+else:
+    print("BOOOOM! Big error. Just crashed.")
+    sys.exit(1)
+
+
+def adv():
+    print('Reo 0.0.5 Alpha version')
+    print('Copyright 2016-2017 Mufeed Ali')
+    print()
+    if wnver == '3.1':
+        print("WordNet Version 3.1 (2011) (Installed)")
+    elif wnver == '3.0':
+        print("WordNet Version 3.0 (2006) (Installed)")
+    check2 = subprocess.Popen(["dict", "-V"],
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+    if check2:
+        check2t = check2.stdout.read().decode()
+        print("Dict Version Info:")
+        print(check2t.strip())
+    else:
+        print("Looks like missing components. (dict)")
+    print()
+    check3 = subprocess.Popen(["espeak", "--version"],
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+    if check3:
+        check3t = check3.stdout.read().decode()
+        print("eSpeak Version Info:")
+        print(check3t.strip())
+    else:
+        print("You're missing a few components. (espeak)")
+    sys.exit()
+
+
+def syscheck():
+    try:
+        which('espeak')
+        print("eSpeak seems to be installed. OK.")
+        espeak = 1
+    except Exception:
+        logging.fatal("eSpeak is not installed! Dependancy missing!")
+        espeak = 0
+    try:
+        which('dict')
+        print('dict seems to be installed. OK.')
+        dict = 1
+    except Exception:
+        logging.fatal("dict is not installed! Dependancy missing!")
+        dict = 0
+    try:
+        open('/usr/share/dictd/wn.dict.dz')
+        print('WordNet databse seems to be installed. OK.')
+        wndict = 1
+    except Exception:
+        logging.warning("WordNet database is not found! Probably won't work.")
+        wndict = 0
+    try:
+        open('/usr/share/dictd/wn.index')
+        print('WordNet index seems to be there. OK.')
+        wnindex = 1
+    except Exception:
+        logging.warning("WordNet database index not found!" +
+                        " Probably won't work.")
+        wnindex = 0
+    try:
+        which('dictd')
+        print('dictd seems to be installed. OK.')
+        dictd = 1
+    except Exception:
+        logging.fatal("dictd is not installed! Dependancy missing!")
+        dictd = 0
+    if (espeak == 1 and dict == 1 and
+            dictd == 1 and wndict == 1 and wnindex == 1):
+        print("Everything Looks Perfect!")
+        print("You should be able to run it without any issues!")
+    elif (espeak == 1 and dict == 1 and dictd == 1 and
+          wndict == 1 and wnindex == 0):
+        print("WordNet might not work as intended.")
+        print("If so, re-install the 'dict-wn' package.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install dict-wn'")
+        print("From AUR for Arch Linux:")
+        print("'yaourt -S dict-wn'")
+        print("Everything else (NOT everything) looks fine.")
+        print("Go on, try and run it!")
+    elif (espeak == 1 and dict == 1 and dictd == 1 and
+          wndict == 0 and wnindex == 1):
+        print("WordNet's data file is missing. Re-install 'dict-wn'.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install dict-wn'")
+        print("From AUR for Arch Linux:")
+        print("'yaourt -S dict-wn'")
+        print("Everything else (NOT everything) looks fine...")
+        print("... BUT you can't run it.")
+    elif (espeak == 1 and dict == 0 and dictd == 0 and
+          wndict == 0 and wnindex == 0):
+        print("dict and dictd (client and server) are missing.. install it.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install dictd dict-wn'")
+        print("From community repo for Arch Linux (but WordNet from AUR):")
+        print("'yaourt -S dictd dict-wn'")
+        print("That should point you in the right direction to getting ")
+        print("it to work.")
+    elif (espeak == 0 and dict == 0 and dictd == 0 and
+          wndict == 0 and wnindex == 0):
+        print("ALL bits and pieces are Missing...")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install espeak dictd dict-wn'")
+        print("From community repo for Arch Linux (but WordNet from AUR):")
+        print("'yaourt -S espeak dictd dict-wn'")
+        print("Go on, get it working now!")
+    elif (espeak == 0 and dict == 1 and dictd == 1 and
+          wndict == 1 and wnindex == 1):
+        print("Everything except eSpeak is working...")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install espeak'")
+        print("From community repo for Arch Linux:")
+        print("'yaourt -S espeak' or 'sudo pacman -S espeak'")
+        print("It should be alright then.")
+    elif (espeak == 0 and dict == 1 and dictd == 1 and
+          wndict == 1 and wnindex == 0):
+        print("eSpeak is missing and WordNet might not work as intended.")
+        print("Install 'espeak' and re-install the 'dict-wn' package.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install espeak dict-wn'")
+        print("From AUR for Arch Linux:")
+        print("'yaourt -S espeak dict-wn'")
+        print("Everything else (NOT everything) looks fine.")
+        print("Go on, try and run it!")
+    elif (espeak == 0 and dict == 1 and dictd == 1 and
+          wndict == 0 and wnindex == 1):
+        print("eSpeak is missing and WordNet's data file is missing." +
+              "Re-install 'dict-wn'.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install espeak dict-wn'")
+        print("From AUR for Arch Linux:")
+        print("'yaourt -S espeak dict-wn'")
+        print("Everything else (NOT everything) looks" +
+              " fine BUT you can't run it.")
+    print("Checking for Python GObject bindings.")
+
+
+if parsed.adversion:
+    adv()
+if parsed.check:
+    syscheck()
+try:
+    import gi  # this is the GObject stuff needed for GTK+
+    gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
+    from gi.repository import Gtk  # this is the GNOME depends
+except Exception:
+    print("Importing GObject failed!")
+    if not parsed.check:
+        print("Confirm all dependencies by running " +
+              "Reo with '--check' parameter.")
+    elif parsed.check:
+        print("Install GObject bindings.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install python3-gobject'")
+        print("From extra repo for Arch Linux:")
+        print("'yaourt -S python-gobject' or 'sudo pacman -S python-gobject'")
+        print("Thanks for trying this out!")
+        sys.exit()
+
+
+def darker():
+    global dark
+    settings = Gtk.Settings.get_default()
+    settings.set_property("gtk-application-prefer-dark-theme", True)
+    dark = True
+
+
+if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
+                                           "-dark-theme"):
+    dark = True
+else:
+    dark = False
+
+if parsed.dark:
+    darker()
+print('Setting Variables.')
+homefold = expanduser('~')  # Find the location of the home folder of the user
+# This is where stuff like settings, Custom Definitions, etc will go.
+reofold = homefold + "/.reo"
+cdefold = reofold + "/cdef"
+# The Folder within reofold where Custom Definitions are to be kept.
+if not os.path.exists(reofold):  # check for Reo folder
+    os.makedirs(reofold)  # create Reo folder
+if not os.path.exists(cdefold):  # check for Custom Definitions folder.
+    os.makedirs(cdefold)  # create Custom Definitions folder.
+
+
+def residclean():
+    residfold = reofold.replace("/.reo", "/.reocdef")
+    # ^ Folder from older builds.
+    if os.path.exists(residfold):  # check for folder from older builds.
+        os.removedirs(residfold)  # delete folder from older builds.
+    else:
+        # let the user know that they're clean.
+        print('Residual files from old build not found.')
+
+
+residclean()
+
+print("Getting objects.")
+# Self-Explanatory stuff.
+builder = Gtk.Builder()
+
+
+def addbuilder():
+    if parsed.gladefile:
+        GLADEFILE = parsed.gladefile
+    else:
+        # GLADEFILE points to the location of the UI file.
+        GLADEFILE = PATH + "/reo.ui"
+    builder.add_from_file(GLADEFILE)
+
+
+addbuilder()
+# completion = builder.get_object('completelist')
+# temporarily useless treeview
+# temporarily useless liststore accompanying 'completion'.
+# liststr = builder.get_object('liststore1')
+
+
+class GUI:
+
+    def on_window_destroy(self, window):
+        print("Quitting.")
+        Gtk.main_quit()
+
+    def icon_press(self, imagemenuitem4):
+        about = builder.get_object('aboutdialog1')
+        print("Loading About Window.")
+        response = about.run()
+        print("Done")
+        if (response == Gtk.ResponseType.DELETE_EVENT or
+                response == Gtk.ResponseType.CANCEL):
+            about.hide()
+
+    def sst(self, imagemenuitem1):
+        sb = builder.get_object('entry1')  # searchbox
+        viewer = builder.get_object('textview1')  # Data Space
+        print("Getting selected text.")
+        try:
+            dec, dek = viewer.get_buffer().get_selection_bounds()
+            fail = 0
+        except Exception:
+            logging.error("Getting selected text failed. No selected Text?")
+            fail = 1
+        if fail == 0:
+            sb.set_text(viewer.get_buffer().get_text(dec, dek, True))
+            print('Trimming Search term.')
+            if '-\n         ' in sb.get_text():
+                sb.set_text(sb.get_text().replace('-\n         ', '-'))
+            else:
+                sb.set_text(sb.get_text().replace('\n', ' '))
+                sb.set_text(sb.get_text().replace('         ', ''))
+            if not sb.get_text() == '' and not sb.get_text().isspace():
+                print('Searching now.')
+                self.dosearch()
+        else:
+            print('Failed')
+
+    def newced(self, title, primary, secondary):
+        # Common Error Dialog. One dialog for all of them.
+        cept = builder.get_object('cept')
+        cest = builder.get_object('cest')
+        ced = builder.get_object('ced')
+        ced.set_title(title)
+        cept.set_label(primary)
+        cest.set_label(secondary)
+        response = ced.run()
+        if (response == Gtk.ResponseType.DELETE_EVENT or
+                response == Gtk.ResponseType.OK):
+            ced.hide()
+
+    def fortune(self):
+        try:
+            fortune = subprocess.Popen(["fortune", "-a"],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
+            fortune.wait()
+            ft = fortune.stdout.read().decode()
+            return ft
+        except Exception:
+            ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
+            print(ft)
+            return ft
+
+    def cowfortune(self):
+        cowsay = subprocess.Popen(["cowsay", self.fortune()],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+        cowsay.wait()
+        if cowsay:
+            cst = cowsay.stdout.read().decode()
+        return cst
+
+    def dosearch(self):
+        if dark:
+            sencol = "cyan"  # Color of sentences in Dark mode
+            wordcol = "lightgreen"  # Color of: Similar Words,
+#                                     Synonyms and Antonyms.
+        else:
+            sencol = "blue"  # Color of sentences in Dark mode
+            wordcol = "green"  # Color of: Similar Words,
+#                                Synonyms and Antonyms.
+        global searched
+        sb = builder.get_object('entry1')  # searchbox
+        viewer = builder.get_object('textview1')  # Data Space
+        strat = "lev"
+        # ^ To change strategy used in 'Similar Words', change this value.
+        if viewer.get_monospace():
+            viewer.set_monospace(False)
+        viewer.get_buffer().set_text("")
+        lastiter = viewer.get_buffer().get_end_iter()
+        if (not sb.get_text().strip('"?`![]()/\\:;,') == '' and
+                not sb.get_text().isspace() and not sb.get_text() == ''):
+            print("Formatting search text.")
+            text = sb.get_text()
+            text = text.strip().strip('"?`![]()/\\:;,')
+            if text == 'fortune -a':
+                viewer.set_monospace(True)
+                lastiter = viewer.get_buffer().get_end_iter()
+                viewer.get_buffer().insert(lastiter, self.fortune(), -1)
+                return
+            elif text == 'cowfortune':
+                viewer.set_monospace(True)
+                lastiter = viewer.get_buffer().get_end_iter()
+                viewer.get_buffer().insert(lastiter, self.cowfortune(), -1)
+                return
+            elif text == 'reo':
+                viewer.set_monospace(True)
+                lastiter = viewer.get_buffer().get_end_iter()
+                viewer.get_buffer().insert_markup(lastiter, "Pronunciation:" +
+                                                  " <b>/ɹˈiːəʊ/</b>\n  <b>" +
+                                                  "Reo</b> ~ <i>Japanese Wor" +
+                                                  "d</i>\n  <b>1:</b> Name o" +
+                                                  "f this application, chose" +
+                                                  "n kind of at random.\n  <" +
+                                                  "b>2:</b> Japanese word me" +
+                                                  "aning 'Wise Center'\n <b>" +
+                                                  "Similar Words:</b>\n <i><" +
+                                                  "span foreground=\"" +
+                                                  wordcol + "\">  ro, re, ro" +
+                                                  "e, redo, reno, oreo, ceo," +
+                                                  " leo, neo, rho, rio, reb," +
+                                                  " red, ref, rem, rep, res," +
+                                                  " ret, rev, rex</span></i>",
+                                                  -1)
+                return True
+            if text and not text.isspace():
+                print("Reporting search.")
+                searched = 1
+                print("Check for custom definition.")
+                cdfail = False
+                try:
+                    cdfile = open(cdefold + '/' + text, 'r')
+                except Exception:
+                    cdfail = True
+                if not cdfail:
+                    print("Custom Definition found")
+                    cdefread = cdfile.read()
+                    if "[warninghide]" in cdefread:
+                        cdefread = cdefread.replace("\n[warninghide]", "")
+                        final = cdefread
+                    else:
+                        final = (cdefread + '\n<span foreground="#e6292f">N' +
+                                 'OTE: This is a Custom definition. No one' +
+                                 ' is to be held responsible for errors in' +
+                                 ' this.</span>')
+                    viewer.get_buffer().insert_markup(lastiter, final, -1)
+                    lastiter = viewer.get_buffer().get_end_iter()
+                else:
+                    print("No custom definition found.")
+                    print("Obtaining definition for '" +
+                          text + "' from Dictd using Dict.")
+                    prc = subprocess.Popen(["dict", "-d", "wn", text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                    prc.wait()
+                    print("Processing Output.")
+                    proc = prc.stderr.read().decode()
+                    if 'bash: dict: command not found' in proc:
+                        logging.error("Dict is not installed.")
+                        print("Please install 'dict' before using Reo.")
+                    if prc:
+                        proc = prc.stdout.read().decode()
+                        crip = 0
+                    if proc == '':
+                        proc = ("\n\nCouldn't find any definition for " +
+                                '"' + text + '"' + '.\n\n')
+                        crip = 1
+                        logging.error('Definition not found.')
+                    print("Obtaining Pronunciation for '" +
+                          text + "' from eSpeak.")
+                    pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+                                            "--ipa", "-q", text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                    pro.wait()
+                    if pro:
+                        dcd = pro.stdout.read().decode()
+                        pron = ("/" +
+                                dcd.strip().replace('\n ', ' ') +
+                                "/")
+                    else:
+                        pron = ('ERROR: Something went wrong' +
+                                ' with pronunications.')
+                    derr = pro.stderr.read().decode()
+                    if 'bash: espeak: command not found' in derr:
+                        logging.error("eSpeak is not installed.")
+                        print("Please install 'espeak' before using Reo.")
+                    print("Obtaining Similar words for " + text +
+                          " from Dict.")
+                    try:
+                        cls = subprocess.Popen(["dict", "-m", "-d", "wn",
+                                                "-s", strat, text],
+                                               stdout=subprocess.PIPE,
+                                               stderr=subprocess.PIPE)
+                        cls.wait()
+                        clo = cls.stderr.read().decode()
+                        clo = cls.stdout.read().decode()
+                    except Exception as ex:
+                        print('ERROR:\n' + ex)
+                    fail = 0
+                    if 'bash: dict: command not found' in clo:
+                        logging.error("Dict is not installed.")
+                        print("Please install dict before using Reo.")
+                        fail = 1
+                    if clo == '':
+                        clo = ("Sorry! Couldn't find any similar words for " +
+                               '"' + text + '"' + "!")
+                        fail = 1
+                    print("Formatting and processing Dict output further.")
+                    soc = proc.replace('1 definition found\n\nFrom WordNet' +
+                                       ' (r) 3.0 (2006) [wn]:\n', '')
+                    soc = proc.replace('1 definition found\n\nFrom WordNet' +
+                                       ' (r) 3.1 (2011) [wn]:\n', '')
+                    try:
+                        imp = re.search("  " + text, soc,
+                                        flags=re.IGNORECASE).group(0)
+                    except Exception:
+                        imp = ''
+                    soc = soc.replace(imp + '\n', '')
+                    cleans = ['"--Thomas', '"--\n           ',
+                              '-\n             ', '"; [', '      n 1',
+                              '      v 1', '      adj 1', '      adv 1',
+                              '\n          --',
+                              '-\n           ', '-\n         ',
+                              '\n           ', '\n             ',
+                              '\n          ',
+                              '\n           ', '           ',
+                              '\n         ', '    ', '   ',
+                              '[syn:', '}]', '[ant:', '"; "', '; "',
+                              '"\n', '" <i>', '"- ', '", "',
+                              '"<span foreground="' + sencol +
+                              '"><span foreground="' + sencol +
+                              '"><span foreground="' + sencol + '">',
+                              '"<span foreground="' + sencol +
+                              '"><span foreground="' +
+                              sencol + '">', '(', ')',
+                              '{', '}', ':"', '" \n      <',
+                              '"; ', ', "', '; e.g. "', '"  <i>',
+                              ';"', ';  "', ': "', ';   "', '"--',
+                              '"-', '" -']
+                    cleaned = ['</span> - Thomas',
+                               '</span> - ', '-', '</span> [', '<b>' + imp +
+                               '</b> ~ <i>noun</i>:\n      1', '<b>' + imp +
+                               '</b> ~ <i>verb</i>:\n      1',
+                               '<b>' + imp + '</b> ~ <i>adjective</i>:\n    ' +
+                               '  1', '<b>' + imp +
+                               '</b> ~ <i>adverb</i>:\n      1',
+                               '--', '-', '-', ' ', ' ', ' ',
+                               '\n         ', '         ', ' ', '',
+                               ' ', '<i>\n      Synonyms:',
+                               '}</i>', '<i>\n      Antonyms:',
+                               '</span>; <span foreground="' + sencol + '">',
+                               '\n      <span foreground="' + sencol +
+                               '">', '</span>\n', '</span> <i>', '</span> - ',
+                               '</span>; <span foreground="' + sencol +
+                               '">', '"<span foreground="' + sencol + '">',
+                               '"<span foreground="' + sencol +
+                               '">', '<i>(', ')</i>', '<span foreground="' +
+                               wordcol + '">', '</span>',
+                               '\n      <span foreground="' + sencol +
+                               '">', '</span>; <',
+                               '</span>; <span foreground="' + sencol + '">',
+                               '\n      <span foreground="' + sencol +
+                               '">', '\n      <span foreground="' +
+                               sencol + '">', '</span><i>',
+                               '\n      <span foreground="' + sencol +
+                               '">', '\n      <span foreground="' +
+                               sencol + '">',
+                               '\n      <span foreground="' + sencol + '">',
+                               '\n      <span foreground="' + sencol + '">',
+                               '\n      <span foreground="' + sencol + '">',
+                               '</span> - ', '</span> - ', '</span> - ']
+                    if not crip == 1:
+                        for x, y in zip(cleans, cleaned):
+                            soc = soc.replace(x, y)
+                    gsi = range(-100, 1)
+                    for si in gsi:
+                        soc = soc.replace(' ' + str(si).replace('-', '') +
+                                          ': ', ' <b>' +
+                                          str(si).replace('-', '') +
+                                          ': </b>')
+                    # Remove line below before release! This line is used for
+                    # debugging!
+                    print(soc)
+                    if not soc.find("`") == -1:
+                        soc = soc.replace("`", "'")
+                        print("Fixed mistake in example!")
+                    if not soc.find("thunder started the sleeping") == -1:
+                        soc = soc.replace("thunder started the sleeping",
+                                          "thunder started, the sleeping")
+                        print("Fixed mistake in example!")
+                    print("Formatting Similar Words.")
+                    clp = clo.replace('wn:', '').rstrip()
+                    if fail == 0:
+                        clp = clp.replace('\n  ', '  ').rstrip()
+                        clp = clp.replace("  " + text.lower() + "  ", "")
+                        clp = clp.replace("  " + '"' + text.lower() + '"' +
+                                          "  ", "")
+                        clp = clp.replace("  " + text.lower() + "  ", "")
+                        same_word = re.compile("  " + text.lower() + "$")
+                        same_term = re.compile('  "' + text.lower() +
+                                               '"' + "$")
+                        clp = same_word.sub("", clp)
+                        clp = same_term.sub("", clp)
+                        clp = clp.strip().replace("  ", ", ")
+                    if clp == "":
+                        clp = ("Sorry! Couldn't find any similar words for " +
+                               '"' + text + '"' + "!")
+                        fail = 1
+                    if text == 'recursion':
+                        clp = 'recursion'
+                        fail = 0
+                    print("Presenting final result to user.")
+                    lastiter = viewer.get_buffer().get_end_iter()
+                    if pro and not crip == 1:
+                        viewer.get_buffer().insert_markup(lastiter,
+                                                          "Pronunciation: " +
+                                                          "<b>" + pron +
+                                                          '</b>' +
+                                                          '\n', -1)
+                    elif pro and crip == 1:
+                        viewer.get_buffer().insert_markup(lastiter,
+                                                          "Probable " +
+                                                          "Pronunciation: " +
+                                                          "<b>" + pron +
+                                                          '</b>' +
+                                                          '\n', -1)
+                    else:
+                        logging.error('eSpeak does not work as it should!')
+                        print("Something went wrong with eSpeak.")
+                        print("Try some fixes:")
+                        print("    1 - Install eSpeak if it is not already" +
+                              " installed.")
+                        print("    2 - Reinstall eSpeak.")
+                        print('    3 - Run "espeak -h" and check that' +
+                              ' eSpeak is pointed to its data properly/')
+                        print('    4 - Post at Reo forum with full' +
+                              ' console output while running Reo.')
+                    lastiter = viewer.get_buffer().get_end_iter()
+                    soc = soc.strip()
+                    if not proc == "":
+                        viewer.get_buffer().insert_markup(lastiter, soc, -1)
+                    lastiter = viewer.get_buffer().get_end_iter()
+                    if fail == 0:
+                        cclp = clp.replace('\n  ', '  ')
+                        cleanclp = cclp.strip().replace('  ', ', ')
+                        if crip == 1:
+                            viewer.get_buffer().insert_markup(lastiter,
+                                                              '\n<b>Did you' +
+                                                              ' mean</b>:\n<' +
+                                                              'i><span fore' +
+                                                              'ground="' +
+                                                              wordcol +
+                                                              '">  ' +
+                                                              cleanclp +
+                                                              '</span></i>',
+                                                              -1)
+                        else:
+                            viewer.get_buffer().insert_markup(lastiter,
+                                                              '\n<b>Similar ' +
+                                                              'Words</b>:\n' +
+                                                              '<i><span for' +
+                                                              'eground="' +
+                                                              wordcol +
+                                                              '">  ' +
+                                                              cleanclp +
+                                                              '</span></i>',
+                                                              -1)
+                    else:
+                        viewer.get_buffer().insert(lastiter, '\n' + clp)
+                    # liststr.append([text]) # doesn't work
+                    print("Search completed.")
+        elif (sb.get_text().strip('"?`![]()/\\:;,') == '' and
+              not sb.get_text().isspace() and
+              not sb.get_text() == ''):
+            logging.error("Invalid Characters.")
+            self.newced('Error: Invalid Input!', 'Invalid Characters!',
+                        "Reo thinks that your input was actually \nju" +
+                        "st a bunch of useless characters. \nSo, 'Inva" +
+                        "lid Characters' error!")
+        elif sb.get_text().isspace():
+            logging.error("Empty search box!")
+            self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
+                        " there! You sure \nyou typed something?")
+            print("Search Failed.")
+        elif sb.get_text() == '':
+            logging.error("Empty search box!")
+            self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
+                        " there! You sure \nyou typed something?")
+            print("Search Failed.")
+
+    def cedok(self, cedok):
+        ced = builder.get_object('ced')
+        ced.response(Gtk.ResponseType.OK)
+
+    def randomword(self, textfile, chunk_size=16):
+        textfile.seek(0, os.SEEK_END)
+        size = textfile.tell()
+        i = random.randint(0, size)
+        while True:
+            i -= chunk_size
+            if i < 0:
+                chunk_size += i
+                i = 0
+            textfile.seek(i, os.SEEK_SET)
+            chunk = textfile.read(chunk_size)
+            i_newline = chunk.rfind('\n')
+            if i_newline != -1:
+                i += i_newline + 1
+                break
+            if i == 0:
+                break
+        textfile.seek(i, os.SEEK_SET)
+        return textfile.readline()
+
+    def randword(self, mnurand):
+        sb = builder.get_object('entry1')  # searchbox
+        rw = self.randomword(wn)
+        sb.set_text(rw.strip())
+        self.dosearch()
+
+    def search(self, button2):
+        print("Loading...")
+        self.dosearch()
+        print('Done')
+
+    def clear(self, button3):
+        sb = builder.get_object('entry1')  # searchbox
+        viewer = builder.get_object('textview1')  # Data Space
+        sb.set_text("")
+        viewer.get_buffer().set_text("")
+
+    def audio(self, button4):
+        NULLMAKER = open(os.devnull, 'w')
+        sb = builder.get_object('entry1')  # searchbox
+        speed = '120'  # To change eSpeak audio speed.
+        if searched == 1 and not sb.get_text() == '':
+            subprocess.Popen(["espeak", "-ven-uk-rp", "-s", speed,
+                              sb.get_text()], stdout=NULLMAKER,
+                             stderr=subprocess.STDOUT)
+        elif sb.get_text() == '' or sb.get_text().isspace():
+            self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
+                        " there! You sure \nyou typed something?")
+        elif searched == 0:
+            self.newced("Sorry!!", "Sorry!!",
+                        "I'm sorry but you have to do a search" +
+                        " first \nbefore trying to  listen to it." +
+                        " I mean, Reo \nis <b>NOT</b> a Text-To" +
+                        "-Speech Software!")
+
+    def changed(self, entry1):
+        sb = builder.get_object('entry1')  # searchbox
+        global searched
+        searched = 0
+        sb.set_text(sb.get_text().replace('\n', ' '))
+        sb.set_text(sb.get_text().replace('         ', ''))
+
+    def quitb(self, imagemenuitem10):
+        Gtk.main_quit()
+
+    def enterpress(self, entry1):
+        self.search(self)
+
+    def sdok(self, save):
+        defdiag = builder.get_object('savedef')
+        defdiag.response(Gtk.ResponseType.OK)
+
+    def sdcancel(self, cancel):
+        defdiag = builder.get_object('savedef')
+        defdiag.response(Gtk.ResponseType.CANCEL)
+
+    def savedef(self, imagemenuitem2):
+        defdiag = builder.get_object('savedef')
+        viewer = builder.get_object('textview1')  # Data Space
+        response = defdiag.run()
+        if (response == Gtk.ResponseType.DELETE_EVENT or
+                response == Gtk.ResponseType.CANCEL):
+            defdiag.hide()
+        elif response == Gtk.ResponseType.OK:
+            sf = open(defdiag.get_filename(), 'w')
+            startiter = viewer.get_buffer().get_start_iter()
+            lastiter = viewer.get_buffer().get_end_iter()
+            sf.write(viewer.get_buffer().get_text(startiter,
+                                                  lastiter,
+                                                  'false'))
+            defdiag.hide()
+
+
+builder.connect_signals(GUI())
+
+
+def windowcall():
+    window = builder.get_object('window')  # main window
+    window.show_all()
+
+
+windowcall()
+Gtk.main()
+print("Reo is READY!!!!!!")

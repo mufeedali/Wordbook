@@ -1,0 +1,33 @@
+Pango (Deprecated Tags):
+
+# NOTE: THIS CODE IS DEPRECATED!! THESE TAGS ARE NOT USED LATER IN THE CODE
+#       AND THEREFORE, HAVE BEEN COMMENTED OUT.
+# print ("Setting Pango tags.")
+# b_tag = viewer.get_buffer().create_tag("b", weight=Pango.Weight.BOLD) # bold tag
+# i_tag = viewer.get_buffer().create_tag("i", style=Pango.Style.ITALIC) # italic tag
+# g_tag = viewer.get_buffer().create_tag("g", foreground=Pango.Color.green) # color(green) tag
+
+Search Selected Text Warning:
+
+# print ("This feature might be a little glitchy.") # Pretty stable now, it would seem.
+
+Useless code in Search Selected Text:
+
+# Below lines were commented due to realization that it is not needed.
+#sb.set_text(sb.get_text().replace('<span foreground="blue">',''))
+#sb.set_text(sb.get_text().replace('</span>',''))
+#sb.set_text(sb.get_text().replace('</b>',''))
+#sb.set_text(sb.get_text().replace('<b>',''))
+#sb.set_text(sb.get_text().replace('</i>',''))
+#sb.set_text(sb.get_text().replace('<i>',''))
+#sb.set_text(sb.get_text().replace('<span foreground="green">',''))
+
+Similar words list:
+
+# A try at code for the similar words list feature:
+#simlist = clo.replace('wn:  ', '').strip().split('  ')
+#liststr.append(simlist)
+
+Random Word:
+#rwprocess = subprocess.Popen(["shuf", "-n1", pydictfold + "/wn"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#rw = rwprocess.stdout.read().decode().strip()
