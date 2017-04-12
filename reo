@@ -126,7 +126,7 @@ if wnver == '3.1':
 elif wnver == '3.0':
     wn = open(PATH + '/wn3.0', 'r')
 else:
-    print("BOOOOM! Big error. Just crashed.")
+    print("Big error. Just crashed.")
     sys.exit(1)
 
 
@@ -402,6 +402,8 @@ class GUI:
                 lastiter = viewer.get_buffer().get_end_iter()
                 viewer.get_buffer().insert(lastiter, self.cowfortune(), -1)
                 return
+            elif text == 'crash now' or text == 'close now':
+                Gtk.main_quit()
             elif text == 'reo':
                 viewer.set_monospace(True)
                 lastiter = viewer.get_buffer().get_end_iter()
