@@ -3,7 +3,7 @@
 # Could use just '#!/usr/bin/env python' if you're NOT on Ubuntu or any other
 # distribution that has python2 as the main python version.
 #
-# reo
+# Reo
 # Copyright (C) 2016-2017 Mufeed Ali
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Now, beginning with the Imports.
-from __future__ import absolute_import, division
-from __future__ import print_function, unicode_literals
 import sys
 import logging
 from os.path import expanduser  # for detecting home folder
@@ -48,7 +46,61 @@ parser.add_argument("-d", "--adversion", action="store_true",
 parser.add_argument("-gd", "--dark", action="store_true",
                     help="Use GNOME dark theme")
 parsed = parser.parse_args()
+try:
+    import gi  # this is the GObject stuff needed for GTK+
+    gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
+    from gi.repository import Gtk  # this is the GNOME depends
+    if parsed.check:
+        sys.exit()
+except Exception:
+    logging.fatal("Importing GObject failed!")
+    if not parsed.check:
+        print("Confirm all dependencies by running " +
+              "Reo with '--check' parameter.")
+    elif parsed.check:
+        print("Install GObject bindings.")
+        print("For Ubuntu, Debian, etc:")
+        print("'sudo apt install python3-gobject'")
+        print("From extra repo for Arch Linux:")
+        print("'yaourt -S python-gobject' or 'sudo pacman -S python-gobject'")
+        print("Thanks for trying this out!")
+print("Getting objects.")
+# Self-Explanatory stuff.
+builder = Gtk.Builder()
 PATH = os.path.dirname(os.path.realpath(__file__))
+
+
+def darker():
+    global dark
+    settings = Gtk.Settings.get_default()
+    settings.set_property("gtk-application-prefer-dark-theme", True)
+    dark = True
+
+
+def addbuilder():
+    if parsed.gladefile:
+        GLADEFILE = parsed.gladefile
+    else:
+        # GLADEFILE points to the location of the UI file.
+        GLADEFILE = PATH + "/reo.ui"
+    builder.add_from_file(GLADEFILE)
+
+
+def windowcall():
+    window = builder.get_object('window')  # main window
+    window.show_all()
+
+
+if not parsed.adversion and not parsed.check:
+    if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
+                                               "-dark-theme"):
+        dark = True
+    else:
+        dark = False
+    if parsed.dark:
+        darker()
+    addbuilder()
+    windowcall()
 
 
 def wncheck():
@@ -131,14 +183,6 @@ def syscheck():
         logging.warning("WordNet database is not found! Probably won't work.")
         wndict = 0
     try:
-        open('/usr/share/dictd/wn.index')
-        print('WordNet index seems to be there. OK.')
-        wnindex = 1
-    except Exception:
-        logging.warning("WordNet database index not found!" +
-                        " Probably won't work.")
-        wnindex = 0
-    try:
         which('dictd')
         print('dictd seems to be installed. OK.')
         dictd = 1
@@ -146,11 +190,11 @@ def syscheck():
         logging.fatal("dictd is not installed! Dependancy missing!")
         dictd = 0
     if (espeak == 1 and dict == 1 and
-            dictd == 1 and wndict == 1 and wnindex == 1):
+            dictd == 1 and wndict == 1):
         print("Everything Looks Perfect!")
         print("You should be able to run it without any issues!")
     elif (espeak == 1 and dict == 1 and dictd == 1 and
-          wndict == 1 and wnindex == 0):
+          wndict == 1):
         print("WordNet might not work as intended.")
         print("If so, re-install the 'dict-wn' package.")
         print("For Ubuntu, Debian, etc:")
@@ -160,7 +204,7 @@ def syscheck():
         print("Everything else (NOT everything) looks fine.")
         print("Go on, try and run it!")
     elif (espeak == 1 and dict == 1 and dictd == 1 and
-          wndict == 0 and wnindex == 1):
+          wndict == 0):
         print("WordNet's data file is missing. Re-install 'dict-wn'.")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install dict-wn'")
@@ -169,7 +213,7 @@ def syscheck():
         print("Everything else (NOT everything) looks fine...")
         print("... BUT you can't run it.")
     elif (espeak == 1 and dict == 0 and dictd == 0 and
-          wndict == 0 and wnindex == 0):
+          wndict == 0):
         print("dict and dictd (client and server) are missing.. install it.")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install dictd dict-wn'")
@@ -178,7 +222,7 @@ def syscheck():
         print("That should point you in the right direction to getting ")
         print("it to work.")
     elif (espeak == 0 and dict == 0 and dictd == 0 and
-          wndict == 0 and wnindex == 0):
+          wndict == 0):
         print("ALL bits and pieces are Missing...")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install espeak dictd dict-wn'")
@@ -186,7 +230,7 @@ def syscheck():
         print("'yaourt -S espeak dictd dict-wn'")
         print("Go on, get it working now!")
     elif (espeak == 0 and dict == 1 and dictd == 1 and
-          wndict == 1 and wnindex == 1):
+          wndict == 1):
         print("Everything except eSpeak is working...")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install espeak'")
@@ -194,7 +238,7 @@ def syscheck():
         print("'yaourt -S espeak' or 'sudo pacman -S espeak'")
         print("It should be alright then.")
     elif (espeak == 0 and dict == 1 and dictd == 1 and
-          wndict == 1 and wnindex == 0):
+          wndict == 1):
         print("eSpeak is missing and WordNet might not work as intended.")
         print("Install 'espeak' and re-install the 'dict-wn' package.")
         print("For Ubuntu, Debian, etc:")
@@ -204,7 +248,7 @@ def syscheck():
         print("Everything else (NOT everything) looks fine.")
         print("Go on, try and run it!")
     elif (espeak == 0 and dict == 1 and dictd == 1 and
-          wndict == 0 and wnindex == 1):
+          wndict == 0):
         print("eSpeak is missing and WordNet's data file is missing." +
               "Re-install 'dict-wn'.")
         print("For Ubuntu, Debian, etc:")
@@ -220,41 +264,6 @@ if parsed.adversion:
     adv()
 if parsed.check:
     syscheck()
-try:
-    import gi  # this is the GObject stuff needed for GTK+
-    gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
-    from gi.repository import Gtk  # this is the GNOME depends
-    if parsed.check:
-        sys.exit()
-except Exception:
-    print("Importing GObject failed!")
-    if not parsed.check:
-        print("Confirm all dependencies by running " +
-              "Reo with '--check' parameter.")
-    elif parsed.check:
-        print("Install GObject bindings.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install python3-gobject'")
-        print("From extra repo for Arch Linux:")
-        print("'yaourt -S python-gobject' or 'sudo pacman -S python-gobject'")
-        print("Thanks for trying this out!")
-
-
-def darker():
-    global dark
-    settings = Gtk.Settings.get_default()
-    settings.set_property("gtk-application-prefer-dark-theme", True)
-    dark = True
-
-
-if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
-                                           "-dark-theme"):
-    dark = True
-else:
-    dark = False
-
-if parsed.dark:
-    darker()
 print('Setting Variables.')
 homefold = expanduser('~')  # Find the location of the home folder of the user
 # This is where stuff like settings, Custom Definitions, etc will go.
@@ -278,34 +287,6 @@ def residclean():
 
 
 residclean()
-
-print("Getting objects.")
-# Self-Explanatory stuff.
-builder = Gtk.Builder()
-
-
-def addbuilder():
-    if parsed.gladefile:
-        GLADEFILE = parsed.gladefile
-    else:
-        # GLADEFILE points to the location of the UI file.
-        GLADEFILE = PATH + "/reo.ui"
-    builder.add_from_file(GLADEFILE)
-
-
-addbuilder()
-# completion = builder.get_object('completelist')
-# temporarily useless treeview
-# temporarily useless liststore accompanying 'completion'.
-# liststr = builder.get_object('liststore1')
-
-
-def windowcall():
-    window = builder.get_object('window')  # main window
-    window.show_all()
-
-
-windowcall()
 
 
 class GUI:
@@ -802,5 +783,4 @@ class GUI:
 
 
 builder.connect_signals(GUI())
-print("Reo is READY!!!!!!")
 Gtk.main()
