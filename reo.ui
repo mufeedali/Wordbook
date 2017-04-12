@@ -152,8 +152,9 @@ Author: Mufeed Ali
                   <object class="GtkSearchEntry" id="entry1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="has_focus">True</property>
+                    <property name="is_focus">True</property>
                     <property name="can_default">True</property>
-                    <property name="has_default">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Search Box</property>
                     <property name="hexpand">True</property>
@@ -178,6 +179,7 @@ Author: Mufeed Ali
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
+                    <property name="has_default">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Search</property>
                     <property name="image">image2</property>
