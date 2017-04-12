@@ -224,6 +224,8 @@ try:
     import gi  # this is the GObject stuff needed for GTK+
     gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
     from gi.repository import Gtk  # this is the GNOME depends
+    if parsed.check:
+        sys.exit()
 except Exception:
     print("Importing GObject failed!")
     if not parsed.check:
@@ -236,7 +238,6 @@ except Exception:
         print("From extra repo for Arch Linux:")
         print("'yaourt -S python-gobject' or 'sudo pacman -S python-gobject'")
         print("Thanks for trying this out!")
-        sys.exit()
 
 
 def darker():
@@ -297,6 +298,14 @@ addbuilder()
 # temporarily useless treeview
 # temporarily useless liststore accompanying 'completion'.
 # liststr = builder.get_object('liststore1')
+
+
+def windowcall():
+    window = builder.get_object('window')  # main window
+    window.show_all()
+
+
+windowcall()
 
 
 class GUI:
@@ -365,13 +374,19 @@ class GUI:
             return ft
 
     def cowfortune(self):
-        cowsay = subprocess.Popen(["cowsay", self.fortune()],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
-        cowsay.wait()
-        if cowsay:
-            cst = cowsay.stdout.read().decode()
-        return cst
+        try:
+            cowsay = subprocess.Popen(["cowsay", self.fortune()],
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE)
+            cowsay.wait()
+            if cowsay:
+                cst = cowsay.stdout.read().decode()
+            return cst
+        except Exception:
+            ft = ("Easter Egg Fail!!! Install 'fortune' or 'fortunemod'" +
+                  "and also 'cowsay'.")
+            print(ft)
+            return ft
 
     def dosearch(self):
         if dark:
@@ -455,7 +470,21 @@ class GUI:
                     prc = subprocess.Popen(["dict", "-d", "wn", text],
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE)
+                    print("Obtaining Pronunciation for '" +
+                          text + "' from eSpeak.")
+                    pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+                                            "--ipa", "-q", text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                    print("Obtaining Similar words for " + text +
+                          " from Dict.")
+                    cls = subprocess.Popen(["dict", "-m", "-d", "wn",
+                                            "-s", strat, text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
                     prc.wait()
+                    cls.wait()
+                    pro.wait()
                     print("Processing Output.")
                     proc = prc.stderr.read().decode()
                     if 'bash: dict: command not found' in proc:
@@ -469,13 +498,6 @@ class GUI:
                                 '"' + text + '"' + '.\n\n')
                         crip = 1
                         logging.error('Definition not found.')
-                    print("Obtaining Pronunciation for '" +
-                          text + "' from eSpeak.")
-                    pro = subprocess.Popen(["espeak", "-ven-uk-rp",
-                                            "--ipa", "-q", text],
-                                           stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-                    pro.wait()
                     if pro:
                         dcd = pro.stdout.read().decode()
                         pron = ("/" +
@@ -488,18 +510,8 @@ class GUI:
                     if 'bash: espeak: command not found' in derr:
                         logging.error("eSpeak is not installed.")
                         print("Please install 'espeak' before using Reo.")
-                    print("Obtaining Similar words for " + text +
-                          " from Dict.")
-                    try:
-                        cls = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                                "-s", strat, text],
-                                               stdout=subprocess.PIPE,
-                                               stderr=subprocess.PIPE)
-                        cls.wait()
-                        clo = cls.stderr.read().decode()
-                        clo = cls.stdout.read().decode()
-                    except Exception as ex:
-                        print('ERROR:\n' + ex)
+                    clo = cls.stderr.read().decode()
+                    clo = cls.stdout.read().decode()
                     fail = 0
                     if 'bash: dict: command not found' in clo:
                         logging.error("Dict is not installed.")
@@ -790,13 +802,5 @@ class GUI:
 
 
 builder.connect_signals(GUI())
-
-
-def windowcall():
-    window = builder.get_object('window')  # main window
-    window.show_all()
-
-
-windowcall()
-Gtk.main()
 print("Reo is READY!!!!!!")
+Gtk.main()

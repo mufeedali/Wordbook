@@ -476,7 +476,9 @@ Author: Mufeed Ali
           <object class="GtkBox" id="titlemenu">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">end</property>
             <property name="valign">center</property>
+            <property name="hexpand">True</property>
             <property name="spacing">2</property>
             <child>
               <object class="GtkSeparator" id="titlesep">
@@ -497,8 +499,8 @@ Author: Mufeed Ali
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <property name="vexpand">False</property>
-                <property name="label" translatable="yes">&lt;span font_stretch="semi-condensed"&gt;&lt;b&gt;Reo&lt;/b&gt;&lt;/span&gt;
-&lt;span foreground="grey" size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
+                <property name="label" translatable="yes">&lt;span font_stretch="semi-condensed" size="large"&gt;Reo&lt;/span&gt;
+&lt;span foreground="grey" size="xx-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="justify">right</property>
                 <property name="wrap">True</property>
