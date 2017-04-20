@@ -23,12 +23,7 @@
 import sys
 import logging
 from os.path import expanduser  # for detecting home folder
-import re  # regular expressions
-import os  # base stuff
-from shutil import which  # for checks.
-import subprocess  # for running dict and others in background
 import argparse  # for CommandLine-Interface (CLI).
-import random  # for Random Words
 # logging is the most important. You have to let users know everything.
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
@@ -52,11 +47,12 @@ try:
     from gi.repository import Gtk  # this is the GNOME depends
     if parsed.check:
         sys.exit()
-except Exception:
+except ImportError as ierr:
     logging.fatal("Importing GObject failed!")
     if not parsed.check:
         print("Confirm all dependencies by running " +
               "Reo with '--check' parameter.")
+        print(ierr)
     elif parsed.check:
         print("Install GObject bindings.")
         print("For Ubuntu, Debian, etc:")
@@ -102,6 +98,12 @@ if not parsed.adversion and not parsed.check:
     addbuilder()
     windowcall()
 
+import re  # regular expressions
+import os  # base stuff
+from shutil import which  # for checks.
+import subprocess  # for running dict and others in background
+import random  # for Random Words
+
 
 def wncheck():
     try:
@@ -109,8 +111,9 @@ def wncheck():
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE)
         checkt = check.stdout.read().decode()
-    except Exception:
-        print("eroor with dict.")
+    except Exception as ex:
+        print("Error with dict. Error")
+        print(ex)
     if not checkt.find('1 definition found\n\nFrom WordNet (r)' +
                        ' 3.1 (2011) [wn]:\n') == -1:
         wnver = '3.1'
