@@ -24,13 +24,9 @@ Python 2 lacks a lot of things used by Reo like proper unicode support, which fr
 Gtk+3.14 and below are IMPOSSIBLE. Gtk+ 3.16 and 3.18 should also work. BUT the UI might seem horribly broken. If so, try reverting the UI changes in commit d543d27f1c520147ad8059d0ede1f3a07dc65368. This MIGHT fix it.
 Still, the recommended versions remain Gtk+ 3.20 and above.
 
-#### Self-Optimization Tips
-Reo has a lot of faults, as expected from an alpha-quality project. BUT it gives ways to overcome those faults. THIS IS FOR MORE ADVANCED USERS WITH EXPERIENCE, LITTLE OR LOT, IN PYTHON(3). Read on to optimize Reo for yourself.  
-
-**Simple Tweaks:**  
-
- 1. Determine your WordNet version and then, delete the index file (wn3.1 or wn3.0) for the version that you do not require. This will save you about 2 MBs of space.
- 2. Clean up the code on-the-whole according to how your system is set up. It shouldn't be all that hard. Just remove bits you won't need (like Random Word for some) and remove the corresponding imports.
+**Little Tip**  
+Determine your WordNet version and then, delete the index file (wn3.1 or wn3.0) for the version that you do not require. This will save you about 2 MBs of space.  
+Also, if you can, clean up the code on-the-whole according to how your system is set up. It shouldn't be all that hard. Just remove bits you won't need (like Random Word for some), remove version detections and remove the corresponding imports. This can improve performance greatly.
 
 #### Future
 The future is clear. Stabilize Reo first. Then, I will drop the first 2 requirements in a different project called *Jisho*. Eventually the third too.
