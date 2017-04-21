@@ -13,12 +13,12 @@
  * Beautiful HeaderBar-based UI that is truly Unique to Reo and Rerun
  * Optimized Code with further optimizations coming each day
  * Custom Definitions feature using Pango Markup Syntax for formatting
- * Lightweight. 3.7 mb only and further reduceable (Self-optimization Tips at End)
+ * Lightweight. 3.7 mb only and further reducible (Self-optimization Tips at End)
  * Support for GNOME Dark Mode and launching app in dark mode.
  * Easter eggs ;)
 
 #### Why no Python 2 support?
-Python 2 lacks a lot of things used by Reo like proper unicode support, which from shutil and more. But I would like proper Python 2 spport because, as noted in a commit to Rerun, I've notticed better performance in Python 2 than Python 3 though by very small margins.
+Python 2 lacks a lot of things used by Reo like proper Unicode support, which from shutil and more. But I would like proper Python 2 support because, as noted in a commit to Rerun, I've noticed better performance in Python 2 than Python 3 though by very small margins.
 
 #### Gtk versions before Gtk+3.20?
 Gtk+3.14 and below are IMPOSSIBLE. Gtk+ 3.16 and 3.18 should also work. BUT the UI might seem horribly broken. If so, try reverting the UI changes in commit d543d27f1c520147ad8059d0ede1f3a07dc65368. This MIGHT fix it.
