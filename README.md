@@ -26,7 +26,7 @@ Still, the recommended versions remain Gtk+ 3.20 and above.
 
 **Little Tip**  
 Determine your WordNet version and then, delete the index file (wn3.1 or wn3.0) for the version that you do not require. This will save you about 2 MBs of space.  
-Also, if you can, clean up the code on-the-whole according to how your system is set up. It shouldn't be all that hard. Just remove bits you won't need (like Random Word for some), remove version detections and remove the corresponding imports. This can improve performance greatly.
+Also, if you can, clean up the code on-the-whole according to how your system is set up. It shouldn't be all that hard. Just remove bits you won't need (like Random Word for some), remove version detections and remove the corresponding imports. This can improve performance greatly. Reo was built to be tweakable.
 
 #### Future
 The future is clear. Stabilize Reo first. Then, I will drop the first 2 requirements in a different project called *Jisho*. Eventually the third too.

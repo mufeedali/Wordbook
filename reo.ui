@@ -28,10 +28,6 @@ Author: Mufeed Ali
   <!-- interface-description An Open Source Dictionary application that actually makes use of Linux's apposphere (just made that one up). -->
   <!-- interface-copyright 2016-2017 Mufeed Ali -->
   <!-- interface-authors Mufeed Ali -->
-  <object class="GtkListStore" id="completelist"/>
-  <object class="GtkEntryCompletion" id="entrycompletion1">
-    <property name="model">completelist</property>
-  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -47,7 +43,107 @@ Author: Mufeed Ali
     <property name="can_focus">False</property>
     <property name="icon_name">audio-speakers-symbolic</property>
   </object>
-  <object class="GtkListStore" id="liststore1"/>
+  <object class="GtkImage" id="saveimg">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-save-symbolic</property>
+  </object>
+  <object class="GtkImage" id="sstimg">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-find-symbolic</property>
+  </object>
+  <object class="GtkMenu" id="menu4">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="menu_type_hint">normal</property>
+    <child>
+      <object class="GtkMenuItem" id="do">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Do</property>
+        <property name="use_underline">True</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="domenu">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkImageMenuItem" id="sstmenubutton">
+                <property name="label" translatable="yes">Search Selected Text</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="image">sstimg</property>
+                <property name="use_stock">False</property>
+                <signal name="activate" handler="sst" swapped="no"/>
+                <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImageMenuItem" id="imagemenuitem2">
+                <property name="label">Save Definition</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="image">saveimg</property>
+                <property name="use_stock">False</property>
+                <signal name="activate" handler="savedef" swapped="no"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImageMenuItem" id="mnurand">
+                <property name="label" translatable="yes">Random Word</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_stock">False</property>
+                <signal name="activate" handler="randword" swapped="no"/>
+                <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="help">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Help</property>
+        <property name="use_underline">True</property>
+        <child type="submenu">
+          <object class="GtkMenu" id="help-menu">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkImageMenuItem" id="imagemenuitem5">
+                <property name="label">gtk-help</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_underline">True</property>
+                <property name="use_stock">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImageMenuItem" id="imagemenuitem4">
+                <property name="label">About Reo</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_stock">False</property>
+                <signal name="activate" handler="icon_press" swapped="no"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkImageMenuItem" id="imagemenuitem10">
+                <property name="label">Quit</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_stock">False</property>
+                <signal name="activate" handler="quitb" swapped="no"/>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkApplicationWindow" id="window">
     <property name="can_focus">False</property>
     <property name="tooltip_markup" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Reo&lt;/b&gt;&lt;/span&gt;
@@ -60,74 +156,35 @@ Author: Mufeed Ali
     <property name="show_menubar">False</property>
     <signal name="destroy" handler="on_window_destroy" swapped="no"/>
     <child>
-      <object class="GtkBox" id="databox">
+      <object class="GtkScrolledWindow" id="scroll">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">1</property>
+        <property name="can_focus">True</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
+        <property name="shadow_type">out</property>
         <child>
-          <object class="GtkPaned" id="pane">
+          <object class="GtkTextView" id="textview1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="position_set">True</property>
-            <child>
-              <object class="GtkTreeView" id="SimList">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="tooltip_text" translatable="yes">FUTURE: List for Similar Words.</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="model">liststore1</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
-                </child>
-              </object>
-              <packing>
-                <property name="resize">False</property>
-                <property name="shrink">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow" id="scroll">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="shadow_type">out</property>
-                <child>
-                  <object class="GtkTextView" id="textview1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="tooltip_text" translatable="yes">Data Space</property>
-                    <property name="margin_top">1</property>
-                    <property name="margin_bottom">2</property>
-                    <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
-                    <property name="hscroll_policy">natural</property>
-                    <property name="vscroll_policy">natural</property>
-                    <property name="pixels_below_lines">3</property>
-                    <property name="editable">False</property>
-                    <property name="wrap_mode">word-char</property>
-                    <property name="left_margin">2</property>
-                    <property name="right_margin">2</property>
-                    <property name="top_margin">2</property>
-                    <property name="bottom_margin">4</property>
-                    <property name="cursor_visible">False</property>
-                    <property name="accepts_tab">False</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="resize">True</property>
-                <property name="shrink">True</property>
-              </packing>
-            </child>
+            <property name="tooltip_text" translatable="yes">Data Space</property>
+            <property name="margin_left">2</property>
+            <property name="margin_right">2</property>
+            <property name="margin_top">2</property>
+            <property name="margin_bottom">2</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="hscroll_policy">natural</property>
+            <property name="vscroll_policy">natural</property>
+            <property name="pixels_below_lines">3</property>
+            <property name="editable">False</property>
+            <property name="wrap_mode">word-char</property>
+            <property name="left_margin">2</property>
+            <property name="right_margin">2</property>
+            <property name="top_margin">2</property>
+            <property name="bottom_margin">4</property>
+            <property name="cursor_visible">False</property>
+            <property name="accepts_tab">False</property>
           </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
         </child>
       </object>
     </child>
@@ -154,8 +211,6 @@ Author: Mufeed Ali
                     <property name="can_focus">True</property>
                     <property name="has_focus">True</property>
                     <property name="is_focus">True</property>
-                    <property name="can_default">True</property>
-                    <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Search Box</property>
                     <property name="hexpand">True</property>
                     <property name="max_width_chars">75</property>
@@ -164,8 +219,7 @@ Author: Mufeed Ali
                     <property name="secondary_icon_activatable">False</property>
                     <property name="secondary_icon_sensitive">False</property>
                     <property name="placeholder_text" translatable="yes">Search...</property>
-                    <property name="completion">entrycompletion1</property>
-                    <signal name="activate" handler="enterpress" swapped="no"/>
+                    <signal name="activate" handler="dosearch" swapped="no"/>
                     <signal name="changed" handler="changed" swapped="no"/>
                   </object>
                   <packing>
@@ -179,11 +233,13 @@ Author: Mufeed Ali
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
+                    <property name="can_default">True</property>
                     <property name="has_default">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Search</property>
                     <property name="image">image2</property>
                     <property name="relief">none</property>
+                    <signal name="clicked" handler="dosearch" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -196,7 +252,7 @@ Author: Mufeed Ali
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
-                    <property name="receives_default">True</property>
+                    <property name="receives_default">False</property>
                     <property name="tooltip_text" translatable="yes">Clear Everything</property>
                     <property name="image">image1</property>
                     <property name="relief">none</property>
@@ -213,7 +269,7 @@ Author: Mufeed Ali
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
-                    <property name="receives_default">True</property>
+                    <property name="receives_default">False</property>
                     <property name="tooltip_text" translatable="yes">Say It!</property>
                     <property name="image">image3</property>
                     <property name="relief">none</property>
@@ -482,7 +538,6 @@ Author: Mufeed Ali
       <object class="GtkBox" id="sdbox">
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="sdbbox">
             <property name="can_focus">False</property>
@@ -528,107 +583,6 @@ Author: Mufeed Ali
     </child>
     <child>
       <placeholder/>
-    </child>
-  </object>
-  <object class="GtkImage" id="saveimg">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">document-save-symbolic</property>
-  </object>
-  <object class="GtkImage" id="sstimg">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">edit-find-symbolic</property>
-  </object>
-  <object class="GtkMenu" id="menu4">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="menu_type_hint">normal</property>
-    <child>
-      <object class="GtkMenuItem" id="do">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Do</property>
-        <property name="use_underline">True</property>
-        <child type="submenu">
-          <object class="GtkMenu" id="domenu">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <object class="GtkImageMenuItem" id="sstmenubutton">
-                <property name="label" translatable="yes">Search Selected Text</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="image">sstimg</property>
-                <property name="use_stock">False</property>
-                <signal name="activate" handler="sst" swapped="no"/>
-                <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem2">
-                <property name="label">Save Definition</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="image">saveimg</property>
-                <property name="use_stock">False</property>
-                <signal name="activate" handler="savedef" swapped="no"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImageMenuItem" id="mnurand">
-                <property name="label" translatable="yes">Random Word</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_stock">False</property>
-                <signal name="activate" handler="randword" swapped="no"/>
-                <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="help">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Help</property>
-        <property name="use_underline">True</property>
-        <child type="submenu">
-          <object class="GtkMenu" id="help-menu">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem5">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_underline">True</property>
-                <property name="use_stock">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem4">
-                <property name="label">About Reo</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_stock">False</property>
-                <signal name="activate" handler="icon_press" swapped="no"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem10">
-                <property name="label">Quit</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_stock">False</property>
-                <signal name="activate" handler="quitb" swapped="no"/>
-              </object>
-            </child>
-          </object>
-        </child>
-      </object>
     </child>
   </object>
 </interface>

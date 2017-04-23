@@ -22,7 +22,6 @@
 # Now, beginning with the Imports.
 import sys
 import logging
-import os  # base stuff
 import argparse  # for CommandLine-Interface (CLI).
 # logging is the most important. You have to let users know everything.
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - " +
@@ -63,7 +62,7 @@ except ImportError as ierr:
 print("Getting objects.")
 # Self-Explanatory stuff.
 builder = Gtk.Builder()
-PATH = os.path.dirname(os.path.realpath(__file__))
+PATH = None
 
 
 def darker():
@@ -88,6 +87,8 @@ def windowcall():
 
 
 if not parsed.adversion and not parsed.check:
+    import os  # base stuff
+    PATH = os.path.dirname(os.path.realpath(__file__))
     if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
                                                "-dark-theme"):
         dark = True
@@ -372,7 +373,7 @@ class GUI:
             print(ft)
             return ft
 
-    def dosearch(self):
+    def dosearch(self, button1=None):
         if dark:
             sencol = "cyan"  # Color of sentences in Dark mode
             wordcol = "lightgreen"  # Color of: Similar Words,
@@ -453,49 +454,64 @@ class GUI:
                     print("No custom definition found.")
                     print("Obtaining definition for '" +
                           text + "' from Dictd using Dict.")
-                    prc = subprocess.Popen(["dict", "-d", "wn", text],
-                                           stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
+                    try:
+                        prc = subprocess.Popen(["dict", "-d", "wn", text],
+                                               stdout=subprocess.PIPE,
+                                               stderr=subprocess.PIPE)
+                    except Exception:
+                        print("Didnt Work! ERROR CODE: PAPAYA")
+                        return
                     print("Obtaining Pronunciation for '" +
                           text + "' from eSpeak.")
-                    pro = subprocess.Popen(["espeak", "-ven-uk-rp",
-                                            "--ipa", "-q", text],
-                                           stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
+                    try:
+                        pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+                                                "--ipa", "-q", text],
+                                               stdout=subprocess.PIPE,
+                                               stderr=subprocess.PIPE)
+                    except Exception:
+                        print("Didnt Work! ERROR CODE: MANGO")
+                        return
                     print("Obtaining Similar words for " + text +
                           " from Dict.")
-                    cls = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                            "-s", strat, text],
-                                           stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-                    prc.wait()
-                    cls.wait()
-                    pro.wait()
+                    try:
+                        cls = subprocess.Popen(["dict", "-m", "-d", "wn",
+                                                "-s", strat, text],
+                                               stdout=subprocess.PIPE,
+                                               stderr=subprocess.PIPE)
+                    except Exception:
+                        print("Didnt Work! ERROR CODE: PAPAYA")
+                        return
                     print("Processing Output.")
+                    prc.wait()
                     proc = prc.stderr.read().decode()
                     if 'bash: dict: command not found' in proc:
                         logging.error("Dict is not installed.")
                         print("Please install 'dict' before using Reo.")
-                    if prc:
+                    try:
                         proc = prc.stdout.read().decode()
                         crip = 0
+                    except Exception:
+                        print("Something went wrong while obtaining" +
+                              " definitions.")
                     if proc == '':
                         proc = ("\n\nCouldn't find any definition for " +
                                 '"' + text + '"' + '.\n\n')
                         crip = 1
                         logging.error('Definition not found.')
-                    if pro:
+                    pro.wait()
+                    try:
                         dcd = pro.stdout.read().decode()
                         pron = ("/" +
                                 dcd.strip().replace('\n ', ' ') +
                                 "/")
-                    else:
+                    except Exception:
                         pron = ('ERROR: Something went wrong' +
                                 ' with pronunications.')
                     derr = pro.stderr.read().decode()
                     if 'bash: espeak: command not found' in derr:
                         logging.error("eSpeak is not installed.")
                         print("Please install 'espeak' before using Reo.")
+                    cls.wait()
                     clo = cls.stderr.read().decode()
                     clo = cls.stdout.read().decode()
                     fail = 0
@@ -720,11 +736,6 @@ class GUI:
         sb.set_text(rw.strip())
         self.dosearch()
 
-    def search(self, button2):
-        print("Loading...")
-        self.dosearch()
-        print('Done')
-
     def clear(self, button3):
         sb = builder.get_object('entry1')  # searchbox
         viewer = builder.get_object('textview1')  # Data Space
@@ -758,9 +769,6 @@ class GUI:
 
     def quitb(self, imagemenuitem10):
         Gtk.main_quit()
-
-    def enterpress(self, entry1):
-        self.search(self)
 
     def sdok(self, save):
         defdiag = builder.get_object('savedef')
