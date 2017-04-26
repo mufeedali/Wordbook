@@ -62,7 +62,8 @@ except ImportError as ierr:
 print("Getting objects.")
 # Self-Explanatory stuff.
 builder = Gtk.Builder()
-PATH = None
+import os  # base stuff
+PATH = os.path.dirname(os.path.realpath(__file__))
 
 
 def darker():
@@ -87,8 +88,6 @@ def windowcall():
 
 
 if not parsed.adversion and not parsed.check:
-    import os  # base stuff
-    PATH = os.path.dirname(os.path.realpath(__file__))
     if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
                                                "-dark-theme"):
         dark = True
@@ -104,6 +103,7 @@ from os.path import expanduser  # for detecting home folder
 from shutil import which  # for checks.
 import subprocess  # for running dict and others in background
 import random  # for Random Words
+import linecache
 
 
 def wncheck():
@@ -124,23 +124,13 @@ def wncheck():
     return wnver
 
 
-wnver = wncheck()
-if wnver == '3.1':
-    wn = open(PATH + '/wn3.1', 'r')
-elif wnver == '3.0':
-    wn = open(PATH + '/wn3.0', 'r')
-else:
-    print("Big error. Just crashed.")
-    sys.exit(1)
-
-
 def adv():
     print('Reo 0.0.5 Alpha version')
     print('Copyright 2016-2017 Mufeed Ali')
     print()
-    if wnver == '3.1':
+    if wncheck() == '3.1':
         print("WordNet Version 3.1 (2011) (Installed)")
-    elif wnver == '3.0':
+    elif wncheck() == '3.0':
         print("WordNet Version 3.0 (2006) (Installed)")
     check2 = subprocess.Popen(["dict", "-V"],
                               stdout=subprocess.PIPE,
@@ -596,9 +586,8 @@ class GUI:
                                           ': ', ' <b>' +
                                           str(si).replace('-', '') +
                                           ': </b>')
-                    # Remove line below before release! This line is used for
-                    # debugging!
-                    print(soc)
+                    # print(soc)
+                    # This line is used for debugging.
                     if not soc.find("`") == -1:
                         soc = soc.replace("`", "'")
                         print("Fixed mistake in example!")
@@ -710,29 +699,15 @@ class GUI:
         ced = builder.get_object('ced')
         ced.response(Gtk.ResponseType.OK)
 
-    def randomword(self, textfile, chunk_size=16):
-        textfile.seek(0, os.SEEK_END)
-        size = textfile.tell()
-        i = random.randint(0, size)
-        while True:
-            i -= chunk_size
-            if i < 0:
-                chunk_size += i
-                i = 0
-            textfile.seek(i, os.SEEK_SET)
-            chunk = textfile.read(chunk_size)
-            i_newline = chunk.rfind('\n')
-            if i_newline != -1:
-                i += i_newline + 1
-                break
-            if i == 0:
-                break
-        textfile.seek(i, os.SEEK_SET)
-        return textfile.readline()
+    def randomword(self):
+        if wncheck() == '3.1':
+            return linecache.getline('wn3.1', random.randint(0, 147477))
+        elif wncheck() == '3.0':
+            return linecache.getline('wn3.0', random.randint(0, 147288))
 
     def randword(self, mnurand):
         sb = builder.get_object('entry1')  # searchbox
-        rw = self.randomword(wn)
+        rw = self.randomword()
         sb.set_text(rw.strip())
         self.dosearch()
 
