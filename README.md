@@ -24,7 +24,7 @@ Python 2 lacks a lot of things used by Reo like proper Unicode support, which fr
 Gtk+3.14 and below are IMPOSSIBLE. Gtk+ 3.16 and 3.18 should also work. BUT the UI might seem horribly broken. If so, try reverting the UI changes in commit d543d27f1c520147ad8059d0ede1f3a07dc65368. This MIGHT fix it.
 Still, the recommended versions remain Gtk+ 3.20 and above.
 
-**Important Tips**  
+**Tips**  
 Determine your WordNet version and then, delete the index file (wn3.1 or wn3.0) for the version that you do not require. This will save you about 2 MBs of space.  
 After you have confirmed that everything is working fine for you, open 'reo' in a text editor and remove all the print statements put in for logging. This should improve performance though not noticeably. This is only in master for now and once Git Flow is used this will not be the case and you won't have to do this manually.  
 Also, if you can, clean up the code on-the-whole according to how your system is set up. It shouldn't be all that hard. Just remove bits you won't need (like Random Word for some), remove version detections and remove the corresponding imports. This can improve performance greatly. Reo was built to be tweakable.

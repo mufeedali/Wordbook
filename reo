@@ -745,16 +745,12 @@ class GUI:
     def quitb(self, imagemenuitem10):
         Gtk.main_quit()
 
-    def sdok(self, save):
-        defdiag = builder.get_object('savedef')
-        defdiag.response(Gtk.ResponseType.OK)
-
-    def sdcancel(self, cancel):
-        defdiag = builder.get_object('savedef')
-        defdiag.response(Gtk.ResponseType.CANCEL)
-
     def savedef(self, imagemenuitem2):
-        defdiag = builder.get_object('savedef')
+        defdiag = Gtk.FileChooserDialog("Save Definition as...",
+                                        builder.get_object('window'),
+                                        Gtk.FileChooserAction.SAVE,
+                                        ("Save", Gtk.ResponseType.OK,
+                                         "Cancel", Gtk.ResponseType.CANCEL))
         viewer = builder.get_object('textview1')  # Data Space
         response = defdiag.run()
         if (response == Gtk.ResponseType.DELETE_EVENT or

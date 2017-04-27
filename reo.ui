@@ -146,7 +146,7 @@ Author: Mufeed Ali
   </object>
   <object class="GtkApplicationWindow" id="window">
     <property name="can_focus">False</property>
-    <property name="tooltip_markup" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Reo&lt;/b&gt;&lt;/span&gt;
+    <property name="tooltip_markup" translatable="yes">&lt;span size="large"&gt;Reo&lt;/span&gt;
 &lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
     <property name="window_position">center</property>
     <property name="default_width">605</property>
@@ -351,7 +351,7 @@ Author: Mufeed Ali
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="label" translatable="yes">&lt;span font_stretch="semi-condensed" size="large"&gt;Reo&lt;/span&gt;
-&lt;span foreground="grey" size="xx-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
+&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
                     <property name="use_markup">True</property>
                     <property name="justify">right</property>
                     <property name="track_visited_links">False</property>
@@ -518,65 +518,6 @@ Author: Mufeed Ali
             <property name="fill">True</property>
             <property name="padding">2</property>
             <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <child>
-      <placeholder/>
-    </child>
-  </object>
-  <object class="GtkFileChooserDialog" id="savedef">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Save Definition as...</property>
-    <property name="icon_name">document-save-symbolic</property>
-    <property name="type_hint">normal</property>
-    <property name="transient_for">window</property>
-    <property name="action">save</property>
-    <property name="do_overwrite_confirmation">True</property>
-    <child internal-child="vbox">
-      <object class="GtkBox" id="sdbox">
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="sdbbox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="cancel">
-                <property name="label">gtk-cancel</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-                <signal name="clicked" handler="sdcancel" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="save">
-                <property name="label">gtk-save</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-                <signal name="clicked" handler="sdok" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
           </packing>
         </child>
       </object>
