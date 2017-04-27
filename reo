@@ -701,9 +701,9 @@ class GUI:
 
     def randomword(self):
         if wncheck() == '3.1':
-            return linecache.getline('wn3.1', random.randint(0, 147477))
+            return linecache.getline('wn3.1', random.randint(0, 147478))
         elif wncheck() == '3.0':
-            return linecache.getline('wn3.0', random.randint(0, 147288))
+            return linecache.getline('wn3.0', random.randint(0, 147289))
 
     def randword(self, mnurand):
         sb = builder.get_object('entry1')  # searchbox
