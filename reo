@@ -310,6 +310,7 @@ class GUI:
                 sb.set_text(sb.get_text().replace('         ', ''))
             if not sb.get_text() == '' and not sb.get_text().isspace():
                 self.dosearch()
+                sb.grab_focus()
         except Exception as ex:
             return
 
@@ -429,6 +430,7 @@ class GUI:
                                  ' this.</span>')
                     viewer.get_buffer().insert_markup(lastiter, final, -1)
                     lastiter = viewer.get_buffer().get_end_iter()
+                    cdfile.close()
                 else:
                     try:
                         prc = subprocess.Popen(["dict", "-d", "wn", text],
@@ -689,6 +691,7 @@ class GUI:
         rw = self.randomword()
         sb.set_text(rw.strip())
         self.dosearch()
+        sb.grab_focus()
 
     def clear(self, button3):
         sb = builder.get_object('entry1')  # searchbox
@@ -713,6 +716,7 @@ class GUI:
                         " first \nbefore trying to  listen to it." +
                         " I mean, Reo \nis <b>NOT</b> a Text-To" +
                         "-Speech Software!")
+        NULLMAKER.close()
 
     def changed(self, entry1):
         sb = builder.get_object('entry1')  # searchbox
@@ -743,6 +747,7 @@ class GUI:
                                                   lastiter,
                                                   'false'))
             defdiag.hide()
+            sf.close()
 
 
 builder.connect_signals(GUI())
