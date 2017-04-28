@@ -3,9 +3,10 @@
 # Could use just '#!/usr/bin/env python' if you're NOT on Ubuntu or any other
 # distribution that has python2 as the main python version.
 #
-# MIT License
+# The MIT License (MIT)
 #
 # Copyright (c) 2016-2017 Mufeed Ali
+# This file is part of Reo
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -67,11 +68,9 @@ except ImportError as ierr:
         print("From extra repo for Arch Linux:")
         print("'yaourt -S python-gobject' or 'sudo pacman -S python-gobject'")
         print("Thanks for trying this out!")
-print("Getting objects.")
 # Self-Explanatory stuff.
 builder = Gtk.Builder()
-import os  # base stuff
-PATH = os.path.dirname(os.path.realpath(__file__))
+import os
 
 
 def darker():
@@ -82,6 +81,7 @@ def darker():
 
 
 def addbuilder():
+    PATH = os.path.dirname(os.path.realpath(__file__))
     if parsed.gladefile:
         GLADEFILE = parsed.gladefile
     else:
@@ -140,25 +140,27 @@ def adv():
         print("WordNet Version 3.1 (2011) (Installed)")
     elif wncheck() == '3.0':
         print("WordNet Version 3.0 (2006) (Installed)")
-    check2 = subprocess.Popen(["dict", "-V"],
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
-    if check2:
+    try:
+        check2 = subprocess.Popen(["dict", "-V"],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
         check2t = check2.stdout.read().decode()
         print("Dict Version Info:")
         print(check2t.strip())
-    else:
+    except Exception as ex:
         print("Looks like missing components. (dict)")
+        print(ex)
     print()
-    check3 = subprocess.Popen(["espeak", "--version"],
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
-    if check3:
+    try:
+        check3 = subprocess.Popen(["espeak", "--version"],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
         check3t = check3.stdout.read().decode()
         print("eSpeak Version Info:")
         print(check3t.strip())
-    else:
+    except Exception as ex:
         print("You're missing a few components. (espeak)")
+        print(ex)
     sys.exit()
 
 
@@ -167,29 +169,33 @@ def syscheck():
         which('espeak')
         print("eSpeak seems to be installed. OK.")
         espeak = 1
-    except Exception:
+    except Exception as ex:
         logging.fatal("eSpeak is not installed! Dependancy missing!")
+        print(ex)
         espeak = 0
     try:
         which('dict')
         print('dict seems to be installed. OK.')
         dict = 1
-    except Exception:
+    except Exception as ex:
         logging.fatal("dict is not installed! Dependancy missing!")
+        print(ex)
         dict = 0
     try:
         open('/usr/share/dictd/wn.dict.dz')
         print('WordNet databse seems to be installed. OK.')
         wndict = 1
-    except Exception:
+    except Exception as ex:
         logging.warning("WordNet database is not found! Probably won't work.")
+        print(ex)
         wndict = 0
     try:
         which('dictd')
         print('dictd seems to be installed. OK.')
         dictd = 1
-    except Exception:
+    except Exception as ex:
         logging.fatal("dictd is not installed! Dependancy missing!")
+        print(ex)
         dictd = 0
     if (espeak == 1 and dict == 1 and
             dictd == 1 and wndict == 1):
@@ -259,14 +265,13 @@ def syscheck():
         print("'yaourt -S espeak dict-wn'")
         print("Everything else (NOT everything) looks" +
               " fine BUT you can't run it.")
-    print("Checking for Python GObject bindings.")
+    sys.exit()
 
 
 if parsed.adversion:
     adv()
 if parsed.check:
     syscheck()
-print('Setting Variables.')
 homefold = expanduser('~')  # Find the location of the home folder of the user
 # This is where stuff like settings, Custom Definitions, etc will go.
 reofold = homefold + "/.reo"
@@ -278,23 +283,9 @@ if not os.path.exists(cdefold):  # check for Custom Definitions folder.
     os.makedirs(cdefold)  # create Custom Definitions folder.
 
 
-def residclean():
-    residfold = reofold.replace("/.reo", "/.reocdef")
-    # ^ Folder from older builds.
-    if os.path.exists(residfold):  # check for folder from older builds.
-        os.removedirs(residfold)  # delete folder from older builds.
-    else:
-        # let the user know that they're clean.
-        print('Residual files from old build not found.')
-
-
-residclean()
-
-
 class GUI:
 
     def on_window_destroy(self, window):
-        print("Quitting.")
         Gtk.main_quit()
 
     def icon_press(self, imagemenuitem4):
@@ -309,26 +300,18 @@ class GUI:
     def sst(self, imagemenuitem1):
         sb = builder.get_object('entry1')  # searchbox
         viewer = builder.get_object('textview1')  # Data Space
-        print("Getting selected text.")
         try:
             dec, dek = viewer.get_buffer().get_selection_bounds()
-            fail = 0
-        except Exception:
-            logging.error("Getting selected text failed. No selected Text?")
-            fail = 1
-        if fail == 0:
             sb.set_text(viewer.get_buffer().get_text(dec, dek, True))
-            print('Trimming Search term.')
             if '-\n         ' in sb.get_text():
                 sb.set_text(sb.get_text().replace('-\n         ', '-'))
             else:
                 sb.set_text(sb.get_text().replace('\n', ' '))
                 sb.set_text(sb.get_text().replace('         ', ''))
             if not sb.get_text() == '' and not sb.get_text().isspace():
-                print('Searching now.')
                 self.dosearch()
-        else:
-            print('Failed')
+        except Exception as ex:
+            return
 
     def newced(self, title, primary, secondary):
         # Common Error Dialog. One dialog for all of them.
@@ -351,9 +334,10 @@ class GUI:
             fortune.wait()
             ft = fortune.stdout.read().decode()
             return ft
-        except Exception:
+        except Exception as ex:
             ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
             print(ft)
+            print(ex)
             return ft
 
     def cowfortune(self):
@@ -365,10 +349,11 @@ class GUI:
             if cowsay:
                 cst = cowsay.stdout.read().decode()
             return cst
-        except Exception:
+        except Exception as ex:
             ft = ("Easter Egg Fail!!! Install 'fortune' or 'fortunemod'" +
-                  "and also 'cowsay'.")
+                  " and also 'cowsay'.")
             print(ft)
+            print(ex)
             return ft
 
     def dosearch(self, button1=None):
@@ -391,7 +376,6 @@ class GUI:
         lastiter = viewer.get_buffer().get_end_iter()
         if (not sb.get_text().strip('"?`![]()/\\:;,') == '' and
                 not sb.get_text().isspace() and not sb.get_text() == ''):
-            print("Formatting search text.")
             text = sb.get_text()
             text = text.strip().strip('"?`![]()/\\:;,')
             if text == 'fortune -a':
@@ -427,16 +411,13 @@ class GUI:
                                                   -1)
                 return True
             if text and not text.isspace():
-                print("Reporting search.")
-                searched = 1
-                print("Check for custom definition.")
+                searched = True
                 cdfail = False
                 try:
                     cdfile = open(cdefold + '/' + text, 'r')
                 except Exception:
                     cdfail = True
                 if not cdfail:
-                    print("Custom Definition found")
                     cdefread = cdfile.read()
                     if "[warninghide]" in cdefread:
                         cdefread = cdefread.replace("\n[warninghide]", "")
@@ -449,37 +430,32 @@ class GUI:
                     viewer.get_buffer().insert_markup(lastiter, final, -1)
                     lastiter = viewer.get_buffer().get_end_iter()
                 else:
-                    print("No custom definition found.")
-                    print("Obtaining definition for '" +
-                          text + "' from Dictd using Dict.")
                     try:
                         prc = subprocess.Popen(["dict", "-d", "wn", text],
                                                stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE)
-                    except Exception:
+                    except Exception as ex:
                         print("Didnt Work! ERROR CODE: PAPAYA")
+                        print(ex)
                         return
-                    print("Obtaining Pronunciation for '" +
-                          text + "' from eSpeak.")
                     try:
                         pro = subprocess.Popen(["espeak", "-ven-uk-rp",
                                                 "--ipa", "-q", text],
                                                stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE)
-                    except Exception:
+                    except Exception as ex:
                         print("Didnt Work! ERROR CODE: MANGO")
+                        print(ex)
                         return
-                    print("Obtaining Similar words for " + text +
-                          " from Dict.")
                     try:
                         cls = subprocess.Popen(["dict", "-m", "-d", "wn",
                                                 "-s", strat, text],
                                                stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE)
-                    except Exception:
+                    except Exception as ex:
                         print("Didnt Work! ERROR CODE: PAPAYA")
+                        print(ex)
                         return
-                    print("Processing Output.")
                     prc.wait()
                     proc = prc.stderr.read().decode()
                     if 'bash: dict: command not found' in proc:
@@ -488,9 +464,10 @@ class GUI:
                     try:
                         proc = prc.stdout.read().decode()
                         crip = 0
-                    except Exception:
+                    except Exception as ex:
                         print("Something went wrong while obtaining" +
                               " definitions.")
+                        print(ex)
                     if proc == '':
                         proc = ("\n\nCouldn't find any definition for " +
                                 '"' + text + '"' + '.\n\n')
@@ -502,9 +479,10 @@ class GUI:
                         pron = ("/" +
                                 dcd.strip().replace('\n ', ' ') +
                                 "/")
-                    except Exception:
+                    except Exception as ex:
                         pron = ('ERROR: Something went wrong' +
                                 ' with pronunications.')
+                        print(ex)
                     derr = pro.stderr.read().decode()
                     if 'bash: espeak: command not found' in derr:
                         logging.error("eSpeak is not installed.")
@@ -521,7 +499,6 @@ class GUI:
                         clo = ("Sorry! Couldn't find any similar words for " +
                                '"' + text + '"' + "!")
                         fail = 1
-                    print("Formatting and processing Dict output further.")
                     soc = proc.replace('1 definition found\n\nFrom WordNet' +
                                        ' (r) 3.0 (2006) [wn]:\n', '')
                     soc = proc.replace('1 definition found\n\nFrom WordNet' +
@@ -529,8 +506,9 @@ class GUI:
                     try:
                         imp = re.search("  " + text, soc,
                                         flags=re.IGNORECASE).group(0)
-                    except Exception:
+                    except Exception as ex:
                         imp = ''
+                        print(ex)
                     soc = soc.replace(imp + '\n', '')
                     cleans = ['"--Thomas', '"--\n           ',
                               '-\n             ', '"; [', '      n 1',
@@ -598,12 +576,9 @@ class GUI:
                     # This line is used for debugging.
                     if not soc.find("`") == -1:
                         soc = soc.replace("`", "'")
-                        print("Fixed mistake in example!")
                     if not soc.find("thunder started the sleeping") == -1:
                         soc = soc.replace("thunder started the sleeping",
                                           "thunder started, the sleeping")
-                        print("Fixed mistake in example!")
-                    print("Formatting Similar Words.")
                     clp = clo.replace('wn:', '').rstrip()
                     if fail == 0:
                         clp = clp.replace('\n  ', '  ').rstrip()
@@ -624,7 +599,6 @@ class GUI:
                     if text == 'recursion':
                         clp = 'recursion'
                         fail = 0
-                    print("Presenting final result to user.")
                     lastiter = viewer.get_buffer().get_end_iter()
                     if pro and not crip == 1:
                         viewer.get_buffer().insert_markup(lastiter,
@@ -683,7 +657,6 @@ class GUI:
                     else:
                         viewer.get_buffer().insert(lastiter, '\n' + clp)
                     # liststr.append([text]) # doesn't work
-                    print("Search completed.")
         elif (sb.get_text().strip('"?`![]()/\\:;,') == '' and
               not sb.get_text().isspace() and
               not sb.get_text() == ''):
@@ -696,12 +669,10 @@ class GUI:
             logging.error("Empty search box!")
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
-            print("Search Failed.")
         elif sb.get_text() == '':
             logging.error("Empty search box!")
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
-            print("Search Failed.")
 
     def cedok(self, cedok):
         ced = builder.get_object('ced')
@@ -729,14 +700,14 @@ class GUI:
         NULLMAKER = open(os.devnull, 'w')
         sb = builder.get_object('entry1')  # searchbox
         speed = '120'  # To change eSpeak audio speed.
-        if searched == 1 and not sb.get_text() == '':
+        if searched and not sb.get_text() == '':
             subprocess.Popen(["espeak", "-ven-uk-rp", "-s", speed,
                               sb.get_text()], stdout=NULLMAKER,
                              stderr=subprocess.STDOUT)
         elif sb.get_text() == '' or sb.get_text().isspace():
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
-        elif searched == 0:
+        elif not searched:
             self.newced("Sorry!!", "Sorry!!",
                         "I'm sorry but you have to do a search" +
                         " first \nbefore trying to  listen to it." +
@@ -746,7 +717,7 @@ class GUI:
     def changed(self, entry1):
         sb = builder.get_object('entry1')  # searchbox
         global searched
-        searched = 0
+        searched = False
         sb.set_text(sb.get_text().replace('\n', ' '))
         sb.set_text(sb.get_text().replace('         ', ''))
 
