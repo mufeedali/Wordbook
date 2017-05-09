@@ -363,10 +363,9 @@ class GUI:
             wordcol = "lightgreen"  # Color of: Similar Words,
 #                                     Synonyms and Antonyms.
         else:
-            sencol = "blue"  # Color of sentences in Dark mode
+            sencol = "blue"  # Color of sentences in regular
             wordcol = "green"  # Color of: Similar Words,
 #                                Synonyms and Antonyms.
-        global searched
         sb = builder.get_object('entry1')  # searchbox
         viewer = builder.get_object('textview1')  # Data Space
         strat = "lev"
@@ -375,306 +374,253 @@ class GUI:
             viewer.set_monospace(False)
         viewer.get_buffer().set_text("")
         lastiter = viewer.get_buffer().get_end_iter()
-        if (not sb.get_text().strip('"?`![]()/\\:;,') == '' and
-                not sb.get_text().isspace() and not sb.get_text() == ''):
-            text = sb.get_text()
-            text = text.strip().strip('"?`![]()/\\:;,')
-            if text == 'fortune -a':
+        text = sb.get_text().strip().strip('<>"?`![]()/\\:;,')
+        try:
+            out = self.search(sb.get_text(), strat, sencol, wordcol)
+            if text == 'fortune -a' and text == 'cowfortune':
                 viewer.set_monospace(True)
-                lastiter = viewer.get_buffer().get_end_iter()
-                viewer.get_buffer().insert(lastiter, self.fortune(), -1)
-                return
-            elif text == 'cowfortune':
-                viewer.set_monospace(True)
-                lastiter = viewer.get_buffer().get_end_iter()
-                viewer.get_buffer().insert(lastiter, self.cowfortune(), -1)
-                return
-            elif text == 'crash now' or text == 'close now':
-                Gtk.main_quit()
+                viewer.get_buffer().insert(lastiter, out, -1)
             elif text == 'reo':
                 viewer.set_monospace(True)
-                lastiter = viewer.get_buffer().get_end_iter()
-                viewer.get_buffer().insert_markup(lastiter, "Pronunciation:" +
-                                                  " <b>/ɹˈiːəʊ/</b>\n  <b>" +
-                                                  "Reo</b> ~ <i>Japanese Wor" +
-                                                  "d</i>\n  <b>1:</b> Name o" +
-                                                  "f this application, chose" +
-                                                  "n kind of at random.\n  <" +
-                                                  "b>2:</b> Japanese word me" +
-                                                  "aning 'Wise Center'\n <b>" +
-                                                  "Similar Words:</b>\n <i><" +
-                                                  "span foreground=\"" +
-                                                  wordcol + "\">  ro, re, ro" +
-                                                  "e, redo, reno, oreo, ceo," +
-                                                  " leo, neo, rho, rio, reb," +
-                                                  " red, ref, rem, rep, res," +
-                                                  " ret, rev, rex</span></i>",
-                                                  -1)
-                return True
-            if text and not text.isspace():
-                searched = True
-                cdfail = False
-                try:
-                    cdfile = open(cdefold + '/' + text, 'r')
-                except Exception:
-                    cdfail = True
-                if not cdfail:
-                    cdefread = cdfile.read()
-                    if "[warninghide]" in cdefread:
-                        cdefread = cdefread.replace("\n[warninghide]", "")
-                        final = cdefread
-                    else:
-                        final = (cdefread + '\n<span foreground="#e6292f">N' +
-                                 'OTE: This is a Custom definition. No one' +
-                                 ' is to be held responsible for errors in' +
-                                 ' this.</span>')
-                    viewer.get_buffer().insert_markup(lastiter, final, -1)
-                    lastiter = viewer.get_buffer().get_end_iter()
-                    cdfile.close()
-                else:
-                    try:
-                        prc = subprocess.Popen(["dict", "-d", "wn", text],
-                                               stdout=subprocess.PIPE,
-                                               stderr=subprocess.PIPE)
-                    except Exception as ex:
-                        print("Didnt Work! ERROR CODE: PAPAYA")
-                        print(ex)
-                        return
-                    try:
-                        pro = subprocess.Popen(["espeak", "-ven-uk-rp",
-                                                "--ipa", "-q", text],
-                                               stdout=subprocess.PIPE,
-                                               stderr=subprocess.PIPE)
-                    except Exception as ex:
-                        print("Didnt Work! ERROR CODE: MANGO")
-                        print(ex)
-                        return
-                    try:
-                        cls = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                                "-s", strat, text],
-                                               stdout=subprocess.PIPE,
-                                               stderr=subprocess.PIPE)
-                    except Exception as ex:
-                        print("Didnt Work! ERROR CODE: PAPAYA")
-                        print(ex)
-                        return
-                    prc.wait()
-                    proc = prc.stderr.read().decode()
-                    if 'bash: dict: command not found' in proc:
-                        logging.error("Dict is not installed.")
-                        print("Please install 'dict' before using Reo.")
-                    try:
-                        proc = prc.stdout.read().decode()
-                        crip = 0
-                    except Exception as ex:
-                        print("Something went wrong while obtaining" +
-                              " definitions.")
-                        print(ex)
-                    if proc == '':
-                        proc = ("\n\nCouldn't find any definition for " +
-                                '"' + text + '"' + '.\n\n')
-                        crip = 1
-                        logging.error('Definition not found.')
-                    pro.wait()
-                    try:
-                        dcd = pro.stdout.read().decode()
-                        pron = ("/" +
-                                dcd.strip().replace('\n ', ' ') +
-                                "/")
-                    except Exception as ex:
-                        pron = ('ERROR: Something went wrong' +
-                                ' with pronunications.')
-                        print(ex)
-                    derr = pro.stderr.read().decode()
-                    if 'bash: espeak: command not found' in derr:
-                        logging.error("eSpeak is not installed.")
-                        print("Please install 'espeak' before using Reo.")
-                    cls.wait()
-                    clo = cls.stderr.read().decode()
-                    clo = cls.stdout.read().decode()
-                    fail = 0
-                    if 'bash: dict: command not found' in clo:
-                        logging.error("Dict is not installed.")
-                        print("Please install dict before using Reo.")
-                        fail = 1
-                    if clo == '':
-                        clo = ("Sorry! Couldn't find any similar words for " +
-                               '"' + text + '"' + "!")
-                        fail = 1
-                    soc = proc.replace('1 definition found\n\nFrom WordNet' +
-                                       ' (r) 3.0 (2006) [wn]:\n', '')
-                    soc = proc.replace('1 definition found\n\nFrom WordNet' +
-                                       ' (r) 3.1 (2011) [wn]:\n', '')
-                    try:
-                        imp = re.search("  " + text, soc,
-                                        flags=re.IGNORECASE).group(0)
-                    except Exception as ex:
-                        imp = ''
-                        print(ex)
-                    soc = soc.replace(imp + '\n', '')
-                    cleans = ['"--Thomas', '"--\n           ',
-                              '-\n             ', '"; [', '      n 1',
-                              '      v 1', '      adj 1', '      adv 1',
-                              '\n          --',
-                              '-\n           ', '-\n         ',
-                              '\n           ', '\n             ',
-                              '\n          ',
-                              '\n           ', '           ',
-                              '\n         ', '    ', '   ',
-                              '[syn:', '}]', '[ant:', '"; "', '; "',
-                              '"\n', '" <i>', '"- ', '", "',
-                              '"<span foreground="' + sencol +
-                              '"><span foreground="' + sencol +
-                              '"><span foreground="' + sencol + '">',
-                              '"<span foreground="' + sencol +
-                              '"><span foreground="' +
-                              sencol + '">', '(', ')',
-                              '{', '}', ':"', '" \n      <',
-                              '"; ', ', "', '; e.g. "', '"  <i>',
-                              ';"', ';  "', ': "', ';   "', '"--',
-                              '"-', '" -']
-                    cleaned = ['</span> - Thomas',
-                               '</span> - ', '-', '</span> [', '<b>' + imp +
-                               '</b> ~ <i>noun</i>:\n      1', '<b>' + imp +
-                               '</b> ~ <i>verb</i>:\n      1',
-                               '<b>' + imp + '</b> ~ <i>adjective</i>:\n    ' +
-                               '  1', '<b>' + imp +
-                               '</b> ~ <i>adverb</i>:\n      1',
-                               '--', '-', '-', ' ', ' ', ' ',
-                               '\n         ', '         ', ' ', '',
-                               ' ', '<i>\n      Synonyms:',
-                               '}</i>', '<i>\n      Antonyms:',
-                               '</span>; <span foreground="' + sencol + '">',
-                               '\n      <span foreground="' + sencol +
-                               '">', '</span>\n', '</span> <i>', '</span> - ',
-                               '</span>; <span foreground="' + sencol +
-                               '">', '"<span foreground="' + sencol + '">',
-                               '"<span foreground="' + sencol +
-                               '">', '<i>(', ')</i>', '<span foreground="' +
-                               wordcol + '">', '</span>',
-                               '\n      <span foreground="' + sencol +
-                               '">', '</span>; <',
-                               '</span>; <span foreground="' + sencol + '">',
-                               '\n      <span foreground="' + sencol +
-                               '">', '\n      <span foreground="' +
-                               sencol + '">', '</span><i>',
-                               '\n      <span foreground="' + sencol +
-                               '">', '\n      <span foreground="' +
-                               sencol + '">',
-                               '\n      <span foreground="' + sencol + '">',
-                               '\n      <span foreground="' + sencol + '">',
-                               '\n      <span foreground="' + sencol + '">',
-                               '</span> - ', '</span> - ', '</span> - ']
-                    if not crip == 1:
-                        for x, y in zip(cleans, cleaned):
-                            soc = soc.replace(x, y)
-                    gsi = range(-100, 1)
-                    for si in gsi:
-                        soc = soc.replace(' ' + str(si).replace('-', '') +
-                                          ': ', ' <b>' +
-                                          str(si).replace('-', '') +
-                                          ': </b>')
-                    # print(soc)
-                    # This line is used for debugging.
-                    if not soc.find("`") == -1:
-                        soc = soc.replace("`", "'")
-                    if not soc.find("thunder started the sleeping") == -1:
-                        soc = soc.replace("thunder started the sleeping",
-                                          "thunder started, the sleeping")
-                    clp = clo.replace('wn:', '').rstrip()
-                    if fail == 0:
-                        clp = clp.replace('\n  ', '  ').rstrip()
-                        clp = clp.replace("  " + text.lower() + "  ", "")
-                        clp = clp.replace("  " + '"' + text.lower() + '"' +
-                                          "  ", "")
-                        clp = clp.replace("  " + text.lower() + "  ", "")
-                        same_word = re.compile("  " + text.lower() + "$")
-                        same_term = re.compile('  "' + text.lower() +
-                                               '"' + "$")
-                        clp = same_word.sub("", clp)
-                        clp = same_term.sub("", clp)
-                        clp = clp.strip().replace("  ", ", ")
-                    if clp == "":
-                        clp = ("Sorry! Couldn't find any similar words for " +
-                               '"' + text + '"' + "!")
-                        fail = 1
-                    if text == 'recursion':
-                        clp = 'recursion'
-                        fail = 0
-                    lastiter = viewer.get_buffer().get_end_iter()
-                    if pro and not crip == 1:
-                        viewer.get_buffer().insert_markup(lastiter,
-                                                          "Pronunciation: " +
-                                                          "<b>" + pron +
-                                                          '</b>' +
-                                                          '\n', -1)
-                    elif pro and crip == 1:
-                        viewer.get_buffer().insert_markup(lastiter,
-                                                          "Probable " +
-                                                          "Pronunciation: " +
-                                                          "<b>" + pron +
-                                                          '</b>' +
-                                                          '\n', -1)
-                    else:
-                        logging.error('eSpeak does not work as it should!')
-                        print("Something went wrong with eSpeak.")
-                        print("Try some fixes:")
-                        print("    1 - Install eSpeak if it is not already" +
-                              " installed.")
-                        print("    2 - Reinstall eSpeak.")
-                        print('    3 - Run "espeak -h" and check that' +
-                              ' eSpeak is pointed to its data properly/')
-                        print('    4 - Post at Reo forum with full' +
-                              ' console output while running Reo.')
-                    lastiter = viewer.get_buffer().get_end_iter()
-                    soc = soc.strip()
-                    if not proc == "":
-                        viewer.get_buffer().insert_markup(lastiter, soc, -1)
-                    lastiter = viewer.get_buffer().get_end_iter()
-                    if fail == 0:
-                        cclp = clp.replace('\n  ', '  ')
-                        cleanclp = cclp.strip().replace('  ', ', ')
-                        if crip == 1:
-                            viewer.get_buffer().insert_markup(lastiter,
-                                                              '\n<b>Did you' +
-                                                              ' mean</b>:\n<' +
-                                                              'i><span fore' +
-                                                              'ground="' +
-                                                              wordcol +
-                                                              '">  ' +
-                                                              cleanclp +
-                                                              '</span></i>',
-                                                              -1)
-                        else:
-                            viewer.get_buffer().insert_markup(lastiter,
-                                                              '\n<b>Similar ' +
-                                                              'Words</b>:\n' +
-                                                              '<i><span for' +
-                                                              'eground="' +
-                                                              wordcol +
-                                                              '">  ' +
-                                                              cleanclp +
-                                                              '</span></i>',
-                                                              -1)
-                    else:
-                        viewer.get_buffer().insert(lastiter, '\n' + clp)
-                    # liststr.append([text]) # doesn't work
-        elif (sb.get_text().strip('"?`![]()/\\:;,') == '' and
-              not sb.get_text().isspace() and
-              not sb.get_text() == ''):
+                viewer.get_buffer().insert_markup(lastiter, out, -1)
+            else:
+                viewer.get_buffer().insert_markup(lastiter, out, -1)
+        except Exception:
+            print("Didn't work.")
+
+    def search(self, sb, strat, sencol, wordcol):
+        if (not sb.strip('<>"?`![]()/\\:;,') == '' and
+                not sb.isspace() and not sb == ''):
+            text = sb.strip().strip('<>"?`![]()/\\:;,')
+            return self.reactor(text, strat, sencol, wordcol)
+        elif (sb.strip('<>"?`![]()/\\:;,') == '' and
+              not sb.isspace() and
+              not sb == ''):
             logging.error("Invalid Characters.")
             self.newced('Error: Invalid Input!', 'Invalid Characters!',
                         "Reo thinks that your input was actually \nju" +
                         "st a bunch of useless characters. \nSo, 'Inva" +
                         "lid Characters' error!")
-        elif sb.get_text().isspace():
+        elif sb.isspace():
             logging.error("Empty search box!")
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
-        elif sb.get_text() == '':
+        elif sb == '':
             logging.error("Empty search box!")
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
+
+    def reactor(self, text, strat, sencol, wordcol):
+        global searched
+        if text == 'fortune -a':
+            return self.fortune()
+        elif text == 'cowfortune':
+            return self.cowfortune()
+        elif text == 'crash now' or text == 'close now':
+            Gtk.main_quit()
+        elif text == 'reo':
+            reodef = str("Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b>" +
+                         " ~ <i>Japanese Word</i>\n  <b>1:</b> Name o" +
+                         "f this application, chosen kind of at rando" +
+                         "m.\n  <b>2:</b> Japanese word meaning 'Wise" +
+                         " Center'\n <b>Similar Words:</b>\n <i><" +
+                         "span foreground=\"" + wordcol + "\">  ro, " +
+                         "re, roe, redo, reno, oreo, ceo, leo, neo, " +
+                         "rho, rio, reb, red, ref, rem, rep, res," +
+                         " ret, rev, rex</span></i>")
+            return reodef
+        if text and not text.isspace():
+            searched = True
+            try:
+                cdfile = open(cdefold + '/' + text, 'r')
+                cdefread = cdfile.read()
+                if "[warninghide]" in cdefread:
+                    cdefread = cdefread.replace("\n[warninghide]", "")
+                    final = cdefread
+                else:
+                    final = (cdefread + '\n<span foreground="#e6292f">N' +
+                             'OTE: This is a Custom definition. No one' +
+                             ' is to be held responsible for errors in' +
+                             ' this.</span>')
+                cdfile.close()
+                return final
+            except Exception:
+                try:
+                    prc = subprocess.Popen(["dict", "-d", "wn", text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                except Exception as ex:
+                    print("Didnt Work! ERROR CODE: PAPAYA")
+                    print(ex)
+                    return
+                try:
+                    pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+                                            "--ipa", "-q", text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                except Exception as ex:
+                    print("Didnt Work! ERROR CODE: MANGO")
+                    print(ex)
+                    return
+                try:
+                    cls = subprocess.Popen(["dict", "-m", "-d", "wn",
+                                            "-s", strat, text],
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE)
+                except Exception as ex:
+                    print("Didnt Work! ERROR CODE: PAPAYA")
+                    print(ex)
+                    return
+                prc.wait()
+                try:
+                    proc = prc.stdout.read().decode()
+                    crip = 0
+                except Exception as ex:
+                    print("Something went wrong while obtaining" +
+                          " definitions.")
+                    print(ex)
+                if proc == '':
+                    proc = ("\n\nCouldn't find any definition for " +
+                            '"' + text + '"' + '.\n\n')
+                    crip = 1
+                    logging.error('Definition not found. Try making' +
+                                  ' a custom definition.')
+                pro.wait()
+                try:
+                    dcd = pro.stdout.read().decode()
+                    pron = ("/" +
+                            dcd.strip().replace('\n ', ' ') +
+                            "/")
+                except Exception as ex:
+                    pron = ('ERROR: Something went wrong' +
+                            ' with pronunications.')
+                    print(ex)
+                cls.wait()
+                clo = cls.stdout.read().decode()
+                fail = 0
+                if clo == '':
+                    fail = 1
+                soc = proc.replace('1 definition found\n\nFrom WordNet' +
+                                   ' (r) 3.0 (2006) [wn]:\n', '')
+                soc = proc.replace('1 definition found\n\nFrom WordNet' +
+                                   ' (r) 3.1 (2011) [wn]:\n', '')
+                try:
+                    imp = re.search("  " + text, soc,
+                                    flags=re.IGNORECASE).group(0)
+                except Exception as ex:
+                    imp = ''
+                    print(ex)
+                soc = soc.replace(imp + '\n', '')
+                cleans = ['"--Thomas', '"--\n           ',
+                          '-\n             ', '"; [', '      n 1',
+                          '      v 1', '      adj 1', '      adv 1',
+                          '\n          --',
+                          '-\n           ', '-\n         ',
+                          '\n           ', '\n             ',
+                          '\n          ',
+                          '\n           ', '           ',
+                          '\n         ', '    ', '   ',
+                          '[syn:', '}]', '[ant:', '"; "', '; "',
+                          '"\n', '" <i>', '"- ', '", "',
+                          '"<span foreground="' + sencol +
+                          '"><span foreground="' + sencol +
+                          '"><span foreground="' + sencol + '">',
+                          '"<span foreground="' + sencol +
+                          '"><span foreground="' +
+                          sencol + '">', '(', ')',
+                          '{', '}', ':"', '" \n      <',
+                          '"; ', ', "', '; e.g. "', '"  <i>',
+                          ';"', ';  "', ': "', ';   "', '"--',
+                          '"-', '" -']
+                cleaned = ['</span> - Thomas',
+                           '</span> - ', '-', '</span> [', '<b>' + imp +
+                           '</b> ~ <i>noun</i>:\n      1', '<b>' + imp +
+                           '</b> ~ <i>verb</i>:\n      1',
+                           '<b>' + imp + '</b> ~ <i>adjective</i>:\n    ' +
+                           '  1', '<b>' + imp +
+                           '</b> ~ <i>adverb</i>:\n      1',
+                           '--', '-', '-', ' ', ' ', ' ',
+                           '\n         ', '         ', ' ', '',
+                           ' ', '<i>\n      Synonyms:',
+                           '}</i>', '<i>\n      Antonyms:',
+                           '</span>; <span foreground="' + sencol + '">',
+                           '\n      <span foreground="' + sencol +
+                           '">', '</span>\n', '</span> <i>', '</span> - ',
+                           '</span>; <span foreground="' + sencol +
+                           '">', '"<span foreground="' + sencol + '">',
+                           '"<span foreground="' + sencol +
+                           '">', '<i>(', ')</i>', '<span foreground="' +
+                           wordcol + '">', '</span>',
+                           '\n      <span foreground="' + sencol +
+                           '">', '</span>; <',
+                           '</span>; <span foreground="' + sencol + '">',
+                           '\n      <span foreground="' + sencol +
+                           '">', '\n      <span foreground="' +
+                           sencol + '">', '</span><i>',
+                           '\n      <span foreground="' + sencol +
+                           '">', '\n      <span foreground="' +
+                           sencol + '">',
+                           '\n      <span foreground="' + sencol + '">',
+                           '\n      <span foreground="' + sencol + '">',
+                           '\n      <span foreground="' + sencol + '">',
+                           '</span> - ', '</span> - ', '</span> - ']
+                if not crip == 1:
+                    for x, y in zip(cleans, cleaned):
+                        soc = soc.replace(x, y)
+                gsi = range(-100, 1)
+                for si in gsi:
+                    soc = soc.replace(' ' + str(si).replace('-', '') +
+                                      ': ', ' <b>' +
+                                      str(si).replace('-', '') +
+                                      ': </b>')
+                # print(soc)
+                # This line is used for debugging.
+                if not soc.find("`") == -1:
+                    soc = soc.replace("`", "'")
+                if not soc.find("thunder started the sleeping") == -1:
+                    soc = soc.replace("thunder started the sleeping",
+                                      "thunder started, the sleeping")
+                clp = clo.replace('wn:', '').rstrip()
+                if fail == 0:
+                    swbtw = re.compile("(.)  " + text.lower() + "  (.)")
+                    clp = swbtw.sub(r"\1  \2", clp)
+                    clp = clp.replace('\n  ', '  ').rstrip()
+                    clp = clp.replace("  " + text.lower() + "  ", "")
+                    clp = clp.replace("  " + '"' + text.lower() + '"' +
+                                      "  ", "")
+                    clp = clp.replace("  " + text.lower() + "  ", "")
+                    same_word = re.compile("  " + text.lower() + "$")
+                    same_term = re.compile('  "' + text.lower() +
+                                           '"' + "$")
+                    clp = same_word.sub("", clp)
+                    clp = same_term.sub("", clp)
+                    clp = clp.strip().replace("  ", ", ")
+                if clp == "":
+                    fail = 1
+                if text == 'recursion':
+                    clp = 'recursion'
+                    fail = 0
+                if pro and not crip == 1:
+                    pron = "Pronunciation: <b>" + pron + '</b>' + '\n'
+                elif pro and crip == 1:
+                    pron = str("Probable Pronunciation: <b>" + pron +
+                               '</b>' + '\n')
+                soc = soc.strip()
+                print(clp)
+                if fail == 0:
+                    cclp = clp.replace('\n  ', '  ')
+                    cleanclp = cclp.strip().replace('  ', ', ')
+                    if crip == 1:
+                        cleanclp = str('\n<b>Did you mean</b>:\n<' +
+                                       'i><span foreground="' + wordcol +
+                                       '">  ' + cleanclp + '</span></i>')
+                    else:
+                        cleanclp = str('\n<b>Similar Words</b>:\n' +
+                                       '<i><span foreground="' + wordcol +
+                                       '">  ' + cleanclp + '</span></i>')
+                else:
+                    cleanclp = ""
+                return pron + soc + cleanclp
 
     def cedok(self, cedok):
         ced = builder.get_object('ced')
