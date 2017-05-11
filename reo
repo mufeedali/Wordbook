@@ -606,7 +606,6 @@ class GUI:
                     pron = str("Probable Pronunciation: <b>" + pron +
                                '</b>' + '\n')
                 soc = soc.strip()
-                print(clp)
                 if fail == 0:
                     cclp = clp.replace('\n  ', '  ')
                     cleanclp = cclp.strip().replace('  ', ', ')
