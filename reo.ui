@@ -34,6 +34,16 @@ Author: Mufeed Ali
   <!-- interface-description An Open Source dictionary application specifically crafted for Linux. -->
   <!-- interface-copyright 2016-2017 Mufeed Ali -->
   <!-- interface-authors Mufeed Ali -->
+  <object class="GtkImage" id="aboutimg">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">help-about-symbolic</property>
+  </object>
+  <object class="GtkImage" id="closeimg">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">window-close-symbolic</property>
+  </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -48,6 +58,11 @@ Author: Mufeed Ali
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">audio-speakers-symbolic</property>
+  </object>
+  <object class="GtkImage" id="randimg">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playlist-shuffle-symbolic</property>
   </object>
   <object class="GtkImage" id="saveimg">
     <property name="visible">True</property>
@@ -99,7 +114,9 @@ Author: Mufeed Ali
                 <property name="label" translatable="yes">Random Word</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="image">randimg</property>
                 <property name="use_stock">False</property>
+                <property name="always_show_image">True</property>
                 <signal name="activate" handler="randword" swapped="no"/>
                 <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -119,19 +136,11 @@ Author: Mufeed Ali
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem5">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="use_underline">True</property>
-                <property name="use_stock">True</property>
-              </object>
-            </child>
-            <child>
               <object class="GtkImageMenuItem" id="imagemenuitem4">
-                <property name="label">About Reo</property>
+                <property name="label">About</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="image">aboutimg</property>
                 <property name="use_stock">False</property>
                 <signal name="activate" handler="icon_press" swapped="no"/>
               </object>
@@ -141,6 +150,7 @@ Author: Mufeed Ali
                 <property name="label">Quit</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="image">closeimg</property>
                 <property name="use_stock">False</property>
                 <signal name="activate" handler="quitb" swapped="no"/>
               </object>
