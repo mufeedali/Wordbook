@@ -358,25 +358,15 @@ class GUI:
             return ft
 
     def dosearch(self, button1=None):
-        if dark:
-            sencol = "cyan"  # Color of sentences in Dark mode
-            wordcol = "lightgreen"  # Color of: Similar Words,
-#                                     Synonyms and Antonyms.
-        else:
-            sencol = "blue"  # Color of sentences in regular
-            wordcol = "green"  # Color of: Similar Words,
-#                                Synonyms and Antonyms.
         sb = builder.get_object('entry1')  # searchbox
         viewer = builder.get_object('textview1')  # Data Space
-        strat = "lev"
-        # ^ To change strategy used in 'Similar Words', change this value.
         if viewer.get_monospace():
             viewer.set_monospace(False)
         viewer.get_buffer().set_text("")
         lastiter = viewer.get_buffer().get_end_iter()
         text = sb.get_text().strip().strip('<>"?`![]()/\\:;,')
         try:
-            out = self.search(sb.get_text(), strat, sencol, wordcol)
+            out = self.search(sb.get_text())
             if text == 'fortune -a' and text == 'cowfortune':
                 viewer.set_monospace(True)
                 viewer.get_buffer().insert(lastiter, out, -1)
@@ -388,11 +378,11 @@ class GUI:
         except Exception:
             print("Didn't work.")
 
-    def search(self, sb, strat, sencol, wordcol):
+    def search(self, sb):
         if (not sb.strip('<>"?`![]()/\\:;,') == '' and
                 not sb.isspace() and not sb == ''):
             text = sb.strip().strip('<>"?`![]()/\\:;,')
-            return self.reactor(text, strat, sencol, wordcol)
+            return self.reactor(text)
         elif (sb.strip('<>"?`![]()/\\:;,') == '' and
               not sb.isspace() and
               not sb == ''):
@@ -410,8 +400,16 @@ class GUI:
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
 
-    def reactor(self, text, strat, sencol, wordcol):
+    def reactor(self, text):
         global searched
+        if dark:
+            sencol = "cyan"  # Color of sentences in Dark mode
+            wordcol = "lightgreen"  # Color of: Similar Words,
+#                                     Synonyms and Antonyms.
+        else:
+            sencol = "blue"  # Color of sentences in regular
+            wordcol = "green"  # Color of: Similar Words,
+#                                Synonyms and Antonyms.
         if text == 'fortune -a':
             return self.fortune()
         elif text == 'cowfortune':
@@ -431,7 +429,7 @@ class GUI:
             return reodef
         if text and not text.isspace():
             searched = True
-            final = self.generator(text, strat, wordcol, sencol)
+            final = self.generator(text, wordcol, sencol)
             return final
 
     def cdef(self, text):
@@ -448,7 +446,9 @@ class GUI:
         cdfile.close()
         return final
 
-    def dictdef(self, text, strat, wordcol, sencol):
+    def dictdef(self, text, wordcol, sencol):
+        strat = "lev"
+        # ^ To change strategy used in 'Similar Words', change this value.
         try:
             prc = subprocess.Popen(["dict", "-d", "wn", text],
                                    stdout=subprocess.PIPE,
@@ -625,11 +625,11 @@ class GUI:
             cleanclp = ""
         return pron + soc + cleanclp
 
-    def generator(self, text, strat, wordcol, sencol):
+    def generator(self, text, wordcol, sencol):
         try:
             return self.cdef(text)
         except Exception:
-            return self.dictdef(text, strat, wordcol, sencol)
+            return self.dictdef(text, wordcol, sencol)
 
     def cedok(self, cedok):
         ced = builder.get_object('ced')
@@ -655,13 +655,13 @@ class GUI:
         viewer.get_buffer().set_text("")
 
     def audio(self, button4):
-        NULLMAKER = open(os.devnull, 'w')
         sb = builder.get_object('entry1')  # searchbox
         speed = '120'  # To change eSpeak audio speed.
         if searched and not sb.get_text() == '':
-            subprocess.Popen(["espeak", "-ven-uk-rp", "-s", speed,
-                              sb.get_text()], stdout=NULLMAKER,
-                             stderr=subprocess.STDOUT)
+            with open(os.devnull, 'w') as NULLMAKER:
+                subprocess.Popen(["espeak", "-ven-uk-rp", "-s", speed,
+                                  sb.get_text()], stdout=NULLMAKER,
+                                 stderr=subprocess.STDOUT)
         elif sb.get_text() == '' or sb.get_text().isspace():
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
@@ -671,7 +671,6 @@ class GUI:
                         " first \nbefore trying to  listen to it." +
                         " I mean, Reo \nis <b>NOT</b> a Text-To" +
                         "-Speech Software!")
-        NULLMAKER.close()
 
     def changed(self, entry1):
         sb = builder.get_object('entry1')  # searchbox

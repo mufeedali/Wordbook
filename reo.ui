@@ -165,8 +165,8 @@ Author: Mufeed Ali
     <property name="tooltip_markup" translatable="yes">&lt;span size="large"&gt;Reo&lt;/span&gt;
 &lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
     <property name="window_position">center</property>
-    <property name="default_width">605</property>
-    <property name="default_height">315</property>
+    <property name="default_width">500</property>
+    <property name="default_height">385</property>
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">accessories-dictionary</property>
     <property name="show_menubar">False</property>
