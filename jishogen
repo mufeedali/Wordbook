@@ -1,0 +1,197 @@
+#!/usr/bin/env python3
+import re  # regular expressions
+import subprocess  # for running dict and others in background
+import threading
+import linecache
+
+
+def dictdef(text, wordcol, sencol):
+    strat = "lev"
+    # ^ To change strategy used in 'Similar Words', change this value.
+    try:
+        prc = subprocess.Popen(["dict", "-d", "wn", text],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    except Exception as ex:
+        print("Didnt Work! ERROR CODE: PAPAYA")
+        print(ex)
+        return
+    try:
+        pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+                                "--ipa", "-q", text],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    except Exception as ex:
+        print("Didnt Work! ERROR CODE: MANGO")
+        print(ex)
+        return
+    try:
+        cls = subprocess.Popen(["dict", "-m", "-d", "wn",
+                                "-s", strat, text],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    except Exception as ex:
+        print("Didnt Work! ERROR CODE: PAPAYA")
+        print(ex)
+        return
+    prc.wait()
+    try:
+        proc = prc.stdout.read().decode()
+        crip = 0
+    except Exception as ex:
+        print("Something went wrong while obtaining" +
+              " definitions.")
+        print(ex)
+    if proc == '':
+        proc = ("\n\nCouldn't find any definition for " +
+                '"' + text + '"' + '.\n\n')
+        crip = 1
+    pro.wait()
+    try:
+        dcd = pro.stdout.read().decode()
+        pron = ("/" +
+                dcd.strip().replace('\n ', ' ') +
+                "/")
+    except Exception as ex:
+        pron = ('ERROR: Something went wrong' +
+                ' with pronunications.')
+        print(ex)
+    cls.wait()
+    clo = cls.stdout.read().decode()
+    fail = 0
+    if clo == '':
+        fail = 1
+    soc = proc.replace('1 definition found\n\nFrom WordNet' +
+                       ' (r) 3.0 (2006) [wn]:\n', '')
+    soc = proc.replace('1 definition found\n\nFrom WordNet' +
+                       ' (r) 3.1 (2011) [wn]:\n', '')
+    try:
+        imp = re.search("  " + text, soc,
+                        flags=re.IGNORECASE).group(0)
+    except Exception as ex:
+        imp = ''
+        print(ex)
+    soc = soc.replace(imp + '\n', '')
+    cleans = ['"--Thomas', '"--\n           ',
+              '-\n             ', '"; [', '      n 1',
+              '      v 1', '      adj 1', '      adv 1',
+              '\n          --',
+              '-\n           ', '-\n         ',
+              '\n           ', '\n             ',
+              '\n          ',
+              '\n           ', '           ',
+              '\n         ', '    ', '   ',
+              '[syn:', '}]', '[ant:', '"; "', '; "',
+              '"\n', '" <i>', '"- ', '", "',
+              '"<span foreground="' + sencol +
+              '"><span foreground="' + sencol +
+              '"><span foreground="' + sencol + '">',
+              '"<span foreground="' + sencol +
+              '"><span foreground="' +
+              sencol + '">', '(', ')',
+              '{', '}', ':"', '" \n      <',
+              '"; ', ', "', '; e.g. "', '"  <i>',
+              ';"', ';  "', ': "', ';   "', '"--',
+              '"-', '" -']
+    cleaned = ['</span> - Thomas',
+               '</span> - ', '-', '</span> [', '<b>' + imp +
+               '</b> ~ <i>noun</i>:\n      1', '<b>' + imp +
+               '</b> ~ <i>verb</i>:\n      1',
+               '<b>' + imp + '</b> ~ <i>adjective</i>:\n    ' +
+               '  1', '<b>' + imp +
+               '</b> ~ <i>adverb</i>:\n      1',
+               '--', '-', '-', ' ', ' ', ' ',
+               '\n         ', '         ', ' ', '',
+               ' ', '<i>\n      Synonyms:',
+               '}</i>', '<i>\n      Antonyms:',
+               '</span>; <span foreground="' + sencol + '">',
+               '\n      <span foreground="' + sencol +
+               '">', '</span>\n', '</span> <i>', '</span> - ',
+               '</span>; <span foreground="' + sencol +
+               '">', '"<span foreground="' + sencol + '">',
+               '"<span foreground="' + sencol +
+               '">', '<i>(', ')</i>', '<span foreground="' +
+               wordcol + '">', '</span>',
+               '\n      <span foreground="' + sencol +
+               '">', '</span>; <',
+               '</span>; <span foreground="' + sencol + '">',
+               '\n      <span foreground="' + sencol +
+               '">', '\n      <span foreground="' +
+               sencol + '">', '</span><i>',
+               '\n      <span foreground="' + sencol +
+               '">', '\n      <span foreground="' +
+               sencol + '">',
+               '\n      <span foreground="' + sencol + '">',
+               '\n      <span foreground="' + sencol + '">',
+               '\n      <span foreground="' + sencol + '">',
+               '</span> - ', '</span> - ', '</span> - ']
+    if not crip == 1:
+        for x, y in zip(cleans, cleaned):
+            soc = soc.replace(x, y)
+    gsi = range(-100, 1)
+    for si in gsi:
+        soc = soc.replace(' ' + str(si).replace('-', '') +
+                          ': ', ' <b>' +
+                          str(si).replace('-', '') +
+                          ': </b>')
+    # print(soc)
+    # This line is used for debugging.
+    if not soc.find("`") == -1:
+        soc = soc.replace("`", "'")
+    if not soc.find("thunder started the sleeping") == -1:
+        soc = soc.replace("thunder started the sleeping",
+                          "thunder started, the sleeping")
+    clp = clo.replace('wn:', '').rstrip()
+    if fail == 0:
+        swbtw = re.compile("(.)  " + text.lower() + "  (.)")
+        clp = swbtw.sub(r"\1  \2", clp)
+        clp = clp.replace('\n  ', '  ').rstrip()
+        clp = clp.replace("  " + text.lower() + "  ", "")
+        clp = clp.replace("  " + '"' + text.lower() + '"' +
+                          "  ", "")
+        clp = clp.replace("  " + text.lower() + "  ", "")
+        same_word = re.compile("  " + text.lower() + "$")
+        same_term = re.compile('  "' + text.lower() +
+                               '"' + "$")
+        clp = same_word.sub("", clp)
+        clp = same_term.sub("", clp)
+        clp = clp.strip().replace("  ", ", ")
+    if clp == "":
+        fail = 1
+    if text == 'recursion':
+        clp = 'recursion'
+        fail = 0
+    if pro and not crip == 1:
+        pron = "Pronunciation: <b>" + pron + '</b>' + '\n'
+    elif pro and crip == 1:
+        pron = str("Probable Pronunciation: <b>" + pron +
+                   '</b>' + '\n')
+    soc = soc.strip()
+    if fail == 0:
+        cclp = clp.replace('\n  ', '  ')
+        cleanclp = cclp.strip().replace('  ', ', ')
+        if crip == 1:
+            cleanclp = str('\n<b>Did you mean</b>:\n<' +
+                           'i><span foreground="' + wordcol +
+                           '">  ' + cleanclp + '</span></i>')
+        else:
+            cleanclp = str('\n<b>Similar Words</b>:\n' +
+                           '<i><span foreground="' + wordcol +
+                           '">  ' + cleanclp + '</span></i>')
+    else:
+        cleanclp = ""
+    return pron + soc + cleanclp
+
+
+def deflooper(x):
+    word = linecache.getline('wn3.1', x).strip()
+    tosave = dictdef(word, "($WORDCOL)", "($SENCOL)")
+    with open("data/" + word, 'w') as save:
+        save.write(tosave)
+
+
+def getword():
+    for x in range(1, 147479):
+        threading.Thread(target=deflooper, args=(x,)).start()
+
+getword()
