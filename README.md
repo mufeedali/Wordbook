@@ -6,6 +6,7 @@
  * Python 3 (2 is not supported)
  * Python GObject
  * Gtk+ 3.20+ (3.16+ should work but not ideally)
+ * eSpeak
 
 ### Features
  * Neat output with proper coloring and formatting
