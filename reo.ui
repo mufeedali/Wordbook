@@ -208,178 +208,127 @@ Author: Mufeed Ali
       <object class="GtkHeaderBar" id="header">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="spacing">0</property>
         <property name="show_close_button">True</property>
         <property name="decoration_layout">menu,minimize:close</property>
-        <child type="title">
-          <object class="GtkBox" id="head">
+        <child>
+          <object class="GtkBox" id="faketitle">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">4</property>
-            <property name="margin_right">4</property>
+            <property name="margin_left">8</property>
+            <property name="margin_right">2</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="spacing">2</property>
             <child>
-              <object class="GtkBox" id="faketitle">
+              <object class="GtkSearchEntry" id="entry1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
+                <property name="is_focus">True</property>
+                <property name="tooltip_text" translatable="yes">Search Box</property>
                 <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="spacing">2</property>
-                <child>
-                  <object class="GtkSearchEntry" id="entry1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="has_focus">True</property>
-                    <property name="is_focus">True</property>
-                    <property name="tooltip_text" translatable="yes">Search Box</property>
-                    <property name="hexpand">True</property>
-                    <property name="max_width_chars">75</property>
-                    <property name="primary_icon_name">edit-find-symbolic</property>
-                    <property name="primary_icon_activatable">False</property>
-                    <property name="secondary_icon_activatable">False</property>
-                    <property name="secondary_icon_sensitive">False</property>
-                    <property name="placeholder_text" translatable="yes">Search...</property>
-                    <signal name="activate" handler="dosearch" swapped="no"/>
-                    <signal name="changed" handler="changed" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="button1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="can_default">True</property>
-                    <property name="has_default">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes">Search</property>
-                    <property name="image">image2</property>
-                    <property name="relief">none</property>
-                    <signal name="clicked" handler="dosearch" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="button3">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="receives_default">False</property>
-                    <property name="tooltip_text" translatable="yes">Clear Everything</property>
-                    <property name="image">image1</property>
-                    <property name="relief">none</property>
-                    <signal name="clicked" handler="clear" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="button4">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="focus_on_click">False</property>
-                    <property name="receives_default">False</property>
-                    <property name="tooltip_text" translatable="yes">Say It!</property>
-                    <property name="image">image3</property>
-                    <property name="relief">none</property>
-                    <signal name="clicked" handler="audio" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">3</property>
-                  </packing>
-                </child>
+                <property name="max_width_chars">75</property>
+                <property name="primary_icon_name">edit-find-symbolic</property>
+                <property name="primary_icon_activatable">False</property>
+                <property name="secondary_icon_activatable">False</property>
+                <property name="secondary_icon_sensitive">False</property>
+                <property name="placeholder_text" translatable="yes">Search...</property>
+                <signal name="activate" handler="dosearch" swapped="no"/>
+                <signal name="changed" handler="changed" swapped="no"/>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="titlemenu">
+              <object class="GtkButton" id="button1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">end</property>
+                <property name="can_focus">True</property>
+                <property name="focus_on_click">False</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Search</property>
+                <property name="image">image2</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="dosearch" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button3">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Clear Everything</property>
+                <property name="image">image1</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="clear" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button4">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Say It!</property>
+                <property name="image">image3</property>
+                <property name="relief">none</property>
+                <signal name="clicked" handler="audio" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+          </object>
+        </child>
+        <child type="title">
+          <object class="GtkSeparator" id="irrelsep">
+            <property name="can_focus">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox" id="titlemenu">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">end</property>
+            <property name="valign">center</property>
+            <property name="margin_left">2</property>
+            <property name="margin_right">8</property>
+            <property name="hexpand">True</property>
+            <property name="spacing">2</property>
+            <child>
+              <object class="GtkMenuButton" id="menu">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Menu</property>
                 <property name="valign">center</property>
-                <property name="hexpand">True</property>
-                <property name="spacing">2</property>
+                <property name="relief">none</property>
+                <property name="popup">menu4</property>
+                <property name="use_popover">False</property>
                 <child>
-                  <object class="GtkSeparator" id="titlesep">
+                  <object class="GtkImage" id="menuicon">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="icon_name">application-menu-symbolic</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="menu">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="tooltip_text" translatable="yes">Menu</property>
-                    <property name="valign">center</property>
-                    <property name="relief">none</property>
-                    <property name="popup">menu4</property>
-                    <property name="use_popover">False</property>
-                    <child>
-                      <object class="GtkImage" id="menuicon">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="icon_name">application-menu-symbolic</property>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparator" id="windowsep">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="maintitle">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_markup" translatable="yes">&lt;b&gt;Reo&lt;/b&gt;
-&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
-                    <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
-                    <property name="label" translatable="yes">&lt;span font_stretch="semi-condensed" size="large"&gt;Reo&lt;/span&gt;
-&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">right</property>
-                    <property name="track_visited_links">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="padding">2</property>
-                    <property name="position">3</property>
-                  </packing>
                 </child>
               </object>
               <packing>
@@ -388,7 +337,43 @@ Author: Mufeed Ali
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkSeparator" id="windowsep">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="maintitle">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_markup" translatable="yes">&lt;b&gt;Reo&lt;/b&gt;
+&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="label" translatable="yes">&lt;span font_stretch="semi-condensed" size="large"&gt;Reo&lt;/span&gt;
+&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="justify">right</property>
+                <property name="track_visited_links">False</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="padding">2</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
           </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
     </child>

@@ -1,5 +1,6 @@
 # Reo ~ The Simple Dictionary
 **Reo** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
+
 ### Requirements
  * DICT official client and server (dictd and dict)
  * WordNet 3.1 or 3.0 database for dictd (dict-wn)
@@ -22,8 +23,7 @@
 Python 2 lacks a lot of things used by Reo like proper Unicode support, which from shutil and more. But I would like proper Python 2 support because, as noted in a commit to Rerun, I've noticed better performance in Python 2 than Python 3 though by very small margins.
 
 #### Gtk versions before Gtk+ 3.20?
-Gtk+ 3.14 and below are IMPOSSIBLE. Gtk+ 3.16 and 3.18 should also work. BUT the UI might seem horribly broken. If so, try reverting the UI changes in commit d543d27f1c520147ad8059d0ede1f3a07dc65368. This MIGHT fix it.
-Still, the recommended versions remain Gtk+ 3.20 and above.
+Gtk+ 3.14 and below are IMPOSSIBLE. Gtk+ 3.16 and 3.18 should also work. However, it is not recommended as the UI might not appear as intended, though usable.
 
 **Tips**  
 Determine your WordNet version and then, delete the index file (wn3.1 or wn3.0) for the version that you do not require. This will save you about 2 MBs of space.  

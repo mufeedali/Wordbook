@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 #
 # Could use just '#!/usr/bin/env python' if you're NOT on Ubuntu or any other
-# distribution that has python2 as the main python version.
+# distribution that has python2 as the main python version. But it has to be
+# run through Python 3, not Python 2.
 #
 # The MIT License (MIT)
 #
