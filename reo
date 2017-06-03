@@ -67,7 +67,7 @@ except ImportError as ierr:
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install python3-gobject'")
         print("From extra repo for Arch Linux:")
-        print("'yaourt -S python-gobject' or 'sudo pacman -S python-gobject'")
+        print("'pacaur -S python-gobject' or 'sudo pacman -S python-gobject'")
         print("Thanks for trying this out!")
 # Self-Explanatory stuff.
 builder = Gtk.Builder()
@@ -169,101 +169,84 @@ def syscheck():
     try:
         which('espeak')
         print("eSpeak seems to be installed. OK.")
-        espeak = 1
+        espeak = True
     except Exception as ex:
         logging.fatal("eSpeak is not installed! Dependancy missing!")
         print(ex)
-        espeak = 0
+        espeak = False
     try:
         which('dict')
         print('dict seems to be installed. OK.')
-        dict = 1
+        dict = True
     except Exception as ex:
         logging.fatal("dict is not installed! Dependancy missing!")
         print(ex)
-        dict = 0
+        dict = False
     try:
         open('/usr/share/dictd/wn.dict.dz')
         print('WordNet databse seems to be installed. OK.')
-        wndict = 1
+        wndict = True
     except Exception as ex:
         logging.warning("WordNet database is not found! Probably won't work.")
         print(ex)
-        wndict = 0
+        wndict = False
     try:
         which('dictd')
         print('dictd seems to be installed. OK.')
-        dictd = 1
+        dictd = True
     except Exception as ex:
         logging.fatal("dictd is not installed! Dependancy missing!")
         print(ex)
-        dictd = 0
-    if (espeak == 1 and dict == 1 and
-            dictd == 1 and wndict == 1):
+        dictd = False
+    if (espeak and dict and dictd and wndict):
         print("Everything Looks Perfect!")
         print("You should be able to run it without any issues!")
-    elif (espeak == 1 and dict == 1 and dictd == 1 and
-          wndict == 1):
-        print("WordNet might not work as intended.")
-        print("If so, re-install the 'dict-wn' package.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install dict-wn'")
-        print("From AUR for Arch Linux:")
-        print("'yaourt -S dict-wn'")
-        print("Everything else (NOT everything) looks fine.")
-        print("Go on, try and run it!")
-    elif (espeak == 1 and dict == 1 and dictd == 1 and
-          wndict == 0):
+    elif (espeak and dict and dictd and not wndict):
         print("WordNet's data file is missing. Re-install 'dict-wn'.")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install dict-wn'")
         print("From AUR for Arch Linux:")
-        print("'yaourt -S dict-wn'")
+        print("'pacaur -S dict-wn'")
         print("Everything else (NOT everything) looks fine...")
         print("... BUT you can't run it.")
-    elif (espeak == 1 and dict == 0 and dictd == 0 and
-          wndict == 0):
+    elif (espeak and not dict and not dictd and not wndict):
         print("dict and dictd (client and server) are missing.. install it.")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install dictd dict-wn'")
         print("From community repo for Arch Linux (but WordNet from AUR):")
-        print("'yaourt -S dictd dict-wn'")
+        print("'pacaur -S dictd dict-wn'")
         print("That should point you in the right direction to getting ")
         print("it to work.")
-    elif (espeak == 0 and dict == 0 and dictd == 0 and
-          wndict == 0):
+    elif (not espeak and not dict and not dictd and not wndict):
         print("ALL bits and pieces are Missing...")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install espeak dictd dict-wn'")
         print("From community repo for Arch Linux (but WordNet from AUR):")
-        print("'yaourt -S espeak dictd dict-wn'")
+        print("'pacaur -S espeak dictd dict-wn'")
         print("Go on, get it working now!")
-    elif (espeak == 0 and dict == 1 and dictd == 1 and
-          wndict == 1):
+    elif (not espeak and dict and dictd and wndict):
         print("Everything except eSpeak is working...")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install espeak'")
         print("From community repo for Arch Linux:")
-        print("'yaourt -S espeak' or 'sudo pacman -S espeak'")
+        print("'pacaur -S espeak' or 'sudo pacman -S espeak'")
         print("It should be alright then.")
-    elif (espeak == 0 and dict == 1 and dictd == 1 and
-          wndict == 1):
+    elif (not espeak and dict and dictd and wndict):
         print("eSpeak is missing and WordNet might not work as intended.")
         print("Install 'espeak' and re-install the 'dict-wn' package.")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install espeak dict-wn'")
         print("From AUR for Arch Linux:")
-        print("'yaourt -S espeak dict-wn'")
+        print("'pacaur -S espeak dict-wn'")
         print("Everything else (NOT everything) looks fine.")
         print("Go on, try and run it!")
-    elif (espeak == 0 and dict == 1 and dictd == 1 and
-          wndict == 0):
+    elif (not espeak and dict and dictd and not wndict):
         print("eSpeak is missing and WordNet's data file is missing." +
               "Re-install 'dict-wn'.")
         print("For Ubuntu, Debian, etc:")
         print("'sudo apt install espeak dict-wn'")
         print("From AUR for Arch Linux:")
-        print("'yaourt -S espeak dict-wn'")
+        print("'pacaur -S espeak dict-wn'")
         print("Everything else (NOT everything) looks" +
               " fine BUT you can't run it.")
     sys.exit()
