@@ -168,7 +168,7 @@ Author: Mufeed Ali
     <property name="default_width">510</property>
     <property name="default_height">385</property>
     <property name="destroy_with_parent">True</property>
-    <property name="icon_name">accessories-dictionary</property>
+    <property name="icon_name">accessories-dictionary-symbolic</property>
     <property name="show_menubar">False</property>
     <signal name="destroy" handler="on_window_destroy" swapped="no"/>
     <child>
@@ -393,14 +393,14 @@ Author: Mufeed Ali
     <property name="type_hint">normal</property>
     <property name="transient_for">window</property>
     <property name="program_name">Reo ~ The Simple Dictionary</property>
-    <property name="version">0.0.5⍺</property>
+    <property name="version">0.6.1⍺</property>
     <property name="copyright" translatable="yes">Copyright © 2016-2017 Mufeed Ali</property>
     <property name="comments" translatable="yes">Reo is a dictionary application that uses dict, dict-wn and eSpeak to provide a complete user interface.</property>
-    <property name="website">http://www.github.com/mufeed20/reo</property>
+    <property name="website">http://www.github.com/lastweakness/reo</property>
     <property name="website_label" translatable="yes">Visit Github Page</property>
     <property name="authors">Mufeed Ali</property>
-    <property name="logo_icon_name">accessories-dictionary</property>
-    <property name="license_type">gpl-3-0</property>
+    <property name="logo_icon_name">accessories-dictionary-symbolic</property>
+    <property name="license_type">mit-x11</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">
         <property name="can_focus">False</property>
