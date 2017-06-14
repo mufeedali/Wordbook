@@ -62,6 +62,7 @@ except ImportError as ierr:
         print("Confirm all dependencies by running " +
               "Reo with '--check' parameter.")
         print(ierr)
+        sys.exit(1)
     elif parsed.check:
         print("Install GObject bindings.")
         print("For Ubuntu, Debian, etc:")
@@ -270,6 +271,7 @@ if not os.path.exists(cdefold):  # check for Custom Definitions folder.
 class GUI:
 
     def on_window_destroy(self, window):
+        linecache.clearcache()
         Gtk.main_quit()
 
     def icon_press(self, imagemenuitem4):
@@ -417,17 +419,16 @@ class GUI:
             return final
 
     def cdef(self, text):
-        cdfile = open(cdefold + '/' + text, 'r')
-        cdefread = cdfile.read()
-        if "[warninghide]" in cdefread:
-            cdefread = cdefread.replace("\n[warninghide]", "")
-            final = cdefread
-        else:
-            final = (cdefread + '\n<span foreground="#e6292f">N' +
-                     'OTE: This is a Custom definition. No one' +
-                     ' is to be held responsible for errors in' +
-                     ' this.</span>')
-        cdfile.close()
+        with open(cdefold + '/' + text, 'r') as cdfile:
+            cdefread = cdfile.read()
+            if "\n[warninghide]" in cdefread:
+                cdefread = cdefread.replace("\n[warninghide]", "")
+                final = cdefread
+            else:
+                final = (cdefread + '\n<span foreground="#e6292f">N' +
+                         'OTE: This is a Custom definition. No one' +
+                         ' is to be held responsible for errors in' +
+                         ' this.</span>')
         return final
 
     def dictdef(self, text, wordcol, sencol):
@@ -620,6 +621,7 @@ class GUI:
         ced.response(Gtk.ResponseType.OK)
 
     def randomword(self):
+        linecache.checkcache()
         if wncheck() == '3.1':
             return linecache.getline('wn3.1', random.randint(0, 147478))
         elif wncheck() == '3.0':
@@ -684,8 +686,8 @@ class GUI:
             sf.write(viewer.get_buffer().get_text(startiter,
                                                   lastiter,
                                                   'false'))
-            defdiag.hide()
             sf.close()
+            defdiag.hide()
 
 
 builder.connect_signals(GUI())

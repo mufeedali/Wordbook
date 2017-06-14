@@ -187,11 +187,12 @@ def deflooper(x):
     word = linecache.getline('wn3.1', x).strip()
     tosave = dictdef(word, "($WORDCOL)", "($SENCOL)")
     with open("data/" + word, 'w') as save:
-        save.write(tosave)
+        save.write(tosave + "\n[warninghide]")
 
 
 def getword():
     for x in range(1, 147479):
         threading.Thread(target=deflooper, args=(x,)).start()
+
 
 getword()
