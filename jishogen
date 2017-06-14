@@ -185,7 +185,7 @@ def dictdef(text, wordcol, sencol):
 
 def deflooper(x):
     word = linecache.getline('wn3.1', x).strip()
-    tosave = dictdef(word, "($WORDCOL)", "($SENCOL)")
+    tosave = dictdef(word, "$WORDCOL", "$SENCOL")
     with open("data/" + word, 'w') as save:
         save.write(tosave + "\n[warninghide]")
 

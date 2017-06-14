@@ -114,33 +114,40 @@ from shutil import which  # for checks.
 import subprocess  # for running dict and others in background
 import random  # for Random Words
 import linecache
+from pathlib import Path
+import threading
+wnver = '3.1'
+wncheckonce = False
 
 
 def wncheck():
-    try:
-        check = subprocess.Popen(["dict", "-d", "wn", "test"],
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE)
-        checkt = check.stdout.read().decode()
-    except Exception as ex:
-        print("Error with dict. Error")
-        print(ex)
-    if not checkt.find('1 definition found\n\nFrom WordNet (r)' +
-                       ' 3.1 (2011) [wn]:\n') == -1:
-        wnver = '3.1'
-    elif not checkt.find('1 definition found\n\nFrom WordNet (r)' +
-                         ' 3.0 (2006) [wn]:\n') == -1:
-        wnver = '3.0'
-    return wnver
+    global wnver, wncheckonce
+    if not wncheckonce:
+        try:
+            check = subprocess.Popen(["dict", "-d", "wn", "test"],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+            checkt = check.stdout.read().decode()
+        except Exception as ex:
+            print("Error with dict. Error")
+            print(ex)
+        if not checkt.find('1 definition found\n\nFrom WordNet (r)' +
+                           ' 3.1 (2011) [wn]:\n') == -1:
+            wnver = '3.1'
+        elif not checkt.find('1 definition found\n\nFrom WordNet (r)' +
+                             ' 3.0 (2006) [wn]:\n') == -1:
+            wnver = '3.0'
+        wncheckonce = True
 
 
 def adv():
     print('Reo 0.0.5 Alpha version')
     print('Copyright 2016-2017 Mufeed Ali')
     print()
-    if wncheck() == '3.1':
+    wncheck()
+    if wnver == '3.1':
         print("WordNet Version 3.1 (2011) (Installed)")
-    elif wncheck() == '3.0':
+    elif wnver == '3.0':
         print("WordNet Version 3.0 (2006) (Installed)")
     try:
         check2 = subprocess.Popen(["dict", "-V"],
@@ -418,9 +425,15 @@ class GUI:
             final = self.generator(text, wordcol, sencol)
             return final
 
-    def cdef(self, text):
+    def cdef(self, text, wordcol, sencol):
         with open(cdefold + '/' + text, 'r') as cdfile:
             cdefread = cdfile.read()
+            cdefread = cdefread.replace("<i>($WORDCOL)</i>", wordcol)
+            cdefread = cdefread.replace("<i>($SENCOL)</i>", sencol)
+            cdefread = cdefread.replace("($WORDCOL)", wordcol)
+            cdefread = cdefread.replace("($SENCOL)", sencol)
+            cdefread = cdefread.replace("$WORDCOL", wordcol)
+            cdefread = cdefread.replace("$SENCOL", sencol)
             if "\n[warninghide]" in cdefread:
                 cdefread = cdefread.replace("\n[warninghide]", "")
                 final = cdefread
@@ -612,8 +625,8 @@ class GUI:
 
     def generator(self, text, wordcol, sencol):
         try:
-            return self.cdef(text)
-        except Exception:
+            return self.cdef(text, wordcol, sencol)
+        except Exception as ex:
             return self.dictdef(text, wordcol, sencol)
 
     def cedok(self, cedok):
@@ -621,11 +634,20 @@ class GUI:
         ced.response(Gtk.ResponseType.OK)
 
     def randomword(self):
-        linecache.checkcache()
-        if wncheck() == '3.1':
-            return linecache.getline('wn3.1', random.randint(0, 147478))
-        elif wncheck() == '3.0':
-            return linecache.getline('wn3.0', random.randint(0, 147289))
+        try:
+            wnver31 = Path(cdefold + "wnver31")
+            if wnver31.is_file():
+                return linecache.getline('wn3.1', random.randint(0, 147478))
+            else:
+                if wncheckonce:
+                    return linecache.getline('wn' + wnver,
+                                             random.randint(0, 147478))
+                else:
+                    return linecache.getline('wn3.1',
+                                             random.randint(0, 147478))
+                    threading.Thread(target=wncheck).start()
+        except Exception as ex:
+            print(ex)
 
     def randword(self, mnurand):
         sb = builder.get_object('entry1')  # searchbox
