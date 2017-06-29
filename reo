@@ -40,15 +40,18 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - " +
 
 # Readying ArgParser
 parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
+mgroup = parser.add_mutually_exclusive_group()
+mgroup.add_argument("-c", "--check", action="store_true",
+                    help="Basic dependancy checks.")
+mgroup.add_argument("-d", "--adversion", action="store_true",
+                    help="Advanced Version Info")
+mgroup.add_argument("-gd", "--dark", action="store_true",
+                    help="Use GNOME dark theme")
+mgroup.add_argument("-gl", "--light", action="store_true",
+                    help="Use GNOME light theme")
 parser.add_argument("-g", "--gladefile", type=str,
                     help="set custom GLADEFILE (file from which UI is taken" +
                     ", useful for testing custom UIs)")
-parser.add_argument("-c", "--check", action="store_true",
-                    help="Basic dependancy checks.")
-parser.add_argument("-d", "--adversion", action="store_true",
-                    help="Advanced Version Info")
-parser.add_argument("-gd", "--dark", action="store_true",
-                    help="Use GNOME dark theme")
 parsed = parser.parse_args()
 try:
     import gi  # this is the GObject stuff needed for GTK+
@@ -70,7 +73,6 @@ except ImportError as ierr:
         print("From extra repo for Arch Linux:")
         print("'pacaur -S python-gobject' or 'sudo pacman -S python-gobject'")
         print("Thanks for trying this out!")
-# Self-Explanatory stuff.
 builder = Gtk.Builder()
 import os
 
@@ -80,6 +82,13 @@ def darker():
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", True)
     dark = True
+
+
+def lighter():
+    global dark
+    settings = Gtk.Settings.get_default()
+    settings.set_property("gtk-application-prefer-dark-theme", False)
+    dark = False
 
 
 def addbuilder():
@@ -105,6 +114,8 @@ if not parsed.adversion and not parsed.check:
         dark = False
     if parsed.dark:
         darker()
+    elif parsed.light:
+        lighter()
     addbuilder()
     windowcall()
 
@@ -265,10 +276,10 @@ if parsed.adversion:
 if parsed.check:
     syscheck()
 homefold = expanduser('~')  # Find the location of the home folder of the user
-# This is where stuff like settings, Custom Definitions, etc will go.
 reofold = homefold + "/.reo"
+# ^ This is where stuff like settings, Custom Definitions, etc will go.
 cdefold = reofold + "/cdef"
-# The Folder within reofold where Custom Definitions are to be kept.
+# ^ The Folder within reofold where Custom Definitions are to be kept.
 if not os.path.exists(reofold):  # check for Reo folder
     os.makedirs(reofold)  # create Reo folder
 if not os.path.exists(cdefold):  # check for Custom Definitions folder.
@@ -295,20 +306,17 @@ class GUI:
         viewer = builder.get_object('textview1')  # Data Space
         try:
             dec, dek = viewer.get_buffer().get_selection_bounds()
-            sb.set_text(viewer.get_buffer().get_text(dec, dek, True))
-            if '-\n         ' in sb.get_text():
-                sb.set_text(sb.get_text().replace('-\n         ', '-'))
-            else:
-                sb.set_text(sb.get_text().replace('\n', ' '))
-                sb.set_text(sb.get_text().replace('         ', ''))
-            if not sb.get_text() == '' and not sb.get_text().isspace():
+            text = viewer.get_buffer().get_text(dec, dek, True)
+            text = text.replace('-\n         ', '-').replace('\n', ' ')
+            text = text.replace('         ', '')
+            sb.set_text(text)
+            if not text == '' and not text.isspace():
                 self.dosearch()
                 sb.grab_focus()
         except Exception as ex:
             return
 
     def newced(self, title, primary, secondary):
-        # Common Error Dialog. One dialog for all of them.
         cept = builder.get_object('cept')
         cest = builder.get_object('cest')
         ced = builder.get_object('ced')
