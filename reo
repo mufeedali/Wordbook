@@ -452,64 +452,7 @@ class GUI:
                          ' this.</span>')
         return final
 
-    def dictdef(self, text, wordcol, sencol):
-        strat = "lev"
-        # ^ To change strategy used in 'Similar Words', change this value.
-        try:
-            prc = subprocess.Popen(["dict", "-d", "wn", text],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-        except Exception as ex:
-            print("Didnt Work! ERROR CODE: PAPAYA")
-            print(ex)
-            return
-        try:
-            pro = subprocess.Popen(["espeak", "-ven-uk-rp",
-                                    "--ipa", "-q", text],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-        except Exception as ex:
-            print("Didnt Work! ERROR CODE: MANGO")
-            print(ex)
-            return
-        try:
-            cls = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                    "-s", strat, text],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-        except Exception as ex:
-            print("Didnt Work! ERROR CODE: PAPAYA")
-            print(ex)
-            return
-        prc.wait()
-        try:
-            proc = prc.stdout.read().decode()
-            crip = 0
-        except Exception as ex:
-            print("Something went wrong while obtaining" +
-                  " definitions.")
-            print(ex)
-        if proc == '':
-            proc = ("\n\nCouldn't find any definition for " +
-                    '"' + text + '"' + '.\n\n')
-            crip = 1
-            logging.error('Definition not found. Try making' +
-                          ' a custom definition.')
-        pro.wait()
-        try:
-            dcd = pro.stdout.read().decode()
-            pron = ("/" +
-                    dcd.strip().replace('\n ', ' ') +
-                    "/")
-        except Exception as ex:
-            pron = ('ERROR: Something went wrong' +
-                    ' with pronunications.')
-            print(ex)
-        cls.wait()
-        clo = cls.stdout.read().decode()
-        fail = 0
-        if clo == '':
-            fail = 1
+    def defmt(self, proc, text, sencol, wordcol):
         soc = proc.replace('1 definition found\n\nFrom WordNet' +
                            ' (r) 3.0 (2006) [wn]:\n', '')
         soc = proc.replace('1 definition found\n\nFrom WordNet' +
@@ -574,62 +517,119 @@ class GUI:
                    '\n      <span foreground="' + sencol + '">',
                    '\n      <span foreground="' + sencol + '">',
                    '</span> - ', '</span> - ', '</span> - ']
-        if not crip == 1:
-            for x, y in zip(cleans, cleaned):
-                soc = soc.replace(x, y)
+        for x, y in zip(cleans, cleaned):
+            soc = soc.replace(x, y)
         gsi = range(-100, 1)
         for si in gsi:
             soc = soc.replace(' ' + str(si).replace('-', '') +
                               ': ', ' <b>' +
                               str(si).replace('-', '') +
                               ': </b>')
-        # print(soc)
-        # This line is used for debugging.
         if not soc.find("`") == -1:
             soc = soc.replace("`", "'")
         if not soc.find("thunder started the sleeping") == -1:
             soc = soc.replace("thunder started the sleeping",
                               "thunder started, the sleeping")
-        clp = clo.replace('wn:', '').rstrip()
-        if fail == 0:
-            swbtw = re.compile("(.)  " + text.lower() + "  (.)")
-            clp = swbtw.sub(r"\1  \2", clp)
-            clp = clp.replace('\n  ', '  ').rstrip()
-            clp = clp.replace("  " + text.lower() + "  ", "")
-            clp = clp.replace("  " + '"' + text.lower() + '"' +
-                              "  ", "")
-            clp = clp.replace("  " + text.lower() + "  ", "")
-            same_word = re.compile("  " + text.lower() + "$")
-            same_term = re.compile('  "' + text.lower() +
-                                   '"' + "$")
-            clp = same_word.sub("", clp)
-            clp = same_term.sub("", clp)
-            clp = clp.strip().replace("  ", ", ")
-        if clp == "":
+        soc = soc.strip()
+        return soc
+
+    def clsfmt(self, clp, text):
+        clp = clp.replace('wn:', '').rstrip()
+        swbtw = re.compile("(.)  " + text.lower() + "  (.)")
+        clp = swbtw.sub(r"\1  \2", clp)
+        clp = clp.replace('\n  ', '  ').rstrip()
+        clp = clp.replace("  " + text.lower() + "  ", "")
+        clp = clp.replace("  " + '"' + text.lower() + '"' +
+                          "  ", "")
+        clp = clp.replace("  " + text.lower() + "  ", "")
+        same_word = re.compile("  " + text.lower() + "$")
+        same_term = re.compile('  "' + text.lower() +
+                               '"' + "$")
+        clp = same_word.sub("", clp)
+        clp = same_term.sub("", clp)
+        clp = clp.strip().replace("  ", ", ")
+        return clp
+
+    def dictdef(self, text, wordcol, sencol):
+        strat = "lev"
+        # ^ To change strategy used in 'Similar Words', change this value.
+        try:
+            prc = subprocess.Popen(["dict", "-d", "wn", text],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
+        except Exception as ex:
+            print("Didnt Work! ERROR CODE: PAPAYA")
+            print(ex)
+        try:
+            pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+                                    "--ipa", "-q", text],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
+        except Exception as ex:
+            print("Didnt Work! ERROR CODE: MANGO")
+            print(ex)
+        try:
+            clos = subprocess.Popen(["dict", "-m", "-d", "wn",
+                                     "-s", strat, text],
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
+        except Exception as ex:
+            print("Didnt Work! ERROR CODE: PAPAYA")
+            print(ex)
+        prc.wait()
+        try:
+            proc = prc.stdout.read().decode()
+            if not proc == '':
+                soc = self.defmt(proc, text, sencol, wordcol)
+                crip = 0
+            else:
+                soc = "\nCoundn't find definition for '" + text + "'.\n"
+                crip = 1
+        except Exception as ex:
+            print("Something went wrong while obtaining" +
+                  " definitions.")
+            print(ex)
+        if crip == 1:
+            print("Failed")
+        pro.wait()
+        try:
+            dcd = pro.stdout.read().decode()
+            pron = " /" + dcd.strip().replace('\n ', ' ') + "/"
+        except Exception as ex:
+            pron = str('ERROR: Something went wrong' +
+                       ' with pronunications.')
+            print(ex)
+        clos.wait()
+        clp = clos.stdout.read().decode()
+        fail = 0
+        print(clp)
+        clp = self.clsfmt(clp, text)
+        print(clp)
+        if clp == '':
             fail = 1
+        # This line is used for debugging.
+        print(clp)
+        print(fail)
         if text == 'recursion':
             clp = 'recursion'
             fail = 0
         if pro and not crip == 1:
             pron = "Pronunciation: <b>" + pron + '</b>' + '\n'
         elif pro and crip == 1:
-            pron = str("Probable Pronunciation: <b>" + pron +
-                       '</b>' + '\n')
-        soc = soc.strip()
+            pron = "Probable Pronunciation: <b>" + pron + '</b>\n'
         if fail == 0:
             cclp = clp.replace('\n  ', '  ')
             cleanclp = cclp.strip().replace('  ', ', ')
             if crip == 1:
-                cleanclp = str('\n<b>Did you mean</b>:\n<' +
-                               'i><span foreground="' + wordcol +
-                               '">  ' + cleanclp + '</span></i>')
+                cleanclp = ('<b>Did you mean</b>:\n<i><span foreground="' +
+                            wordcol + '">  ' + cleanclp + '</span></i>')
             else:
-                cleanclp = str('\n<b>Similar Words</b>:\n' +
-                               '<i><span foreground="' + wordcol +
-                               '">  ' + cleanclp + '</span></i>')
+                cleanclp = ('<b>Similar Words</b>:\n' +
+                            '<i><span foreground="' + wordcol + '">  ' +
+                            cleanclp + '</span></i>')
         else:
             cleanclp = ""
-        return pron + soc + cleanclp
+        return pron.strip() + '\n' + soc.strip() + '\n' + cleanclp.strip()
 
     def generator(self, text, wordcol, sencol):
         try:
