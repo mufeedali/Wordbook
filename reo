@@ -293,7 +293,7 @@ class GUI:
         Gtk.main_quit()
 
     def icon_press(self, imagemenuitem4):
-        about = builder.get_object('aboutdialog1')
+        about = builder.get_object('aboutReo')
         print("Loading About Window.")
         response = about.run()
         print("Done")
@@ -302,8 +302,8 @@ class GUI:
             about.hide()
 
     def sst(self, imagemenuitem1):
-        sb = builder.get_object('entry1')  # searchbox
-        viewer = builder.get_object('textview1')  # Data Space
+        sb = builder.get_object('searchEntry')  # Search box
+        viewer = builder.get_object('defView')  # Data Space
         try:
             dec, dek = viewer.get_buffer().get_selection_bounds()
             text = viewer.get_buffer().get_text(dec, dek, True)
@@ -358,9 +358,9 @@ class GUI:
             print(ex)
             return ft
 
-    def dosearch(self, button1=None):
-        sb = builder.get_object('entry1')  # searchbox
-        viewer = builder.get_object('textview1')  # Data Space
+    def searchClick(self, searchButton=None):
+        sb = builder.get_object('searchEntry')  # searchbox
+        viewer = builder.get_object('defView')  # Data Space
         if viewer.get_monospace():
             viewer.set_monospace(False)
         viewer.get_buffer().set_text("")
@@ -452,7 +452,7 @@ class GUI:
                          ' this.</span>')
         return final
 
-    def defmt(self, proc, text, sencol, wordcol):
+    def defProcessor(self, proc, text, sencol, wordcol):
         soc = proc.replace('1 definition found\n\nFrom WordNet' +
                            ' (r) 3.0 (2006) [wn]:\n', '')
         soc = proc.replace('1 definition found\n\nFrom WordNet' +
@@ -580,10 +580,10 @@ class GUI:
         try:
             proc = prc.stdout.read().decode()
             if not proc == '':
-                soc = self.defmt(proc, text, sencol, wordcol)
+                soc = self.defProcessor(proc, text, sencol, wordcol)
                 crip = 0
             else:
-                soc = "\nCoundn't find definition for '" + text + "'.\n"
+                soc = "Coundn't find definition for '" + text + "'."
                 crip = 1
         except Exception as ex:
             print("Something went wrong while obtaining" +
@@ -602,14 +602,9 @@ class GUI:
         clos.wait()
         clp = clos.stdout.read().decode()
         fail = 0
-        print(clp)
         clp = self.clsfmt(clp, text)
-        print(clp)
         if clp == '':
             fail = 1
-        # This line is used for debugging.
-        print(clp)
-        print(fail)
         if text == 'recursion':
             clp = 'recursion'
             fail = 0
@@ -658,20 +653,20 @@ class GUI:
             print(ex)
 
     def randword(self, mnurand):
-        sb = builder.get_object('entry1')  # searchbox
+        sb = builder.get_object('searchEntry')  # searchbox
         rw = self.randomword()
         sb.set_text(rw.strip())
         self.dosearch()
         sb.grab_focus()
 
-    def clear(self, button3):
-        sb = builder.get_object('entry1')  # searchbox
-        viewer = builder.get_object('textview1')  # Data Space
+    def clear(self, clearButton):
+        sb = builder.get_object('searchEntry')  # searchbox
+        viewer = builder.get_object('defView')  # Data Space
         sb.set_text("")
         viewer.get_buffer().set_text("")
 
-    def audio(self, button4):
-        sb = builder.get_object('entry1')  # searchbox
+    def audio(self, audioButton):
+        sb = builder.get_object('searchEntry')  # searchbox
         speed = '120'  # To change eSpeak audio speed.
         if searched and not sb.get_text() == '':
             with open(os.devnull, 'w') as NULLMAKER:
@@ -688,8 +683,8 @@ class GUI:
                         " I mean, Reo \nis <b>NOT</b> a Text-To" +
                         "-Speech Software!")
 
-    def changed(self, entry1):
-        sb = builder.get_object('entry1')  # searchbox
+    def changed(self, searchEntry):
+        sb = builder.get_object('searchEntry')  # searchbox
         global searched
         searched = False
         sb.set_text(sb.get_text().replace('\n', ' '))
@@ -704,7 +699,7 @@ class GUI:
                                         Gtk.FileChooserAction.SAVE,
                                         ("Save", Gtk.ResponseType.OK,
                                          "Cancel", Gtk.ResponseType.CANCEL))
-        viewer = builder.get_object('textview1')  # Data Space
+        viewer = builder.get_object('defView')  # Data Space
         response = defdiag.run()
         if (response == Gtk.ResponseType.DELETE_EVENT or
                 response == Gtk.ResponseType.CANCEL):

@@ -172,14 +172,14 @@ Author: Mufeed Ali
     <property name="show_menubar">False</property>
     <signal name="destroy" handler="on_window_destroy" swapped="no"/>
     <child>
-      <object class="GtkScrolledWindow" id="scroll">
+      <object class="GtkScrolledWindow" id="scroller">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
         <property name="shadow_type">in</property>
         <child>
-          <object class="GtkTextView" id="textview1">
+          <object class="GtkTextView" id="defView">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Data Space</property>
@@ -214,14 +214,14 @@ Author: Mufeed Ali
             <property name="margin_right">8</property>
             <property name="spacing">6</property>
             <child>
-              <object class="GtkBox" id="faketitle">
+              <object class="GtkBox" id="searchSpace">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <property name="spacing">2</property>
                 <child>
-                  <object class="GtkSearchEntry" id="entry1">
+                  <object class="GtkSearchEntry" id="searchEntry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip_text" translatable="yes">Search Box</property>
@@ -246,7 +246,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button1">
+                  <object class="GtkButton" id="searchButton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
@@ -256,7 +256,7 @@ Author: Mufeed Ali
                     <property name="tooltip_text" translatable="yes">Search</property>
                     <property name="image">image2</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="dosearch" swapped="no"/>
+                    <signal name="clicked" handler="searchClick" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -265,7 +265,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button3">
+                  <object class="GtkButton" id="clearButton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
@@ -282,7 +282,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="button4">
+                  <object class="GtkButton" id="audioButton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
@@ -381,14 +381,14 @@ Author: Mufeed Ali
       </object>
     </child>
   </object>
-  <object class="GtkAboutDialog" id="aboutdialog1">
+  <object class="GtkAboutDialog" id="aboutReo">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">About Reo</property>
     <property name="icon_name">accessories-dictionary</property>
     <property name="type_hint">normal</property>
     <property name="transient_for">window</property>
     <property name="program_name">Reo ~ The Simple Dictionary</property>
-    <property name="version">0.6.1⍺</property>
+    <property name="version">0.6.2⍺</property>
     <property name="copyright" translatable="yes">Copyright © 2016-2017 Mufeed Ali</property>
     <property name="comments" translatable="yes">Reo is a dictionary application that uses dict, dict-wn and eSpeak to provide a complete user interface.</property>
     <property name="website">http://www.github.com/lastweakness/reo</property>
