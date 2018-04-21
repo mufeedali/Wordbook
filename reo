@@ -184,39 +184,19 @@ def adv():
     sys.exit()
 
 
-def syscheck():
+def CheckBin(bintocheck):
     try:
-        which('espeak')
-        print("eSpeak seems to be installed. OK.")
-        espeak = True
+        which(bintocheck)
+        print(bintocheck + " seems to be installed. OK.")
+        bincheck = True
     except Exception as ex:
-        logging.fatal("eSpeak is not installed! Dependancy missing!")
+        logging.fatal(bintocheck + " is not installed! Dependancy missing!")
         print(ex)
-        espeak = False
-    try:
-        which('dict')
-        print('dict seems to be installed. OK.')
-        dict = True
-    except Exception as ex:
-        logging.fatal("dict is not installed! Dependancy missing!")
-        print(ex)
-        dict = False
-    try:
-        open('/usr/share/dictd/wn.dict.dz')
-        print('WordNet databse seems to be installed. OK.')
-        wndict = True
-    except Exception as ex:
-        logging.warning("WordNet database is not found! Probably won't work.")
-        print(ex)
-        wndict = False
-    try:
-        which('dictd')
-        print('dictd seems to be installed. OK.')
-        dictd = True
-    except Exception as ex:
-        logging.fatal("dictd is not installed! Dependancy missing!")
-        print(ex)
-        dictd = False
+        bincheck = False
+    return bincheck
+
+
+def PrintChecks(espeak, dict, dictd, wndict):
     if (espeak and dict and dictd and wndict):
         print("Everything Looks Perfect!")
         print("You should be able to run it without any issues!")
@@ -268,6 +248,21 @@ def syscheck():
         print("'pacaur -S espeak dict-wn'")
         print("Everything else (NOT everything) looks" +
               " fine BUT you can't run it.")
+
+
+def syscheck():
+    espeak = CheckBin('espeak')
+    dict = CheckBin('dict')
+    dictd = CheckBin('dictd')
+    try:
+        open('/usr/share/dictd/wn.dict.dz')
+        print('WordNet databse seems to be installed. OK.')
+        wndict = True
+    except Exception as ex:
+        logging.warning("WordNet database is not found! Probably won't work.")
+        print(ex)
+        wndict = False
+    PrintChecks(espeak, dict, dictd, wndict)
     sys.exit()
 
 

@@ -236,7 +236,7 @@ Author: Mufeed Ali
                     <property name="secondary_icon_activatable">False</property>
                     <property name="secondary_icon_sensitive">False</property>
                     <property name="placeholder_text" translatable="yes">Search...</property>
-                    <signal name="activate" handler="dosearch" swapped="no"/>
+                    <signal name="activate" handler="searchClick" swapped="no"/>
                     <signal name="changed" handler="changed" swapped="no"/>
                   </object>
                   <packing>
