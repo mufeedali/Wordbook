@@ -6,7 +6,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2016-2017 Mufeed Ali
+# Copyright (c) 2016-2018 Mufeed Ali
 # This file is part of Reo
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -74,7 +74,6 @@ except ImportError as ierr:
         print("'pacaur -S python-gobject' or 'sudo pacman -S python-gobject'")
         print("Thanks for trying this out!")
 builder = Gtk.Builder()
-import os
 
 
 def darker():
@@ -89,6 +88,9 @@ def lighter():
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", False)
     dark = False
+
+
+import os
 
 
 def addbuilder():
@@ -119,14 +121,19 @@ if not parsed.adversion and not parsed.check:
     addbuilder()
     windowcall()
 
-import re  # regular expressions
-from os.path import expanduser  # for detecting home folder
-from shutil import which  # for checks.
-import subprocess  # for running dict and others in background
-import random  # for Random Words
-import linecache
-from pathlib import Path
-import threading
+try:
+    import re  # regular expressions
+    from os.path import expanduser  # for detecting home folder
+    from shutil import which  # for checks.
+    import subprocess  # for running dict and others in background
+    import random  # for Random Words
+    import linecache
+    from pathlib import Path
+    import threading
+except Exception as ex:
+    print(ex)
+    sys.exit(1)
+
 wnver = '3.1'
 wncheckonce = False
 

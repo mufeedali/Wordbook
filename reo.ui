@@ -3,7 +3,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) 2016-2017 Mufeed Ali
+Copyright (c) 2016-2018 Mufeed Ali
 This file is part of Reo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,7 +32,7 @@ Author: Mufeed Ali
   <!-- interface-license-type mit -->
   <!-- interface-name Reo -->
   <!-- interface-description An Open Source dictionary application specifically crafted for Linux. -->
-  <!-- interface-copyright 2016-2017 Mufeed Ali -->
+  <!-- interface-copyright 2016-2018 Mufeed Ali -->
   <!-- interface-authors Mufeed Ali -->
   <object class="GtkImage" id="aboutimg">
     <property name="visible">True</property>
@@ -388,8 +388,8 @@ Author: Mufeed Ali
     <property name="type_hint">normal</property>
     <property name="transient_for">window</property>
     <property name="program_name">Reo ~ The Simple Dictionary</property>
-    <property name="version">0.6.2⍺</property>
-    <property name="copyright" translatable="yes">Copyright © 2016-2017 Mufeed Ali</property>
+    <property name="version">0.6.3⍺</property>
+    <property name="copyright" translatable="yes">Copyright © 2016-2018 Mufeed Ali</property>
     <property name="comments" translatable="yes">Reo is a dictionary application that uses dict, dict-wn and eSpeak to provide a complete user interface.</property>
     <property name="website">http://www.github.com/lastweakness/reo</property>
     <property name="website_label" translatable="yes">Visit Github Page</property>
