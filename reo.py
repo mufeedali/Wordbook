@@ -313,7 +313,7 @@ class GUI:
             text = text.replace('         ', '')
             sb.set_text(text)
             if not text == '' and not text.isspace():
-                self.dosearch()
+                self.searchClick()
                 sb.grab_focus()
         except Exception as ex:
             return
@@ -658,7 +658,7 @@ class GUI:
         sb = builder.get_object('searchEntry')  # searchbox
         rw = self.randomword()
         sb.set_text(rw.strip())
-        self.dosearch()
+        self.searchClick()
         sb.grab_focus()
 
     def clear(self, clearButton):
