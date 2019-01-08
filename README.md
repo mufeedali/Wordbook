@@ -1,6 +1,9 @@
 # Reo ~ The Simple Dictionary
 **Reo** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 
+### Pretty much abandoned. But also pretty stable.  
+I don't think it needs any improvements for now. It works on older and newer distributions.
+
 ### Requirements
  * DICT official client and server (dictd and dict)
  * WordNet 3.1 or 3.0 database for dictd (dict-wn)
