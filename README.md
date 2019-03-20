@@ -24,4 +24,4 @@ I don't think it needs any improvements for now. It works on older and newer dis
 Python 2 lacks a lot of things used by Reo like proper Unicode support, which from shutil and more.
 
 #### Future
-I might not get to work on this project anymore. Fork it if you wish so.
+Honestly, I feel like just deleting this and forgetting it ever existed. But well, it works and has no bugs I know. So, guess I'll keep it.
