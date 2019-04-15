@@ -33,6 +33,15 @@
 import sys
 import logging
 import argparse  # for CommandLine-Interface (CLI).
+import re  # regular expressions
+import os
+from os.path import expanduser  # for detecting home folder
+from shutil import which  # for checks.
+import subprocess  # for running dict and others in background
+import random  # for Random Words
+import linecache
+from pathlib import Path
+import threading
 # logging is the most important. You have to let users know everything.
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
@@ -90,9 +99,6 @@ def lighter():
     dark = False
 
 
-import os
-
-
 def addbuilder():
     PATH = os.path.dirname(os.path.realpath(__file__))
     if parsed.gladefile:
@@ -120,19 +126,6 @@ if not parsed.adversion and not parsed.check:
         lighter()
     addbuilder()
     windowcall()
-
-try:
-    import re  # regular expressions
-    from os.path import expanduser  # for detecting home folder
-    from shutil import which  # for checks.
-    import subprocess  # for running dict and others in background
-    import random  # for Random Words
-    import linecache
-    from pathlib import Path
-    import threading
-except Exception as ex:
-    print(ex)
-    sys.exit(1)
 
 wnver = '3.1'
 wncheckonce = False
@@ -316,6 +309,7 @@ class GUI:
                 self.searchClick()
                 sb.grab_focus()
         except Exception as ex:
+            logging.error("Searching selected text failed\n" + str(ex))
             return
 
     def newced(self, title, primary, secondary):
@@ -340,8 +334,7 @@ class GUI:
             return ft
         except Exception as ex:
             ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
-            print(ft)
-            print(ex)
+            print(ft + "\n" + str(ex))
             return ft
 
     def cowfortune(self):
@@ -378,8 +371,8 @@ class GUI:
                 viewer.get_buffer().insert_markup(lastiter, out, -1)
             else:
                 viewer.get_buffer().insert_markup(lastiter, out, -1)
-        except Exception:
-            print("Didn't work.")
+        except Exception as ex:
+            print("Didn't work." + str(ex))
 
     def search(self, sb):
         if (not sb.strip('<>"?`![]()/\\:;,') == '' and
@@ -455,10 +448,10 @@ class GUI:
         return final
 
     def defProcessor(self, proc, text, sencol, wordcol):
-        soc = proc.replace('1 definition found\n\nFrom WordNet' +
-                           ' (r) 3.0 (2006) [wn]:\n', '')
-        soc = proc.replace('1 definition found\n\nFrom WordNet' +
-                           ' (r) 3.1 (2011) [wn]:\n', '')
+        soc = proc.replace('1 definition found\n\nFrom WordNet (r)' +
+                           ' 3.0 (2006) [wn]:\n', '')
+        soc = soc.replace('1 definition found\n\nFrom WordNet' +
+                          ' (r) 3.1 (2011) [wn]:\n', '')
         try:
             imp = re.search("  " + text, soc,
                             flags=re.IGNORECASE).group(0)
@@ -560,24 +553,21 @@ class GUI:
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         except Exception as ex:
-            print("Didnt Work! ERROR CODE: PAPAYA")
-            print(ex)
+            print("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
         try:
             pro = subprocess.Popen(["espeak", "-ven-uk-rp",
                                     "--ipa", "-q", text],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         except Exception as ex:
-            print("Didnt Work! ERROR CODE: MANGO")
-            print(ex)
+            print("Didnt Work! ERROR CODE: MANGO\n" + str(ex))
         try:
             clos = subprocess.Popen(["dict", "-m", "-d", "wn",
                                      "-s", strat, text],
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE)
         except Exception as ex:
-            print("Didnt Work! ERROR CODE: PAPAYA")
-            print(ex)
+            print("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
         prc.wait()
         try:
             proc = prc.stdout.read().decode()
@@ -626,12 +616,12 @@ class GUI:
                             cleanclp + '</span></i>')
         else:
             cleanclp = ""
-        return pron.strip() + '\n' + soc.strip() + '\n' + cleanclp.strip()
+        return pron.strip() + '\n' + soc + '\n' + cleanclp.strip()
 
     def generator(self, text, wordcol, sencol):
         try:
             return self.cdef(text, wordcol, sencol)
-        except Exception as ex:
+        except Exception:
             return self.dictdef(text, wordcol, sencol)
 
     def cedok(self, cedok):
@@ -652,7 +642,7 @@ class GUI:
                                              random.randint(0, 147478))
                     threading.Thread(target=wncheck).start()
         except Exception as ex:
-            print(ex)
+            print("Random word search failed" + str(ex))
 
     def randword(self, mnurand):
         sb = builder.get_object('searchEntry')  # searchbox
