@@ -6,7 +6,7 @@
 #
 # The MIT License (MIT)
 #
-# Copyright (c) 2016-2018 Mufeed Ali
+# Copyright (c) 2016-2019 Mufeed Ali
 # This file is part of Reo
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -72,16 +72,16 @@ except ImportError as ierr:
     logging.fatal("Importing GObject failed!")
     if not parsed.check:
         print("Confirm all dependencies by running " +
-              "Reo with '--check' parameter.")
-        print(ierr)
+              "Reo with '--check' parameter.\n" +
+              ierr)
         sys.exit(1)
     elif parsed.check:
-        print("Install GObject bindings.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install python3-gobject'")
-        print("From extra repo for Arch Linux:")
-        print("'pacaur -S python-gobject' or 'sudo pacman -S python-gobject'")
-        print("Thanks for trying this out!")
+        print("Install GObject bindings.\n" +
+              "For Ubuntu, Debian, etc:\n" +
+              "'sudo apt install python3-gobject'\n" +
+              "From extra repo for Arch Linux:\n" +
+              "'pacaur -S python-gobject' or 'sudo pacman -S python-gobject'" +
+              "\nThanks for trying this out!")
 builder = Gtk.Builder()
 
 
@@ -152,8 +152,8 @@ def wncheck():
 
 
 def adv():
-    print('Reo 0.0.5 Alpha version')
-    print('Copyright 2016-2017 Mufeed Ali')
+    print('Reo 0.0.6 Alpha version')
+    print('Copyright 2016-2019 Mufeed Ali')
     print()
     wncheck()
     if wnver == '3.1':
@@ -165,22 +165,20 @@ def adv():
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
         check2t = check2.stdout.read().decode()
-        print("Dict Version Info:")
-        print(check2t.strip())
+        print("Dict Version Info:\n" +
+              check2t.strip())
     except Exception as ex:
-        print("Looks like missing components. (dict)")
-        print(ex)
+        print("Looks like missing components. (dict)\n" + str(ex))
     print()
     try:
         check3 = subprocess.Popen(["espeak", "--version"],
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
         check3t = check3.stdout.read().decode()
-        print("eSpeak Version Info:")
-        print(check3t.strip())
+        print("eSpeak Version Info:\n" +
+              check3t.strip())
     except Exception as ex:
-        print("You're missing a few components. (espeak)")
-        print(ex)
+        print("You're missing a few components. (espeak)\n" + str(ex))
     sys.exit()
 
 
@@ -190,63 +188,63 @@ def CheckBin(bintocheck):
         print(bintocheck + " seems to be installed. OK.")
         bincheck = True
     except Exception as ex:
-        logging.fatal(bintocheck + " is not installed! Dependancy missing!")
-        print(ex)
+        logging.fatal(bintocheck + " is not installed! Dependancy missing!" +
+                      str(ex))
         bincheck = False
     return bincheck
 
 
 def PrintChecks(espeak, dict, dictd, wndict):
     if (espeak and dict and dictd and wndict):
-        print("Everything Looks Perfect!")
-        print("You should be able to run it without any issues!")
+        print("Everything Looks Perfect!\n" +
+              "You should be able to run it without any issues!")
     elif (espeak and dict and dictd and not wndict):
-        print("WordNet's data file is missing. Re-install 'dict-wn'.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install dict-wn'")
-        print("From AUR for Arch Linux:")
-        print("'pacaur -S dict-wn'")
-        print("Everything else (NOT everything) looks fine...")
-        print("... BUT you can't run it.")
+        print("WordNet's data file is missing. Re-install 'dict-wn'.\n" +
+              "For Ubuntu, Debian, etc:\n" +
+              "'sudo apt install dict-wn'\n" +
+              "From AUR for Arch Linux:\n" +
+              "'pacaur -S dict-wn'\n" +
+              "Everything else (NOT everything) looks fine...\n" +
+              "... BUT you can't run it.")
     elif (espeak and not dict and not dictd and not wndict):
-        print("dict and dictd (client and server) are missing.. install it.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install dictd dict-wn'")
-        print("From community repo for Arch Linux (but WordNet from AUR):")
-        print("'pacaur -S dictd dict-wn'")
-        print("That should point you in the right direction to getting ")
-        print("it to work.")
+        print("dict and dictd (client and server) are missing.. install it." +
+              "\nFor Ubuntu, Debian, etc:\n" +
+              "'sudo apt install dictd dict-wn'\n" +
+              "From community repo for Arch Linux (but WordNet from AUR):\n" +
+              "'pacaur -S dictd dict-wn'\n" +
+              "That should point you in the right direction to getting \n" +
+              "it to work.")
     elif (not espeak and not dict and not dictd and not wndict):
-        print("ALL bits and pieces are Missing...")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install espeak dictd dict-wn'")
-        print("From community repo for Arch Linux (but WordNet from AUR):")
-        print("'pacaur -S espeak dictd dict-wn'")
-        print("Go on, get it working now!")
+        print("ALL bits and pieces are Missing...\n" +
+              "For Ubuntu, Debian, etc:\n" +
+              "'sudo apt install espeak dictd dict-wn'\n" +
+              "From community repo for Arch Linux (but WordNet from AUR):\n" +
+              "'pacaur -S espeak dictd dict-wn'\n" +
+              "Go on, get it working now!")
     elif (not espeak and dict and dictd and wndict):
-        print("Everything except eSpeak is working...")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install espeak'")
-        print("From community repo for Arch Linux:")
-        print("'pacaur -S espeak' or 'sudo pacman -S espeak'")
-        print("It should be alright then.")
+        print("Everything except eSpeak is working...\n" +
+              "For Ubuntu, Debian, etc:\n" +
+              "'sudo apt install espeak'\n" +
+              "From community repo for Arch Linux:\n" +
+              "'pacaur -S espeak' or 'sudo pacman -S espeak'\n" +
+              "It should be alright then.")
     elif (not espeak and dict and dictd and wndict):
-        print("eSpeak is missing and WordNet might not work as intended.")
-        print("Install 'espeak' and re-install the 'dict-wn' package.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install espeak dict-wn'")
-        print("From AUR for Arch Linux:")
-        print("'pacaur -S espeak dict-wn'")
-        print("Everything else (NOT everything) looks fine.")
-        print("Go on, try and run it!")
+        print("eSpeak is missing and WordNet might not work as intended.\n" +
+              "Install 'espeak' and re-install the 'dict-wn' package.\n" +
+              "For Ubuntu, Debian, etc:\n" +
+              "'sudo apt install espeak dict-wn'\n" +
+              "From AUR for Arch Linux:\n" +
+              "'pacaur -S espeak dict-wn'\n" +
+              "Everything else (NOT everything) looks fine.\n" +
+              "Go on, try and run it!")
     elif (not espeak and dict and dictd and not wndict):
         print("eSpeak is missing and WordNet's data file is missing." +
-              "Re-install 'dict-wn'.")
-        print("For Ubuntu, Debian, etc:")
-        print("'sudo apt install espeak dict-wn'")
-        print("From AUR for Arch Linux:")
-        print("'pacaur -S espeak dict-wn'")
-        print("Everything else (NOT everything) looks" +
+              "Re-install 'dict-wn'.\n" +
+              "For Ubuntu, Debian, etc:\n" +
+              "'sudo apt install espeak dict-wn'\n" +
+              "From AUR for Arch Linux:\n" +
+              "'pacaur -S espeak dict-wn'\n" +
+              "Everything else (NOT everything) looks" +
               " fine BUT you can't run it.")
 
 
@@ -259,8 +257,8 @@ def syscheck():
         print('WordNet databse seems to be installed. OK.')
         wndict = True
     except Exception as ex:
-        logging.warning("WordNet database is not found! Probably won't work.")
-        print(ex)
+        logging.warning("WordNet database is not found! Probably won't work." +
+                        "\n" + str(ex))
         wndict = False
     PrintChecks(espeak, dict, dictd, wndict)
     sys.exit()
@@ -349,8 +347,7 @@ class GUI:
         except Exception as ex:
             ft = ("Easter Egg Fail!!! Install 'fortune' or 'fortunemod'" +
                   " and also 'cowsay'.")
-            print(ft)
-            print(ex)
+            print(ft + "\n" + str(ex))
             return ft
 
     def searchClick(self, searchButton=None):
@@ -425,8 +422,7 @@ class GUI:
             return reodef
         if text and not text.isspace():
             searched = True
-            final = self.generator(text, wordcol, sencol)
-            return final
+            return self.generator(text, wordcol, sencol)
 
     def cdef(self, text, wordcol, sencol):
         with open(cdefold + '/' + text, 'r') as cdfile:
@@ -439,13 +435,12 @@ class GUI:
             cdefread = cdefread.replace("$SENCOL", sencol)
             if "\n[warninghide]" in cdefread:
                 cdefread = cdefread.replace("\n[warninghide]", "")
-                final = cdefread
+                return cdefread
             else:
-                final = (cdefread + '\n<span foreground="#e6292f">N' +
-                         'OTE: This is a Custom definition. No one' +
-                         ' is to be held responsible for errors in' +
-                         ' this.</span>')
-        return final
+                return(cdefread + '\n<span foreground="#e6292f">N' +
+                       'OTE: This is a Custom definition. No one' +
+                       ' is to be held responsible for errors in' +
+                       ' this.</span>')
 
     def defProcessor(self, proc, text, sencol, wordcol):
         soc = proc.replace('1 definition found\n\nFrom WordNet (r)' +
@@ -457,7 +452,7 @@ class GUI:
                             flags=re.IGNORECASE).group(0)
         except Exception as ex:
             imp = ''
-            print(ex)
+            logging.warning("Regex search failed" + str(ex))
         soc = soc.replace(imp + '\n', '')
         cleans = ['"--Thomas', '"--\n           ',
                   '-\n             ', '"; [', '      n 1',
@@ -579,8 +574,7 @@ class GUI:
                 crip = 1
         except Exception as ex:
             print("Something went wrong while obtaining" +
-                  " definitions.")
-            print(ex)
+                  " definitions.\n" + str(ex))
         if crip == 1:
             print("Failed")
         pro.wait()
@@ -616,7 +610,7 @@ class GUI:
                             cleanclp + '</span></i>')
         else:
             cleanclp = ""
-        return pron.strip() + '\n' + soc + '\n' + cleanclp.strip()
+        return pron.rstrip() + '\n' + soc + '\n' + cleanclp.strip()
 
     def generator(self, text, wordcol, sencol):
         try:
@@ -642,7 +636,7 @@ class GUI:
                                              random.randint(0, 147478))
                     threading.Thread(target=wncheck).start()
         except Exception as ex:
-            print("Random word search failed" + str(ex))
+            logging.error("Random word search failed" + str(ex))
 
     def randword(self, mnurand):
         sb = builder.get_object('searchEntry')  # searchbox
