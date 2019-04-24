@@ -171,14 +171,14 @@ def adv():
         print("Looks like missing components. (dict)\n" + str(ex))
     print()
     try:
-        check3 = subprocess.Popen(["espeak", "--version"],
+        check3 = subprocess.Popen(["espeak-ng", "--version"],
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
         check3t = check3.stdout.read().decode()
-        print("eSpeak Version Info:\n" +
+        print("eSpeak-ng Version Info:\n" +
               check3t.strip())
     except Exception as ex:
-        print("You're missing a few components. (espeak)\n" + str(ex))
+        print("You're missing a few components. (espeak-ng)\n" + str(ex))
     sys.exit()
 
 
@@ -194,11 +194,11 @@ def CheckBin(bintocheck):
     return bincheck
 
 
-def PrintChecks(espeak, dict, dictd, wndict):
-    if (espeak and dict and dictd and wndict):
+def PrintChecks(espeak-ng, dict, dictd, wndict):
+    if (espeak-ng and dict and dictd and wndict):
         print("Everything Looks Perfect!\n" +
               "You should be able to run it without any issues!")
-    elif (espeak and dict and dictd and not wndict):
+    elif (espeak-ng and dict and dictd and not wndict):
         print("WordNet's data file is missing. Re-install 'dict-wn'.\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install dict-wn'\n" +
@@ -206,7 +206,7 @@ def PrintChecks(espeak, dict, dictd, wndict):
               "'pacaur -S dict-wn'\n" +
               "Everything else (NOT everything) looks fine...\n" +
               "... BUT you can't run it.")
-    elif (espeak and not dict and not dictd and not wndict):
+    elif (espeak-ng and not dict and not dictd and not wndict):
         print("dict and dictd (client and server) are missing.. install it." +
               "\nFor Ubuntu, Debian, etc:\n" +
               "'sudo apt install dictd dict-wn'\n" +
@@ -214,42 +214,42 @@ def PrintChecks(espeak, dict, dictd, wndict):
               "'pacaur -S dictd dict-wn'\n" +
               "That should point you in the right direction to getting \n" +
               "it to work.")
-    elif (not espeak and not dict and not dictd and not wndict):
+    elif (not espeak-ng and not dict and not dictd and not wndict):
         print("ALL bits and pieces are Missing...\n" +
               "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak dictd dict-wn'\n" +
+              "'sudo apt install espeak-ng dictd dict-wn'\n" +
               "From community repo for Arch Linux (but WordNet from AUR):\n" +
-              "'pacaur -S espeak dictd dict-wn'\n" +
+              "'pacaur -S espeak-ng dictd dict-wn'\n" +
               "Go on, get it working now!")
-    elif (not espeak and dict and dictd and wndict):
-        print("Everything except eSpeak is working...\n" +
+    elif (not espeak-ng and dict and dictd and wndict):
+        print("Everything except eSpeak-ng is working...\n" +
               "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak'\n" +
+              "'sudo apt install espeak-ng'\n" +
               "From community repo for Arch Linux:\n" +
-              "'pacaur -S espeak' or 'sudo pacman -S espeak'\n" +
+              "'pacaur -S espeak-ng' or 'sudo pacman -S espeak-ng'\n" +
               "It should be alright then.")
-    elif (not espeak and dict and dictd and wndict):
-        print("eSpeak is missing and WordNet might not work as intended.\n" +
-              "Install 'espeak' and re-install the 'dict-wn' package.\n" +
+    elif (not espeak-ng and dict and dictd and wndict):
+        print("eSpeak-ng is missing and WordNet might not work as intended.\n" +
+              "Install 'espeak-ng' and re-install the 'dict-wn' package.\n" +
               "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak dict-wn'\n" +
+              "'sudo apt install espeak-ng dict-wn'\n" +
               "From AUR for Arch Linux:\n" +
-              "'pacaur -S espeak dict-wn'\n" +
+              "'pacaur -S espeak-ng dict-wn'\n" +
               "Everything else (NOT everything) looks fine.\n" +
               "Go on, try and run it!")
-    elif (not espeak and dict and dictd and not wndict):
-        print("eSpeak is missing and WordNet's data file is missing." +
+    elif (not espeak-ng and dict and dictd and not wndict):
+        print("eSpeak-ng is missing and WordNet's data file is missing." +
               "Re-install 'dict-wn'.\n" +
               "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak dict-wn'\n" +
+              "'sudo apt install espeak-ng dict-wn'\n" +
               "From AUR for Arch Linux:\n" +
-              "'pacaur -S espeak dict-wn'\n" +
+              "'pacaur -S espeak-ng dict-wn'\n" +
               "Everything else (NOT everything) looks" +
               " fine BUT you can't run it.")
 
 
 def syscheck():
-    espeak = CheckBin('espeak')
+    espeak-ng = CheckBin('espeak-ng')
     dict = CheckBin('dict')
     dictd = CheckBin('dictd')
     try:
@@ -260,7 +260,7 @@ def syscheck():
         logging.warning("WordNet database is not found! Probably won't work." +
                         "\n" + str(ex))
         wndict = False
-    PrintChecks(espeak, dict, dictd, wndict)
+    PrintChecks(espeak-ng, dict, dictd, wndict)
     sys.exit()
 
 
@@ -550,7 +550,7 @@ class GUI:
         except Exception as ex:
             print("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
         try:
-            pro = subprocess.Popen(["espeak", "-ven-uk-rp",
+            pro = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
                                     "--ipa", "-q", text],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -653,10 +653,10 @@ class GUI:
 
     def audio(self, audioButton):
         sb = builder.get_object('searchEntry')  # searchbox
-        speed = '120'  # To change eSpeak audio speed.
+        speed = '120'  # To change eSpeak-ng audio speed.
         if searched and not sb.get_text() == '':
             with open(os.devnull, 'w') as NULLMAKER:
-                subprocess.Popen(["espeak", "-ven-uk-rp", "-s", speed,
+                subprocess.Popen(["espeak-ng", "-ven-uk-rp", "-s", speed,
                                   sb.get_text()], stdout=NULLMAKER,
                                  stderr=subprocess.STDOUT)
         elif sb.get_text() == '' or sb.get_text().isspace():
