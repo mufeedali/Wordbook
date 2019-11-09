@@ -194,11 +194,11 @@ def CheckBin(bintocheck):
     return bincheck
 
 
-def PrintChecks(espeak-ng, dict, dictd, wndict):
-    if (espeak-ng and dict and dictd and wndict):
+def PrintChecks(espeakng, dict, dictd, wndict):
+    if (espeakng and dict and dictd and wndict):
         print("Everything Looks Perfect!\n" +
               "You should be able to run it without any issues!")
-    elif (espeak-ng and dict and dictd and not wndict):
+    elif (espeakng and dict and dictd and not wndict):
         print("WordNet's data file is missing. Re-install 'dict-wn'.\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install dict-wn'\n" +
@@ -206,7 +206,7 @@ def PrintChecks(espeak-ng, dict, dictd, wndict):
               "'pacaur -S dict-wn'\n" +
               "Everything else (NOT everything) looks fine...\n" +
               "... BUT you can't run it.")
-    elif (espeak-ng and not dict and not dictd and not wndict):
+    elif (espeakng and not dict and not dictd and not wndict):
         print("dict and dictd (client and server) are missing.. install it." +
               "\nFor Ubuntu, Debian, etc:\n" +
               "'sudo apt install dictd dict-wn'\n" +
@@ -214,21 +214,21 @@ def PrintChecks(espeak-ng, dict, dictd, wndict):
               "'pacaur -S dictd dict-wn'\n" +
               "That should point you in the right direction to getting \n" +
               "it to work.")
-    elif (not espeak-ng and not dict and not dictd and not wndict):
+    elif (not espeakng and not dict and not dictd and not wndict):
         print("ALL bits and pieces are Missing...\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install espeak-ng dictd dict-wn'\n" +
               "From community repo for Arch Linux (but WordNet from AUR):\n" +
               "'pacaur -S espeak-ng dictd dict-wn'\n" +
               "Go on, get it working now!")
-    elif (not espeak-ng and dict and dictd and wndict):
+    elif (not espeakng and dict and dictd and wndict):
         print("Everything except eSpeak-ng is working...\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install espeak-ng'\n" +
               "From community repo for Arch Linux:\n" +
               "'pacaur -S espeak-ng' or 'sudo pacman -S espeak-ng'\n" +
               "It should be alright then.")
-    elif (not espeak-ng and dict and dictd and wndict):
+    elif (not espeakng and dict and dictd and wndict):
         print("eSpeak-ng is missing and WordNet might not work as intended.\n" +
               "Install 'espeak-ng' and re-install the 'dict-wn' package.\n" +
               "For Ubuntu, Debian, etc:\n" +
@@ -237,7 +237,7 @@ def PrintChecks(espeak-ng, dict, dictd, wndict):
               "'pacaur -S espeak-ng dict-wn'\n" +
               "Everything else (NOT everything) looks fine.\n" +
               "Go on, try and run it!")
-    elif (not espeak-ng and dict and dictd and not wndict):
+    elif (not espeakng and dict and dictd and not wndict):
         print("eSpeak-ng is missing and WordNet's data file is missing." +
               "Re-install 'dict-wn'.\n" +
               "For Ubuntu, Debian, etc:\n" +
@@ -249,7 +249,7 @@ def PrintChecks(espeak-ng, dict, dictd, wndict):
 
 
 def syscheck():
-    espeak-ng = CheckBin('espeak-ng')
+    espeakng = CheckBin('espeak-ng')
     dict = CheckBin('dict')
     dictd = CheckBin('dictd')
     try:
