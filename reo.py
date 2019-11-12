@@ -111,7 +111,8 @@ def addbuilder():
 
 def windowcall():
     window = builder.get_object('window')  # main window
-    if(int(os.environ['GTK_CSD'])==0):
+    if((os.environ.get('GTK_CSD')=='0') and
+       (os.environ.get('XDG_SESSION_TYPE')!='wayland')):
         headlabel = builder.get_object('headlabel')
         windowsep1 = builder.get_object('windowsep1')
         windowsep = builder.get_object('windowsep')
