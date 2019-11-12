@@ -111,6 +111,17 @@ def addbuilder():
 
 def windowcall():
     window = builder.get_object('window')  # main window
+    if(int(os.environ['GTK_CSD'])==0):
+        headlabel = builder.get_object('headlabel')
+        windowsep1 = builder.get_object('windowsep1')
+        windowsep = builder.get_object('windowsep')
+        titles = builder.get_object('titles')
+        titles.set_margin_end(0)
+        titles.set_margin_start(0)
+        headlabel.destroy()
+        windowsep.destroy()
+        windowsep1.destroy()
+    window.set_title('Reo')
     window.show_all()
 
 
@@ -126,6 +137,7 @@ if not parsed.adversion and not parsed.check:
         lighter()
     addbuilder()
     windowcall()
+
 
 wnver = '3.1'
 wncheckonce = False

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.0 
+<!-- Generated with glade 3.22.1 
 
 The MIT License (MIT)
 
@@ -169,34 +169,6 @@ Author: Mufeed Ali
     <property name="icon_name">accessories-dictionary</property>
     <property name="show_menubar">False</property>
     <signal name="destroy" handler="on_window_destroy" swapped="no"/>
-    <child>
-      <object class="GtkScrolledWindow" id="scroller">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="hexpand">True</property>
-        <property name="vexpand">True</property>
-        <property name="shadow_type">in</property>
-        <child>
-          <object class="GtkTextView" id="defView">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hexpand">True</property>
-            <property name="vexpand">True</property>
-            <property name="hscroll_policy">natural</property>
-            <property name="vscroll_policy">natural</property>
-            <property name="pixels_below_lines">3</property>
-            <property name="editable">False</property>
-            <property name="wrap_mode">word-char</property>
-            <property name="left_margin">4</property>
-            <property name="right_margin">4</property>
-            <property name="top_margin">4</property>
-            <property name="bottom_margin">6</property>
-            <property name="cursor_visible">False</property>
-            <property name="accepts_tab">False</property>
-          </object>
-        </child>
-      </object>
-    </child>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header">
         <property name="visible">True</property>
@@ -207,8 +179,8 @@ Author: Mufeed Ali
           <object class="GtkBox" id="titles">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">8</property>
-            <property name="margin_right">8</property>
+            <property name="margin_left">6</property>
+            <property name="margin_right">6</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkBox" id="searchSpace">
@@ -308,7 +280,44 @@ Author: Mufeed Ali
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <property name="hexpand">True</property>
-                <property name="spacing">2</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkSeparator" id="windowsep">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="headlabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Reo&lt;/b&gt;
+&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
+                    <property name="use_markup">True</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="windowsep1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
                 <child>
                   <object class="GtkMenuButton" id="menu">
                     <property name="visible">True</property>
@@ -330,39 +339,7 @@ Author: Mufeed Ali
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparator" id="windowsep">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="maintitle">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="tooltip_markup" translatable="yes">&lt;b&gt;Reo&lt;/b&gt;
-&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
-                    <property name="hexpand">True</property>
-                    <property name="vexpand">True</property>
-                    <property name="label" translatable="yes">&lt;span font_stretch="semi-condensed" size="large"&gt;Reo&lt;/span&gt;
-&lt;span size="x-small"&gt;The Simple Dictionary&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">right</property>
-                    <property name="track_visited_links">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="padding">2</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -372,6 +349,34 @@ Author: Mufeed Ali
                 <property name="position">1</property>
               </packing>
             </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow" id="scroller">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
+        <property name="shadow_type">in</property>
+        <child>
+          <object class="GtkTextView" id="defView">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="hscroll_policy">natural</property>
+            <property name="vscroll_policy">natural</property>
+            <property name="pixels_below_lines">3</property>
+            <property name="editable">False</property>
+            <property name="wrap_mode">word-char</property>
+            <property name="left_margin">4</property>
+            <property name="right_margin">4</property>
+            <property name="top_margin">4</property>
+            <property name="bottom_margin">6</property>
+            <property name="cursor_visible">False</property>
+            <property name="accepts_tab">False</property>
           </object>
         </child>
       </object>
@@ -392,6 +397,9 @@ Author: Mufeed Ali
     <property name="authors">Mufeed Ali</property>
     <property name="logo_icon_name">accessories-dictionary</property>
     <property name="license_type">mit-x11</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">
         <property name="can_focus">False</property>
@@ -410,9 +418,6 @@ Author: Mufeed Ali
         </child>
       </object>
     </child>
-    <child>
-      <placeholder/>
-    </child>
   </object>
   <object class="GtkDialog" id="ced">
     <property name="can_focus">False</property>
@@ -422,6 +427,9 @@ Author: Mufeed Ali
     <property name="icon_name">dialog-error</property>
     <property name="type_hint">normal</property>
     <property name="transient_for">window</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="ceb">
         <property name="can_focus">False</property>
@@ -523,9 +531,6 @@ Author: Mufeed Ali
           </packing>
         </child>
       </object>
-    </child>
-    <child>
-      <placeholder/>
     </child>
   </object>
 </interface>
