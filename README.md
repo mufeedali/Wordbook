@@ -13,6 +13,10 @@
  * Gtk+ 3.20+
  * eSpeak-ng (For pronunciations and audio)
 
+#### Slow?
+If the output is slow, it's possibly because the definition is obtained from dict.org rather than localhost. So, run  
+`sudo systemctl enable dictd.service && sudo systemctl start dictd.service`
+
 ### Features
  * Neat output with proper coloring and formatting
  * Random Word
