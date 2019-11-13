@@ -107,14 +107,10 @@ def windowcall():
     if((os.environ.get('GTK_CSD')=='0') and
        (os.environ.get('XDG_SESSION_TYPE')!='wayland')):
         headlabel = builder.get_object('headlabel')
-        windowsep1 = builder.get_object('windowsep1')
-        windowsep = builder.get_object('windowsep')
         titles = builder.get_object('titles')
         titles.set_margin_end(0)
         titles.set_margin_start(0)
         headlabel.destroy()
-        windowsep.destroy()
-        windowsep1.destroy()
     # Gtk.Settings.get_default().set_property("gtk-theme-name", "Materia")
     window.set_title('Reo')
     window.show_all()
