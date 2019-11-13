@@ -58,9 +58,6 @@ mgroup.add_argument("-gd", "--dark", action="store_true",
                     help="Use GNOME dark theme")
 mgroup.add_argument("-gl", "--light", action="store_true",
                     help="Use GNOME light theme")
-parser.add_argument("-g", "--gladefile", type=str,
-                    help="set custom GLADEFILE (file from which UI is taken" +
-                    ", useful for testing custom UIs)")
 parsed = parser.parse_args()
 try:
     import gi  # this is the GObject stuff needed for GTK+
@@ -101,11 +98,7 @@ def lighter():
 
 def addbuilder():
     PATH = os.path.dirname(os.path.realpath(__file__))
-    if parsed.gladefile:
-        GLADEFILE = parsed.gladefile
-    else:
-        # GLADEFILE points to the location of the UI file.
-        GLADEFILE = PATH + "/reo.ui"
+    GLADEFILE = PATH + "/reo.ui"
     builder.add_from_file(GLADEFILE)
 
 
@@ -122,6 +115,7 @@ def windowcall():
         headlabel.destroy()
         windowsep.destroy()
         windowsep1.destroy()
+    # Gtk.Settings.get_default().set_property("gtk-theme-name", "Materia")
     window.set_title('Reo')
     window.show_all()
 
@@ -424,9 +418,9 @@ class GUI:
             Gtk.main_quit()
         elif text == 'reo':
             reodef = str("Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b>" +
-                         " ~ <i>Japanese Word</i>\n  <b>1:</b> Name o" +
-                         "f this application, chosen kind of at rando" +
-                         "m.\n  <b>2:</b> Japanese word meaning 'Wise" +
+                         " ~ <i>Japanese Word</i>\n  <b>1:</b> Name " +
+                         "of this application, chosen kind of at random." +
+                         "\n  <b>2:</b> Japanese word meaning 'Wise" +
                          " Center'\n <b>Similar Words:</b>\n <i><" +
                          "span foreground=\"" + wordcol + "\">  ro, " +
                          "re, roe, redo, reno, oreo, ceo, leo, neo, " +
@@ -440,18 +434,17 @@ class GUI:
     def cdef(self, text, wordcol, sencol):
         with open(cdefold + '/' + text, 'r') as cdfile:
             cdefread = cdfile.read()
-            cdefread = cdefread.replace("<i>($WORDCOL)</i>", wordcol)
-            cdefread = cdefread.replace("<i>($SENCOL)</i>", sencol)
-            cdefread = cdefread.replace("($WORDCOL)", wordcol)
-            cdefread = cdefread.replace("($SENCOL)", sencol)
-            cdefread = cdefread.replace("$WORDCOL", wordcol)
-            cdefread = cdefread.replace("$SENCOL", sencol)
+            relist={"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
+                    "($WORDCOL)": wordcol, "($SENCOL)": sencol,
+                    "$WORDCOL": wordcol, "$SENCOL": sencol}
+            for i, j in relist.items():
+                cdefread = cdefread.replace(i, j)
             if "\n[warninghide]" in cdefread:
                 cdefread = cdefread.replace("\n[warninghide]", "")
                 return cdefread
             else:
-                return(cdefread + '\n<span foreground="#e6292f">N' +
-                       'OTE: This is a Custom definition. No one' +
+                return(cdefread + '\n<span foreground="#e6292f">' +
+                       'NOTE: This is a Custom definition. No one' +
                        ' is to be held responsible for errors in' +
                        ' this.</span>')
 

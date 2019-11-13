@@ -179,8 +179,8 @@ Author: Mufeed Ali
           <object class="GtkBox" id="titles">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
+            <property name="margin_left">2</property>
+            <property name="margin_right">2</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkBox" id="searchSpace">
@@ -282,17 +282,6 @@ Author: Mufeed Ali
                 <property name="hexpand">True</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkSeparator" id="windowsep">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel" id="headlabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -305,17 +294,6 @@ Author: Mufeed Ali
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSeparator" id="windowsep1">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -332,7 +310,7 @@ Author: Mufeed Ali
                       <object class="GtkImage" id="menuicon">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="icon_name">application-menu-symbolic</property>
+                        <property name="icon_name">accessories-dictionary</property>
                       </object>
                     </child>
                   </object>
@@ -346,6 +324,7 @@ Author: Mufeed Ali
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="padding">6</property>
                 <property name="position">1</property>
               </packing>
             </child>
