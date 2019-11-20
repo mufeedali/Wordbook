@@ -263,7 +263,7 @@ def syscheck():
         logging.warning("WordNet database is not found! Probably won't work." +
                         "\n" + str(ex))
         wndict = False
-    PrintChecks(espeak-ng, dict, dictd, wndict)
+    PrintChecks(espeakng, dict, dictd, wndict)
     sys.exit()
 
 
@@ -634,9 +634,9 @@ class GUI:
                     return linecache.getline('wn' + wnver,
                                              random.randint(0, 147478))
                 else:
+                    threading.Thread(target=wncheck).start()
                     return linecache.getline('wn3.1',
                                              random.randint(0, 147478))
-                    threading.Thread(target=wncheck).start()
         except Exception as ex:
             logging.error("Random word search failed" + str(ex))
 
