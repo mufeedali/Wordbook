@@ -289,10 +289,10 @@ if not os.path.exists(reofold):  # check for Reo folder
     os.makedirs(reofold)  # create Reo folder
 if not os.path.exists(cdefold):  # check for Custom Definitions folder.
     os.makedirs(cdefold)  # create Custom Definitions folder.
-if (os.path.exists(reofold + "/dark") and 
+if (os.path.exists(reofold + "/dark") and
    not os.path.exists(reofold + "/light")):  # check for Dark mode file
     darker()
-elif (not os.path.exists(reofold + "/dark") and 
+elif (not os.path.exists(reofold + "/dark") and
     os.path.exists(reofold + "/light")):
     lighter()
 if os.path.exists(reofold + "/wnver31"):
@@ -415,7 +415,11 @@ class GUI:
             sencol = "blue"  # Color of sentences in regular
             wordcol = "green"  # Color of: Similar Words,
 #                                Synonyms and Antonyms.
-        if text == 'fortune -a':
+        skip = ['00-database-allchars','00-database-info', '00-database-long',
+                '00-database-short', '00-database-url']
+        if text in skip:
+            return "<tt> Running Reo with WordNet " + wnver + "</tt>"
+        elif text == 'fortune -a':
             return self.fortune()
         elif text == 'cowfortune':
             return self.cowfortune()
@@ -467,32 +471,33 @@ class GUI:
             logging.warning("Regex search failed" + str(ex))
         soc = soc.replace(imp + '\n', '')
         logging.debug("Searching " + imp)
-        relist={r'[ \t\r\f\v]+n\s+':'<b>' + imp + 
-                '</b> ~ <i>noun</i>:\n      ', 
-                r'[ \t\r\f\v]+adv\s+':'<b>' + imp + 
+        relist={r'[ \t\r\f\v]+n\s+':'<b>' + imp +
+                '</b> ~ <i>noun</i>:\n      ',
+                r'[ \t\r\f\v]+adv\s+':'<b>' + imp +
                 '</b> ~ <i>adverb</i>:\n      ',
-                r'[ \t\r\f\v]+adj\s+':'<b>' + imp + 
+                r'[ \t\r\f\v]+adj\s+':'<b>' + imp +
                 '</b> ~ <i>adjective</i>:\n      ',
-                r'[ \t\r\f\v]+v\s+':'<b>' + imp + 
+                r'[ \t\r\f\v]+v\s+':'<b>' + imp +
                 '</b> ~ <i>verb</i>:\n      ',
                 r'\s+      \s+':' ',
                 r'"$':r'</span>',
                 r'\s+(\d+):(\D)':r'\n  <b>\1: </b>\2',
-                r'";\s*"':'</span><b>;</b> <span foreground="' + 
+                r'";\s*"':'</span><b>;</b> <span foreground="' +
                 sencol + '">',
-                r';\s*"':r'\n        <span foreground="' + 
+                r';\s*"':r'\n        <span foreground="' +
                 sencol + '">',
                 r'"\s+\[':r'</span>[',
                 r'\[syn:':r'\n        <i>Synonyms: ',
                 r'\[ant:':r'\n        <i>Antonyms: ',
                 r'}\]':r'}</i>',
-                r"\{([^{]*)\}":r'<span foreground="' + 
+                r"\{([^{]*)\}":r'<span foreground="' +
                 wordcol + r'">\1</span>',
                 r'"[ \t\r\f\v]+(.+)\n': r'</span> \1\n',
                 r'"\s*\-+\s*(.+)' : r"</span> - \1"}
         for x, y in relist.items():
             reclean = re.compile(x, re.MULTILINE)
             soc = str(reclean.sub(y, soc))
+        print(soc)
         if not soc.find("`") == -1:
             soc = soc.replace("`", "'")
         if not soc.find("thunder started the sleeping") == -1:
@@ -503,7 +508,7 @@ class GUI:
 
     def clsfmt(self, clp, text):
         clp = clp.replace('wn:', '').rstrip()
-        subb = {r'\s+      \s+':r' ', 
+        subb = {r'\s+      \s+':r' ',
                 "(.)  " + text.lower() + "  (.)":r"\1  \2",
                 r'\s*\n\s*':r' ',
                 text.lower() + "$":r'',
