@@ -42,10 +42,7 @@ import random  # for Random Words
 import linecache
 from pathlib import Path
 import threading
-# logging is the most important. You have to let users know everything.
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - " +
-                    "[%(levelname)s] [%(threadName)s] (%(module)s:" +
-                    "%(lineno)d) %(message)s")
+import html
 
 # Readying ArgParser
 parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
@@ -58,7 +55,17 @@ mgroup.add_argument("-gd", "--dark", action="store_true",
                     help="Use GNOME dark theme")
 mgroup.add_argument("-gl", "--light", action="store_true",
                     help="Use GNOME light theme")
+parser.add_argument("-v", "--verbose", action="store_true",
+                    help="Make it scream louder")
 parsed = parser.parse_args()
+# logging is the most important. You have to let users know everything.
+if(parsed.verbose):
+    level=logging.DEBUG
+else:
+    level=logging.WARNING
+logging.basicConfig(level=level, format="%(asctime)s - " +
+                    "[%(levelname)s] [%(threadName)s] (%(module)s:" +
+                    "%(lineno)d) %(message)s")
 try:
     import gi  # this is the GObject stuff needed for GTK+
     gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
@@ -148,14 +155,16 @@ def wncheck():
         if not checkt.find('1 definition found\n\nFrom WordNet (r)' +
                            ' 3.1 (2011) [wn]:\n') == -1:
             wnver = '3.1'
+            logging.info("Using WordNet 3.1")
         elif not checkt.find('1 definition found\n\nFrom WordNet (r)' +
                              ' 3.0 (2006) [wn]:\n') == -1:
             wnver = '3.0'
+            logging.info("Using WordNet 3.0")
         wncheckonce = True
 
 
 def adv():
-    print('Reo 0.0.6 Alpha version')
+    print('Reo - master')
     print('Copyright 2016-2019 Mufeed Ali')
     print()
     wncheck()
@@ -272,7 +281,7 @@ if parsed.adversion:
 if parsed.check:
     syscheck()
 homefold = expanduser('~')  # Find the location of the home folder of the user
-reofold = homefold + "/.reo"
+reofold = homefold + "/.config/reo"
 # ^ This is where stuff like settings, Custom Definitions, etc will go.
 cdefold = reofold + "/cdef"
 # ^ The Folder within reofold where Custom Definitions are to be kept.
@@ -280,6 +289,15 @@ if not os.path.exists(reofold):  # check for Reo folder
     os.makedirs(reofold)  # create Reo folder
 if not os.path.exists(cdefold):  # check for Custom Definitions folder.
     os.makedirs(cdefold)  # create Custom Definitions folder.
+if (os.path.exists(reofold + "/dark") and 
+   not os.path.exists(reofold + "/light")):  # check for Dark mode file
+    darker()
+elif (not os.path.exists(reofold + "/dark") and 
+    os.path.exists(reofold + "/light")):
+    lighter()
+if os.path.exists(reofold + "/wnver31"):
+    logging.info("Using WordNet 3.1 as per local config")
+    wncheckonce = True
 
 
 class GUI:
@@ -290,9 +308,7 @@ class GUI:
 
     def icon_press(self, imagemenuitem4):
         about = builder.get_object('aboutReo')
-        print("Loading About Window.")
         response = about.run()
-        print("Done")
         if (response == Gtk.ResponseType.DELETE_EVENT or
                 response == Gtk.ResponseType.CANCEL):
             about.hide()
@@ -332,11 +348,12 @@ class GUI:
                                        stderr=subprocess.PIPE)
             fortune.wait()
             ft = fortune.stdout.read().decode()
-            return ft
+            ft = html.escape(ft,False)
+            return "<tt>" + ft + "</tt>"
         except Exception as ex:
             ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
             print(ft + "\n" + str(ex))
-            return ft
+            return "<tt>" + ft + "</tt>"
 
     def cowfortune(self):
         try:
@@ -346,12 +363,12 @@ class GUI:
             cowsay.wait()
             if cowsay:
                 cst = cowsay.stdout.read().decode()
-            return cst
+            return "<tt>" + cst + "</tt>"
         except Exception as ex:
             ft = ("Easter Egg Fail!!! Install 'fortune' or 'fortunemod'" +
                   " and also 'cowsay'.")
             print(ft + "\n" + str(ex))
-            return ft
+            return "<tt>" + ft + "</tt>"
 
     def searchClick(self, searchButton=None):
         sb = builder.get_object('searchEntry')  # searchbox
@@ -360,17 +377,9 @@ class GUI:
             viewer.set_monospace(False)
         viewer.get_buffer().set_text("")
         lastiter = viewer.get_buffer().get_end_iter()
-        text = sb.get_text().strip().strip('<>"?`![]()/\\:;,')
         try:
             out = self.search(sb.get_text())
-            if text == 'fortune -a' and text == 'cowfortune':
-                viewer.set_monospace(True)
-                viewer.get_buffer().insert(lastiter, out, -1)
-            elif text == 'reo':
-                viewer.set_monospace(True)
-                viewer.get_buffer().insert_markup(lastiter, out, -1)
-            else:
-                viewer.get_buffer().insert_markup(lastiter, out, -1)
+            viewer.get_buffer().insert_markup(lastiter, out, -1)
         except Exception as ex:
             print("Didn't work." + str(ex))
 
@@ -413,7 +422,7 @@ class GUI:
         elif text == 'crash now' or text == 'close now':
             Gtk.main_quit()
         elif text == 'reo':
-            reodef = str("Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b>" +
+            reodef = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b>" +
                          " ~ <i>Japanese Word</i>\n  <b>1:</b> Name " +
                          "of this application, chosen kind of at random." +
                          "\n  <b>2:</b> Japanese word meaning 'Wise" +
@@ -421,7 +430,7 @@ class GUI:
                          "span foreground=\"" + wordcol + "\">  ro, " +
                          "re, roe, redo, reno, oreo, ceo, leo, neo, " +
                          "rho, rio, reb, red, ref, rem, rep, res," +
-                         " ret, rev, rex</span></i>")
+                         " ret, rev, rex</span></i></tt>")
             return reodef
         if text and not text.isspace():
             searched = True
@@ -449,6 +458,7 @@ class GUI:
                            ' 3.0 (2006) [wn]:\n', '')
         soc = soc.replace('1 definition found\n\nFrom WordNet' +
                           ' (r) 3.1 (2011) [wn]:\n', '')
+        soc = html.escape(soc, False)
         try:
             imp = re.search("  " + text, soc,
                             flags=re.IGNORECASE).group(0)
@@ -456,67 +466,33 @@ class GUI:
             imp = ''
             logging.warning("Regex search failed" + str(ex))
         soc = soc.replace(imp + '\n', '')
-        cleans = ['"--Thomas', '"--\n           ',
-                  '-\n             ', '"; [', '      n 1',
-                  '      v 1', '      adj 1', '      adv 1',
-                  '\n          --',
-                  '-\n           ', '-\n         ',
-                  '\n           ', '\n             ',
-                  '\n          ',
-                  '\n           ', '           ',
-                  '\n         ', '    ', '   ',
-                  '[syn:', '}]', '[ant:', '"; "', '; "',
-                  '"\n', '" <i>', '"- ', '", "',
-                  '"<span foreground="' + sencol +
-                  '"><span foreground="' + sencol +
-                  '"><span foreground="' + sencol + '">',
-                  '"<span foreground="' + sencol +
-                  '"><span foreground="' +
-                  sencol + '">', '(', ')',
-                  '{', '}', ':"', '" \n      <',
-                  '"; ', ', "', '; e.g. "', '"  <i>',
-                  ';"', ';  "', ': "', ';   "', '"--',
-                  '"-', '" -']
-        cleaned = ['</span> - Thomas',
-                   '</span> - ', '-', '</span> [', '<b>' + imp +
-                   '</b> ~ <i>noun</i>:\n      1', '<b>' + imp +
-                   '</b> ~ <i>verb</i>:\n      1',
-                   '<b>' + imp + '</b> ~ <i>adjective</i>:\n    ' +
-                   '  1', '<b>' + imp +
-                   '</b> ~ <i>adverb</i>:\n      1',
-                   '--', '-', '-', ' ', ' ', ' ',
-                   '\n         ', '         ', ' ', '',
-                   ' ', '<i>\n      Synonyms:',
-                   '}</i>', '<i>\n      Antonyms:',
-                   '</span>; <span foreground="' + sencol + '">',
-                   '\n      <span foreground="' + sencol +
-                   '">', '</span>\n', '</span> <i>', '</span> - ',
-                   '</span>; <span foreground="' + sencol +
-                   '">', '"<span foreground="' + sencol + '">',
-                   '"<span foreground="' + sencol +
-                   '">', '<i>(', ')</i>', '<span foreground="' +
-                   wordcol + '">', '</span>',
-                   '\n      <span foreground="' + sencol +
-                   '">', '</span>; <',
-                   '</span>; <span foreground="' + sencol + '">',
-                   '\n      <span foreground="' + sencol +
-                   '">', '\n      <span foreground="' +
-                   sencol + '">', '</span><i>',
-                   '\n      <span foreground="' + sencol +
-                   '">', '\n      <span foreground="' +
-                   sencol + '">',
-                   '\n      <span foreground="' + sencol + '">',
-                   '\n      <span foreground="' + sencol + '">',
-                   '\n      <span foreground="' + sencol + '">',
-                   '</span> - ', '</span> - ', '</span> - ']
-        for x, y in zip(cleans, cleaned):
-            soc = soc.replace(x, y)
-        gsi = range(-100, 1)
-        for si in gsi:
-            soc = soc.replace(' ' + str(si).replace('-', '') +
-                              ': ', ' <b>' +
-                              str(si).replace('-', '') +
-                              ': </b>')
+        logging.debug("Searching " + imp)
+        relist={r'[ \t\r\f\v]+n\s+':'<b>' + imp + 
+                '</b> ~ <i>noun</i>:\n      ', 
+                r'[ \t\r\f\v]+adv\s+':'<b>' + imp + 
+                '</b> ~ <i>adverb</i>:\n      ',
+                r'[ \t\r\f\v]+adj\s+':'<b>' + imp + 
+                '</b> ~ <i>adjective</i>:\n      ',
+                r'[ \t\r\f\v]+v\s+':'<b>' + imp + 
+                '</b> ~ <i>verb</i>:\n      ',
+                r'\s+      \s+':' ',
+                r'"$':r'</span>',
+                r'\s+(\d+):(\D)':r'\n  <b>\1: </b>\2',
+                r'";\s*"':'</span><b>;</b> <span foreground="' + 
+                sencol + '">',
+                r';\s*"':r'\n        <span foreground="' + 
+                sencol + '">',
+                r'"\s+\[':r'</span>[',
+                r'\[syn:':r'\n        <i>Synonyms: ',
+                r'\[ant:':r'\n        <i>Antonyms: ',
+                r'}\]':r'}</i>',
+                r"\{([^{]*)\}":r'<span foreground="' + 
+                wordcol + r'">\1</span>',
+                r'"[ \t\r\f\v]+(.+)\n': r'</span> \1\n',
+                r'"\s*\-+\s*(.+)' : r"</span> - \1"}
+        for x, y in relist.items():
+            reclean = re.compile(x, re.MULTILINE)
+            soc = str(reclean.sub(y, soc))
         if not soc.find("`") == -1:
             soc = soc.replace("`", "'")
         if not soc.find("thunder started the sleeping") == -1:
@@ -527,37 +503,31 @@ class GUI:
 
     def clsfmt(self, clp, text):
         clp = clp.replace('wn:', '').rstrip()
-        swbtw = re.compile("(.)  " + text.lower() + "  (.)")
-        clp = swbtw.sub(r"\1  \2", clp)
-        clp = clp.replace('\n  ', '  ').rstrip()
-        clp = clp.replace("  " + text.lower() + "  ", "")
-        clp = clp.replace("  " + '"' + text.lower() + '"' +
-                          "  ", "")
-        clp = clp.replace("  " + text.lower() + "  ", "")
-        same_word = re.compile("  " + text.lower() + "$")
-        same_term = re.compile('  "' + text.lower() +
-                               '"' + "$")
-        clp = same_word.sub("", clp)
-        clp = same_term.sub("", clp)
-        clp = clp.strip().replace("  ", ", ")
+        subb = {r'\s+      \s+':r' ', 
+                "(.)  " + text.lower() + "  (.)":r"\1  \2",
+                r'\s*\n\s*':r' ',
+                text.lower() + "$":r'',
+                r"\s+": r", "}
+        for x, y in subb.items():
+            subr = re.compile(x)
+            clp = subr.sub(y, clp).strip()
         return clp
 
     def dictdef(self, text, wordcol, sencol):
         strat = "lev"
-        # ^ To change strategy used in 'Similar Words', change this value.
         try:
             prc = subprocess.Popen(["dict", "-d", "wn", text],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         except Exception as ex:
-            print("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
+            logging.error("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
         try:
             pro = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
                                     "--ipa", "-q", text],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         except Exception as ex:
-            print("Didnt Work! ERROR CODE: MANGO\n" + str(ex))
+            logging.error("Didnt Work! ERROR CODE: MANGO\n" + str(ex))
         try:
             clos = subprocess.Popen(["dict", "-m", "-d", "wn",
                                      "-s", strat, text],
@@ -575,10 +545,10 @@ class GUI:
                 soc = "Coundn't find definition for '" + text + "'."
                 crip = 1
         except Exception as ex:
-            print("Something went wrong while obtaining" +
+            logging.error("Something went wrong while obtaining" +
                   " definitions.\n" + str(ex))
         if crip == 1:
-            print("Failed")
+            logging.error("Failed")
         pro.wait()
         try:
             dcd = pro.stdout.read().decode()
@@ -626,17 +596,13 @@ class GUI:
 
     def randomword(self):
         try:
-            wnver31 = Path(cdefold + "wnver31")
-            if wnver31.is_file():
-                return linecache.getline('wn3.1', random.randint(0, 147478))
+            if wncheckonce:
+                return linecache.getline('wn' + wnver,
+                                         random.randint(0, 147478))
             else:
-                if wncheckonce:
-                    return linecache.getline('wn' + wnver,
-                                             random.randint(0, 147478))
-                else:
-                    threading.Thread(target=wncheck).start()
-                    return linecache.getline('wn3.1',
-                                             random.randint(0, 147478))
+                threading.Thread(target=wncheck).start()
+                return linecache.getline('wn3.1',
+                                         random.randint(0, 147478))
         except Exception as ex:
             logging.error("Random word search failed" + str(ex))
 
@@ -696,8 +662,7 @@ class GUI:
             sf = open(defdiag.get_filename(), 'w')
             startiter = viewer.get_buffer().get_start_iter()
             lastiter = viewer.get_buffer().get_end_iter()
-            sf.write(viewer.get_buffer().get_text(startiter,
-                                                  lastiter,
+            sf.write(viewer.get_buffer().get_text(startiter, lastiter,
                                                   'false'))
             sf.close()
             defdiag.hide()
