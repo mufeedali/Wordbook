@@ -413,8 +413,7 @@ class GUI:
 #                                     Synonyms and Antonyms.
         else:
             sencol = "blue"  # Color of sentences in regular
-            wordcol = "green"  # Color of: Similar Words,
-#                                Synonyms and Antonyms.
+            wordcol = "green"  # Color of: Similar Words, Synonyms and Antonyms.
         skip = ['00-database-allchars','00-database-info', '00-database-long',
                 '00-database-short', '00-database-url']
         if text in skip:
@@ -471,8 +470,7 @@ class GUI:
             logging.warning("Regex search failed" + str(ex))
         soc = soc.replace(imp + '\n', '')
         logging.debug("Searching " + imp)
-        relist={r'[ \t\r\f\v]+n\s+':'<b>' + imp +
-                '</b> ~ <i>noun</i>:\n      ',
+        relist={r'[ \t\r\f\v]+n\s+':'<b>' + imp + '</b> ~ <i>noun</i>:\n      ',
                 r'[ \t\r\f\v]+adv\s+':'<b>' + imp +
                 '</b> ~ <i>adverb</i>:\n      ',
                 r'[ \t\r\f\v]+adj\s+':'<b>' + imp +
@@ -497,7 +495,6 @@ class GUI:
         for x, y in relist.items():
             reclean = re.compile(x, re.MULTILINE)
             soc = str(reclean.sub(y, soc))
-        print(soc)
         if not soc.find("`") == -1:
             soc = soc.replace("`", "'")
         if not soc.find("thunder started the sleeping") == -1:
