@@ -39,8 +39,7 @@ from os.path import expanduser  # for detecting home folder
 from shutil import which  # for checks.
 import subprocess  # for running dict and others in background
 import random  # for Random Words
-import linecache
-from pathlib import Path
+import lzma
 import threading
 import html
 
@@ -60,9 +59,9 @@ parser.add_argument("-v", "--verbose", action="store_true",
 parsed = parser.parse_args()
 # logging is the most important. You have to let users know everything.
 if(parsed.verbose):
-    level=logging.DEBUG
+    level = logging.DEBUG
 else:
-    level=logging.WARNING
+    level = logging.WARNING
 logging.basicConfig(level=level, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
                     "%(lineno)d) %(message)s")
@@ -71,7 +70,7 @@ try:
     gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
     import gi.repository.Gtk as Gtk  # this is the GNOME depends
     if parsed.check:
-        sys.exit()
+        print("PyGOject bindings working")
 except ImportError as ierr:
     logging.fatal("Importing GObject failed!")
     if not parsed.check:
@@ -106,19 +105,19 @@ def lighter():
 def addbuilder():
     PATH = os.path.dirname(os.path.realpath(__file__))
     GLADEFILE = PATH + "/reo.ui"
+#    GLADEFILE = "/usr/share/reo/reo.ui"
     builder.add_from_file(GLADEFILE)
 
 
 def windowcall():
     window = builder.get_object('window')  # main window
-    if((os.environ.get('GTK_CSD')=='0') and
-       (os.environ.get('XDG_SESSION_TYPE')!='wayland')):
+    if((os.environ.get('GTK_CSD') == '0') and
+       (os.environ.get('XDG_SESSION_TYPE') != 'wayland')):
         headlabel = builder.get_object('headlabel')
         titles = builder.get_object('titles')
         titles.set_margin_end(0)
         titles.set_margin_start(0)
         headlabel.destroy()
-    # Gtk.Settings.get_default().set_property("gtk-theme-name", "Materia")
     window.set_title('Reo')
     window.show_all()
 
@@ -142,7 +141,7 @@ wncheckonce = False
 
 
 def wncheck():
-    global wnver, wncheckonce
+    global wnver, wncheckonce, wn
     if not wncheckonce:
         try:
             check = subprocess.Popen(["dict", "-d", "wn", "test"],
@@ -161,6 +160,7 @@ def wncheck():
             wnver = '3.0'
             logging.info("Using WordNet 3.0")
         wncheckonce = True
+    wn = str(lzma.open('wn' + wnver + '.lzma', 'r').read()).split('\\n')
 
 
 def adv():
@@ -177,8 +177,7 @@ def adv():
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
         check2t = check2.stdout.read().decode()
-        print("Dict Version Info:\n" +
-              check2t.strip())
+        print("Dict Version Info:\n" + check2t.strip())
     except Exception as ex:
         print("Looks like missing components. (dict)\n" + str(ex))
     print()
@@ -187,8 +186,7 @@ def adv():
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
         check3t = check3.stdout.read().decode()
-        print("eSpeak-ng Version Info:\n" +
-              check3t.strip())
+        print("eSpeak-ng Version Info:\n" + check3t.strip())
     except Exception as ex:
         print("You're missing a few components. (espeak-ng)\n" + str(ex))
     sys.exit()
@@ -206,11 +204,11 @@ def CheckBin(bintocheck):
     return bincheck
 
 
-def PrintChecks(espeakng, dict, dictd, wndict):
-    if (espeakng and dict and dictd and wndict):
+def PrintChecks(espeakng, dictc, dictd, wndict):
+    if (espeakng and dictc and dictd and wndict):
         print("Everything Looks Perfect!\n" +
               "You should be able to run it without any issues!")
-    elif (espeakng and dict and dictd and not wndict):
+    elif (espeakng and dictc and dictd and not wndict):
         print("WordNet's data file is missing. Re-install 'dict-wn'.\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install dict-wn'\n" +
@@ -218,7 +216,7 @@ def PrintChecks(espeakng, dict, dictd, wndict):
               "'pacaur -S dict-wn'\n" +
               "Everything else (NOT everything) looks fine...\n" +
               "... BUT you can't run it.")
-    elif (espeakng and not dict and not dictd and not wndict):
+    elif (espeakng and not dictc and not dictd and not wndict):
         print("dict and dictd (client and server) are missing.. install it." +
               "\nFor Ubuntu, Debian, etc:\n" +
               "'sudo apt install dictd dict-wn'\n" +
@@ -226,30 +224,30 @@ def PrintChecks(espeakng, dict, dictd, wndict):
               "'pacaur -S dictd dict-wn'\n" +
               "That should point you in the right direction to getting \n" +
               "it to work.")
-    elif (not espeakng and not dict and not dictd and not wndict):
+    elif (not espeakng and not dictc and not dictd and not wndict):
         print("ALL bits and pieces are Missing...\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install espeak-ng dictd dict-wn'\n" +
               "From community repo for Arch Linux (but WordNet from AUR):\n" +
               "'pacaur -S espeak-ng dictd dict-wn'\n" +
               "Go on, get it working now!")
-    elif (not espeakng and dict and dictd and wndict):
+    elif (not espeakng and dictc and dictd and wndict):
         print("Everything except eSpeak-ng is working...\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install espeak-ng'\n" +
               "From community repo for Arch Linux:\n" +
               "'pacaur -S espeak-ng' or 'sudo pacman -S espeak-ng'\n" +
               "It should be alright then.")
-    elif (not espeakng and dict and dictd and wndict):
-        print("eSpeak-ng is missing and WordNet might not work as intended.\n" +
-              "Install 'espeak-ng' and re-install the 'dict-wn' package.\n" +
+    elif (not espeakng and dictc and dictd and wndict):
+        print("eSpeak-ng is missing and WordNet might not work as intended.\n"
+              + "Install 'espeak-ng' and re-install the 'dict-wn' package.\n" +
               "For Ubuntu, Debian, etc:\n" +
               "'sudo apt install espeak-ng dict-wn'\n" +
               "From AUR for Arch Linux:\n" +
               "'pacaur -S espeak-ng dict-wn'\n" +
               "Everything else (NOT everything) looks fine.\n" +
               "Go on, try and run it!")
-    elif (not espeakng and dict and dictd and not wndict):
+    elif (not espeakng and dictc and dictd and not wndict):
         print("eSpeak-ng is missing and WordNet's data file is missing." +
               "Re-install 'dict-wn'.\n" +
               "For Ubuntu, Debian, etc:\n" +
@@ -262,7 +260,7 @@ def PrintChecks(espeakng, dict, dictd, wndict):
 
 def syscheck():
     espeakng = CheckBin('espeak-ng')
-    dict = CheckBin('dict')
+    dictc = CheckBin('dict')
     dictd = CheckBin('dictd')
     try:
         open('/usr/share/dictd/wn.dict.dz')
@@ -272,7 +270,7 @@ def syscheck():
         logging.warning("WordNet database is not found! Probably won't work." +
                         "\n" + str(ex))
         wndict = False
-    PrintChecks(espeakng, dict, dictd, wndict)
+    PrintChecks(espeakng, dictc, dictd, wndict)
     sys.exit()
 
 
@@ -293,17 +291,18 @@ if (os.path.exists(reofold + "/dark") and
    not os.path.exists(reofold + "/light")):  # check for Dark mode file
     darker()
 elif (not os.path.exists(reofold + "/dark") and
-    os.path.exists(reofold + "/light")):
+      os.path.exists(reofold + "/light")):
     lighter()
 if os.path.exists(reofold + "/wnver31"):
     logging.info("Using WordNet 3.1 as per local config")
+    wnver = '3.1'
     wncheckonce = True
+threading.Thread(target=wncheck).start()
 
 
 class GUI:
 
     def on_window_destroy(self, window):
-        linecache.clearcache()
         Gtk.main_quit()
 
     def icon_press(self, imagemenuitem4):
@@ -348,7 +347,7 @@ class GUI:
                                        stderr=subprocess.PIPE)
             fortune.wait()
             ft = fortune.stdout.read().decode()
-            ft = html.escape(ft,False)
+            ft = html.escape(ft, False)
             return "<tt>" + ft + "</tt>"
         except Exception as ex:
             ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
@@ -413,8 +412,8 @@ class GUI:
 #                                     Synonyms and Antonyms.
         else:
             sencol = "blue"  # Color of sentences in regular
-            wordcol = "green"  # Color of: Similar Words, Synonyms and Antonyms.
-        skip = ['00-database-allchars','00-database-info', '00-database-long',
+            wordcol = "green"  # Color of: Similar Words, Synonyms, Antonyms.
+        skip = ['00-database-allchars', '00-database-info', '00-database-long',
                 '00-database-short', '00-database-url']
         if text in skip:
             return "<tt> Running Reo with WordNet " + wnver + "</tt>"
@@ -442,9 +441,9 @@ class GUI:
     def cdef(self, text, wordcol, sencol):
         with open(cdefold + '/' + text, 'r') as cdfile:
             cdefread = cdfile.read()
-            relist={"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
-                    "($WORDCOL)": wordcol, "($SENCOL)": sencol,
-                    "$WORDCOL": wordcol, "$SENCOL": sencol}
+            relist = {"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
+                      "($WORDCOL)": wordcol, "($SENCOL)": sencol,
+                      "$WORDCOL": wordcol, "$SENCOL": sencol}
             for i, j in relist.items():
                 cdefread = cdefread.replace(i, j)
             if "\n[warninghide]" in cdefread:
@@ -470,31 +469,32 @@ class GUI:
             logging.warning("Regex search failed" + str(ex))
         soc = soc.replace(imp + '\n', '')
         logging.debug("Searching " + imp)
-        relist={r'[ \t\r\f\v]+n\s+':'<b>' + imp + '</b> ~ <i>noun</i>:\n      ',
-                r'[ \t\r\f\v]+adv\s+':'<b>' + imp +
-                '</b> ~ <i>adverb</i>:\n      ',
-                r'[ \t\r\f\v]+adj\s+':'<b>' + imp +
-                '</b> ~ <i>adjective</i>:\n      ',
-                r'[ \t\r\f\v]+v\s+':'<b>' + imp +
-                '</b> ~ <i>verb</i>:\n      ',
-                r'\s+      \s+':' ',
-                r'"$':r'</span>',
-                r'\s+(\d+):(\D)':r'\n  <b>\1: </b>\2',
-                r'";\s*"':'</span><b>;</b> <span foreground="' +
-                sencol + '">',
-                r';\s*"':r'\n        <span foreground="' +
-                sencol + '">',
-                r'"\s+\[':r'</span>[',
-                r'\[syn:':r'\n        <i>Synonyms: ',
-                r'\[ant:':r'\n        <i>Antonyms: ',
-                r'}\]':r'}</i>',
-                r"\{([^{]*)\}":r'<span foreground="' +
-                wordcol + r'">\1</span>',
-                r'"[ \t\r\f\v]+(.+)\n': r'</span> \1\n',
-                r'"\s*\-+\s*(.+)' : r"</span> - \1"}
+        relist = {r'[ \t\r\f\v]+n\s+': '<b>' + imp +
+                  '</b> ~ <i>noun</i>:\n      ',
+                  r'[ \t\r\f\v]+adv\s+': '<b>' + imp +
+                  '</b> ~ <i>adverb</i>:\n      ',
+                  r'[ \t\r\f\v]+adj\s+': '<b>' + imp +
+                  '</b> ~ <i>adjective</i>:\n      ',
+                  r'[ \t\r\f\v]+v\s+': '<b>' + imp +
+                  '</b> ~ <i>verb</i>:\n      ',
+                  r'\s+      \s+': ' ',
+                  r'"$': r'</span>',
+                  r'\s+(\d+):(\D)': r'\n  <b>\1: </b>\2',
+                  r'";\s*"': '</span><b>;</b> <span foreground="' +
+                  sencol + '">',
+                  r'[;:]\s*"': r'\n        <span foreground="' +
+                  sencol + '">',
+                  r'"\s+\[': r'</span>[',
+                  r'\[syn:': r'\n        <i>Synonyms: ',
+                  r'\[ant:': r'\n        <i>Antonyms: ',
+                  r'}\]': r'}</i>',
+                  r"\{([^{]*)\}": r'<span foreground="' +
+                  wordcol + r'">\1</span>',
+                  r'"[ \t\r\f\v]+(.+)\n': r'</span> \1\n',
+                  r'"\s*\-+\s*(.+)': r"</span> - \1"}
         for x, y in relist.items():
             reclean = re.compile(x, re.MULTILINE)
-            soc = str(reclean.sub(y, soc))
+            soc = reclean.sub(y, soc)
         if not soc.find("`") == -1:
             soc = soc.replace("`", "'")
         if not soc.find("thunder started the sleeping") == -1:
@@ -505,10 +505,10 @@ class GUI:
 
     def clsfmt(self, clp, text):
         clp = clp.replace('wn:', '').rstrip()
-        subb = {r'\s+      \s+':r' ',
-                "(.)  " + text.lower() + "  (.)":r"\1  \2",
-                r'\s*\n\s*':r' ',
-                text.lower() + "$":r'',
+        subb = {r'\s+      \s+': r' ',
+                "(.)  " + text.lower() + "  (.)": r"\1  \2",
+                r'\s*\n\s*': r' ',
+                text.lower() + "$": r'',
                 r"\s+": r", "}
         for x, y in subb.items():
             subr = re.compile(x)
@@ -521,22 +521,16 @@ class GUI:
             prc = subprocess.Popen(["dict", "-d", "wn", text],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
-        except Exception as ex:
-            logging.error("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
-        try:
             pro = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
                                     "--ipa", "-q", text],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
-        except Exception as ex:
-            logging.error("Didnt Work! ERROR CODE: MANGO\n" + str(ex))
-        try:
             clos = subprocess.Popen(["dict", "-m", "-d", "wn",
                                      "-s", strat, text],
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE)
         except Exception as ex:
-            print("Didnt Work! ERROR CODE: PAPAYA\n" + str(ex))
+            logging.error("Didnt Work! ERROR INFO: " + str(ex))
         prc.wait()
         try:
             proc = prc.stdout.read().decode()
@@ -548,7 +542,7 @@ class GUI:
                 crip = 1
         except Exception as ex:
             logging.error("Something went wrong while obtaining" +
-                  " definitions.\n" + str(ex))
+                          " definitions.\n" + str(ex))
         if crip == 1:
             logging.error("Failed")
         pro.wait()
@@ -565,7 +559,7 @@ class GUI:
         clp = self.clsfmt(clp, text)
         if clp == '':
             fail = 1
-        if text == 'recursion':
+        if text.lower() == 'recursion':
             clp = 'recursion'
             fail = 0
         if pro and not crip == 1:
@@ -596,21 +590,9 @@ class GUI:
         ced = builder.get_object('ced')
         ced.response(Gtk.ResponseType.OK)
 
-    def randomword(self):
-        try:
-            if wncheckonce:
-                return linecache.getline('wn' + wnver,
-                                         random.randint(0, 147478))
-            else:
-                threading.Thread(target=wncheck).start()
-                return linecache.getline('wn3.1',
-                                         random.randint(0, 147478))
-        except Exception as ex:
-            logging.error("Random word search failed" + str(ex))
-
     def randword(self, mnurand):
         sb = builder.get_object('searchEntry')  # searchbox
-        rw = self.randomword()
+        rw = random.choice(wn)
         sb.set_text(rw.strip())
         self.searchClick()
         sb.grab_focus()
