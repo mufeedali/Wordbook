@@ -21,7 +21,7 @@ If the output is slow, it's possibly because the definition is obtained from dic
  * Neat output with proper coloring and formatting
  * Random Word
  * Custom Definitions feature using Pango Markup Syntax for formatting
- * Lightweight. 3.7 mb only and further reducible (It does nothing on its own, so yeah)
+ * Lightweight. 1 mb only and further reducible (It does nothing on its own, so yeah)
  * Support for GNOME Dark Mode and launching app in dark mode. Also supports gtk3-nocsd.
 
 #### Future
