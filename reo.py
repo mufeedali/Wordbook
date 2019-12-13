@@ -1,35 +1,37 @@
 #!/usr/bin/env python3
-#
-# Could use just '#!/usr/bin/env python' if you're NOT on Ubuntu or any other
-# distribution that has python2 as the main python version. But it has to be
-# run through Python 3, not Python 2.
-#
-# The MIT License (MIT)
-#
-# Copyright (c) 2016-2019 Mufeed Ali
-# This file is part of Reo
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-#
-# Author: Mufeed Ali
-#
-# Now, beginning with the Imports.
+"""Reo is a dictionary application made with Python and Gtk+3.
+
+It's a simple script basically. It uses existing tools and as such, easily
+works across most Linux distributions without any changes.
+
+The MIT License (MIT)
+
+Copyright (c) 2016-2019 Mufeed Ali
+This file is part of Reo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Author: Mufeed Ali
+
+Now, beginning with the Imports.
+"""
+
 import sys
 import logging
 import argparse  # for CommandLine-Interface (CLI).
@@ -89,6 +91,7 @@ builder = Gtk.Builder()
 
 
 def darker():
+    """Switch to Dark mode."""
     global dark
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", True)
@@ -96,21 +99,19 @@ def darker():
 
 
 def lighter():
+    """Switch to Light mode."""
     global dark
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", False)
     dark = False
 
 
-def addbuilder():
-    PATH = os.path.dirname(os.path.realpath(__file__))
-    GLADEFILE = PATH + "/reo.ui"
-#    GLADEFILE = "/usr/share/reo/reo.ui"
-    builder.add_from_file(GLADEFILE)
-
-
 def windowcall():
+    """Call the window."""
+    global sb, viewer
     window = builder.get_object('window')  # main window
+    sb = builder.get_object('searchEntry')  # Search box
+    viewer = builder.get_object('defView')  # Data Space
     if((os.environ.get('GTK_CSD') == '0') and
        (os.environ.get('XDG_SESSION_TYPE') != 'wayland')):
         headlabel = builder.get_object('headlabel')
@@ -119,6 +120,7 @@ def windowcall():
         titles.set_margin_start(0)
         headlabel.destroy()
     window.set_title('Reo')
+    sb.grab_focus()
     window.show_all()
 
 
@@ -132,7 +134,10 @@ if not parsed.adversion and not parsed.check:
         darker()
     elif parsed.light:
         lighter()
-    addbuilder()
+    PATH = os.path.dirname(os.path.realpath(__file__))
+    GLADEFILE = PATH + "/reo.ui"
+#    GLADEFILE = "/usr/share/reo/reo.ui"
+    builder.add_from_file(GLADEFILE)
     windowcall()
 
 
@@ -141,6 +146,7 @@ wncheckonce = False
 
 
 def wncheck():
+    """Check if WordNet is properly installed."""
     global wnver, wncheckonce, wn
     if not wncheckonce:
         try:
@@ -164,6 +170,7 @@ def wncheck():
 
 
 def adv():
+    """Check all requirements thoroughly."""
     print('Reo - master')
     print('Copyright 2016-2019 Mufeed Ali')
     print()
@@ -193,6 +200,7 @@ def adv():
 
 
 def CheckBin(bintocheck):
+    """Check presence of required binaries."""
     try:
         which(bintocheck)
         print(bintocheck + " seems to be installed. OK.")
@@ -205,6 +213,7 @@ def CheckBin(bintocheck):
 
 
 def PrintChecks(espeakng, dictc, dictd, wndict):
+    """Print result of all checks."""
     if (espeakng and dictc and dictd and wndict):
         print("Everything Looks Perfect!\n" +
               "You should be able to run it without any issues!")
@@ -259,16 +268,15 @@ def PrintChecks(espeakng, dictc, dictd, wndict):
 
 
 def syscheck():
+    """Check requirements but not thoroughly."""
     espeakng = CheckBin('espeak-ng')
     dictc = CheckBin('dict')
     dictd = CheckBin('dictd')
-    try:
-        open('/usr/share/dictd/wn.dict.dz')
+    if os.path.exists('/usr/share/dictd/wn.dict.dz'):
         print('WordNet databse seems to be installed. OK.')
         wndict = True
-    except Exception as ex:
-        logging.warning("WordNet database is not found! Probably won't work." +
-                        "\n" + str(ex))
+    else:
+        logging.warning("WordNet database is not found! Probably won't work.")
         wndict = False
     PrintChecks(espeakng, dictc, dictd, wndict)
     sys.exit()
@@ -301,11 +309,14 @@ threading.Thread(target=wncheck).start()
 
 
 class GUI:
+    """Define all UI actions and sub-actions."""
 
     def on_window_destroy(self, window):
+        """Clear all windows."""
         Gtk.main_quit()
 
     def icon_press(self, imagemenuitem4):
+        """Open About Window."""
         about = builder.get_object('aboutReo')
         response = about.run()
         if (response == Gtk.ResponseType.DELETE_EVENT or
@@ -313,22 +324,18 @@ class GUI:
             about.hide()
 
     def sst(self, imagemenuitem1):
-        sb = builder.get_object('searchEntry')  # Search box
-        viewer = builder.get_object('defView')  # Data Space
-        try:
-            dec, dek = viewer.get_buffer().get_selection_bounds()
-            text = viewer.get_buffer().get_text(dec, dek, True)
-            text = text.replace('-\n         ', '-').replace('\n', ' ')
-            text = text.replace('         ', '')
-            sb.set_text(text)
-            if not text == '' and not text.isspace():
-                self.searchClick()
-                sb.grab_focus()
-        except Exception as ex:
-            logging.error("Searching selected text failed\n" + str(ex))
-            return
+        """Search selected text."""
+        dec, dek = viewer.get_buffer().get_selection_bounds()
+        text = viewer.get_buffer().get_text(dec, dek, True)
+        text = text.replace('-\n         ', '-').replace('\n', ' ')
+        text = text.replace('         ', '')
+        sb.set_text(text)
+        if not text == '' and not text.isspace():
+            self.searchClick()
+            sb.grab_focus()
 
     def newced(self, title, primary, secondary):
+        """Show error dialog."""
         cept = builder.get_object('cept')
         cest = builder.get_object('cest')
         ced = builder.get_object('ced')
@@ -341,6 +348,7 @@ class GUI:
             ced.hide()
 
     def fortune(self):
+        """Present fortune easter egg."""
         try:
             fortune = subprocess.Popen(["fortune", "-a"],
                                        stdout=subprocess.PIPE,
@@ -355,6 +363,7 @@ class GUI:
             return "<tt>" + ft + "</tt>"
 
     def cowfortune(self):
+        """Present cowsay version of fortune easter egg."""
         try:
             cowsay = subprocess.Popen(["cowsay", self.fortune()],
                                       stdout=subprocess.PIPE,
@@ -370,19 +379,16 @@ class GUI:
             return "<tt>" + ft + "</tt>"
 
     def searchClick(self, searchButton=None):
-        sb = builder.get_object('searchEntry')  # searchbox
-        viewer = builder.get_object('defView')  # Data Space
+        """Pass data to search function and set TextView data."""
         if viewer.get_monospace():
             viewer.set_monospace(False)
         viewer.get_buffer().set_text("")
         lastiter = viewer.get_buffer().get_end_iter()
-        try:
-            out = self.search(sb.get_text())
-            viewer.get_buffer().insert_markup(lastiter, out, -1)
-        except Exception as ex:
-            print("Didn't work." + str(ex))
+        out = self.search(sb.get_text())
+        viewer.get_buffer().insert_markup(lastiter, out, -1)
 
     def search(self, sb):
+        """Clean input text, give errors and pass data to reactor."""
         if (not sb.strip('<>"?`![]()/\\:;,') == '' and
                 not sb.isspace() and not sb == ''):
             text = sb.strip().strip('<>"?`![]()/\\:;,')
@@ -405,6 +411,7 @@ class GUI:
                         " there! You sure \nyou typed something?")
 
     def reactor(self, text):
+        """Check easter eggs and set variables."""
         global searched
         if dark:
             sencol = "cyan"  # Color of sentences in Dark mode
@@ -439,6 +446,7 @@ class GUI:
             return self.generator(text, wordcol, sencol)
 
     def cdef(self, text, wordcol, sencol):
+        """Present custom definition when available."""
         with open(cdefold + '/' + text, 'r') as cdfile:
             cdefread = cdfile.read()
             relist = {"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
@@ -456,10 +464,11 @@ class GUI:
                        ' this.</span>')
 
     def defProcessor(self, proc, text, sencol, wordcol):
+        """Format the definition obtained from 'dict'."""
         soc = proc.replace('1 definition found\n\nFrom WordNet (r)' +
                            ' 3.0 (2006) [wn]:\n', '')
-        soc = soc.replace('1 definition found\n\nFrom WordNet' +
-                          ' (r) 3.1 (2011) [wn]:\n', '')
+        soc = soc.replace('1 definition found\n\nFrom WordNet (r)' +
+                          ' 3.1 (2011) [wn]:\n', '')
         soc = html.escape(soc, False)
         try:
             imp = re.search("  " + text, soc,
@@ -468,7 +477,7 @@ class GUI:
             imp = ''
             logging.warning("Regex search failed" + str(ex))
         soc = soc.replace(imp + '\n', '')
-        logging.debug("Searching " + imp)
+        logging.debug("Searching " + imp.strip())
         relist = {r'[ \t\r\f\v]+n\s+': '<b>' + imp +
                   '</b> ~ <i>noun</i>:\n      ',
                   r'[ \t\r\f\v]+adv\s+': '<b>' + imp +
@@ -477,7 +486,8 @@ class GUI:
                   '</b> ~ <i>adjective</i>:\n      ',
                   r'[ \t\r\f\v]+v\s+': '<b>' + imp +
                   '</b> ~ <i>verb</i>:\n      ',
-                  r'\s+      \s+': ' ',
+                  r'([-]+)\s+      \s+': r'\1',
+                  r'\s+      \s+': r' ',
                   r'"$': r'</span>',
                   r'\s+(\d+):(\D)': r'\n  <b>\1: </b>\2',
                   r'";\s*"': '</span><b>;</b> <span foreground="' +
@@ -490,7 +500,9 @@ class GUI:
                   r'}\]': r'}</i>',
                   r"\{([^{]*)\}": r'<span foreground="' +
                   wordcol + r'">\1</span>',
-                  r'"[ \t\r\f\v]+(.+)\n': r'</span> \1\n',
+                  r'";[ \t\r\f\v]*$': r'</span>',
+                  r'";[ \t\r\f\v]+(.+)$': r'</span> \1',
+                  r'"[; \t\r\f\v]+(\(.+\))$': r'</span> \1',
                   r'"\s*\-+\s*(.+)': r"</span> - \1"}
         for x, y in relist.items():
             reclean = re.compile(x, re.MULTILINE)
@@ -504,18 +516,24 @@ class GUI:
         return soc
 
     def clsfmt(self, clp, text):
-        clp = clp.replace('wn:', '').rstrip()
-        subb = {r'\s+      \s+': r' ',
+        """Format the similar words list obtained."""
+        subb = {r'\s+      \s+': r'  ',
+                '  ["]*' + text.lower() + '["]*$': r'',
                 "(.)  " + text.lower() + "  (.)": r"\1  \2",
-                r'\s*\n\s*': r' ',
-                text.lower() + "$": r'',
-                r"\s+": r", "}
+                'wn: ["]*' + text.lower() + '["]*  (.)': r"\1",
+                '(.)  "' + text.lower() + '"  (.)': r"\1  \2",
+                r'\s*\n\s*': r'  ',
+                r"\s\s+": r", ",
+                '["]+' + text.lower() + '["]+': r"",
+                'wn:[,]*': r''}
         for x, y in subb.items():
             subr = re.compile(x)
             clp = subr.sub(y, clp).strip()
+        clp = clp.rstrip()
         return clp
 
     def dictdef(self, text, wordcol, sencol):
+        """Obtain all outputs from dict and espeak and return final result."""
         strat = "lev"
         try:
             prc = subprocess.Popen(["dict", "-d", "wn", text],
@@ -532,79 +550,64 @@ class GUI:
         except Exception as ex:
             logging.error("Didnt Work! ERROR INFO: " + str(ex))
         prc.wait()
-        try:
-            proc = prc.stdout.read().decode()
-            if not proc == '':
-                soc = self.defProcessor(proc, text, sencol, wordcol)
-                crip = 0
-            else:
-                soc = "Coundn't find definition for '" + text + "'."
-                crip = 1
-        except Exception as ex:
-            logging.error("Something went wrong while obtaining" +
-                          " definitions.\n" + str(ex))
-        if crip == 1:
-            logging.error("Failed")
+        proc = prc.stdout.read().decode()
+        if not proc == '':
+            soc = self.defProcessor(proc, text, sencol, wordcol)
+            crip = 0
+        else:
+            soc = "Coundn't find definition for '" + text + "'."
+            crip = 1
         pro.wait()
-        try:
-            dcd = pro.stdout.read().decode()
-            pron = " /" + dcd.strip().replace('\n ', ' ') + "/"
-        except Exception as ex:
-            pron = str('ERROR: Something went wrong' +
-                       ' with pronunications.')
-            print(ex)
+        pron = pro.stdout.read().decode()
+        pron = " /" + pron.strip().replace('\n ', ' ') + "/"
         clos.wait()
         clp = clos.stdout.read().decode()
-        fail = 0
         clp = self.clsfmt(clp, text)
-        if clp == '':
-            fail = 1
+        fail = 0
         if text.lower() == 'recursion':
             clp = 'recursion'
-            fail = 0
+        if clp == '':
+            fail = 1
         if pro and not crip == 1:
-            pron = "Pronunciation: <b>" + pron + '</b>' + '\n'
+            pron = "<b>Pronunciation</b>: <b>" + pron + '</b>'
         elif pro and crip == 1:
-            pron = "Probable Pronunciation: <b>" + pron + '</b>\n'
+            pron = "<b>Probable Pronunciation</b>: <b>" + pron + '</b>'
         if fail == 0:
-            cclp = clp.replace('\n  ', '  ')
-            cleanclp = cclp.strip().replace('  ', ', ')
             if crip == 1:
-                cleanclp = ('<b>Did you mean</b>:\n<i><span foreground="' +
-                            wordcol + '">  ' + cleanclp + '</span></i>')
+                clp = ('<b>Did you mean</b>:\n<i><span foreground="' +
+                       wordcol + '">  ' + clp + '</span></i>')
             else:
-                cleanclp = ('<b>Similar Words</b>:\n' +
-                            '<i><span foreground="' + wordcol + '">  ' +
-                            cleanclp + '</span></i>')
-        else:
-            cleanclp = ""
-        return pron.rstrip() + '\n' + soc + '\n' + cleanclp.strip()
+                clp = ('<b>Similar Words</b>:\n' +
+                       '<i><span foreground="' + wordcol + '">  ' +
+                       clp + '</span></i>')
+        return pron.strip() + '\n' + soc + '\n' + clp.strip()
 
     def generator(self, text, wordcol, sencol):
-        try:
+        """Check if custom definition exists."""
+        if os.path.exists(cdefold + '/' + text.lower()):
             return self.cdef(text, wordcol, sencol)
-        except Exception:
+        else:
             return self.dictdef(text, wordcol, sencol)
 
     def cedok(self, cedok):
+        """Generate OK response from error dialog."""
         ced = builder.get_object('ced')
         ced.response(Gtk.ResponseType.OK)
 
     def randword(self, mnurand):
-        sb = builder.get_object('searchEntry')  # searchbox
+        """Choose a random word and pass it to the search box."""
         rw = random.choice(wn)
         sb.set_text(rw.strip())
         self.searchClick()
         sb.grab_focus()
 
     def clear(self, clearButton):
-        sb = builder.get_object('searchEntry')  # searchbox
-        viewer = builder.get_object('defView')  # Data Space
+        """Clear text in the Search box and the Data space."""
         sb.set_text("")
         viewer.get_buffer().set_text("")
 
     def audio(self, audioButton):
-        sb = builder.get_object('searchEntry')  # searchbox
+        """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
         if searched and not sb.get_text() == '':
             with open(os.devnull, 'w') as NULLMAKER:
@@ -622,22 +625,23 @@ class GUI:
                         "-Speech Software!")
 
     def changed(self, searchEntry):
-        sb = builder.get_object('searchEntry')  # searchbox
+        """Detect changes to Search box and clean."""
         global searched
         searched = False
         sb.set_text(sb.get_text().replace('\n', ' '))
         sb.set_text(sb.get_text().replace('         ', ''))
 
     def quitb(self, imagemenuitem10):
+        """Quit using menu."""
         Gtk.main_quit()
 
     def savedef(self, imagemenuitem2):
+        """Save definition using FileChooser dialog."""
         defdiag = Gtk.FileChooserDialog("Save Definition as...",
                                         builder.get_object('window'),
                                         Gtk.FileChooserAction.SAVE,
                                         ("Save", Gtk.ResponseType.OK,
                                          "Cancel", Gtk.ResponseType.CANCEL))
-        viewer = builder.get_object('defView')  # Data Space
         response = defdiag.run()
         if (response == Gtk.ResponseType.DELETE_EVENT or
                 response == Gtk.ResponseType.CANCEL):

@@ -13,6 +13,8 @@
  * Gtk+ 3.20+
  * eSpeak-ng (For pronunciations and audio)
 
+You can confirm all the requirements by running Reo with the arguments `--check` (`-c`) or `--adversion` (`-d`).
+
 #### Slow?
 If the output is slow, it's possibly because the definition is obtained from dict.org rather than localhost. So, run  
 `sudo systemctl enable dictd.service && sudo systemctl start dictd.service`
