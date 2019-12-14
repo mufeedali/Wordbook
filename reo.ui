@@ -368,17 +368,13 @@ Author: Mufeed Ali
     <property name="type_hint">normal</property>
     <property name="transient_for">window</property>
     <property name="program_name">Reo ~ The Simple Dictionary</property>
-    <property name="version">0.6.3⍺</property>
     <property name="copyright" translatable="yes">Copyright © 2016-2019 Mufeed Ali</property>
-    <property name="comments" translatable="yes">Reo is a dictionary application that uses dict, dict-wn and eSpeak to provide a complete user interface.</property>
+    <property name="comments" translatable="yes">Reo is a dictionary application that uses dictd, dict-wn and eSpeak-ng to provide a complete user interface.</property>
     <property name="website">http://www.github.com/lastweakness/reo</property>
     <property name="website_label" translatable="yes">Visit Github Page</property>
     <property name="authors">Mufeed Ali</property>
     <property name="logo_icon_name">accessories-dictionary</property>
     <property name="license_type">mit-x11</property>
-    <child>
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">
         <property name="can_focus">False</property>

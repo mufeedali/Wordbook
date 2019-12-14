@@ -45,6 +45,8 @@ import lzma
 import threading
 import html
 
+reo_version = "master"
+
 # Readying ArgParser
 parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
 mgroup = parser.add_mutually_exclusive_group()
@@ -152,7 +154,7 @@ def wncheck():
         try:
             check = subprocess.Popen(["dict", "-d", "wn", "test"],
                                      stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
+                                     stderr=subprocess.STDOUT)
             checkt = check.stdout.read().decode()
         except Exception as ex:
             print("Error with dict. Error")
@@ -171,7 +173,7 @@ def wncheck():
 
 def adv():
     """Check all requirements thoroughly."""
-    print('Reo - master')
+    print('Reo - ' + reo_version)
     print('Copyright 2016-2019 Mufeed Ali')
     print()
     wncheck()
@@ -182,7 +184,7 @@ def adv():
     try:
         check2 = subprocess.Popen(["dict", "-V"],
                                   stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
+                                  stderr=subprocess.STDOUT)
         check2t = check2.stdout.read().decode()
         print("Dict Version Info:\n" + check2t.strip())
     except Exception as ex:
@@ -191,7 +193,7 @@ def adv():
     try:
         check3 = subprocess.Popen(["espeak-ng", "--version"],
                                   stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
+                                  stderr=subprocess.STDOUT)
         check3t = check3.stdout.read().decode()
         print("eSpeak-ng Version Info:\n" + check3t.strip())
     except Exception as ex:
@@ -318,6 +320,7 @@ class GUI:
     def icon_press(self, imagemenuitem4):
         """Open About Window."""
         about = builder.get_object('aboutReo')
+        about.set_version(reo_version)
         response = about.run()
         if (response == Gtk.ResponseType.DELETE_EVENT or
                 response == Gtk.ResponseType.CANCEL):
@@ -352,7 +355,7 @@ class GUI:
         try:
             fortune = subprocess.Popen(["fortune", "-a"],
                                        stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
+                                       stderr=subprocess.STDOUT)
             fortune.wait()
             ft = fortune.stdout.read().decode()
             ft = html.escape(ft, False)
@@ -367,7 +370,7 @@ class GUI:
         try:
             cowsay = subprocess.Popen(["cowsay", self.fortune()],
                                       stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE)
+                                      stderr=subprocess.STDOUT)
             cowsay.wait()
             if cowsay:
                 cst = cowsay.stdout.read().decode()
@@ -538,15 +541,15 @@ class GUI:
         try:
             prc = subprocess.Popen(["dict", "-d", "wn", text],
                                    stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
+                                   stderr=subprocess.STDOUT)
             pro = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
                                     "--ipa", "-q", text],
                                    stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
+                                   stderr=subprocess.STDOUT)
             clos = subprocess.Popen(["dict", "-m", "-d", "wn",
                                      "-s", strat, text],
                                     stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+                                    stderr=subprocess.STDOUT)
         except Exception as ex:
             logging.error("Didnt Work! ERROR INFO: " + str(ex))
         prc.wait()
