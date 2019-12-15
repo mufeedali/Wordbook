@@ -73,6 +73,7 @@ try:
     import gi  # this is the GObject stuff needed for GTK+
     gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
     import gi.repository.Gtk as Gtk  # this is the GNOME depends
+    import gi.repository.Gdk as Gdk
     if parsed.check:
         print("PyGOject bindings working")
 except ImportError as ierr:
@@ -328,8 +329,7 @@ class GUI:
 
     def sst(self, imagemenuitem1):
         """Search selected text."""
-        dec, dek = viewer.get_buffer().get_selection_bounds()
-        text = viewer.get_buffer().get_text(dec, dek, True)
+        text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
         text = text.replace('         ', '')
         sb.set_text(text)
@@ -506,7 +506,8 @@ class GUI:
                   r'";[ \t\r\f\v]*$': r'</span>',
                   r'";[ \t\r\f\v]+(.+)$': r'</span> \1',
                   r'"[; \t\r\f\v]+(\(.+\))$': r'</span> \1',
-                  r'"\s*\-+\s*(.+)': r"</span> - \1"}
+                  r'"\s*\-+\s*(.+)\s*([<]*)': r"</span> - \1; \2",
+                  r';\s*$': r''}
         for x, y in relist.items():
             reclean = re.compile(x, re.MULTILINE)
             soc = reclean.sub(y, soc)
@@ -541,15 +542,15 @@ class GUI:
         try:
             prc = subprocess.Popen(["dict", "-d", "wn", text],
                                    stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
+                                   stderr=subprocess.PIPE)
             pro = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
                                     "--ipa", "-q", text],
                                    stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
+                                   stderr=subprocess.PIPE)
             clos = subprocess.Popen(["dict", "-m", "-d", "wn",
                                      "-s", strat, text],
                                     stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT)
+                                    stderr=subprocess.PIPE)
         except Exception as ex:
             logging.error("Didnt Work! ERROR INFO: " + str(ex))
         prc.wait()
