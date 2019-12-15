@@ -337,6 +337,14 @@ class GUI:
             self.searchClick()
             sb.grab_focus()
 
+    def paste_search(self, pastensearch):
+        """Search text in clipboard."""
+        text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
+        sb.set_text(text)
+        if not text == '' and not text.isspace():
+            self.searchClick()
+            sb.grab_focus()
+
     def newced(self, title, primary, secondary):
         """Show error dialog."""
         cept = builder.get_object('cept')

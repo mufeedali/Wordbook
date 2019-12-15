@@ -59,6 +59,11 @@ Author: Mufeed Ali
     <property name="can_focus">False</property>
     <property name="icon_name">audio-speakers-symbolic</property>
   </object>
+  <object class="GtkImage" id="pasteimg">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">edit-paste-symbolic</property>
+  </object>
   <object class="GtkImage" id="randimg">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -89,6 +94,17 @@ Author: Mufeed Ali
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
+              <object class="GtkImageMenuItem" id="pastensearch">
+                <property name="label" translatable="yes">Paste &amp; Search</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="image">pasteimg</property>
+                <property name="use_stock">False</property>
+                <signal name="activate" handler="paste_search" swapped="no"/>
+                <accelerator key="v" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+              </object>
+            </child>
+            <child>
               <object class="GtkImageMenuItem" id="sstmenubutton">
                 <property name="label" translatable="yes">Search Selected Text</property>
                 <property name="visible">True</property>
@@ -116,7 +132,6 @@ Author: Mufeed Ali
                 <property name="can_focus">False</property>
                 <property name="image">randimg</property>
                 <property name="use_stock">False</property>
-                <property name="always_show_image">True</property>
                 <signal name="activate" handler="randword" swapped="no"/>
                 <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -367,14 +382,17 @@ Author: Mufeed Ali
     <property name="icon_name">accessories-dictionary</property>
     <property name="type_hint">normal</property>
     <property name="transient_for">window</property>
-    <property name="program_name">Reo ~ The Simple Dictionary</property>
+    <property name="program_name">Reo</property>
     <property name="copyright" translatable="yes">Copyright © 2016-2019 Mufeed Ali</property>
     <property name="comments" translatable="yes">Reo is a dictionary application that uses dictd, dict-wn and eSpeak-ng to provide a complete user interface.</property>
-    <property name="website">http://www.github.com/lastweakness/reo</property>
-    <property name="website_label" translatable="yes">Visit Github Page</property>
+    <property name="website">http://lastweakness.github.io/reo</property>
+    <property name="website_label" translatable="yes">Visit Website</property>
     <property name="authors">Mufeed Ali</property>
     <property name="logo_icon_name">accessories-dictionary</property>
     <property name="license_type">mit-x11</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">
         <property name="can_focus">False</property>
