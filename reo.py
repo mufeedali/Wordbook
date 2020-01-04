@@ -1,49 +1,49 @@
-#!/usr/bin/env python3
-"""Reo is a dictionary application made with Python and Gtk+3.
+#!/usr/bin/python
+"""
+Reo is a dictionary application made with Python and Gtk+3.
 
 It's a simple script basically. It uses existing tools and as such, easily
 works across most Linux distributions without any changes.
-
-The MIT License (MIT)
-
-Copyright (c) 2016-2019 Mufeed Ali
-This file is part of Reo
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Author: Mufeed Ali
-
-Now, beginning with the Imports.
 """
+# The MIT License (MIT)
+
+# Copyright (c) 2016-2019 Mufeed Ali
+# This file is part of Reo
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# Author: Mufeed Ali
+
+# Now, beginning with the Imports.
 
 import sys
 import logging
 import argparse  # for CommandLine-Interface (CLI).
-import re  # regular expressions
 import os
 from os.path import expanduser  # for detecting home folder
 from shutil import which  # for checks.
 import subprocess  # for running dict and others in background
 import random  # for Random Words
 import lzma
+import reo_base
 import threading
-import html
+from html import escape
 
 reo_version = "master"
 
@@ -58,6 +58,8 @@ mgroup.add_argument("-gd", "--dark", action="store_true",
                     help="Use GNOME dark theme")
 mgroup.add_argument("-gl", "--light", action="store_true",
                     help="Use GNOME light theme")
+parser.add_argument("-l", "--livesearch", action="store_true",
+                    help="Enable live search")
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 parsed = parser.parse_args()
@@ -115,6 +117,8 @@ def windowcall():
     window = builder.get_object('window')  # main window
     sb = builder.get_object('searchEntry')  # Search box
     viewer = builder.get_object('defView')  # Data Space
+    header = builder.get_object('header')  # Headerbar
+    header.set_show_close_button(True)
     if((os.environ.get('GTK_CSD') == '0') and
        (os.environ.get('XDG_SESSION_TYPE') != 'wayland')):
         headlabel = builder.get_object('headlabel')
@@ -122,6 +126,7 @@ def windowcall():
         titles.set_margin_end(0)
         titles.set_margin_start(0)
         headlabel.destroy()
+    window.set_role('Reo')
     window.set_title('Reo')
     sb.grab_focus()
     window.show_all()
@@ -139,7 +144,7 @@ if not parsed.adversion and not parsed.check:
         lighter()
     PATH = os.path.dirname(os.path.realpath(__file__))
     GLADEFILE = PATH + "/reo.ui"
-#    GLADEFILE = "/usr/share/reo/reo.ui"
+    # GLADEFILE = "/usr/share/reo/reo.ui"
     builder.add_from_file(GLADEFILE)
     windowcall()
 
@@ -304,10 +309,17 @@ if (os.path.exists(reofold + "/dark") and
 elif (not os.path.exists(reofold + "/dark") and
       os.path.exists(reofold + "/light")):
     lighter()
+if os.path.exists(reofold + "/maxhide"):
+    maxhide = True
 if os.path.exists(reofold + "/wnver31"):
     logging.info("Using WordNet 3.1 as per local config")
     wnver = '3.1'
     wncheckonce = True
+if os.path.exists(reofold + "/livesearch") or parsed.livesearch:
+    livesearch = True
+else:
+    livesearch = False
+term = None  # Last searched item.
 threading.Thread(target=wncheck).start()
 
 
@@ -317,6 +329,16 @@ class GUI:
     def on_window_destroy(self, window):
         """Clear all windows."""
         Gtk.main_quit()
+
+    def state_changed(self, window, state):
+        """Detect changes to the window state and adapt."""
+        header = builder.get_object('header')
+        if maxhide:
+            if ("MAXIMIZED" in str(state.new_window_state) and
+                    "FOCUSED" in str(state.new_window_state)):
+                header.set_show_close_button(False)
+            else:
+                header.set_show_close_button(True)
 
     def icon_press(self, imagemenuitem4):
         """Open About Window."""
@@ -366,7 +388,7 @@ class GUI:
                                        stderr=subprocess.STDOUT)
             fortune.wait()
             ft = fortune.stdout.read().decode()
-            ft = html.escape(ft, False)
+            ft = escape(ft, False)
             return "<tt>" + ft + "</tt>"
         except Exception as ex:
             ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
@@ -391,12 +413,14 @@ class GUI:
 
     def searchClick(self, searchButton=None):
         """Pass data to search function and set TextView data."""
-        if viewer.get_monospace():
-            viewer.set_monospace(False)
-        viewer.get_buffer().set_text("")
-        lastiter = viewer.get_buffer().get_end_iter()
-        out = self.search(sb.get_text())
-        viewer.get_buffer().insert_markup(lastiter, out, -1)
+        global term
+        text = sb.get_text().strip()
+        if not text == term:
+            viewer.get_buffer().set_text("")
+            lastiter = viewer.get_buffer().get_end_iter()
+            out = self.search(text)
+            term = text
+            viewer.get_buffer().insert_markup(lastiter, out, -1)
 
     def search(self, sb):
         """Clean input text, give errors and pass data to reactor."""
@@ -412,14 +436,6 @@ class GUI:
                         "Reo thinks that your input was actually \nju" +
                         "st a bunch of useless characters. \nSo, 'Inva" +
                         "lid Characters' error!")
-        elif sb.isspace():
-            logging.error("Empty search box!")
-            self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
-                        " there! You sure \nyou typed something?")
-        elif sb == '':
-            logging.error("Empty search box!")
-            self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
-                        " there! You sure \nyou typed something?")
 
     def reactor(self, text):
         """Check easter eggs and set variables."""
@@ -474,76 +490,6 @@ class GUI:
                        ' is to be held responsible for errors in' +
                        ' this.</span>')
 
-    def defProcessor(self, proc, text, sencol, wordcol):
-        """Format the definition obtained from 'dict'."""
-        soc = proc.replace('1 definition found\n\nFrom WordNet (r)' +
-                           ' 3.0 (2006) [wn]:\n', '')
-        soc = soc.replace('1 definition found\n\nFrom WordNet (r)' +
-                          ' 3.1 (2011) [wn]:\n', '')
-        soc = html.escape(soc, False)
-        try:
-            imp = re.search("  " + text, soc,
-                            flags=re.IGNORECASE).group(0)
-        except Exception as ex:
-            imp = ''
-            logging.warning("Regex search failed" + str(ex))
-        soc = soc.replace(imp + '\n', '')
-        logging.debug("Searching " + imp.strip())
-        relist = {r'[ \t\r\f\v]+n\s+': '<b>' + imp +
-                  '</b> ~ <i>noun</i>:\n      ',
-                  r'[ \t\r\f\v]+adv\s+': '<b>' + imp +
-                  '</b> ~ <i>adverb</i>:\n      ',
-                  r'[ \t\r\f\v]+adj\s+': '<b>' + imp +
-                  '</b> ~ <i>adjective</i>:\n      ',
-                  r'[ \t\r\f\v]+v\s+': '<b>' + imp +
-                  '</b> ~ <i>verb</i>:\n      ',
-                  r'([-]+)\s+      \s+': r'\1',
-                  r'\s+      \s+': r' ',
-                  r'"$': r'</span>',
-                  r'\s+(\d+):(\D)': r'\n  <b>\1: </b>\2',
-                  r'";\s*"': '</span><b>;</b> <span foreground="' +
-                  sencol + '">',
-                  r'[;:]\s*"': r'\n        <span foreground="' +
-                  sencol + '">',
-                  r'"\s+\[': r'</span>[',
-                  r'\[syn:': r'\n        <i>Synonyms: ',
-                  r'\[ant:': r'\n        <i>Antonyms: ',
-                  r'}\]': r'}</i>',
-                  r"\{([^{]*)\}": r'<span foreground="' +
-                  wordcol + r'">\1</span>',
-                  r'";[ \t\r\f\v]*$': r'</span>',
-                  r'";[ \t\r\f\v]+(.+)$': r'</span> \1',
-                  r'"[; \t\r\f\v]+(\(.+\))$': r'</span> \1',
-                  r'"\s*\-+\s*(.+)\s*([<]*)': r"</span> - \1; \2",
-                  r';\s*$': r''}
-        for x, y in relist.items():
-            reclean = re.compile(x, re.MULTILINE)
-            soc = reclean.sub(y, soc)
-        if not soc.find("`") == -1:
-            soc = soc.replace("`", "'")
-        if not soc.find("thunder started the sleeping") == -1:
-            soc = soc.replace("thunder started the sleeping",
-                              "thunder started, the sleeping")
-        soc = soc.strip()
-        return soc
-
-    def clsfmt(self, clp, text):
-        """Format the similar words list obtained."""
-        subb = {r'\s+      \s+': r'  ',
-                '  ["]*' + text.lower() + '["]*$': r'',
-                "(.)  " + text.lower() + "  (.)": r"\1  \2",
-                'wn: ["]*' + text.lower() + '["]*  (.)': r"\1",
-                '(.)  "' + text.lower() + '"  (.)': r"\1  \2",
-                r'\s*\n\s*': r'  ',
-                r"\s\s+": r", ",
-                '["]+' + text.lower() + '["]+': r"",
-                'wn:[,]*': r''}
-        for x, y in subb.items():
-            subr = re.compile(x)
-            clp = subr.sub(y, clp).strip()
-        clp = clp.rstrip()
-        return clp
-
     def dictdef(self, text, wordcol, sencol):
         """Obtain all outputs from dict and espeak and return final result."""
         strat = "lev"
@@ -564,7 +510,7 @@ class GUI:
         prc.wait()
         proc = prc.stdout.read().decode()
         if not proc == '':
-            soc = self.defProcessor(proc, text, sencol, wordcol)
+            soc = reo_base.defProcessor(proc, text, sencol, wordcol, "pango")
             crip = 0
         else:
             soc = "Coundn't find definition for '" + text + "'."
@@ -574,7 +520,7 @@ class GUI:
         pron = " /" + pron.strip().replace('\n ', ' ') + "/"
         clos.wait()
         clp = clos.stdout.read().decode()
-        clp = self.clsfmt(clp, text)
+        clp = reo_base.clsfmt(clp, text)
         fail = 0
         if text.lower() == 'recursion':
             clp = 'recursion'
@@ -621,12 +567,10 @@ class GUI:
     def audio(self, audioButton):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
-        if searched and not sb.get_text() == '':
-            with open(os.devnull, 'w') as NULLMAKER:
-                subprocess.Popen(["espeak-ng", "-ven-uk-rp", "-s", speed,
-                                  sb.get_text()], stdout=NULLMAKER,
-                                 stderr=subprocess.STDOUT)
-        elif sb.get_text() == '' or sb.get_text().isspace():
+        text = sb.get_text().strip()
+        if searched and not text == '':
+            reo_base.readTerm(speed, sb.get_text().strip())
+        elif text == '' or text.isspace():
             self.newced("Umm..?", "Umm..?", "Reo can't find any text" +
                         " there! You sure \nyou typed something?")
         elif not searched:
@@ -637,11 +581,13 @@ class GUI:
                         "-Speech Software!")
 
     def changed(self, searchEntry):
-        """Detect changes to Search box and clean."""
+        """Detect changes to Search box and clean or do live searching."""
         global searched
         searched = False
         sb.set_text(sb.get_text().replace('\n', ' '))
         sb.set_text(sb.get_text().replace('         ', ''))
+        if livesearch:
+            self.searchClick()
 
     def quitb(self, imagemenuitem10):
         """Quit using menu."""

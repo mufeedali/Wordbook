@@ -1,2 +1,4 @@
 .vscode/
 reo.ui~
+.pylintrc
+*.pyc
