@@ -1,9 +1,9 @@
 # Reo ~ The Simple Dictionary
 **Reo** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 
-![In Light Mode](/ss.png?raw=true)
-
-![In Dark Mode](/ss1.png?raw=true)
+Light Mode                       |  Dark Mode
+:-------------------------------:|:--------------------------------:
+![Light Mode](/ss.png?raw=true)  |  ![Dark Mode](/ss1.png?raw=true)
 
 ### Requirements
  * DICT official client and server (dictd and dict)
