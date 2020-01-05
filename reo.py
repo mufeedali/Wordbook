@@ -7,7 +7,7 @@ works across most Linux distributions without any changes.
 """
 # The MIT License (MIT)
 
-# Copyright (c) 2016-2019 Mufeed Ali
+# Copyright (c) 2016-2020 Mufeed Ali
 # This file is part of Reo
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -43,6 +43,7 @@ import random  # for Random Words
 import lzma
 import reo_base
 import threading
+import configparser
 from html import escape
 
 reo_version = "master"
@@ -111,6 +112,37 @@ def lighter():
     dark = False
 
 
+def save_settings(reoconf):
+    """Save settings."""
+    with open(reoconf, 'w') as file:
+        config.write(file)
+
+
+homefold = expanduser('~')  # Find the location of the home folder of the user
+reofold = homefold + "/.config/reo"
+# ^ This is where stuff like settings, Custom Definitions, etc will go.
+cdefold = reofold + "/cdef"
+# ^ The Folder within reofold where Custom Definitions are to be kept.
+cdefenable = True
+if not os.path.exists(reofold):  # check for Reo folder
+    os.makedirs(reofold)  # create Reo folder
+if not os.path.exists(cdefold):  # check for Custom Definitions folder.
+    os.makedirs(cdefold)  # create Custom Definitions folder.
+config = configparser.ConfigParser()
+reo_config = reofold + "/reo_gtk.conf"
+if not os.path.exists(reo_config):
+    config['General'] = {'LiveSearch': 'no',
+                         'CustomDefinitions': 'yes',
+                         'Debug': 'no',
+                         'ForceWordNet31': 'no'}
+    config['UI'] = {'Theme': 'default',
+                    'HideWindowButtonsMaximized': 'no',
+                    'DisableCSD': 'no'}
+    save_settings(reo_config)
+with open(reo_config, 'r') as config_file:
+    config.read_file(config_file)
+
+
 def windowcall():
     """Call the window."""
     global sb, viewer
@@ -126,6 +158,8 @@ def windowcall():
         titles.set_margin_end(0)
         titles.set_margin_start(0)
         headlabel.destroy()
+    pbox = builder.get_object('pref_buttonbox')
+    pbox.destroy()
     window.set_role('Reo')
     window.set_title('Reo')
     sb.grab_focus()
@@ -180,7 +214,7 @@ def wncheck():
 def adv():
     """Check all requirements thoroughly."""
     print('Reo - ' + reo_version)
-    print('Copyright 2016-2019 Mufeed Ali')
+    print('Copyright 2016-2020 Mufeed Ali')
     print()
     wncheck()
     if wnver == '3.1':
@@ -290,35 +324,95 @@ def syscheck():
     sys.exit()
 
 
+def bool_str(bool):
+    """Convert boolean to string for configparser."""
+    if bool is True:
+        return "yes"
+    else:
+        return "no"
+
+
+def load_settings():
+    """Load all settings from the config file."""
+    global maxhide, livesearch, wnver, wncheckonce, cdefenable, debug
+    live_check = builder.get_object('live_check')
+    cdef_check = builder.get_object('cdef_check')
+    debug_check = builder.get_object('debug_check')
+    forcewn31 = builder.get_object('forcewn31')
+    light_radio = builder.get_object('light_radio')
+    dark_radio = builder.get_object('dark_radio')
+    default_radio = builder.get_object('default_radio')
+    maxhide_check = builder.get_object('maxhide_check')
+    nocsd_check = builder.get_object('nocsd_check')
+    live_check.set_active(config.getboolean('General', 'LiveSearch'))
+    livesearch = config.getboolean('General', 'LiveSearch')
+    cdef_check.set_active(config.getboolean('General', 'CustomDefinitions'))
+    cdefenable = config.getboolean('General', 'CustomDefinitions')
+    debug_check.set_active(config.getboolean('General', 'Debug'))
+    debug = config.getboolean('General', 'Debug')
+    forcewn31.set_active(config.getboolean('General', 'ForceWordNet31'))
+    if config.getboolean('General', 'ForceWordNet31'):
+        logging.info("Using WordNet 3.1 as per local config")
+        wnver = '3.1'
+        wncheckonce = True
+    if config['UI']['Theme'] == "default":
+        default_radio.set_active(True)
+    elif config['UI']['Theme'] == "dark":
+        dark_radio.set_active(True)
+        darker()
+    elif config['UI']['Theme'] == "light":
+        light_radio.set_active(True)
+        lighter()
+    maxhide_check.set_active(config.getboolean('UI',
+                                               'HideWindowButtonsMaximized'))
+    maxhide = config.getboolean('UI', 'HideWindowButtonsMaximized')
+    nocsd_check.set_active(config.getboolean('UI', 'DisableCSD'))
+
+
+def apply_settings():
+    """Apply the settings globally."""
+    global livesearch, maxhide, wnver, wncheckonce, cdefenable, debug
+    live_check = builder.get_object('live_check')
+    cdef_check = builder.get_object('cdef_check')
+    debug_check = builder.get_object('debug_check')
+    forcewn31 = builder.get_object('forcewn31')
+    light_radio = builder.get_object('light_radio')
+    dark_radio = builder.get_object('dark_radio')
+    default_radio = builder.get_object('default_radio')
+    maxhide_check = builder.get_object('maxhide_check')
+    nocsd_check = builder.get_object('nocsd_check')
+    config.set('General', 'LiveSearch', bool_str(live_check.get_active()))
+    livesearch = live_check.get_active()
+    config.set('General', 'CustomDefinitions',
+               bool_str(cdef_check.get_active()))
+    cdefenable = cdef_check.get_active()
+    config.set('General', 'Debug', bool_str(debug_check.get_active()))
+    debug = debug_check.get_active()
+    config.set('General', 'ForceWordNet31', bool_str(forcewn31.get_active()))
+    if forcewn31.get_active():
+        logging.info("Using WordNet 3.1 as per local config")
+        wnver = '3.1'
+        wncheckonce = True
+    if default_radio.get_active():
+        config.set('UI', 'Theme', "default")
+    elif dark_radio.get_active():
+        config.set('UI', 'Theme', "dark")
+        darker()
+    elif light_radio.get_active():
+        config.set('UI', 'Theme', "light")
+        lighter()
+    config.set('UI', 'HideWindowButtonsMaximized',
+               bool_str(maxhide_check.get_active()))
+    maxhide = maxhide_check.get_active()
+    config.set('UI', 'DisableCSD', bool_str(nocsd_check.get_active()))
+    save_settings(reo_config)
+
+
+load_settings()
 if parsed.adversion:
     adv()
 if parsed.check:
     syscheck()
-homefold = expanduser('~')  # Find the location of the home folder of the user
-reofold = homefold + "/.config/reo"
-# ^ This is where stuff like settings, Custom Definitions, etc will go.
-cdefold = reofold + "/cdef"
-# ^ The Folder within reofold where Custom Definitions are to be kept.
-if not os.path.exists(reofold):  # check for Reo folder
-    os.makedirs(reofold)  # create Reo folder
-if not os.path.exists(cdefold):  # check for Custom Definitions folder.
-    os.makedirs(cdefold)  # create Custom Definitions folder.
-if (os.path.exists(reofold + "/dark") and
-   not os.path.exists(reofold + "/light")):  # check for Dark mode file
-    darker()
-elif (not os.path.exists(reofold + "/dark") and
-      os.path.exists(reofold + "/light")):
-    lighter()
-if os.path.exists(reofold + "/maxhide"):
-    maxhide = True
-if os.path.exists(reofold + "/wnver31"):
-    logging.info("Using WordNet 3.1 as per local config")
-    wnver = '3.1'
-    wncheckonce = True
-if os.path.exists(reofold + "/livesearch") or parsed.livesearch:
-    livesearch = True
-else:
-    livesearch = False
 term = None  # Last searched item.
 threading.Thread(target=wncheck).start()
 
@@ -333,12 +427,40 @@ class GUI:
     def state_changed(self, window, state):
         """Detect changes to the window state and adapt."""
         header = builder.get_object('header')
-        if maxhide:
-            if ("MAXIMIZED" in str(state.new_window_state) and
-                    "FOCUSED" in str(state.new_window_state)):
+        if maxhide and not (os.environ.get('GTK_CSD') == '0'):
+            if ("MAXIMIZED" in str(state.new_window_state)):
                 header.set_show_close_button(False)
             else:
                 header.set_show_close_button(True)
+
+    def pref_launch(self, pref_item):
+        """Open Preferences Window."""
+        pref_diag = builder.get_object('pref_diag')
+        response = pref_diag.run()
+        load_settings()
+        if (response == Gtk.ResponseType.DELETE_EVENT or
+                response == Gtk.ResponseType.CANCEL):
+            pref_diag.hide()
+        elif (response == Gtk.ResponseType.OK):
+            apply_settings()
+            self.searchClick(passcheck=True)
+            pref_diag.hide()
+
+    def apply_click(self, apply_button):
+        """Apply settings only."""
+        apply_settings()
+        self.searchClick(passcheck=True)
+
+    def ok_click(self, ok_button):
+        """Apply settings and hide dialog."""
+        pref_diag = builder.get_object('pref_diag')
+        pref_diag.response(-5)
+        self.searchClick(passcheck=True)
+
+    def cancel_button_clicked(self, cancel_button):
+        """Hide settings dialog."""
+        pref_diag = builder.get_object('pref_diag')
+        pref_diag.response(-6)
 
     def icon_press(self, imagemenuitem4):
         """Open About Window."""
@@ -411,16 +533,17 @@ class GUI:
             print(ft + "\n" + str(ex))
             return "<tt>" + ft + "</tt>"
 
-    def searchClick(self, searchButton=None):
+    def searchClick(self, searchButton=None, passcheck=False):
         """Pass data to search function and set TextView data."""
         global term
         text = sb.get_text().strip()
-        if not text == term:
+        if not text == term or passcheck:
             viewer.get_buffer().set_text("")
-            lastiter = viewer.get_buffer().get_end_iter()
-            out = self.search(text)
-            term = text
-            viewer.get_buffer().insert_markup(lastiter, out, -1)
+            if not text.strip() == '':
+                lastiter = viewer.get_buffer().get_end_iter()
+                out = self.search(text)
+                term = text
+                viewer.get_buffer().insert_markup(lastiter, out, -1)
 
     def search(self, sb):
         """Clean input text, give errors and pass data to reactor."""
@@ -510,7 +633,8 @@ class GUI:
         prc.wait()
         proc = prc.stdout.read().decode()
         if not proc == '':
-            soc = reo_base.defProcessor(proc, text, sencol, wordcol, "pango")
+            soc = reo_base.defProcessor(proc, text, sencol, wordcol,
+                                        "pango", debug)
             crip = 0
         else:
             soc = "Coundn't find definition for '" + text + "'."
@@ -538,11 +662,13 @@ class GUI:
                 clp = ('<b>Similar Words</b>:\n' +
                        '<i><span foreground="' + wordcol + '">  ' +
                        clp + '</span></i>')
-        return pron.strip() + '\n' + soc + '\n' + clp.strip()
+        final = pron.strip() + '\n' + soc + '\n' + clp.strip()
+        final = final.replace('&', '&amp;')
+        return final
 
     def generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
-        if os.path.exists(cdefold + '/' + text.lower()):
+        if os.path.exists(cdefold + '/' + text.lower()) and cdefenable:
             return self.cdef(text, wordcol, sencol)
         else:
             return self.dictdef(text, wordcol, sencol)

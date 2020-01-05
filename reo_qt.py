@@ -9,7 +9,7 @@ works across most Linux distributions without any changes.
 
 # The MIT License (MIT)
 
-# Copyright (c) 2019 Mufeed Ali
+# Copyright (c) 2019-2020 Mufeed Ali
 # This file is part of Reo
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -126,8 +126,8 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
                              cleanClos + '</font></i>')
         else:
             finalClos = ''
-        finalData = ("<p>" + finalPron + '</p><p>' + cleanDefi +
-                     '</p><p>' + finalClos.strip() + "</p>")
+        finalData = ("<p>" + finalPron + '</p><p>' + cleanDefi + '</p><p>' +
+                     finalClos.strip() + "</p>").replace('&', '&amp;')
         return finalData
 
     def termSay(self):

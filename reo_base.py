@@ -7,7 +7,7 @@ both the UIs.
 
 # The MIT License (MIT)
 
-# Copyright (c) 2019 Mufeed Ali
+# Copyright (c) 2019-2020 Mufeed Ali
 # This file is part of Reo
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -36,7 +36,7 @@ import os
 import subprocess
 
 
-def defProcessor(defi, term, senCol, wordCol, markup='qt'):
+def defProcessor(defi, term, senCol, wordCol, markup='qt', debug=False):
     """Format the definition obtained from 'dict'."""
     defi = defi.replace('1 definition found\n\nFrom WordNet (r)' +
                         ' 3.0 (2006) [wn]:\n', '')
@@ -50,7 +50,8 @@ def defProcessor(defi, term, senCol, wordCol, markup='qt'):
         termInWn = ''
         print("Regex search failed" + str(ex))
     defi = defi.replace(termInWn + '\n', '')
-    print("Searching " + termInWn.strip())
+    if debug is True:
+        print("Searching " + termInWn.strip())
     relist = {r'[ \t\r\f\v]+n\s+': '<b>' + termInWn +
               '</b> ~ <i>noun</i>:\n      ',
               r'[ \t\r\f\v]+adv\s+': '<b>' + termInWn +
