@@ -442,8 +442,6 @@ class GUI:
                 response == Gtk.ResponseType.CANCEL):
             pref_diag.hide()
         elif (response == Gtk.ResponseType.OK):
-            apply_settings()
-            self.searchClick(passcheck=True)
             pref_diag.hide()
 
     def apply_click(self, apply_button):
@@ -455,6 +453,7 @@ class GUI:
         """Apply settings and hide dialog."""
         pref_diag = builder.get_object('pref_diag')
         pref_diag.response(-5)
+        apply_settings()
         self.searchClick(passcheck=True)
 
     def cancel_button_clicked(self, cancel_button):
