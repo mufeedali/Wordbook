@@ -1,4 +1,5 @@
 .vscode/
-reo.ui~
+*.ui~
 .pylintrc
 *.pyc
+*.backup

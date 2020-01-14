@@ -33,14 +33,47 @@ works across most Linux distributions without any changes.
 # Author: Mufeed Ali
 
 import sys
-import subprocess
 import reo_base
+import logging
+import argparse  # for CommandLine-Interface (CLI).
 from qtpy import QtWidgets
 
 from mainwin import Ui_ReoMain
 
+parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
+mgroup = parser.add_mutually_exclusive_group()
+mgroup.add_argument("-i", "--verinfo", action="store_true",
+                    help="Advanced Version Info")
+parser.add_argument("-l", "--livesearch", action="store_true",
+                    help="Enable live search")
+parser.add_argument("-v", "--verbose", action="store_true",
+                    help="Make it scream louder")
+parsed = parser.parse_args()
+if(parsed.verbose):
+    level = logging.DEBUG
+    debug = True
+else:
+    level = logging.WARNING
+    debug = False
+logging.basicConfig(level=level, format="%(asctime)s - " +
+                    "[%(levelname)s] [%(threadName)s] (%(module)s:" +
+                    "%(lineno)d) %(message)s")
+
 senCol = "cyan"  # Color of sentences in Dark mode
 wordCol = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
+
+reo_version = reo_base.reo_version
+reo_fold = reo_base.reo_fold
+cdef_fold = reo_base.cdef_fold
+reo_config = reo_base.reo_config
+livesearch = False
+searchedText = None
+
+if parsed.verinfo:
+    reo_base.verinfo()
+    sys.exit()
+if parsed.livesearch:
+    livesearch = True
 
 
 class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
@@ -52,83 +85,38 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         self.setupUi(self)
         self.searchButton.clicked.connect(self.searchDef)
         self.audioButton.clicked.connect(self.termSay)
+        self.searchEntry.textChanged.connect(self.entryChanged)
+
+    def entryChanged(self):
+        """To live search or not to live search."""
+        term = self.searchEntry.text()
+        cleanTerm = term.strip().strip('<>"?`![]()/^\\:;,')
+        if livesearch and not cleanTerm == searchedText:
+            self.searchDef()
 
     def searchDef(self):
         """Search for definition."""
+        global searchedText
         term = self.searchEntry.text()
         self.defView.clear()
         newced = QtWidgets.QMessageBox.warning
-        if (not term.strip('<>"?`![]()/\\^:;,') == '' and
-                not term.isspace() and not term == ''):
-            cleanTerm = term.strip().strip('<>"?`![]()/^\\:;,')
-            self.defView.setHtml(self.dataObtain(cleanTerm))
-        elif (term.strip('<>"?`![]()/\\:;,') == '' and
-              not term.isspace() and
-              not term == ''):
-            newced('Error: Invalid Input!', "Reo thinks that your input was " +
-                   "actually \njust a bunch of useless characters. \nSo, " +
-                   "'Invalid Characters' error!")
-        elif term.isspace():
-            newced(self, "Umm..?", "Reo can't find any text" +
-                   " there! You sure \nyou typed something?")
-        elif term == '':
-            newced(self, "Umm..?", "Reo can't find any text" +
-                   " there! You sure \nyou typed something?")
-
-    def dataObtain(self, term):
-        """Obtain the data to be processed and presented."""
-        strat = "lev"
-        try:
-            procDefi = subprocess.Popen(["dict", "-d", "wn", term],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-            procPron = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
-                                         "--ipa", "-q", term],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-            procClos = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                         "-s", strat, term],
-                                        stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-        except Exception as ex:
-            print("Didnt Work! ERROR INFO: " + str(ex))
-        procDefi.wait()
-        defi = procDefi.stdout.read().decode()
-        if not defi == '':
-            cleanDefi = reo_base.defProcessor(defi, term, senCol, wordCol)
-            NoDef = 0
-        else:
-            cleanDefi = "Coundn't find definition for '" + term + "'."
-            NoDef = 1
-        procPron.wait()
-        pron = procPron.stdout.read().decode()
-        cleanPron = " /" + pron.strip().replace('\n ', ' ') + "/"
-        procClos.wait()
-        clos = procClos.stdout.read().decode()
-        cleanClos = reo_base.clsfmt(clos, term)
-        fail = 0
-        if term.lower() == 'recursion':
-            clos = 'recursion'
-        if clos == '':
-            fail = 1
-        if procPron and not NoDef == 1:
-            finalPron = "<b>Pronunciation</b>: <b>" + cleanPron + '</b>'
-        elif procPron and NoDef == 1:
-            finalPron = ("<b>Probable Pronunciation</b>: <b>" + cleanPron +
-                         '</b>')
-        if fail == 0:
-            if NoDef == 1:
-                finalClos = ('<b>Did you mean</b>:<br><i><font color="' +
-                             wordCol + '">  ' + cleanClos + '</font></i>')
-            else:
-                finalClos = ('<b>Similar Words</b>:<br>' +
-                             '<i><font color="' + wordCol + '">  ' +
-                             cleanClos + '</font></i>')
-        else:
-            finalClos = ''
-        finalData = ("<p>" + finalPron + '</p><p>' + cleanDefi + '</p><p>' +
-                     finalClos.strip() + "</p>").replace('&', '&amp;')
-        return finalData
+        cleanTerm = term.strip().strip('<>"?`![]()/^\\:;,')
+        if (cleanTerm == 'fortune -a'):
+            out = reo_base.fortune().strip().replace('\n', '<br>')
+            out = out.replace(' ', '&nbsp;')
+            self.defView.setHtml(out)
+        elif (cleanTerm == 'cowfortune'):
+            out = reo_base.cowfortune().strip().replace('\n', '<br>')
+            out = out.replace(' ', '&nbsp;')
+            self.defView.setHtml(out)
+        elif (not cleanTerm == '' and not term.isspace() and not term == ''):
+            self.defView.setHtml(reo_base.dataObtain(cleanTerm, wordCol,
+                                                     senCol, "html", debug))
+            searchedText = cleanTerm
+        elif (cleanTerm == '' and not term.isspace() and not term == ''):
+            newced(self, 'Error: Invalid Input!', "Reo thinks that your " +
+                   "input was actually just a bunch of useless characters. " +
+                   "So, 'Invalid Characters' error!")
 
     def termSay(self):
         """Say the text out loud."""

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwin.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.0
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -33,6 +33,7 @@ class Ui_ReoMain(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.searchEntry = QtWidgets.QLineEdit(self.centralwidget)
         self.searchEntry.setStyleSheet("")
+        self.searchEntry.setClearButtonEnabled(True)
         self.searchEntry.setObjectName("searchEntry")
         self.horizontalLayout.addWidget(self.searchEntry)
         self.searchButton = QtWidgets.QToolButton(self.centralwidget)
@@ -62,7 +63,7 @@ class Ui_ReoMain(object):
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         ReoMain.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(ReoMain)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 448, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 510, 30))
         self.menubar.setObjectName("menubar")
         self.menuSearch = QtWidgets.QMenu(self.menubar)
         self.menuSearch.setObjectName("menuSearch")

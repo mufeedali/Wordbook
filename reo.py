@@ -36,24 +36,19 @@ import sys
 import logging
 import argparse  # for CommandLine-Interface (CLI).
 import os
-from os.path import expanduser  # for detecting home folder
 from shutil import which  # for checks.
-import subprocess  # for running dict and others in background
 import random  # for Random Words
 import lzma
 import reo_base
 import threading
 import configparser
-from html import escape
-
-reo_version = "master"
 
 # Readying ArgParser
 parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
 mgroup = parser.add_mutually_exclusive_group()
 mgroup.add_argument("-c", "--check", action="store_true",
                     help="Basic dependancy checks.")
-mgroup.add_argument("-d", "--adversion", action="store_true",
+mgroup.add_argument("-i", "--verinfo", action="store_true",
                     help="Advanced Version Info")
 mgroup.add_argument("-gd", "--dark", action="store_true",
                     help="Use GNOME dark theme")
@@ -72,6 +67,11 @@ else:
 logging.basicConfig(level=level, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
                     "%(lineno)d) %(message)s")
+
+cdef_fold = reo_base.cdef_fold
+reo_config = reo_base.reo_config
+reo_version = reo_base.reo_version
+
 try:
     import gi  # this is the GObject stuff needed for GTK+
     gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
@@ -118,26 +118,17 @@ def save_settings(reoconf):
         config.write(file)
 
 
-homefold = expanduser('~')  # Find the location of the home folder of the user
-reofold = homefold + "/.config/reo"
-# ^ This is where stuff like settings, Custom Definitions, etc will go.
-cdefold = reofold + "/cdef"
-# ^ The Folder within reofold where Custom Definitions are to be kept.
 cdefenable = True
-if not os.path.exists(reofold):  # check for Reo folder
-    os.makedirs(reofold)  # create Reo folder
-if not os.path.exists(cdefold):  # check for Custom Definitions folder.
-    os.makedirs(cdefold)  # create Custom Definitions folder.
+reo_base.foldGen()
 config = configparser.ConfigParser()
-reo_config = reofold + "/reo_gtk.conf"
 if not os.path.exists(reo_config):
     config['General'] = {'LiveSearch': 'no',
                          'CustomDefinitions': 'yes',
                          'Debug': 'no',
                          'ForceWordNet31': 'no'}
-    config['UI'] = {'Theme': 'default',
-                    'HideWindowButtonsMaximized': 'no',
-                    'DisableCSD': 'no'}
+    config['UI-gtk'] = {'Theme': 'default',
+                        'HideWindowButtonsMaximized': 'no',
+                        'DisableCSD': 'no'}
     save_settings(reo_config)
 with open(reo_config, 'r') as config_file:
     config.read_file(config_file)
@@ -166,7 +157,91 @@ def windowcall():
     window.show_all()
 
 
-if not parsed.adversion and not parsed.check:
+def bool_str(bool):
+    """Convert boolean to string for configparser."""
+    if bool is True:
+        return "yes"
+    else:
+        return "no"
+
+
+def load_settings():
+    """Load all settings from the config file."""
+    global maxhide, livesearch, wnver, wncheckonce, cdefenable, debug
+    live_check = builder.get_object('live_check')
+    cdef_check = builder.get_object('cdef_check')
+    debug_check = builder.get_object('debug_check')
+    forcewn31 = builder.get_object('forcewn31')
+    light_radio = builder.get_object('light_radio')
+    dark_radio = builder.get_object('dark_radio')
+    default_radio = builder.get_object('default_radio')
+    maxhide_check = builder.get_object('maxhide_check')
+    nocsd_check = builder.get_object('nocsd_check')
+    live_check.set_active(config.getboolean('General', 'LiveSearch'))
+    livesearch = config.getboolean('General', 'LiveSearch')
+    cdef_check.set_active(config.getboolean('General', 'CustomDefinitions'))
+    cdefenable = config.getboolean('General', 'CustomDefinitions')
+    debug_check.set_active(config.getboolean('General', 'Debug'))
+    debug = config.getboolean('General', 'Debug')
+    forcewn31.set_active(config.getboolean('General', 'ForceWordNet31'))
+    if config.getboolean('General', 'ForceWordNet31'):
+        logging.info("Using WordNet 3.1 as per local config")
+        wnver = '3.1'
+        wncheckonce = True
+    if config['UI-gtk']['Theme'] == "default":
+        default_radio.set_active(True)
+    elif config['UI-gtk']['Theme'] == "dark":
+        dark_radio.set_active(True)
+        darker()
+    elif config['UI-gtk']['Theme'] == "light":
+        light_radio.set_active(True)
+        lighter()
+    maxhide_check.set_active(config.getboolean('UI-gtk',
+                                               'HideWindowButtonsMaximized'))
+    maxhide = config.getboolean('UI-gtk', 'HideWindowButtonsMaximized')
+    nocsd_check.set_active(config.getboolean('UI-gtk', 'DisableCSD'))
+
+
+def apply_settings():
+    """Apply the settings globally."""
+    global livesearch, maxhide, wnver, wncheckonce, cdefenable, debug
+    live_check = builder.get_object('live_check')
+    cdef_check = builder.get_object('cdef_check')
+    debug_check = builder.get_object('debug_check')
+    forcewn31 = builder.get_object('forcewn31')
+    light_radio = builder.get_object('light_radio')
+    dark_radio = builder.get_object('dark_radio')
+    default_radio = builder.get_object('default_radio')
+    maxhide_check = builder.get_object('maxhide_check')
+    nocsd_check = builder.get_object('nocsd_check')
+    config.set('General', 'LiveSearch', bool_str(live_check.get_active()))
+    livesearch = live_check.get_active()
+    config.set('General', 'CustomDefinitions',
+               bool_str(cdef_check.get_active()))
+    cdefenable = cdef_check.get_active()
+    config.set('General', 'Debug', bool_str(debug_check.get_active()))
+    debug = debug_check.get_active()
+    config.set('General', 'ForceWordNet31', bool_str(forcewn31.get_active()))
+    if forcewn31.get_active():
+        logging.info("Using WordNet 3.1 as per local config")
+        wnver = '3.1'
+        wncheckonce = True
+    if default_radio.get_active():
+        config.set('UI-gtk', 'Theme', "default")
+    elif dark_radio.get_active():
+        config.set('UI-gtk', 'Theme', "dark")
+        darker()
+    elif light_radio.get_active():
+        config.set('UI-gtk', 'Theme', "light")
+        lighter()
+    config.set('UI-gtk', 'HideWindowButtonsMaximized',
+               bool_str(maxhide_check.get_active()))
+    maxhide = maxhide_check.get_active()
+    config.set('UI-gtk', 'DisableCSD', bool_str(nocsd_check.get_active()))
+    save_settings(reo_config)
+
+
+if not parsed.verinfo and not parsed.check:
     if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
                                                "-dark-theme"):
         dark = True
@@ -181,6 +256,7 @@ if not parsed.adversion and not parsed.check:
     # GLADEFILE = "/usr/share/reo/reo.ui"
     builder.add_from_file(GLADEFILE)
     windowcall()
+    load_settings()
 
 
 wnver = '3.1'
@@ -191,54 +267,10 @@ def wncheck():
     """Check if WordNet is properly installed."""
     global wnver, wncheckonce, wn
     if not wncheckonce:
-        try:
-            check = subprocess.Popen(["dict", "-d", "wn", "test"],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.STDOUT)
-            checkt = check.stdout.read().decode()
-        except Exception as ex:
-            print("Error with dict. Error")
-            print(ex)
-        if not checkt.find('1 definition found\n\nFrom WordNet (r)' +
-                           ' 3.1 (2011) [wn]:\n') == -1:
-            wnver = '3.1'
-            logging.info("Using WordNet 3.1")
-        elif not checkt.find('1 definition found\n\nFrom WordNet (r)' +
-                             ' 3.0 (2006) [wn]:\n') == -1:
-            wnver = '3.0'
-            logging.info("Using WordNet 3.0")
+        wnver = reo_base.wnvercheck()
+        logging.info("Using WordNet " + wnver)
         wncheckonce = True
     wn = str(lzma.open('wn' + wnver + '.lzma', 'r').read()).split('\\n')
-
-
-def adv():
-    """Check all requirements thoroughly."""
-    print('Reo - ' + reo_version)
-    print('Copyright 2016-2020 Mufeed Ali')
-    print()
-    wncheck()
-    if wnver == '3.1':
-        print("WordNet Version 3.1 (2011) (Installed)")
-    elif wnver == '3.0':
-        print("WordNet Version 3.0 (2006) (Installed)")
-    try:
-        check2 = subprocess.Popen(["dict", "-V"],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT)
-        check2t = check2.stdout.read().decode()
-        print("Dict Version Info:\n" + check2t.strip())
-    except Exception as ex:
-        print("Looks like missing components. (dict)\n" + str(ex))
-    print()
-    try:
-        check3 = subprocess.Popen(["espeak-ng", "--version"],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT)
-        check3t = check3.stdout.read().decode()
-        print("eSpeak-ng Version Info:\n" + check3t.strip())
-    except Exception as ex:
-        print("You're missing a few components. (espeak-ng)\n" + str(ex))
-    sys.exit()
 
 
 def CheckBin(bintocheck):
@@ -324,93 +356,9 @@ def syscheck():
     sys.exit()
 
 
-def bool_str(bool):
-    """Convert boolean to string for configparser."""
-    if bool is True:
-        return "yes"
-    else:
-        return "no"
-
-
-def load_settings():
-    """Load all settings from the config file."""
-    global maxhide, livesearch, wnver, wncheckonce, cdefenable, debug
-    live_check = builder.get_object('live_check')
-    cdef_check = builder.get_object('cdef_check')
-    debug_check = builder.get_object('debug_check')
-    forcewn31 = builder.get_object('forcewn31')
-    light_radio = builder.get_object('light_radio')
-    dark_radio = builder.get_object('dark_radio')
-    default_radio = builder.get_object('default_radio')
-    maxhide_check = builder.get_object('maxhide_check')
-    nocsd_check = builder.get_object('nocsd_check')
-    live_check.set_active(config.getboolean('General', 'LiveSearch'))
-    livesearch = config.getboolean('General', 'LiveSearch')
-    cdef_check.set_active(config.getboolean('General', 'CustomDefinitions'))
-    cdefenable = config.getboolean('General', 'CustomDefinitions')
-    debug_check.set_active(config.getboolean('General', 'Debug'))
-    debug = config.getboolean('General', 'Debug')
-    forcewn31.set_active(config.getboolean('General', 'ForceWordNet31'))
-    if config.getboolean('General', 'ForceWordNet31'):
-        logging.info("Using WordNet 3.1 as per local config")
-        wnver = '3.1'
-        wncheckonce = True
-    if config['UI']['Theme'] == "default":
-        default_radio.set_active(True)
-    elif config['UI']['Theme'] == "dark":
-        dark_radio.set_active(True)
-        darker()
-    elif config['UI']['Theme'] == "light":
-        light_radio.set_active(True)
-        lighter()
-    maxhide_check.set_active(config.getboolean('UI',
-                                               'HideWindowButtonsMaximized'))
-    maxhide = config.getboolean('UI', 'HideWindowButtonsMaximized')
-    nocsd_check.set_active(config.getboolean('UI', 'DisableCSD'))
-
-
-def apply_settings():
-    """Apply the settings globally."""
-    global livesearch, maxhide, wnver, wncheckonce, cdefenable, debug
-    live_check = builder.get_object('live_check')
-    cdef_check = builder.get_object('cdef_check')
-    debug_check = builder.get_object('debug_check')
-    forcewn31 = builder.get_object('forcewn31')
-    light_radio = builder.get_object('light_radio')
-    dark_radio = builder.get_object('dark_radio')
-    default_radio = builder.get_object('default_radio')
-    maxhide_check = builder.get_object('maxhide_check')
-    nocsd_check = builder.get_object('nocsd_check')
-    config.set('General', 'LiveSearch', bool_str(live_check.get_active()))
-    livesearch = live_check.get_active()
-    config.set('General', 'CustomDefinitions',
-               bool_str(cdef_check.get_active()))
-    cdefenable = cdef_check.get_active()
-    config.set('General', 'Debug', bool_str(debug_check.get_active()))
-    debug = debug_check.get_active()
-    config.set('General', 'ForceWordNet31', bool_str(forcewn31.get_active()))
-    if forcewn31.get_active():
-        logging.info("Using WordNet 3.1 as per local config")
-        wnver = '3.1'
-        wncheckonce = True
-    if default_radio.get_active():
-        config.set('UI', 'Theme', "default")
-    elif dark_radio.get_active():
-        config.set('UI', 'Theme', "dark")
-        darker()
-    elif light_radio.get_active():
-        config.set('UI', 'Theme', "light")
-        lighter()
-    config.set('UI', 'HideWindowButtonsMaximized',
-               bool_str(maxhide_check.get_active()))
-    maxhide = maxhide_check.get_active()
-    config.set('UI', 'DisableCSD', bool_str(nocsd_check.get_active()))
-    save_settings(reo_config)
-
-
-load_settings()
-if parsed.adversion:
-    adv()
+if parsed.verinfo:
+    reo_base.verinfo()
+    sys.exit()
 if parsed.check:
     syscheck()
 term = None  # Last searched item.
@@ -501,42 +449,12 @@ class GUI:
                 response == Gtk.ResponseType.OK):
             ced.hide()
 
-    def fortune(self):
-        """Present fortune easter egg."""
-        try:
-            fortune = subprocess.Popen(["fortune", "-a"],
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.STDOUT)
-            fortune.wait()
-            ft = fortune.stdout.read().decode()
-            ft = escape(ft, False)
-            return "<tt>" + ft + "</tt>"
-        except Exception as ex:
-            ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
-            print(ft + "\n" + str(ex))
-            return "<tt>" + ft + "</tt>"
-
-    def cowfortune(self):
-        """Present cowsay version of fortune easter egg."""
-        try:
-            cowsay = subprocess.Popen(["cowsay", self.fortune()],
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT)
-            cowsay.wait()
-            if cowsay:
-                cst = cowsay.stdout.read().decode()
-            return "<tt>" + cst + "</tt>"
-        except Exception as ex:
-            ft = ("Easter Egg Fail!!! Install 'fortune' or 'fortunemod'" +
-                  " and also 'cowsay'.")
-            print(ft + "\n" + str(ex))
-            return "<tt>" + ft + "</tt>"
-
     def searchClick(self, searchButton=None, passcheck=False):
         """Pass data to search function and set TextView data."""
         global term
         text = sb.get_text().strip()
-        if not text == term or passcheck:
+        exceptlist = ['fortune -a', 'cowfortune']
+        if not text == term or passcheck or text in exceptlist:
             viewer.get_buffer().set_text("")
             if not text.strip() == '':
                 lastiter = viewer.get_buffer().get_end_iter()
@@ -574,9 +492,9 @@ class GUI:
         if text in skip:
             return "<tt> Running Reo with WordNet " + wnver + "</tt>"
         elif text == 'fortune -a':
-            return self.fortune()
+            return reo_base.fortune()
         elif text == 'cowfortune':
-            return self.cowfortune()
+            return reo_base.cowfortune()
         elif text == 'crash now' or text == 'close now':
             Gtk.main_quit()
         elif text == 'reo':
@@ -596,7 +514,7 @@ class GUI:
 
     def cdef(self, text, wordcol, sencol):
         """Present custom definition when available."""
-        with open(cdefold + '/' + text, 'r') as cdfile:
+        with open(cdef_fold + '/' + text, 'r') as cdfile:
             cdefread = cdfile.read()
             relist = {"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
                       "($WORDCOL)": wordcol, "($SENCOL)": sencol,
@@ -612,65 +530,12 @@ class GUI:
                        ' is to be held responsible for errors in' +
                        ' this.</span>')
 
-    def dictdef(self, text, wordcol, sencol):
-        """Obtain all outputs from dict and espeak and return final result."""
-        strat = "lev"
-        try:
-            prc = subprocess.Popen(["dict", "-d", "wn", text],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-            pro = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
-                                    "--ipa", "-q", text],
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-            clos = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                     "-s", strat, text],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
-        except Exception as ex:
-            logging.error("Didnt Work! ERROR INFO: " + str(ex))
-        prc.wait()
-        proc = prc.stdout.read().decode()
-        if not proc == '':
-            soc = reo_base.defProcessor(proc, text, sencol, wordcol,
-                                        "pango", debug)
-            crip = 0
-        else:
-            soc = "Coundn't find definition for '" + text + "'."
-            crip = 1
-        pro.wait()
-        pron = pro.stdout.read().decode()
-        pron = " /" + pron.strip().replace('\n ', ' ') + "/"
-        clos.wait()
-        clp = clos.stdout.read().decode()
-        clp = reo_base.clsfmt(clp, text)
-        fail = 0
-        if text.lower() == 'recursion':
-            clp = 'recursion'
-        if clp == '':
-            fail = 1
-        if pro and not crip == 1:
-            pron = "<b>Pronunciation</b>: <b>" + pron + '</b>'
-        elif pro and crip == 1:
-            pron = "<b>Probable Pronunciation</b>: <b>" + pron + '</b>'
-        if fail == 0:
-            if crip == 1:
-                clp = ('<b>Did you mean</b>:\n<i><span foreground="' +
-                       wordcol + '">  ' + clp + '</span></i>')
-            else:
-                clp = ('<b>Similar Words</b>:\n' +
-                       '<i><span foreground="' + wordcol + '">  ' +
-                       clp + '</span></i>')
-        final = pron.strip() + '\n' + soc + '\n' + clp.strip()
-        final = final.replace('&', '&amp;')
-        return final
-
     def generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
-        if os.path.exists(cdefold + '/' + text.lower()) and cdefenable:
+        if os.path.exists(cdef_fold + '/' + text.lower()) and cdefenable:
             return self.cdef(text, wordcol, sencol)
         else:
-            return self.dictdef(text, wordcol, sencol)
+            return reo_base.dataObtain(text, wordcol, sencol, "pango", debug)
 
     def cedok(self, cedok):
         """Generate OK response from error dialog."""
