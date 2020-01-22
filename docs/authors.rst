@@ -1,3 +1,0 @@
-AUTHORS
-===========
-.. mdinclude:: ../AUTHORS

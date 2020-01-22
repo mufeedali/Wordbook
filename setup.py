@@ -4,13 +4,14 @@
 
 from setuptools import setup, find_packages
 from reo import utils
-from m2r import parse_from_file
 
-readme = parse_from_file('README.md')
+with open('README.md', 'r') as file:
+    readme = file.read()
 
-history = parse_from_file('CHANGELOG')
+with open('CHANGELOG', 'r') as file:
+    history = file.read()
 
-requirements = ['m2r']
+requirements = []
 
 setup_requirements = []
 

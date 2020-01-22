@@ -11,6 +11,7 @@ Welcome to Reo's documentation!
    contributing
    authors
    history
+   license
 
 Indices and tables
 ==================
