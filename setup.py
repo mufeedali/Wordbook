@@ -10,7 +10,7 @@ readme = parse_from_file('README.md')
 
 history = parse_from_file('CHANGELOG')
 
-requirements = []
+requirements = ['m2r']
 
 setup_requirements = []
 
