@@ -1,0 +1,3 @@
+HISTORY
+===========
+.. mdinclude:: ../CHANGELOG

@@ -17,13 +17,12 @@ try:
 except Exception as ex:
     print("Something went wrong... " + str(ex))
 
-output = out_PyUic.replace(os.environ.get("HOME") + "/Projects/" +
-                           args.project + "/", "")
-clean_output = output.replace("from PyQt5", "from qtpy")
+clean_output = out_PyUic.replace(os.environ.get("HOME") + "/Projects/" +
+                                 args.project + "/", "")
 
 pyname = args.file.replace(".ui", ".py")
 
-with open(pyname, "w") as f:
+with open("ui_" + pyname, "w") as f:
     f.write(clean_output)
 
 proc_pep = subprocess.Popen(["autopep8", "-i", pyname],

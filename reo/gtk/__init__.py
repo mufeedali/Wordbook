@@ -5,32 +5,6 @@ Reo is a dictionary application made with Python and Gtk+3.
 It's a simple script basically. It uses existing tools and as such, easily
 works across most Linux distributions without any changes.
 """
-# The MIT License (MIT)
-
-# Copyright (c) 2016-2020 Mufeed Ali
-# This file is part of Reo
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-# Author: Mufeed Ali
-
-# Now, beginning with the Imports.
 
 import sys
 import logging
@@ -39,7 +13,7 @@ import os
 from shutil import which  # for checks.
 import random  # for Random Words
 import lzma
-import reo_base
+from reo import reo_base, utils
 import threading
 import configparser
 
@@ -54,8 +28,6 @@ mgroup.add_argument("-gd", "--dark", action="store_true",
                     help="Use GNOME dark theme")
 mgroup.add_argument("-gl", "--light", action="store_true",
                     help="Use GNOME light theme")
-parser.add_argument("-l", "--livesearch", action="store_true",
-                    help="Enable live search")
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 parsed = parser.parse_args()
@@ -68,9 +40,9 @@ logging.basicConfig(level=level, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
                     "%(lineno)d) %(message)s")
 
-cdef_fold = reo_base.cdef_fold
-reo_config = reo_base.reo_config
-reo_version = reo_base.reo_version
+cdef_fold = utils.CDEF_FOLD
+reo_config = utils.CONFIG_FILE
+reo_version = utils.VERSION
 
 try:
     import gi  # this is the GObject stuff needed for GTK+
@@ -112,12 +84,6 @@ def lighter():
     dark = False
 
 
-def save_settings(reoconf):
-    """Save settings."""
-    with open(reoconf, 'w') as file:
-        config.write(file)
-
-
 cdefenable = True
 reo_base.foldGen()
 config = configparser.ConfigParser()
@@ -129,7 +95,7 @@ if not os.path.exists(reo_config):
     config['UI-gtk'] = {'Theme': 'default',
                         'HideWindowButtonsMaximized': 'no',
                         'DisableCSD': 'no'}
-    save_settings(reo_config)
+    utils.save_settings(config)
 with open(reo_config, 'r') as config_file:
     config.read_file(config_file)
 
@@ -155,14 +121,6 @@ def windowcall():
     window.set_title('Reo')
     sb.grab_focus()
     window.show_all()
-
-
-def bool_str(bool):
-    """Convert boolean to string for configparser."""
-    if bool is True:
-        return "yes"
-    else:
-        return "no"
 
 
 def load_settings():
@@ -214,14 +172,16 @@ def apply_settings():
     default_radio = builder.get_object('default_radio')
     maxhide_check = builder.get_object('maxhide_check')
     nocsd_check = builder.get_object('nocsd_check')
-    config.set('General', 'LiveSearch', bool_str(live_check.get_active()))
+    config.set('General', 'LiveSearch',
+               utils.bool_str(live_check.get_active()))
     livesearch = live_check.get_active()
     config.set('General', 'CustomDefinitions',
-               bool_str(cdef_check.get_active()))
+               utils.bool_str(cdef_check.get_active()))
     cdefenable = cdef_check.get_active()
-    config.set('General', 'Debug', bool_str(debug_check.get_active()))
+    config.set('General', 'Debug', utils.bool_str(debug_check.get_active()))
     debug = debug_check.get_active()
-    config.set('General', 'ForceWordNet31', bool_str(forcewn31.get_active()))
+    config.set('General', 'ForceWordNet31',
+               utils.bool_str(forcewn31.get_active()))
     if forcewn31.get_active():
         logging.info("Using WordNet 3.1 as per local config")
         wnver = '3.1'
@@ -235,10 +195,11 @@ def apply_settings():
         config.set('UI-gtk', 'Theme', "light")
         lighter()
     config.set('UI-gtk', 'HideWindowButtonsMaximized',
-               bool_str(maxhide_check.get_active()))
+               utils.bool_str(maxhide_check.get_active()))
     maxhide = maxhide_check.get_active()
-    config.set('UI-gtk', 'DisableCSD', bool_str(nocsd_check.get_active()))
-    save_settings(reo_config)
+    config.set('UI-gtk', 'DisableCSD',
+               utils.bool_str(nocsd_check.get_active()))
+    utils.save_settings(reo_config, config)
 
 
 if not parsed.verinfo and not parsed.check:
@@ -247,16 +208,16 @@ if not parsed.verinfo and not parsed.check:
         dark = True
     else:
         dark = False
-    if parsed.dark:
-        darker()
-    elif parsed.light:
-        lighter()
     PATH = os.path.dirname(os.path.realpath(__file__))
-    GLADEFILE = PATH + "/reo.ui"
+    GLADEFILE = PATH + "/ui/reo.ui"
     # GLADEFILE = "/usr/share/reo/reo.ui"
     builder.add_from_file(GLADEFILE)
     windowcall()
     load_settings()
+    if parsed.dark:
+        darker()
+    elif parsed.light:
+        lighter()
 
 
 wnver = '3.1'
@@ -270,7 +231,7 @@ def wncheck():
         wnver = reo_base.wnvercheck()
         logging.info("Using WordNet " + wnver)
         wncheckonce = True
-    wn = str(lzma.open('wn' + wnver + '.lzma', 'r').read()).split('\\n')
+    wn = str(lzma.open(utils.get_wordlist(wnver), 'r').read()).split('\\n')
 
 
 def CheckBin(bintocheck):
@@ -604,5 +565,11 @@ class GUI:
             defdiag.hide()
 
 
-builder.connect_signals(GUI())
-Gtk.main()
+def main():
+    """Run the Gtk UI."""
+    builder.connect_signals(GUI())
+    Gtk.main()
+
+
+if __name__ == '__main__':
+    main()

@@ -5,51 +5,19 @@ reo_base is a part of Reo. It contains a few functions that are reusable across
 both the UIs.
 """
 
-# The MIT License (MIT)
-
-# Copyright (c) 2019-2020 Mufeed Ali
-# This file is part of Reo
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-# Author: Mufeed Ali
-
 import re
 import html
 import os
 import subprocess
-from os.path import expanduser
-
-reo_version = "master"
-reo_fold = expanduser('~') + "/.config/reo"
-# ^ This is where stuff like settings, Custom Definitions, etc will go.
-cdef_fold = reo_fold + "/cdef"
-# ^ The Folder within reo_fold where Custom Definitions are to be kept.
-reo_config = reo_fold + "/reo.conf"
+from reo import utils
 
 
 def foldGen():
     """Make required directories if they don't already exist."""
-    if not os.path.exists(reo_fold):  # check for Reo folder
-        os.makedirs(reo_fold)  # create Reo folder
-    if not os.path.exists(cdef_fold):  # check for Custom Definitions folder.
-        os.makedirs(cdef_fold)  # create Custom Definitions folder.
+    if not os.path.exists(utils.CONFIG_FOLD):  # check for Reo folder
+        os.makedirs(utils.CONFIG_FOLD)  # create Reo folder
+    if not os.path.exists(utils.CDEF_FOLD):  # check Custom Definitions folder.
+        os.makedirs(utils.CDEF_FOLD)  # create Custom Definitions folder.
 
 
 def defProcessor(defi, term, senCol, wordCol, markup='html', debug=False):
@@ -248,7 +216,7 @@ def wnvercheck():
 
 def verinfo():
     """Present clear version info."""
-    print('Reo - ' + reo_version)
+    print('Reo - ' + utils.VERSION)
     print('Copyright 2016-2020 Mufeed Ali')
     print()
     wnver = wnvercheck()
