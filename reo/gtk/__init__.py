@@ -199,12 +199,13 @@ def apply_settings():
     maxhide = maxhide_check.get_active()
     config.set('UI-gtk', 'DisableCSD',
                utils.bool_str(nocsd_check.get_active()))
-    utils.save_settings(reo_config, config)
+    utils.save_settings(config)
 
 
 if not parsed.verinfo and not parsed.check:
-    if Gtk.Settings.get_default().get_property("gtk-application-prefer" +
-                                               "-dark-theme"):
+    GtkSettings = Gtk.Settings.get_default()
+    if (GtkSettings.get_property("gtk-application-prefer-dark-theme") or
+            GtkSettings.get_property("gtk-theme-name").endswith('-dark')):
         dark = True
     else:
         dark = False

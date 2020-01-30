@@ -8,7 +8,7 @@ from reo import utils
 with open('README.md', 'r') as file:
     readme = file.read()
 
-with open('CHANGELOG', 'r') as file:
+with open('CHANGELOG.md', 'r') as file:
     history = file.read()
 
 requirements = []
