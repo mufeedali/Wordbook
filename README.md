@@ -6,12 +6,12 @@ Light Mode                             |  Dark Mode
 ![Light Mode](images/ss.png?raw=true)  |  ![Dark Mode](images/ss1.png?raw=true)
 
 ### Requirements
- * DICT official client and server (dictd and dict)
- * WordNet 3.1 or 3.0 database for dictd (dict-wn)
- * Python 3
- * Python GObject
- * Gtk+ 3.20+
- * eSpeak-ng (For pronunciations and audio)
+ * DICT official client and server (dictd and dict) [Arch: `dictd`]
+ * WordNet 3.1 or 3.0 database for dictd (dict-wn) [Arch AUR: `dict-wn`]
+ * Python 3 [Arch: `python`]
+ * Python GObject [Arch: `python-gobject`]
+ * Gtk+ 3.20+ [Arch: `gtk3`]
+ * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 You can confirm all the requirements by running Reo with the arguments `--check` (`-c`) or `--adversion` (`-d`).
 
