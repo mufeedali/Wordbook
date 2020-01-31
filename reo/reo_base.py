@@ -245,7 +245,7 @@ def verinfo():
 
 
 def htmltopango(data):
-    """Convert HTML data to Pango markup data."""
+    """Convert HTML data to Pango markup data. Not a real converter."""
     data = data.replace('<font color="', '<span foreground="')
     data = data.replace('</font>', '</span>')
     data = data.replace('<br>', '\n')

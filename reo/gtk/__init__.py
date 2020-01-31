@@ -73,6 +73,10 @@ def darker():
     global dark
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", True)
+    current_theme = settings.get_property("gtk-theme-name")
+    if not current_theme.endswith('-dark'):
+        new_theme = current_theme + "-dark"
+        settings.set_property("gtk-theme-name", new_theme)
     dark = True
 
 
@@ -81,6 +85,10 @@ def lighter():
     global dark
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", False)
+    current_theme = settings.get_property("gtk-theme-name")
+    if current_theme.endswith('-dark'):
+        new_theme = current_theme[:-5]
+        settings.set_property("gtk-theme-name", new_theme)
     dark = False
 
 
@@ -206,9 +214,9 @@ if not parsed.verinfo and not parsed.check:
     GtkSettings = Gtk.Settings.get_default()
     if (GtkSettings.get_property("gtk-application-prefer-dark-theme") or
             GtkSettings.get_property("gtk-theme-name").endswith('-dark')):
-        dark = True
+        darker()
     else:
-        dark = False
+        lighter()
     PATH = os.path.dirname(os.path.realpath(__file__))
     GLADEFILE = PATH + "/ui/reo.ui"
     # GLADEFILE = "/usr/share/reo/reo.ui"
