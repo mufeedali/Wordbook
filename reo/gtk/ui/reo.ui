@@ -98,7 +98,7 @@ Author: Mufeed Ali
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkImageMenuItem" id="pastensearch">
+              <object class="GtkImageMenuItem" id="menu_paste">
                 <property name="label" translatable="yes">Paste &amp; Search</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -109,7 +109,7 @@ Author: Mufeed Ali
               </object>
             </child>
             <child>
-              <object class="GtkImageMenuItem" id="sstmenubutton">
+              <object class="GtkImageMenuItem" id="menu_sst">
                 <property name="label" translatable="yes">Search Selected Text</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -120,23 +120,23 @@ Author: Mufeed Ali
               </object>
             </child>
             <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem2">
+              <object class="GtkImageMenuItem" id="menu_save">
                 <property name="label">Save Definition</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="image">saveimg</property>
                 <property name="use_stock">False</property>
-                <signal name="activate" handler="savedef" swapped="no"/>
+                <signal name="activate" handler="save_def" swapped="no"/>
               </object>
             </child>
             <child>
-              <object class="GtkImageMenuItem" id="mnurand">
+              <object class="GtkImageMenuItem" id="menu_rand">
                 <property name="label" translatable="yes">Random Word</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="image">randimg</property>
                 <property name="use_stock">False</property>
-                <signal name="activate" handler="randword" swapped="no"/>
+                <signal name="activate" handler="random_word" swapped="no"/>
                 <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
             </child>
@@ -179,7 +179,7 @@ Author: Mufeed Ali
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem4">
+              <object class="GtkImageMenuItem" id="menu_about">
                 <property name="label">About</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -189,13 +189,13 @@ Author: Mufeed Ali
               </object>
             </child>
             <child>
-              <object class="GtkImageMenuItem" id="imagemenuitem10">
+              <object class="GtkImageMenuItem" id="menu_quit">
                 <property name="label">Quit</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="image">closeimg</property>
                 <property name="use_stock">False</property>
-                <signal name="activate" handler="quitb" swapped="no"/>
+                <signal name="activate" handler="quit" swapped="no"/>
               </object>
             </child>
           </object>
@@ -234,7 +234,7 @@ Author: Mufeed Ali
                 <property name="vexpand">True</property>
                 <property name="spacing">2</property>
                 <child>
-                  <object class="GtkSearchEntry" id="searchEntry">
+                  <object class="GtkSearchEntry" id="search_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="valign">center</property>
@@ -248,7 +248,7 @@ Author: Mufeed Ali
                     <property name="secondary_icon_activatable">False</property>
                     <property name="secondary_icon_sensitive">False</property>
                     <property name="placeholder_text" translatable="yes">Search...</property>
-                    <signal name="activate" handler="searchClick" swapped="no"/>
+                    <signal name="activate" handler="search_click" swapped="no"/>
                     <signal name="changed" handler="changed" swapped="no"/>
                   </object>
                   <packing>
@@ -258,7 +258,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="searchButton">
+                  <object class="GtkButton" id="search_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
@@ -268,7 +268,7 @@ Author: Mufeed Ali
                     <property name="tooltip_text" translatable="yes">Search</property>
                     <property name="image">image2</property>
                     <property name="relief">none</property>
-                    <signal name="clicked" handler="searchClick" swapped="no"/>
+                    <signal name="clicked" handler="search_click" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -277,7 +277,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="clearButton">
+                  <object class="GtkButton" id="clear_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
@@ -294,7 +294,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="audioButton">
+                  <object class="GtkButton" id="audio_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="focus_on_click">False</property>
@@ -326,7 +326,7 @@ Author: Mufeed Ali
                 <property name="hexpand">True</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkLabel" id="headlabel">
+                  <object class="GtkLabel" id="head_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes">&lt;b&gt;Reo&lt;/b&gt;
@@ -384,7 +384,7 @@ Author: Mufeed Ali
         <property name="vexpand">True</property>
         <property name="shadow_type">in</property>
         <child>
-          <object class="GtkTextView" id="defView">
+          <object class="GtkTextView" id="def_view">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="hexpand">True</property>
@@ -462,12 +462,12 @@ Author: Mufeed Ali
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="cedok">
+              <object class="GtkButton" id="ced_ok">
                 <property name="label" translatable="yes">OK</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="cedok" swapped="no"/>
+                <signal name="clicked" handler="ced_ok" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -507,7 +507,7 @@ Author: Mufeed Ali
                 <property name="orientation">vertical</property>
                 <property name="spacing">4</property>
                 <child>
-                  <object class="GtkLabel" id="cept">
+                  <object class="GtkLabel" id="large_ced_text">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <attributes>
@@ -523,7 +523,7 @@ Author: Mufeed Ali
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="cest">
+                  <object class="GtkLabel" id="small_ced_text">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="use_markup">True</property>
@@ -555,7 +555,7 @@ Author: Mufeed Ali
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="pref_diag">
+  <object class="GtkDialog" id="pref_dialog">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
     <property name="default_width">475</property>
@@ -694,11 +694,11 @@ Author: Mufeed Ali
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="cdef_box">
+                          <object class="GtkBox" id="custom_def_box">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="cdef_label">
+                              <object class="GtkLabel" id="custom_def_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Custom Definitions</property>
@@ -710,7 +710,7 @@ Author: Mufeed Ali
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSwitch" id="cdef_check">
+                              <object class="GtkSwitch" id="custom_def_check">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="active">True</property>
@@ -779,7 +779,7 @@ Author: Mufeed Ali
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSwitch" id="forcewn31">
+                              <object class="GtkSwitch" id="force_wn_31">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                               </object>
@@ -900,11 +900,11 @@ Author: Mufeed Ali
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="maxhide_box1">
+                          <object class="GtkBox" id="max_hide_box1">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="maxhide_label1">
+                              <object class="GtkLabel" id="max_hide_label1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Hide window buttons when maximized</property>
@@ -916,7 +916,7 @@ Author: Mufeed Ali
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSwitch" id="maxhide_check">
+                              <object class="GtkSwitch" id="max_hide_check">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                               </object>
@@ -934,11 +934,11 @@ Author: Mufeed Ali
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="nocsd_box1">
+                          <object class="GtkBox" id="no_csd_box1">
                             <property name="sensitive">False</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="nocsd_label1">
+                              <object class="GtkLabel" id="no_csd_label1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Disable CSD</property>
@@ -950,7 +950,7 @@ Author: Mufeed Ali
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSwitch" id="nocsd_check">
+                              <object class="GtkSwitch" id="no_csd_check">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                               </object>

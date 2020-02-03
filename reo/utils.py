@@ -9,15 +9,15 @@ CONFIG_FILE = CONFIG_FOLD + "/reo.conf"
 VERSION = '0.1.0'
 
 
-def get_wordlist(wn_version):
-    """Get the wordlist filename depending on the WordNet version."""
-    WORLDLIST = dirname(__file__) + '/data/wn' + wn_version + '.lzma'
-    return WORLDLIST
+def get_word_list(wn_version):
+    """Get the word list filename depending on the WordNet version."""
+    word_list = f"{dirname(__file__)}/data/wn{wn_version}.lzma"
+    return word_list
 
 
-def bool_str(bool):
-    """Convert boolean to string for configparser."""
-    if bool is True:
+def boot_to_str(boolean):
+    """Convert boolean to string for configuration parser."""
+    if boolean is True:
         return "yes"
     else:
         return "no"

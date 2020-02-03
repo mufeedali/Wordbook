@@ -9,23 +9,22 @@ parser.add_argument("file", help="Name of UI file")
 args = parser.parse_args()
 
 try:
-    proc_PyUic = subprocess.Popen(["pyuic5", args.file],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT)
-    proc_PyUic.wait()
-    out_PyUic = proc_PyUic.stdout.read().decode()
+    pyuic_process = subprocess.Popen(["pyuic5", args.file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # Use PyQt5's conversion tool because (for me at least), it has been more reliable and produces clearer output.
+    pyuic_process.wait()
+    out_PyUic = pyuic_process.stdout.read().decode()
 except Exception as ex:
     print("Something went wrong... " + str(ex))
+    exit(1)
 
-clean_output = out_PyUic.replace(os.environ.get("HOME") + "/Projects/" +
-                                 args.project + "/", "")
+clean_output = out_PyUic.replace(os.environ.get("HOME") + "/Projects/" + args.project + "/", "")
 
-pyname = args.file.replace(".ui", ".py")
+py_name = "ui_" + args.file.replace(".ui", ".py")
 
-with open("ui_" + pyname, "w") as f:
+with open(py_name, "w") as f:
     f.write(clean_output)
 
-proc_pep = subprocess.Popen(["autopep8", "-i", pyname],
-                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-proc_pep.wait()
-print(proc_pep.stdout.read().decode())
+pep_process = subprocess.Popen(["autopep8", "--max-line-length=120", "-i", py_name], stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+pep_process.wait()
+print(pep_process.stdout.read().decode())

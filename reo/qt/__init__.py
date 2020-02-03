@@ -10,7 +10,7 @@ works across most Linux distributions without any changes.
 import sys
 import logging
 import argparse  # for CommandLine-Interface (CLI).
-from PyQt5 import QtWidgets
+from PySide2 import QtWidgets
 from reo import utils, reo_base
 from reo.qt.main_win import ReoMain
 
@@ -24,7 +24,7 @@ parser.add_argument("-l", "--livesearch", action="store_true",
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 parsed = parser.parse_args()
-if(parsed.verbose):
+if parsed.verbose:
     level = logging.DEBUG
     debug = True
 else:
@@ -34,8 +34,8 @@ logging.basicConfig(level=level, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
                     "%(lineno)d) %(message)s")
 
-senCol = "cyan"  # Color of sentences in Dark mode
-wordCol = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
+sen_col = "cyan"  # Color of sentences in Dark mode
+word_col = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
 
 reo_version = utils.VERSION
 reo_fold = utils.CONFIG_FOLD
@@ -55,8 +55,8 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Reo")
     app.setDesktopFileName("Reo")
-    main = ReoMain(livesearch, wordCol, senCol, debug)
-    main.show()
+    main_window = ReoMain(livesearch, word_col, sen_col, debug)
+    main_window.show()
     sys.exit(app.exec_())
 
 

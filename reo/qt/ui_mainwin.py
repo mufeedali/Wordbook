@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 
 class Ui_ReoMain(object):
@@ -120,17 +120,12 @@ class Ui_ReoMain(object):
         self.audioButton.setText(_translate("ReoMain", "Audio"))
         self.menuSearch.setTitle(_translate("ReoMain", "Search"))
         self.menuHelp.setTitle(_translate("ReoMain", "Help"))
-        self.actionPaste_Search.setText(
-            _translate("ReoMain", "Paste && Search"))
-        self.actionPaste_Search.setShortcut(
-            _translate("ReoMain", "Ctrl+Shift+V"))
-        self.actionSearch_Selected.setText(
-            _translate("ReoMain", "Search Selected Text"))
+        self.actionPaste_Search.setText(_translate("ReoMain", "Paste && Search"))
+        self.actionPaste_Search.setShortcut(_translate("ReoMain", "Ctrl+Shift+V"))
+        self.actionSearch_Selected.setText(_translate("ReoMain", "Search Selected Text"))
         self.actionSearch_Selected.setShortcut(_translate("ReoMain", "Ctrl+S"))
-        self.actionSave_Definition.setText(
-            _translate("ReoMain", "Save Definition"))
-        self.actionSave_Definition.setShortcut(
-            _translate("ReoMain", "Ctrl+Shift+S"))
+        self.actionSave_Definition.setText(_translate("ReoMain", "Save Definition"))
+        self.actionSave_Definition.setShortcut(_translate("ReoMain", "Ctrl+Shift+S"))
         self.actionRandom_Word.setText(_translate("ReoMain", "Random Word"))
         self.actionRandom_Word.setShortcut(_translate("ReoMain", "Ctrl+R"))
         self.actionAbout.setText(_translate("ReoMain", "About Reo"))

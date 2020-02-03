@@ -12,7 +12,7 @@ import subprocess
 from reo import utils
 
 
-def foldGen():
+def fold_gen():
     """Make required directories if they don't already exist."""
     if not os.path.exists(utils.CONFIG_FOLD):  # check for Reo folder
         os.makedirs(utils.CONFIG_FOLD)  # create Reo folder
@@ -20,78 +20,70 @@ def foldGen():
         os.makedirs(utils.CDEF_FOLD)  # create Custom Definitions folder.
 
 
-def defProcessor(defi, term, senCol, wordCol, markup='html', debug=False):
+def def_processor(definition, term, sen_col, word_col, markup='html', debug=False):
     """Format the definition obtained from 'dict'."""
-    defi = defi.replace('1 definition found\n\nFrom WordNet (r)' +
-                        ' 3.0 (2006) [wn]:\n', '')
-    defi = defi.replace('1 definition found\n\nFrom WordNet (r)' +
-                        ' 3.1 (2011) [wn]:\n', '')
-    defi = html.escape(defi, False)
+    definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n', '')
+    definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n', '')
+    definition = html.escape(definition, False)
     try:
-        termInWn = re.search("  " + term, defi,
-                             flags=re.IGNORECASE).group(0)
+        term_in_wn = re.search("  " + term, definition, flags=re.IGNORECASE).group(0)
     except Exception as ex:
-        termInWn = ''
+        term_in_wn = term
         print("Regex search failed" + str(ex))
-    defi = defi.replace(termInWn + '\n', '')
+    definition = definition.replace(term_in_wn + '\n', '')
     if debug is True:
-        print("Searching " + termInWn.strip())
-    relist = {r'[ \t\r\f\v]+n\s+': '<b>' + termInWn +
-              '</b> ~ <i>noun</i>:\n      ',
-              r'[ \t\r\f\v]+adv\s+': '<b>' + termInWn +
-              '</b> ~ <i>adverb</i>:\n      ',
-              r'[ \t\r\f\v]+adj\s+': '<b>' + termInWn +
-              '</b> ~ <i>adjective</i>:\n      ',
-              r'[ \t\r\f\v]+v\s+': '<b>' + termInWn +
-              '</b> ~ <i>verb</i>:\n      ',
-              r'([-]+)\s+      \s+': r'\1',
-              r'\s+      \s+': r' ',
-              r'"$': r'</font>',
-              r'\s+(\d+):\D': r'\n  <b>\1:  </b>',
-              r'";\s*"': '</font><b>;</b> <font color="' + senCol + '">',
-              r'[;:]\s*"': r'\n        <font color="' + senCol + '">',
-              r'"\s+\[': r'</font>[',
-              r'\[syn:': r'\n        <i>Synonyms: ',
-              r'\[ant:': r'\n        <i>Antonyms: ',
-              r'}\]': r'}</i>',
-              r"\{([^{]*)\}": r'<font color="' + wordCol + r'">\1</font>',
-              r'";[ \t\r\f\v]*$': r'</font>',
-              r'";[ \t\r\f\v]+(.+)$': r'</font> \1',
-              r'"[; \t\r\f\v]+(\(.+\))$': r'</font> \1',
-              r'"\s*\-+\s*(.+)\s*([<]*)': r"</font> - \1; \2",
-              r';\s*$': r''}
-    for x, y in relist.items():
-        reclean = re.compile(x, re.MULTILINE)
-        defi = reclean.sub(y, defi)
+        print(f"Searching {term_in_wn.strip()}")
+    re_list = {r'[ \t\r\f\v]+n\s+': f'<b>{term_in_wn}</b> ~ <i>noun</i>:\n      ',
+               r'[ \t\r\f\v]+adv\s+': f'<b>{term_in_wn}</b> ~ <i>adverb</i>:\n      ',
+               r'[ \t\r\f\v]+adj\s+': f'<b>{term_in_wn}</b> ~ <i>adjective</i>:\n      ',
+               r'[ \t\r\f\v]+v\s+': f'<b>{term_in_wn}</b> ~ <i>verb</i>:\n      ',
+               r'([-]+)\s+      \s+': r'\1',
+               r'\s+      \s+': r' ',
+               r'"$': r'</font>',
+               r'\s+(\d+):\D': r'\n  <b>\1:  </b>',
+               r'";\s*"': f'</font><b>;</b> <font color="{sen_col}">',
+               r'[;:]\s*"': fr'\n        <font color="{sen_col}">',
+               r'"\s+\[': r'</font>[',
+               r'\[syn:': r'\n        <i>Synonyms: ',
+               r'\[ant:': r'\n        <i>Antonyms: ',
+               r'}\]': r'}</i>',
+               r"\{([^{]*)\}": fr'<font color="{word_col}">\1</font>',
+               r'";[ \t\r\f\v]*$': r'</font>',
+               r'";[ \t\r\f\v]+(.+)$': r'</font> \1',
+               r'"[; \t\r\f\v]+(\(.+\))$': r'</font> \1',
+               r'"\s*\-+\s*(.+)\s*([<]*)': r"</font> - \1; \2",
+               r';\s*$': r''}
+    for x, y in re_list.items():
+        re_clean = re.compile(x, re.MULTILINE)
+        definition = re_clean.sub(y, definition)
     if markup == "pango":
-        defi = defi.replace('<font color="', '<span foreground="')
-        defi = defi.replace('</font>', '</span>')
-    if not defi.find("`") == -1:
-        defi = defi.replace("`", "'")
-    if not defi.find("thunder started the sleeping") == -1:
-        defi = defi.replace("thunder started the sleeping",
-                            "thunder started, the sleeping")
+        definition = definition.replace('<font color="', '<span foreground="')
+        definition = definition.replace('</font>', '</span>')
+    if not definition.find("`") == -1:
+        definition = definition.replace("`", "'")
+    if not definition.find("thunder started the sleeping") == -1:
+        definition = definition.replace("thunder started the sleeping", "thunder started, the sleeping")
     if markup == "html":
-        cleanDefi = defi.strip().replace('\n', '<br>')
+        clean_definition = definition.strip().replace('\n', '<br>')
     else:
-        cleanDefi = defi.strip()
-    return cleanDefi
+        clean_definition = definition.strip()
+    return clean_definition
 
 
-def clsfmt(clp, text):
+def cls_fmt(clp, text):
     """Format the similar words list obtained."""
-    subDict = {r'\s+      \s+': r'  ',
-               '  ["]*' + text.lower() + '["]*$': r'',
-               "(.)  " + text.lower() + "  (.)": r"\1  \2",
-               'wn: ["]*' + text.lower() + '["]*  (.)': r"\1",
-               '(.)  "' + text.lower() + '"  (.)': r"\1  \2",
-               r'\s*\n\s*': r'  ',
-               r"\s\s+": r", ",
-               '["]+' + text.lower() + '["]+': r"",
-               'wn:[,]*': r''}
-    for x, y in subDict.items():
-        subr = re.compile(x)
-        clp = subr.sub(y, clp).strip()
+    sub_dict = {r'\s+      \s+': r'  ',
+                f'  ["]*{text.lower()}["]*$': r'',
+                f"(.)  {text.lower()}  (.)": r"\1  \2",
+                f'wn: ["]*{text.lower()}["]*  (.)': r"\1",
+                f'(.)  "{text.lower()}"  (.)': r"\1  \2",
+                r'\s*\n\s*': r'  ',
+                r"\s\s+": r", ",
+                f'["]+{text.lower()}["]+': r"",
+                'wn:[,]*': r''}
+    for x, y in sub_dict.items():
+        sub_re = re.compile(x)
+        clp = sub_re.sub(y, clp).strip()
     clp = clp.rstrip()
     return clp
 
@@ -99,118 +91,105 @@ def clsfmt(clp, text):
 def fortune():
     """Present fortune easter egg."""
     try:
-        fortune = subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
-        fortune.wait()
-        ft = fortune.stdout.read().decode()
+        fortune_process = subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        fortune_process.wait()
+        ft = fortune_process.stdout.read().decode()
         ft = html.escape(ft, False)
         return "<tt>" + ft + "</tt>"
     except Exception as ex:
         ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
-        print(ft + "\n" + str(ex))
-        return "<tt>" + ft + "</tt>"
+        print(f"{ft}\n{str(ex)}")
+        return f"<tt>{ft}</tt>"
 
 
 def cowfortune():
     """Present cowsay version of fortune easter egg."""
     try:
-        cowsay = subprocess.Popen(["cowsay", fortune()],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT)
+        cowsay = subprocess.Popen(["cowsay", fortune()], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cowsay.wait()
         if cowsay:
             cst = cowsay.stdout.read().decode()
-        return "<tt>" + cst + "</tt>"
+            return f"<tt>{cst}</tt>"
+        else:
+            return "<tt>Cowsay fail... Too bad...</tt>"
     except Exception as ex:
-        ft = ("Easter Egg Fail!!! Install 'fortune' or 'fortunemod'" +
-              " and also 'cowsay'.")
-        print(ft + "\n" + str(ex))
-        return "<tt>" + ft + "</tt>"
+        ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
+        print(f"{ft}\n{str(ex)}")
+        return f"<tt>{ft}</tt>"
 
 
-def dataObtain(term, wordCol, senCol, markup='html', debug=False):
+def data_obtain(term, word_col, sen_col, markup='html', debug=False):
     """
     Obtain the data to be processed and presented.
 
     Too complex according to McCabe complexity check. Needs work.
     """
-    strat = "lev"
+    strategy = "lev"
     try:
-        procDefi = subprocess.Popen(["dict", "-d", "wn", term],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
-        procPron = subprocess.Popen(["espeak-ng", "-ven-uk-rp",
-                                     "--ipa", "-q", term],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
-        procClos = subprocess.Popen(["dict", "-m", "-d", "wn",
-                                     "-s", strat, term],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
+        process_def = subprocess.Popen(["dict", "-d", "wn", term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process_pron = subprocess.Popen(["espeak-ng", "-ven-uk-rp", "--ipa", "-q", term], stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+        process_close = subprocess.Popen(["dict", "-m", "-d", "wn", "-s", strategy, term], stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
     except Exception as ex:
-        print("Didnt Work! ERROR INFO: " + str(ex))
-    procDefi.wait()
-    defi = procDefi.stdout.read().decode()
-    if not defi == '':
-        cleanDefi = defProcessor(defi, term, senCol, wordCol, markup, debug)
-        NoDef = 0
+        print("Didn't Work! ERROR INFO: " + str(ex))
+        return
+    process_def.wait()
+    definition = process_def.stdout.read().decode()
+    if not definition == '':
+        clean_def = def_processor(definition, term, sen_col, word_col, markup, debug)
+        no_def = 0
     else:
-        cleanDefi = "Coundn't find definition for '" + term + "'."
-        NoDef = 1
-    procPron.wait()
-    pron = procPron.stdout.read().decode()
-    cleanPron = " /" + pron.strip().replace('\n ', ' ') + "/"
-    procClos.wait()
-    clos = procClos.stdout.read().decode()
-    cleanClos = clsfmt(clos, term)
+        clean_def = f"Couldn't find definition for '{term}'."
+        no_def = 1
+    process_pron.wait()
+    pron = process_pron.stdout.read().decode()
+    clean_pron = " /{0}/".format(pron.strip().replace('\n ', ' '))
+    process_close.wait()
+    close = process_close.stdout.read().decode()
+    clean_close = cls_fmt(close, term)
     fail = False
     if term.lower() == 'recursion':
-        clos = 'recursion'
-    if cleanClos.strip() == '':
+        clean_close = 'recursion'
+    if clean_close.strip() == '':
         fail = True
-    if procPron and not NoDef == 1:
-        finalPron = "<b>Pronunciation</b>: <b>" + cleanPron + '</b>'
-    elif procPron and NoDef == 1:
-        finalPron = ("<b>Probable Pronunciation</b>: <b>" + cleanPron +
-                     '</b>')
-    if not fail:
-        if NoDef == 1:
-            finalClos = ('<b>Did you mean</b>:<br><i><font color="' +
-                         wordCol + '">  ' + cleanClos + '</font></i>')
-        else:
-            finalClos = ('<b>Similar Words</b>:<br>' +
-                         '<i><font color="' + wordCol + '">  ' +
-                         cleanClos + '</font></i>')
+    if process_pron and not no_def == 1:
+        final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
     else:
-        finalClos = ''
+        final_pron = "Pronunciation processing failed. Report this as a bug."
+    if not fail:
+        if no_def == 1:
+            final_close = f'<b>Did you mean</b>:<br><i><font color="{word_col}">  {clean_close}</font></i>'
+        else:
+            final_close = f'<b>Similar Words</b>:<br><i><font color="{word_col}">  {clean_close}</font></i>'
+    else:
+        final_close = ''
     if markup == "pango":
-        data = finalPron.strip() + '\n' + cleanDefi + '\n' + finalClos.strip()
+        data = f'{final_pron.strip()}\n{clean_def}\n{final_close.strip()}'
         data = data.replace('<font color="', '<span foreground="')
         data = data.replace('</font>', '</span>')
         data = data.replace('<br>', '\n')
-        finalData = data.replace('&', '&amp;')
+        final_data = data.replace('&', '&amp;')
     else:
-        data = ("<p>" + finalPron + '</p><p>' + cleanDefi + '</p><p>' +
-                finalClos.strip() + "</p>")
-        finalData = data.replace('&', '&amp;').replace('  ', '&nbsp;&nbsp;')
-    return finalData
+        data = f"<p>{final_pron}</p><p>{clean_def}</p><p>{final_close.strip()}</p>"
+        final_data = data.replace('&', '&amp;').replace('  ', '&nbsp;&nbsp;')
+    return final_data
 
 
-def wnvercheck():
+def wn_ver_check():
     """Check version of WordNet."""
     try:
-        checkProc = subprocess.Popen(["dict", "-d", "wn", "test"],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.STDOUT)
-        checkOut = checkProc.stdout.read().decode()
+        check_process = subprocess.Popen(["dict", "-d", "wn", "test"],
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.STDOUT)
+        check_out = check_process.stdout.read().decode()
     except Exception as ex:
         print("Error with dict. Error")
         print(ex)
-    if not checkOut.find('1 definition found\n\nFrom WordNet (r)' +
-                         ' 3.1 (2011) [wn]:\n') == -1:
         return '3.1'
-    elif not checkOut.find('1 definition found\n\nFrom WordNet (r)' +
-                           ' 3.0 (2006) [wn]:\n') == -1:
+    if not check_out.find('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n') == -1:
+        return '3.1'
+    elif not check_out.find('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n') == -1:
         return '3.0'
 
 
@@ -219,32 +198,29 @@ def verinfo():
     print('Reo - ' + utils.VERSION)
     print('Copyright 2016-2020 Mufeed Ali')
     print()
-    wnver = wnvercheck()
-    if wnver == '3.1':
+    wn_ver = wn_ver_check()
+    if wn_ver == '3.1':
         print("WordNet Version 3.1 (2011) (Installed)")
-    elif wnver == '3.0':
+    elif wn_ver == '3.0':
         print("WordNet Version 3.0 (2006) (Installed)")
     print()
     try:
-        dictProc = subprocess.Popen(["dict", "-V"],
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT)
-        dictOut = dictProc.stdout.read().decode()
-        print(dictOut.strip())
+        dict_process = subprocess.Popen(["dict", "-V"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        dict_out = dict_process.stdout.read().decode()
+        print(dict_out.strip())
     except Exception as ex:
         print("Looks like missing components. (dict)\n" + str(ex))
     print()
     try:
-        esProc = subprocess.Popen(["espeak-ng", "--version"],
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT)
-        esOut = esProc.stdout.read().decode()
-        print(esOut.strip())
+        espeak_process = subprocess.Popen(["espeak-ng", "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        espeak_process.wait()
+        espeak_out = espeak_process.stdout.read().decode()
+        print(espeak_out.strip())
     except Exception as ex:
         print("You're missing a few components. (espeak-ng)\n" + str(ex))
 
 
-def htmltopango(data):
+def html_to_pango(data):
     """Convert HTML data to Pango markup data. Not a real converter."""
     data = data.replace('<font color="', '<span foreground="')
     data = data.replace('</font>', '</span>')
@@ -252,8 +228,7 @@ def htmltopango(data):
     return data
 
 
-def readTerm(text, speed):
+def read_term(text, speed):
     """Say text loudly."""
-    with open(os.devnull, 'w') as NULLMAKER:
-        subprocess.Popen(["espeak-ng", "-ven-uk-rp", "-s", speed, text],
-                         stdout=NULLMAKER, stderr=subprocess.STDOUT)
+    with open(os.devnull, 'w') as NULL_MAKER:
+        subprocess.Popen(["espeak-ng", "-ven-uk-rp", "-s", speed, text], stdout=NULL_MAKER, stderr=subprocess.STDOUT)
