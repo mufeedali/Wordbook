@@ -10,7 +10,7 @@ args = parser.parse_args()
 
 try:
     pyuic_process = subprocess.Popen(["pyuic5", args.file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # Use PyQt5's conversion tool because (for me at least), it has been more reliable and produces clearer output.
+    # Use PyQt5's conversion tool because, it has been more reliable (for me at least) and produces clearer output.
     pyuic_process.wait()
     out_PyUic = pyuic_process.stdout.read().decode()
 except Exception as ex:

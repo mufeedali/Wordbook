@@ -10,7 +10,7 @@ Light Mode                             |  Dark Mode
  * WordNet 3.1 or 3.0 database for dictd (dict-wn) [Arch AUR: `dict-wn`]
  * Python 3 [Arch: `python`]
  * Python GObject [Arch: `python-gobject`]
- * Gtk+ 3.20+ [Arch: `gtk3`]
+ * GTK 3.20+ [Arch: `gtk3`]
  * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 You can confirm all the requirements by running Reo with the arguments `--check` (`-c`) or `--adversion` (`-d`).
@@ -29,7 +29,7 @@ If the output is slow, it's possibly because the definition is obtained from dic
 
 #### Qt5 Interface
 
-Unlike the Gtk3 version, which works quite well already, the Qt5 interface is more of an experiment. I just wanted to see how easy it would be to port Reo over to Qt5. While I do plan to add all the features from the Gtk3 version over to the Qt5 version, the Gtk version is the recommended version, for now and probably forever, especially since Gtk3 applications will look native on Plasma (on X11. It already looked good on Plasma Wayland.) starting from KDE 5.18 LTS. But Qt5 is fun to work with, so I'll be working on it anyway.
+Unlike the GTK 3 version, which works quite well already, the Qt5 interface is more of an experiment. I just wanted to see how easy it would be to port Reo over to Qt5. While I do plan to add all the features from the GTK 3 version over to the Qt5 version, the GTK version is the recommended version, for now and probably forever, especially since GTK 3 applications will look native on Plasma (on X11. It already looked good on Plasma Wayland.) starting from KDE 5.18 LTS. But Qt5 is fun to work with, so I'll be working on it anyway.
 
 Another important thing to note is that the use of Qt5 won't make it cross-platform. It's still Linux-only and probably will remain so.
 

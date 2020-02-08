@@ -119,11 +119,7 @@ def cowfortune():
 
 
 def data_obtain(term, word_col, sen_col, markup='html', debug=False):
-    """
-    Obtain the data to be processed and presented.
-
-    Too complex according to McCabe complexity check. Needs work.
-    """
+    """Obtain the data to be processed and presented."""
     strategy = "lev"
     try:
         process_def = subprocess.Popen(["dict", "-d", "wn", term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
