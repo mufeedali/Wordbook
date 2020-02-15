@@ -10,6 +10,7 @@ import html
 import os
 import subprocess
 from reo import utils
+from functools import lru_cache
 
 
 def fold_gen():
@@ -70,6 +71,7 @@ def def_processor(definition, term, sen_col, word_col, markup='html', debug=Fals
     return clean_definition
 
 
+@lru_cache(maxsize=None)
 def cls_fmt(clp, text):
     """Format the similar words list obtained."""
     sub_dict = {r'\s+      \s+': r'  ',
@@ -95,7 +97,7 @@ def fortune():
         fortune_process.wait()
         ft = fortune_process.stdout.read().decode()
         ft = html.escape(ft, False)
-        return "<tt>" + ft + "</tt>"
+        return f"<tt>{ft}</tt>"
     except Exception as ex:
         ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
         print(f"{ft}\n{str(ex)}")
@@ -118,8 +120,8 @@ def cowfortune():
         return f"<tt>{ft}</tt>"
 
 
-def data_obtain(term, word_col, sen_col, markup='html', debug=False):
-    """Obtain the data to be processed and presented."""
+@lru_cache(maxsize=None)
+def run_processes(term):
     strategy = "lev"
     try:
         process_def = subprocess.Popen(["dict", "-d", "wn", term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -131,28 +133,35 @@ def data_obtain(term, word_col, sen_col, markup='html', debug=False):
         print("Didn't Work! ERROR INFO: " + str(ex))
         return
     process_def.wait()
-    definition = process_def.stdout.read().decode()
+    output = ['', '', '']
+    output[0] = process_def.stdout.read().decode()
+    process_pron.wait()
+    output[1] = process_pron.stdout.read().decode()
+    process_close.wait()
+    output[2] = process_close.stdout.read().decode()
+    return output
+
+
+def data_obtain(term, word_col, sen_col, markup='html', debug=False):
+    """Obtain the data to be processed and presented."""
+    output = run_processes(term)
+    definition = output[0]
     if not definition == '':
         clean_def = def_processor(definition, term, sen_col, word_col, markup, debug)
         no_def = 0
     else:
         clean_def = f"Couldn't find definition for '{term}'."
         no_def = 1
-    process_pron.wait()
-    pron = process_pron.stdout.read().decode()
+    pron = output[1]
     clean_pron = " /{0}/".format(pron.strip().replace('\n ', ' '))
-    process_close.wait()
-    close = process_close.stdout.read().decode()
+    close = output[2]
     clean_close = cls_fmt(close, term)
     fail = False
     if term.lower() == 'recursion':
         clean_close = 'recursion'
     if clean_close.strip() == '':
         fail = True
-    if process_pron and not no_def == 1:
-        final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
-    else:
-        final_pron = "Pronunciation processing failed. Report this as a bug."
+    final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
     if not fail:
         if no_def == 1:
             final_close = f'<b>Did you mean</b>:<br><i><font color="{word_col}">  {clean_close}</font></i>'
@@ -162,16 +171,14 @@ def data_obtain(term, word_col, sen_col, markup='html', debug=False):
         final_close = ''
     if markup == "pango":
         data = f'{final_pron.strip()}\n{clean_def}\n{final_close.strip()}'
-        data = data.replace('<font color="', '<span foreground="')
-        data = data.replace('</font>', '</span>')
-        data = data.replace('<br>', '\n')
-        final_data = data.replace('&', '&amp;')
+        final_data = html_to_pango(data).replace('&', '&amp;')
     else:
         data = f"<p>{final_pron}</p><p>{clean_def}</p><p>{final_close.strip()}</p>"
         final_data = data.replace('&', '&amp;').replace('  ', '&nbsp;&nbsp;')
     return final_data
 
 
+@lru_cache(maxsize=None)
 def wn_ver_check():
     """Check version of WordNet."""
     try:

@@ -51,11 +51,11 @@ except ImportError as import_error:
         print("Confirm all dependencies by running Reo with '--check' parameter.\n" + str(import_error))
         sys.exit(1)
     elif parsed.check:
-        print("Install GObject bindings.\n" +
-              "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install python3-gobject'\n" +
-              "From extra repo for Arch Linux:\n" +
-              "'yay -S python-gobject' or 'sudo pacman -S python-gobject'\n" +
+        print("Install GObject bindings.\n"
+              "For Ubuntu, Debian, etc:\n"
+              "'sudo apt install python3-gobject'\n"
+              "From extra repo for Arch Linux:\n"
+              "'yay -S python-gobject' or 'sudo pacman -S python-gobject'\n"
               "Thanks for trying this out!")
 
 builder = Gtk.Builder()
@@ -72,10 +72,6 @@ def darker():
     global dark
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", True)
-    current_theme = settings.get_property("gtk-theme-name")
-    if not current_theme.endswith('-dark'):
-        new_theme = current_theme + "-dark"
-        settings.set_property("gtk-theme-name", new_theme)
     dark = True
 
 
@@ -84,10 +80,6 @@ def lighter():
     global dark
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", False)
-    current_theme = settings.get_property("gtk-theme-name")
-    if current_theme.endswith('-dark'):
-        new_theme = current_theme[:-5]
-        settings.set_property("gtk-theme-name", new_theme)
     dark = False
 
 
@@ -206,7 +198,7 @@ def apply_settings():
 if not parsed.verinfo and not parsed.check:
     GtkSettings = Gtk.Settings.get_default()
     if (GtkSettings.get_property("gtk-application-prefer-dark-theme") or
-            GtkSettings.get_property("gtk-theme-name").endswith('-dark')):
+            GtkSettings.get_property("gtk-theme-name").lower().endswith('-dark')):
         darker()
     else:
         lighter()
@@ -253,55 +245,54 @@ def check_bin(bin_to_check):
 def print_checks(espeak_ng, dict_check, dictd, wn_dict):
     """Print result of all checks."""
     if espeak_ng and dict_check and dictd and wn_dict:
-        print("Everything Looks Perfect!\n" +
+        print("Everything Looks Perfect!\n"
               "You should be able to run it without any issues!")
     elif espeak_ng and dict_check and dictd and not wn_dict:
-        print("WordNet's data file is missing. Re-install 'dict-wn'.\n" +
-              "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install dict-wn'\n" +
-              "From AUR for Arch Linux:\n" +
-              "'yay -S dict-wn'\n" +
-              "Everything else (NOT everything) looks fine...\n" +
+        print("WordNet's data file is missing. Re-install 'dict-wn'.\n"
+              "For Ubuntu, Debian, etc:\n"
+              "'sudo apt install dict-wn'\n"
+              "From AUR for Arch Linux:\n"
+              "'yay -S dict-wn'\n"
+              "Everything else (NOT everything) looks fine...\n"
               "... BUT you can't run it.")
     elif espeak_ng and not dict_check and not dictd and not wn_dict:
-        print("dict and dictd (client and server) are missing.. install it." +
-              "\nFor Ubuntu, Debian, etc:\n" +
-              "'sudo apt install dictd dict-wn'\n" +
-              "From community repo for Arch Linux (but WordNet from AUR):\n" +
-              "'yay -S dictd dict-wn'\n" +
-              "That should point you in the right direction to getting \n" +
+        print("dict and dictd (client and server) are missing.. install it."
+              "\nFor Ubuntu, Debian, etc:\n"
+              "'sudo apt install dictd dict-wn'\n"
+              "From community repo for Arch Linux (but WordNet from AUR):\n"
+              "'yay -S dictd dict-wn'\n"
+              "That should point you in the right direction to getting \n"
               "it to work.")
     elif not espeak_ng and not dict_check and not dictd and not wn_dict:
-        print("ALL bits and pieces are Missing...\n" +
-              "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak-ng dictd dict-wn'\n" +
-              "From community repo for Arch Linux (but WordNet from AUR):\n" +
-              "'yay -S espeak-ng dictd dict-wn'\n" +
+        print("ALL bits and pieces are Missing...\n"
+              "For Ubuntu, Debian, etc:\n"
+              "'sudo apt install espeak-ng dictd dict-wn'\n"
+              "From community repo for Arch Linux (but WordNet from AUR):\n"
+              "'yay -S espeak-ng dictd dict-wn'\n"
               "Go on, get it working now!")
     elif not espeak_ng and dict_check and dictd and wn_dict:
-        print("Everything except eSpeak-ng is working...\n" +
-              "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak-ng'\n" +
-              "From community repo for Arch Linux:\n" +
-              "'yay -S espeak-ng' or 'sudo pacman -S espeak-ng'\n" +
+        print("Everything except eSpeak-ng is working...\n"
+              "For Ubuntu, Debian, etc:\n"
+              "'sudo apt install espeak-ng'\n"
+              "From community repo for Arch Linux:\n"
+              "'yay -S espeak-ng' or 'sudo pacman -S espeak-ng'\n"
               "It should be alright then.")
     elif not espeak_ng and dict_check and dictd and wn_dict:
         print("eSpeak-ng is missing and WordNet might not work as intended.\n"
-              + "Install 'espeak-ng' and re-install the 'dict-wn' package.\n" +
-              "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak-ng dict-wn'\n" +
-              "From AUR for Arch Linux:\n" +
-              "'yay -S espeak-ng dict-wn'\n" +
-              "Everything else (NOT everything) looks fine.\n" +
+              + "Install 'espeak-ng' and re-install the 'dict-wn' package.\n"
+              "For Ubuntu, Debian, etc:\n"
+              "'sudo apt install espeak-ng dict-wn'\n"
+              "From AUR for Arch Linux:\n"
+              "'yay -S espeak-ng dict-wn'\n"
+              "Everything else (NOT everything) looks fine.\n"
               "Go on, try and run it!")
     elif not espeak_ng and dict_check and dictd and not wn_dict:
-        print("eSpeak-ng is missing and WordNet's data file is missing. Re-install 'dict-wn'.\n" +
-              "For Ubuntu, Debian, etc:\n" +
-              "'sudo apt install espeak-ng dict-wn'\n" +
-              "From AUR for Arch Linux:\n" +
-              "'yay -S espeak-ng dict-wn'\n" +
-              "Everything else (NOT everything) looks" +
-              " fine BUT you can't run it.")
+        print("eSpeak-ng is missing and WordNet's data file is missing. Re-install 'dict-wn'.\n"
+              "For Ubuntu, Debian, etc:\n"
+              "'sudo apt install espeak-ng dict-wn'\n"
+              "From AUR for Arch Linux:\n"
+              "'yay -S espeak-ng dict-wn'\n"
+              "Everything else (NOT everything) looks fine BUT you can't run it.")
 
 
 def dep_check():
@@ -432,14 +423,14 @@ class GUI:
         """Clean input text, give errors and pass data to reactor."""
         if (not search_box.strip('<>"?`![]()/\\:;,') == '' and
                 not search_box.isspace() and not search_box == ''):
-            text = search_box.strip().strip('<>"?`![]()/\\:;,')
+            text = search_box.strip().strip('<>"?`![]()/\\:;,*')
             return self.reactor(text)
         elif (search_box.strip('<>"?`![]()/\\:;,') == '' and
               not search_box.isspace() and
               not search_box == ''):
             logging.error("Invalid Characters.")
             self.new_ced('Error: Invalid Input!', 'Invalid Characters!',
-                         "Reo thinks that your input was actually \njust a bunch of useless characters." +
+                         "Reo thinks that your input was actually \njust a bunch of useless characters."
                          "\nSo, 'Invalid Characters' error!")
 
     def reactor(self, text):
@@ -455,7 +446,7 @@ class GUI:
         skip = ['00-database-allchars', '00-database-info', '00-database-long',
                 '00-database-short', '00-database-url']
         if text in skip:
-            return "<tt> Running Reo with WordNet " + wn_version + "</tt>"
+            return f"<tt> Running Reo with WordNet {wn_version}</tt>"
         elif text == 'fortune -a':
             return reo_base.fortune()
         elif text == 'cowfortune':
@@ -463,10 +454,10 @@ class GUI:
         elif text == 'crash now' or text == 'close now':
             Gtk.main_quit()
         elif text == 'reo':
-            reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name " +
-                          "of this application, chosen kind of at random.\n  <b>2:</b> Japanese word meaning 'Wise" +
-                          " Center'\n <b>Similar Words:</b>\n <i><span foreground=\"" + wordcol + "\">  ro, " +
-                          "re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb, red, ref, rem, rep, res," +
+            reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name "
+                          "of this application, chosen kind of at random.\n  <b>2:</b> Japanese word meaning 'Wise"
+                          f" Center'\n <b>Similar Words:</b>\n <i><span foreground=\"{wordcol}\">  ro, "
+                          "re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb, red, ref, rem, rep, res,"
                           " ret, rev, rex</span></i></tt>")
             return reo_def
         if text and not text.isspace():
@@ -487,7 +478,7 @@ class GUI:
                 custom_def_read = custom_def_read.replace("\n[warninghide]", "")
                 return custom_def_read
             else:
-                return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one' +
+                return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one'
                        ' is to be held responsible for errors in this.</span>')
 
     def generator(self, text, wordcol, sencol):
@@ -526,7 +517,7 @@ class GUI:
             self.new_ced("Umm..?", "Umm..?", "Reo can't find any text there! You sure \nyou typed something?")
         elif not searched:
             self.new_ced("Sorry!!", "Sorry!!",
-                         "I'm sorry but you have to do a search first \nbefore trying to  listen to it." +
+                         "I'm sorry but you have to do a search first \nbefore trying to  listen to it."
                          " I mean, Reo \nis <b>NOT</b> a Text-To-Speech Software!")
 
     def changed(self, search_entry):

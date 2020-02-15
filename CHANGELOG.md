@@ -1,5 +1,7 @@
 # CHANGELOG
 
 ## [Unreleased]
+
 ### Added
- - Everything. Initial release.
+
+- Everything. Initial release.

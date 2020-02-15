@@ -2,11 +2,11 @@
 Usage
 =====
 
-To run Reo's Gtk3 UI, run ::
+To run Reo's GTK 3 UI, run ::
 
     $ reo-gtk
 
-To run Reo's Qt5 UI (alpha quality), run ::
+To run Reo's Qt5 UI, run ::
 
     $ reo-qt
 

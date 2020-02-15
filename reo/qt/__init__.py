@@ -10,7 +10,7 @@ works across most Linux distributions without any changes.
 import sys
 import logging
 import argparse  # for CommandLine-Interface (CLI).
-from PySide2 import QtWidgets
+from PyQt5 import QtWidgets
 from reo import utils, reo_base
 from reo.qt.main_win import ReoMain
 
