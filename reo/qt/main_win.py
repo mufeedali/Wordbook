@@ -64,7 +64,8 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         self.searchEntry.setText(self.defView.textCursor().selectedText())
         self.search_def()
 
-    def quit(self):
+    @staticmethod
+    def quit():
         """Quit the application."""
         exit(0)
 

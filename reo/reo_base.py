@@ -122,6 +122,7 @@ def cowfortune():
 
 @lru_cache(maxsize=None)
 def run_processes(term):
+    """Run the processes for obtaining defintion data."""
     strategy = "lev"
     try:
         process_def = subprocess.Popen(["dict", "-d", "wn", term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

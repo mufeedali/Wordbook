@@ -331,7 +331,7 @@ class GUI:
     def state_changed(window, state):
         """Detect changes to the window state and adapt."""
         header = builder.get_object('header')
-        if max_hide and not (os.environ.get('GTK_CSD') == '0'):
+        if max_hide and not os.environ.get('GTK_CSD') == '0':
             if "MAXIMIZED" in str(state.new_window_state):
                 header.set_show_close_button(False)
             else:
@@ -451,7 +451,7 @@ class GUI:
             return reo_base.fortune()
         elif text == 'cowfortune':
             return reo_base.cowfortune()
-        elif text == 'crash now' or text == 'close now':
+        elif text in ('crash now', 'close now'):
             Gtk.main_quit()
         elif text == 'reo':
             reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name "
@@ -544,11 +544,10 @@ class GUI:
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
             def_dialog.hide()
         elif response == Gtk.ResponseType.OK:
-            sf = open(def_dialog.get_filename(), 'w')
-            start_iter = viewer.get_buffer().get_start_iter()
-            last_iter = viewer.get_buffer().get_end_iter()
-            sf.write(viewer.get_buffer().get_text(start_iter, last_iter, 'false'))
-            sf.close()
+            with open(def_dialog.get_filename(), 'w') as sf:
+                start_iter = viewer.get_buffer().get_start_iter()
+                last_iter = viewer.get_buffer().get_end_iter()
+                sf.write(viewer.get_buffer().get_text(start_iter, last_iter, 'false'))
             def_dialog.hide()
 
 
