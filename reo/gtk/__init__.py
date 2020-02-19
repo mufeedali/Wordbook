@@ -530,22 +530,6 @@ class GUI:
         """Quit using menu."""
         Gtk.main_quit()
 
-    @staticmethod
-    def save_def(menu_save):
-        """Save definition using FileChooser dialog."""
-        def_dialog = Gtk.FileChooserDialog("Save Definition as...", builder.get_object('window'),
-                                           Gtk.FileChooserAction.SAVE,
-                                           ("Save", Gtk.ResponseType.OK, "Cancel", Gtk.ResponseType.CANCEL))
-        response = def_dialog.run()
-        if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
-            def_dialog.hide()
-        elif response == Gtk.ResponseType.OK:
-            with open(def_dialog.get_filename(), 'w') as sf:
-                start_iter = viewer.get_buffer().get_start_iter()
-                last_iter = viewer.get_buffer().get_end_iter()
-                sf.write(viewer.get_buffer().get_text(start_iter, last_iter, 'false'))
-            def_dialog.hide()
-
 
 def main():
     """Run the Gtk UI."""

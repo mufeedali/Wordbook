@@ -182,18 +182,6 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionSave_Definition">
-   <property name="icon">
-    <iconset theme="document-save-symbolic">
-     <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
-   </property>
-   <property name="text">
-    <string>Save Definition</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
-   </property>
-  </action>
   <action name="actionRandom_Word">
    <property name="icon">
     <iconset theme="media-playlist-shuffle-symbolic">

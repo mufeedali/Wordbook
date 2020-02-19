@@ -73,11 +73,6 @@ Author: Mufeed Ali
     <property name="can_focus">False</property>
     <property name="icon_name">media-playlist-shuffle-symbolic</property>
   </object>
-  <object class="GtkImage" id="saveimg">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">document-save-symbolic</property>
-  </object>
   <object class="GtkImage" id="sstimg">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -117,16 +112,6 @@ Author: Mufeed Ali
                 <property name="use_stock">False</property>
                 <signal name="activate" handler="sst" swapped="no"/>
                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-            </child>
-            <child>
-              <object class="GtkImageMenuItem" id="menu_save">
-                <property name="label">Save Definition</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="image">saveimg</property>
-                <property name="use_stock">False</property>
-                <signal name="activate" handler="save_def" swapped="no"/>
               </object>
             </child>
             <child>
