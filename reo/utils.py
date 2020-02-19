@@ -19,8 +19,7 @@ def boot_to_str(boolean):
     """Convert boolean to string for configuration parser."""
     if boolean is True:
         return "yes"
-    else:
-        return "no"
+    return "no"
 
 
 def save_settings(config):

@@ -112,8 +112,7 @@ def cowfortune():
         if cowsay:
             cst = cowsay.stdout.read().decode()
             return f"<tt>{cst}</tt>"
-        else:
-            return "<tt>Cowsay fail... Too bad...</tt>"
+        return "<tt>Cowsay fail... Too bad...</tt>"
     except Exception as ex:
         ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
         print(f"{ft}\n{str(ex)}")
@@ -191,10 +190,9 @@ def wn_ver_check():
         print("Error with dict. Error")
         print(ex)
         return '3.1'
-    if not check_out.find('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n') == -1:
-        return '3.1'
-    elif not check_out.find('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n') == -1:
+    if not check_out.find('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n') == -1:
         return '3.0'
+    return '3.1'
 
 
 def verinfo():

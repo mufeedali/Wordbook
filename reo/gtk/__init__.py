@@ -425,13 +425,10 @@ class GUI:
                 not search_box.isspace() and not search_box == ''):
             text = search_box.strip().strip('<>"?`![]()/\\:;,*')
             return self.reactor(text)
-        elif (search_box.strip('<>"?`![]()/\\:;,') == '' and
-              not search_box.isspace() and
-              not search_box == ''):
-            logging.error("Invalid Characters.")
-            self.new_ced('Error: Invalid Input!', 'Invalid Characters!',
-                         "Reo thinks that your input was actually \njust a bunch of useless characters."
-                         "\nSo, 'Invalid Characters' error!")
+        logging.error("Invalid Characters.")
+        self.new_ced('Error: Invalid Input!', 'Invalid Characters!',
+                     "Reo thinks that your input was actually \njust a bunch of useless characters."
+                     "\nSo, 'Invalid Characters' error!")
 
     def reactor(self, text):
         """Check easter eggs and set variables."""
@@ -447,11 +444,11 @@ class GUI:
                 '00-database-short', '00-database-url']
         if text in skip:
             return f"<tt> Running Reo with WordNet {wn_version}</tt>"
-        elif text == 'fortune -a':
+        if text == 'fortune -a':
             return reo_base.fortune()
-        elif text == 'cowfortune':
+        if text == 'cowfortune':
             return reo_base.cowfortune()
-        elif text in ('crash now', 'close now'):
+        if text in ('crash now', 'close now'):
             Gtk.main_quit()
         elif text == 'reo':
             reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name "
@@ -477,9 +474,8 @@ class GUI:
             if "\n[warninghide]" in custom_def_read:
                 custom_def_read = custom_def_read.replace("\n[warninghide]", "")
                 return custom_def_read
-            else:
-                return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one'
-                       ' is to be held responsible for errors in this.</span>')
+            return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one'
+                   ' is to be held responsible for errors in this.</span>')
 
     def generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
