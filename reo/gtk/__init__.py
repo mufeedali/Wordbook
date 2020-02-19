@@ -420,11 +420,10 @@ class GUI:
                     term = text
                     viewer.get_buffer().insert_markup(last_iter, out, -1)
 
-    def search(self, search_box):
+    def search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        if (not search_box.strip('<>"?`![]()/\\:;,') == '' and
-                not search_box.isspace() and not search_box == ''):
-            text = search_box.strip().strip('<>"?`![]()/\\:;,*')
+        if not search_text.strip('<>"?`![]()/\\:;,') == '' and not search_text.isspace() and not search_text == '':
+            text = search_text.strip().strip('<>"?`![]()/\\:;,*')
             return self.reactor(text)
         logging.error("Invalid Characters.")
         self.new_ced('Error: Invalid Input!', 'Invalid Characters!',
@@ -442,8 +441,7 @@ class GUI:
         else:
             sencol = "blue"  # Color of sentences in regular
             wordcol = "green"  # Color of: Similar Words, Synonyms, Antonyms.
-        skip = ['00-database-allchars', '00-database-info', '00-database-long',
-                '00-database-short', '00-database-url']
+        skip = ['00-database-allchars', '00-database-info', '00-database-long', '00-database-short', '00-database-url']
         if text in skip:
             return f"<tt> Running Reo with WordNet {wn_version}</tt>"
         if text == 'fortune -a':
@@ -453,7 +451,7 @@ class GUI:
         if text in ('crash now', 'close now'):
             Gtk.main_quit()
             return None
-        elif text == 'reo':
+        if text == 'reo':
             reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name "
                           "of this application, chosen kind of at random.\n  <b>2:</b> Japanese word meaning 'Wise"
                           f" Center'\n <b>Similar Words:</b>\n <i><span foreground=\"{wordcol}\">  ro, "
@@ -477,8 +475,8 @@ class GUI:
             if "\n[warninghide]" in custom_def_read:
                 custom_def_read = custom_def_read.replace("\n[warninghide]", "")
                 return custom_def_read
-            return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one'
-                   ' is to be held responsible for errors in this.</span>')
+            return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one is to be'
+                   ' held responsible for errors in this.</span>')
 
     def generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
