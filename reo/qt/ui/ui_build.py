@@ -10,14 +10,13 @@ args = parser.parse_args()
 
 try:
     pyuic_process = subprocess.Popen(["pyuic5", args.file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # Use PyQt5's conversion tool because, it has been more reliable (for me at least) and produces clearer output.
     pyuic_process.wait()
     out_PyUic = pyuic_process.stdout.read().decode()
 except Exception as ex:
     print("Something went wrong... " + str(ex))
     exit(1)
 
-clean_output = out_PyUic.replace(os.environ.get("HOME") + "/Projects/" + args.project + "/", "")
+clean_output = out_PyUic.replace(os.environ.get("HOME") + f"/Projects/{args.project}/", '').replace('(object)', '()')
 
 py_name = "ui_" + args.file.replace(".ui", ".py")
 

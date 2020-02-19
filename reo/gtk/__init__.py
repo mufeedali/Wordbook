@@ -416,8 +416,9 @@ class GUI:
             if not text.strip() == '':
                 last_iter = viewer.get_buffer().get_end_iter()
                 out = self.search(text)
-                term = text
-                viewer.get_buffer().insert_markup(last_iter, out, -1)
+                if out is not None:
+                    term = text
+                    viewer.get_buffer().insert_markup(last_iter, out, -1)
 
     def search(self, search_box):
         """Clean input text, give errors and pass data to reactor."""
@@ -429,6 +430,7 @@ class GUI:
         self.new_ced('Error: Invalid Input!', 'Invalid Characters!',
                      "Reo thinks that your input was actually \njust a bunch of useless characters."
                      "\nSo, 'Invalid Characters' error!")
+        return None
 
     def reactor(self, text):
         """Check easter eggs and set variables."""
@@ -450,6 +452,7 @@ class GUI:
             return reo_base.cowfortune()
         if text in ('crash now', 'close now'):
             Gtk.main_quit()
+            return None
         elif text == 'reo':
             reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name "
                           "of this application, chosen kind of at random.\n  <b>2:</b> Japanese word meaning 'Wise"
@@ -481,8 +484,7 @@ class GUI:
         """Check if custom definition exists."""
         if os.path.exists(custom_def_fold + '/' + text.lower()) and custom_def_enable:
             return self.custom_def(text, wordcol, sencol)
-        else:
-            return reo_base.data_obtain(text, wordcol, sencol, "pango", debug)
+        return reo_base.data_obtain(text, wordcol, sencol, "pango", debug)
 
     @staticmethod
     def ced_ok(ced_ok):

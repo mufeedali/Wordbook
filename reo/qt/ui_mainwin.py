@@ -10,7 +10,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ReoMain(object):
+class Ui_ReoMain():
     def setupUi(self, ReoMain):
         ReoMain.setObjectName("ReoMain")
         ReoMain.resize(510, 385)

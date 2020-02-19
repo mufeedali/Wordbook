@@ -131,7 +131,7 @@ def run_processes(term):
                                          stderr=subprocess.PIPE)
     except Exception as ex:
         print("Didn't Work! ERROR INFO: " + str(ex))
-        return
+        return None
     process_def.wait()
     output = ['', '', '']
     output[0] = process_def.stdout.read().decode()
@@ -145,6 +145,8 @@ def run_processes(term):
 def data_obtain(term, word_col, sen_col, markup='html', debug=False):
     """Obtain the data to be processed and presented."""
     output = run_processes(term)
+    if not output:
+        return "Lookup failed. Check logs."
     definition = output[0]
     if not definition == '':
         clean_def = def_processor(definition, term, sen_col, word_col, markup, debug)
