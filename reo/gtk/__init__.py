@@ -508,7 +508,7 @@ class GUI:
         speed = '120'  # To change eSpeak-ng audio speed.
         text = sb.get_text().strip()
         if searched and not text == '':
-            reo_base.read_term(speed, sb.get_text().strip())
+            reo_base.read_term(sb.get_text().strip(), speed)
         elif text == '' or text.isspace():
             self.new_ced("Umm..?", "Umm..?", "Reo can't find any text there! You sure \nyou typed something?")
         elif not searched:

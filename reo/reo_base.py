@@ -235,4 +235,4 @@ def html_to_pango(data):
 def read_term(text, speed):
     """Say text loudly."""
     with open(os.devnull, 'w') as NULL_MAKER:
-        subprocess.Popen(["espeak-ng", "-ven-uk-rp", "-s", speed, text], stdout=NULL_MAKER, stderr=subprocess.STDOUT)
+        subprocess.Popen(["espeak-ng", "-s", speed, "-ven-uk-rp", text], stdout=NULL_MAKER, stderr=subprocess.STDOUT)
