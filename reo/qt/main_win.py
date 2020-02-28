@@ -6,20 +6,20 @@ import threading
 
 from reo.qt.ui_mainwin import Ui_ReoMain
 
-searchedText = None
-wn_version = '3.1'
-wn_check_once = False
-wn = None
-searched = None
+SEARCHED_TEXT = None
+WN_VERSION = '3.1'
+WN_CHECK_ONCE = False
+WN = None
+SEARCHED = None
 
 
 def wn_check():
     """Check if WordNet is properly installed."""
-    global wn_version, wn_check_once, wn
-    if not wn_check_once:
-        wn_version = reo_base.wn_ver_check()
-        wn_check_once = True
-    wn = str(lzma.open(utils.get_word_list(wn_version), 'r').read()).split('\\n')
+    global WN_VERSION, WN_CHECK_ONCE, WN
+    if not WN_CHECK_ONCE:
+        WN_VERSION = reo_base.wn_ver_check()
+        WN_CHECK_ONCE = True
+    WN = str(lzma.open(utils.get_word_list(WN_VERSION), 'r').read()).split('\\n')
 
 
 threading.Thread(target=wn_check).start()
@@ -71,19 +71,19 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
 
     def random_word(self):
         """Choose a random word and pass it to the search box."""
-        self.searchEntry.setText(random.choice(wn))
+        self.searchEntry.setText(random.choice(WN))
         self.search_def()
 
     def entry_changed(self):
         """To live search or not to live search."""
         term = self.searchEntry.text()
         clean_term = term.strip().strip('<>"?`![]()/^\\:;,')
-        if self.live_search and not clean_term == searchedText:
+        if self.live_search and not clean_term == SEARCHED_TEXT:
             self.search_def()
 
     def search_def(self):
         """Search for definition."""
-        global searchedText
+        global SEARCHED_TEXT
         term = self.searchEntry.text()
         self.defView.clear()
         new_ced = QtWidgets.QMessageBox.warning
@@ -98,7 +98,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             self.defView.setHtml(out)
         elif not clean_term == '' and not term.isspace() and not term == '':
             self.defView.setHtml(reo_base.data_obtain(clean_term, self.wordCol, self.senCol, "html", self.debug))
-            searchedText = clean_term
+            SEARCHED_TEXT = clean_term
         elif clean_term == '' and not term.isspace() and not term == '':
             new_ced(self, 'Error: Invalid Input!', "Reo thinks that your input was actually just a bunch of useless"
                     " characters. So, 'Invalid Characters' error!")

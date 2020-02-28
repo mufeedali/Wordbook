@@ -54,9 +54,9 @@ def def_processor(definition, term, sen_col, word_col, markup='html', debug=Fals
                r'"[; \t\r\f\v]+(\(.+\))$': r'</font> \1',
                r'"\s*\-+\s*(.+)\s*([<]*)': r"</font> - \1; \2",
                r';\s*$': r''}
-    for x, y in re_list.items():
-        re_clean = re.compile(x, re.MULTILINE)
-        definition = re_clean.sub(y, definition)
+    for to_replace, replace_with in re_list.items():
+        re_clean = re.compile(to_replace, re.MULTILINE)
+        definition = re_clean.sub(replace_with, definition)
     if markup == "pango":
         definition = definition.replace('<font color="', '<span foreground="')
         definition = definition.replace('</font>', '</span>')
@@ -83,9 +83,9 @@ def cls_fmt(clp, text):
                 r"\s\s+": r", ",
                 f'["]+{text.lower()}["]+': r"",
                 'wn:[,]*': r''}
-    for x, y in sub_dict.items():
-        sub_re = re.compile(x)
-        clp = sub_re.sub(y, clp).strip()
+    for to_replace, replace_with in sub_dict.items():
+        sub_re = re.compile(to_replace)
+        clp = sub_re.sub(replace_with, clp).strip()
     clp = clp.rstrip()
     return clp
 
@@ -95,13 +95,13 @@ def fortune():
     try:
         fortune_process = subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         fortune_process.wait()
-        ft = fortune_process.stdout.read().decode()
-        ft = html.escape(ft, False)
-        return f"<tt>{ft}</tt>"
+        fortune_out = fortune_process.stdout.read().decode()
+        fortune_out = html.escape(fortune_out, False)
+        return f"<tt>{fortune_out}</tt>"
     except Exception as ex:
-        ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
-        print(f"{ft}\n{str(ex)}")
-        return f"<tt>{ft}</tt>"
+        fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
+        print(f"{fortune_out}\n{str(ex)}")
+        return f"<tt>{fortune_out}</tt>"
 
 
 def cowfortune():
@@ -114,9 +114,9 @@ def cowfortune():
             return f"<tt>{cst}</tt>"
         return "<tt>Cowsay fail... Too bad...</tt>"
     except Exception as ex:
-        ft = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
-        print(f"{ft}\n{str(ex)}")
-        return f"<tt>{ft}</tt>"
+        fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
+        print(f"{fortune_out}\n{str(ex)}")
+        return f"<tt>{fortune_out}</tt>"
 
 
 @lru_cache(maxsize=None)
@@ -234,5 +234,5 @@ def html_to_pango(data):
 
 def read_term(text, speed):
     """Say text loudly."""
-    with open(os.devnull, 'w') as NULL_MAKER:
-        subprocess.Popen(["espeak-ng", "-s", speed, "-ven-uk-rp", text], stdout=NULL_MAKER, stderr=subprocess.STDOUT)
+    with open(os.devnull, 'w') as null_maker:
+        subprocess.Popen(["espeak-ng", "-s", speed, "-ven-uk-rp", text], stdout=null_maker, stderr=subprocess.STDOUT)

@@ -18,39 +18,39 @@ import threading
 import configparser
 
 # Readying ArgParser
-parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
-exc_group = parser.add_mutually_exclusive_group()
+PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
+exc_group = PARSER.add_mutually_exclusive_group()
 exc_group.add_argument("-c", "--check", action="store_true", help="Basic dependency checks.")
 exc_group.add_argument("-i", "--verinfo", action="store_true", help="Advanced Version Info")
 exc_group.add_argument("-gd", "--dark", action="store_true", help="Use GNOME dark theme")
 exc_group.add_argument("-gl", "--light", action="store_true", help="Use GNOME light theme")
-parser.add_argument("-v", "--verbose", action="store_true", help="Make it scream louder")
-parsed = parser.parse_args()
+PARSER.add_argument("-v", "--verbose", action="store_true", help="Make it scream louder")
+PARSED = PARSER.parse_args()
 # logging is the most important. You have to let users know everything.
-if parsed.verbose:
+if PARSED.verbose:
     level = logging.DEBUG
 else:
     level = logging.WARNING
 logging.basicConfig(level=level,
                     format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 
-custom_def_fold = utils.CDEF_FOLD
-reo_config = utils.CONFIG_FILE
-reo_version = utils.VERSION
+CUSTOM_DEF_FOLD = utils.CDEF_FOLD
+REO_CONFIG = utils.CONFIG_FILE
+REO_VERSION = utils.VERSION
 
 try:
     import gi  # this is the GObject stuff needed for GTK+
     gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
     from gi.repository import Gtk  # this is the GNOME depends
     from gi.repository import Gdk
-    if parsed.check:
+    if PARSED.check:
         print("PyGObject bindings working")
 except ImportError as import_error:
     logging.fatal("Importing GObject failed!")
-    if not parsed.check:
+    if not PARSED.check:
         print("Confirm all dependencies by running Reo with '--check' parameter.\n" + str(import_error))
         sys.exit(1)
-    elif parsed.check:
+    elif PARSED.check:
         print("Install GObject bindings.\n"
               "For Ubuntu, Debian, etc:\n"
               "'sudo apt install python3-gobject'\n"
@@ -58,144 +58,144 @@ except ImportError as import_error:
               "'yay -S python-gobject' or 'sudo pacman -S python-gobject'\n"
               "Thanks for trying this out!")
 
-builder = Gtk.Builder()
-dark = False
-sb = None
-viewer = None
-max_hide = False
-live_search = False
-debug = False
+BUILDER = Gtk.Builder()
+DARK = False
+SEARCH_BOX = None
+DEF_VIEWER = None
+MAX_HIDE = False
+LIVE_SEARCH = False
+DEBUG = False
 
 
 def darker():
     """Switch to Dark mode."""
-    global dark
+    global DARK
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", True)
-    dark = True
+    DARK = True
 
 
 def lighter():
     """Switch to Light mode."""
-    global dark
+    global DARK
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", False)
-    dark = False
+    DARK = False
 
 
-custom_def_enable = True
+CUSTOM_DEF_ENABLE = True
 reo_base.fold_gen()
-config = configparser.ConfigParser()
-if not os.path.exists(reo_config):
-    config['General'] = {'LiveSearch': 'no',
+CONFIG = configparser.ConfigParser()
+if not os.path.exists(REO_CONFIG):
+    CONFIG['General'] = {'LiveSearch': 'no',
                          'CustomDefinitions': 'yes',
                          'Debug': 'no',
                          'ForceWordNet31': 'no'}
-    config['UI-gtk'] = {'Theme': 'default',
+    CONFIG['UI-gtk'] = {'Theme': 'default',
                         'HideWindowButtonsMaximized': 'no',
                         'DisableCSD': 'no'}
-    utils.save_settings(config)
-with open(reo_config, 'r') as config_file:
-    config.read_file(config_file)
+    utils.save_settings(CONFIG)
+with open(REO_CONFIG, 'r') as CONFIG_FILE:
+    CONFIG.read_file(CONFIG_FILE)
 
 
 def window_call():
     """Call the window."""
-    global sb, viewer
-    window = builder.get_object('window')  # main window
-    sb = builder.get_object('search_entry')  # Search box
-    viewer = builder.get_object('def_view')  # Data Space
-    header = builder.get_object('header')  # HeaderBar
+    global SEARCH_BOX, DEF_VIEWER
+    window = BUILDER.get_object('window')  # main window
+    SEARCH_BOX = BUILDER.get_object('search_entry')  # Search box
+    DEF_VIEWER = BUILDER.get_object('def_view')  # Data Space
+    header = BUILDER.get_object('header')  # HeaderBar
     header.set_show_close_button(True)
     if((os.environ.get('GTK_CSD') == '0') and
        (os.environ.get('XDG_SESSION_TYPE') != 'wayland')):
-        head_label = builder.get_object('head_label')
-        titles = builder.get_object('titles')
+        head_label = BUILDER.get_object('head_label')
+        titles = BUILDER.get_object('titles')
         titles.set_margin_end(0)
         titles.set_margin_start(0)
         head_label.destroy()
-    pref_box = builder.get_object('pref_buttonbox')
+    pref_box = BUILDER.get_object('pref_buttonbox')
     pref_box.destroy()
     window.set_role('Reo')
     window.set_title('Reo')
-    sb.grab_focus()
+    SEARCH_BOX.grab_focus()
     window.show_all()
 
 
 def load_settings():
     """Load all settings from the config file."""
-    global max_hide, live_search, wn_version, wn_check_once, custom_def_enable, debug
-    live_check = builder.get_object('live_check')
-    custom_def_check = builder.get_object('custom_def_check')
-    debug_check = builder.get_object('debug_check')
-    force_wn_31 = builder.get_object('force_wn_31')
-    light_radio = builder.get_object('light_radio')
-    dark_radio = builder.get_object('dark_radio')
-    default_radio = builder.get_object('default_radio')
-    max_hide_check = builder.get_object('max_hide_check')
-    no_csd_check = builder.get_object('no_csd_check')
-    live_check.set_active(config.getboolean('General', 'LiveSearch'))
-    live_search = config.getboolean('General', 'LiveSearch')
-    custom_def_check.set_active(config.getboolean('General', 'CustomDefinitions'))
-    custom_def_enable = config.getboolean('General', 'CustomDefinitions')
-    debug_check.set_active(config.getboolean('General', 'Debug'))
-    debug = config.getboolean('General', 'Debug')
-    force_wn_31.set_active(config.getboolean('General', 'ForceWordNet31'))
-    if config.getboolean('General', 'ForceWordNet31'):
+    global MAX_HIDE, LIVE_SEARCH, WN_VERSION, WN_CHECK_ONCE, CUSTOM_DEF_ENABLE, DEBUG
+    live_check = BUILDER.get_object('live_check')
+    custom_def_check = BUILDER.get_object('custom_def_check')
+    debug_check = BUILDER.get_object('debug_check')
+    force_wn_31 = BUILDER.get_object('force_wn_31')
+    light_radio = BUILDER.get_object('light_radio')
+    dark_radio = BUILDER.get_object('dark_radio')
+    default_radio = BUILDER.get_object('default_radio')
+    max_hide_check = BUILDER.get_object('max_hide_check')
+    no_csd_check = BUILDER.get_object('no_csd_check')
+    live_check.set_active(CONFIG.getboolean('General', 'LiveSearch'))
+    LIVE_SEARCH = CONFIG.getboolean('General', 'LiveSearch')
+    custom_def_check.set_active(CONFIG.getboolean('General', 'CustomDefinitions'))
+    CUSTOM_DEF_ENABLE = CONFIG.getboolean('General', 'CustomDefinitions')
+    debug_check.set_active(CONFIG.getboolean('General', 'Debug'))
+    DEBUG = CONFIG.getboolean('General', 'Debug')
+    force_wn_31.set_active(CONFIG.getboolean('General', 'ForceWordNet31'))
+    if CONFIG.getboolean('General', 'ForceWordNet31'):
         logging.info("Using WordNet 3.1 as per local config")
-        wn_version = '3.1'
-        wn_check_once = True
-    if config['UI-gtk']['Theme'] == "default":
+        WN_VERSION = '3.1'
+        WN_CHECK_ONCE = True
+    if CONFIG['UI-gtk']['Theme'] == "default":
         default_radio.set_active(True)
-    elif config['UI-gtk']['Theme'] == "dark":
+    elif CONFIG['UI-gtk']['Theme'] == "dark":
         dark_radio.set_active(True)
         darker()
-    elif config['UI-gtk']['Theme'] == "light":
+    elif CONFIG['UI-gtk']['Theme'] == "light":
         light_radio.set_active(True)
         lighter()
-    max_hide_check.set_active(config.getboolean('UI-gtk', 'HideWindowButtonsMaximized'))
-    max_hide = config.getboolean('UI-gtk', 'HideWindowButtonsMaximized')
-    no_csd_check.set_active(config.getboolean('UI-gtk', 'DisableCSD'))
+    max_hide_check.set_active(CONFIG.getboolean('UI-gtk', 'HideWindowButtonsMaximized'))
+    MAX_HIDE = CONFIG.getboolean('UI-gtk', 'HideWindowButtonsMaximized')
+    no_csd_check.set_active(CONFIG.getboolean('UI-gtk', 'DisableCSD'))
 
 
 def apply_settings():
     """Apply the settings globally."""
-    global live_search, max_hide, wn_version, wn_check_once, custom_def_enable, debug
-    live_check = builder.get_object('live_check')
-    custom_def_check = builder.get_object('custom_def_check')
-    debug_check = builder.get_object('debug_check')
-    force_wn_31 = builder.get_object('force_wn_31')
-    light_radio = builder.get_object('light_radio')
-    dark_radio = builder.get_object('dark_radio')
-    default_radio = builder.get_object('default_radio')
-    max_hide_check = builder.get_object('max_hide_check')
-    no_csd_check = builder.get_object('no_csd_check')
-    config.set('General', 'LiveSearch', utils.boot_to_str(live_check.get_active()))
-    live_search = live_check.get_active()
-    config.set('General', 'CustomDefinitions', utils.boot_to_str(custom_def_check.get_active()))
-    custom_def_enable = custom_def_check.get_active()
-    config.set('General', 'Debug', utils.boot_to_str(debug_check.get_active()))
-    debug = debug_check.get_active()
-    config.set('General', 'ForceWordNet31', utils.boot_to_str(force_wn_31.get_active()))
+    global LIVE_SEARCH, MAX_HIDE, WN_VERSION, WN_CHECK_ONCE, CUSTOM_DEF_ENABLE, DEBUG
+    live_check = BUILDER.get_object('live_check')
+    custom_def_check = BUILDER.get_object('custom_def_check')
+    debug_check = BUILDER.get_object('debug_check')
+    force_wn_31 = BUILDER.get_object('force_wn_31')
+    light_radio = BUILDER.get_object('light_radio')
+    dark_radio = BUILDER.get_object('dark_radio')
+    default_radio = BUILDER.get_object('default_radio')
+    max_hide_check = BUILDER.get_object('max_hide_check')
+    no_csd_check = BUILDER.get_object('no_csd_check')
+    CONFIG.set('General', 'LiveSearch', utils.boot_to_str(live_check.get_active()))
+    LIVE_SEARCH = live_check.get_active()
+    CONFIG.set('General', 'CustomDefinitions', utils.boot_to_str(custom_def_check.get_active()))
+    CUSTOM_DEF_ENABLE = custom_def_check.get_active()
+    CONFIG.set('General', 'Debug', utils.boot_to_str(debug_check.get_active()))
+    DEBUG = debug_check.get_active()
+    CONFIG.set('General', 'ForceWordNet31', utils.boot_to_str(force_wn_31.get_active()))
     if force_wn_31.get_active():
         logging.info("Using WordNet 3.1 as per local config")
-        wn_version = '3.1'
-        wn_check_once = True
+        WN_VERSION = '3.1'
+        WN_CHECK_ONCE = True
     if default_radio.get_active():
-        config.set('UI-gtk', 'Theme', "default")
+        CONFIG.set('UI-gtk', 'Theme', "default")
     elif dark_radio.get_active():
-        config.set('UI-gtk', 'Theme', "dark")
+        CONFIG.set('UI-gtk', 'Theme', "dark")
         darker()
     elif light_radio.get_active():
-        config.set('UI-gtk', 'Theme', "light")
+        CONFIG.set('UI-gtk', 'Theme', "light")
         lighter()
-    config.set('UI-gtk', 'HideWindowButtonsMaximized', utils.boot_to_str(max_hide_check.get_active()))
-    max_hide = max_hide_check.get_active()
-    config.set('UI-gtk', 'DisableCSD', utils.boot_to_str(no_csd_check.get_active()))
-    utils.save_settings(config)
+    CONFIG.set('UI-gtk', 'HideWindowButtonsMaximized', utils.boot_to_str(max_hide_check.get_active()))
+    MAX_HIDE = max_hide_check.get_active()
+    CONFIG.set('UI-gtk', 'DisableCSD', utils.boot_to_str(no_csd_check.get_active()))
+    utils.save_settings(CONFIG)
 
 
-if not parsed.verinfo and not parsed.check:
+if not PARSED.verinfo and not PARSED.check:
     GtkSettings = Gtk.Settings.get_default()
     if (GtkSettings.get_property("gtk-application-prefer-dark-theme") or
             GtkSettings.get_property("gtk-theme-name").lower().endswith('-dark')):
@@ -205,29 +205,29 @@ if not parsed.verinfo and not parsed.check:
     PATH = os.path.dirname(os.path.realpath(__file__))
     GLADEFILE = PATH + "/ui/reo.ui"
     # GLADEFILE = "/usr/share/reo/reo.ui"
-    builder.add_from_file(GLADEFILE)
+    BUILDER.add_from_file(GLADEFILE)
     window_call()
     load_settings()
-    if parsed.dark:
+    if PARSED.dark:
         darker()
-    elif parsed.light:
+    elif PARSED.light:
         lighter()
 
 
-wn_version = '3.1'
-wn_check_once = False
-wn = None
-searched = None
+WN_VERSION = '3.1'
+WN_CHECK_ONCE = False
+WN = None
+SEARCHED = None
 
 
 def wn_check():
     """Check if WordNet is properly installed."""
-    global wn_version, wn_check_once, wn
-    if not wn_check_once:
-        wn_version = reo_base.wn_ver_check()
-        logging.info(f"Using WordNet {wn_version}")
-        wn_check_once = True
-    wn = str(lzma.open(utils.get_word_list(wn_version), 'r').read()).split('\\n')
+    global WN_VERSION, WN_CHECK_ONCE, WN
+    if not WN_CHECK_ONCE:
+        WN_VERSION = reo_base.wn_ver_check()
+        logging.info(f"Using WordNet {WN_VERSION}")
+        WN_CHECK_ONCE = True
+    WN = str(lzma.open(utils.get_word_list(WN_VERSION), 'r').read()).split('\\n')
 
 
 def check_bin(bin_to_check):
@@ -310,12 +310,13 @@ def dep_check():
     sys.exit()
 
 
-if parsed.verinfo:
+if PARSED.verinfo:
     reo_base.verinfo()
     sys.exit()
-if parsed.check:
+if PARSED.check:
     dep_check()
-term = None  # Last searched item.
+
+TERM = None  # Last searched item.
 threading.Thread(target=wn_check).start()
 
 
@@ -330,8 +331,8 @@ class GUI:
     @staticmethod
     def state_changed(window, state):
         """Detect changes to the window state and adapt."""
-        header = builder.get_object('header')
-        if max_hide and not os.environ.get('GTK_CSD') == '0':
+        header = BUILDER.get_object('header')
+        if MAX_HIDE and not os.environ.get('GTK_CSD') == '0':
             if "MAXIMIZED" in str(state.new_window_state):
                 header.set_show_close_button(False)
             else:
@@ -340,7 +341,7 @@ class GUI:
     @staticmethod
     def pref_launch(pref_item):
         """Open Preferences Window."""
-        pref_dialog = builder.get_object('pref_dialog')
+        pref_dialog = BUILDER.get_object('pref_dialog')
         response = pref_dialog.run()
         load_settings()
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
@@ -355,7 +356,7 @@ class GUI:
 
     def ok_click(self, ok_button):
         """Apply settings and hide dialog."""
-        pref_dialog = builder.get_object('pref_dialog')
+        pref_dialog = BUILDER.get_object('pref_dialog')
         pref_dialog.response(-5)
         apply_settings()
         self.search_click(pass_check=True)
@@ -363,14 +364,14 @@ class GUI:
     @staticmethod
     def cancel_button_clicked(cancel_button):
         """Hide settings dialog."""
-        pref_dialog = builder.get_object('pref_dialog')
+        pref_dialog = BUILDER.get_object('pref_dialog')
         pref_dialog.response(-6)
 
     @staticmethod
     def icon_press(menu_about):
         """Open About Window."""
-        about = builder.get_object('aboutReo')
-        about.set_version(reo_version)
+        about = BUILDER.get_object('aboutReo')
+        about.set_version(REO_VERSION)
         response = about.run()
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
             about.hide()
@@ -380,25 +381,25 @@ class GUI:
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
         text = text.replace('         ', '')
-        sb.set_text(text)
+        SEARCH_BOX.set_text(text)
         if not text == '' and not text.isspace():
             self.search_click()
-            sb.grab_focus()
+            SEARCH_BOX.grab_focus()
 
     def paste_search(self, menu_paste):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-        sb.set_text(text)
+        SEARCH_BOX.set_text(text)
         if not text == '' and not text.isspace():
             self.search_click()
-            sb.grab_focus()
+            SEARCH_BOX.grab_focus()
 
     @staticmethod
     def new_ced(title, primary, secondary):
         """Show error dialog."""
-        large_ced_text = builder.get_object('large_ced_text')
-        small_ced_text = builder.get_object('small_ced_text')
-        ced = builder.get_object('ced')
+        large_ced_text = BUILDER.get_object('large_ced_text')
+        small_ced_text = BUILDER.get_object('small_ced_text')
+        ced = BUILDER.get_object('ced')
         ced.set_title(title)
         large_ced_text.set_label(primary)
         small_ced_text.set_label(secondary)
@@ -408,17 +409,17 @@ class GUI:
 
     def search_click(self, search_button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
-        global term
-        text = sb.get_text().strip()
+        global TERM
+        text = SEARCH_BOX.get_text().strip()
         except_list = ['fortune -a', 'cowfortune']
-        if not text == term or pass_check or text in except_list:
-            viewer.get_buffer().set_text("")
+        if not text == TERM or pass_check or text in except_list:
+            DEF_VIEWER.get_buffer().set_text("")
             if not text.strip() == '':
-                last_iter = viewer.get_buffer().get_end_iter()
+                last_iter = DEF_VIEWER.get_buffer().get_end_iter()
                 out = self.search(text)
                 if out is not None:
-                    term = text
-                    viewer.get_buffer().insert_markup(last_iter, out, -1)
+                    TERM = text
+                    DEF_VIEWER.get_buffer().insert_markup(last_iter, out, -1)
 
     def search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
@@ -433,8 +434,8 @@ class GUI:
 
     def reactor(self, text):
         """Check easter eggs and set variables."""
-        global searched
-        if dark:
+        global SEARCHED
+        if DARK:
             sencol = "cyan"  # Color of sentences in Dark mode
             wordcol = "lightgreen"  # Color of: Similar Words,
 #                                     Synonyms and Antonyms.
@@ -443,7 +444,7 @@ class GUI:
             wordcol = "green"  # Color of: Similar Words, Synonyms, Antonyms.
         skip = ['00-database-allchars', '00-database-info', '00-database-long', '00-database-short', '00-database-url']
         if text in skip:
-            return f"<tt> Running Reo with WordNet {wn_version}</tt>"
+            return f"<tt> Running Reo with WordNet {WN_VERSION}</tt>"
         if text == 'fortune -a':
             return reo_base.fortune()
         if text == 'cowfortune':
@@ -459,13 +460,13 @@ class GUI:
                           " ret, rev, rex</span></i></tt>")
             return reo_def
         if text and not text.isspace():
-            searched = True
+            SEARCHED = True
             return self.generator(text, wordcol, sencol)
 
     @staticmethod
     def custom_def(text, wordcol, sencol):
         """Present custom definition when available."""
-        with open(custom_def_fold + '/' + text, 'r') as def_file:
+        with open(CUSTOM_DEF_FOLD + '/' + text, 'r') as def_file:
             custom_def_read = def_file.read()
             re_list = {"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
                        "($WORDCOL)": wordcol, "($SENCOL)": sencol,
@@ -480,49 +481,49 @@ class GUI:
 
     def generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
-        if os.path.exists(custom_def_fold + '/' + text.lower()) and custom_def_enable:
+        if os.path.exists(CUSTOM_DEF_FOLD + '/' + text.lower()) and CUSTOM_DEF_ENABLE:
             return self.custom_def(text, wordcol, sencol)
-        return reo_base.data_obtain(text, wordcol, sencol, "pango", debug)
+        return reo_base.data_obtain(text, wordcol, sencol, "pango", DEBUG)
 
     @staticmethod
     def ced_ok(ced_ok):
         """Generate OK response from error dialog."""
-        ced = builder.get_object('ced')
+        ced = BUILDER.get_object('ced')
         ced.response(Gtk.ResponseType.OK)
 
     def random_word(self, menu_rand):
         """Choose a random word and pass it to the search box."""
-        rw = random.choice(wn)
-        sb.set_text(rw.strip())
+        rw = random.choice(WN)
+        SEARCH_BOX.set_text(rw.strip())
         self.search_click()
-        sb.grab_focus()
+        SEARCH_BOX.grab_focus()
 
     @staticmethod
     def clear(clear_button):
         """Clear text in the Search box and the Data space."""
-        sb.set_text("")
-        viewer.get_buffer().set_text("")
+        SEARCH_BOX.set_text("")
+        DEF_VIEWER.get_buffer().set_text("")
 
     def audio(self, audio_button):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
-        text = sb.get_text().strip()
-        if searched and not text == '':
-            reo_base.read_term(sb.get_text().strip(), speed)
+        text = SEARCH_BOX.get_text().strip()
+        if SEARCHED and not text == '':
+            reo_base.read_term(SEARCH_BOX.get_text().strip(), speed)
         elif text == '' or text.isspace():
             self.new_ced("Umm..?", "Umm..?", "Reo can't find any text there! You sure \nyou typed something?")
-        elif not searched:
+        elif not SEARCHED:
             self.new_ced("Sorry!!", "Sorry!!",
                          "I'm sorry but you have to do a search first \nbefore trying to  listen to it."
                          " I mean, Reo \nis <b>NOT</b> a Text-To-Speech Software!")
 
     def changed(self, search_entry):
         """Detect changes to Search box and clean or do live searching."""
-        global searched
-        searched = False
-        sb.set_text(sb.get_text().replace('\n', ' '))
-        sb.set_text(sb.get_text().replace('         ', ''))
-        if live_search:
+        global SEARCHED
+        SEARCHED = False
+        SEARCH_BOX.set_text(SEARCH_BOX.get_text().replace('\n', ' '))
+        SEARCH_BOX.set_text(SEARCH_BOX.get_text().replace('         ', ''))
+        if LIVE_SEARCH:
             self.search_click()
 
     @staticmethod
@@ -533,7 +534,7 @@ class GUI:
 
 def main():
     """Run the Gtk UI."""
-    builder.connect_signals(GUI())
+    BUILDER.connect_signals(GUI())
     Gtk.main()
 
 

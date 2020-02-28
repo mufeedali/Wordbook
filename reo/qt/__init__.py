@@ -15,39 +15,39 @@ from reo import utils, reo_base
 from reo.qt.main_win import ReoMain
 
 
-parser = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
-mgroup = parser.add_mutually_exclusive_group()
-mgroup.add_argument("-i", "--verinfo", action="store_true",
+PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
+MGROUP = PARSER.add_mutually_exclusive_group()
+MGROUP.add_argument("-i", "--verinfo", action="store_true",
                     help="Advanced Version Info")
-parser.add_argument("-l", "--livesearch", action="store_true",
+PARSER.add_argument("-l", "--livesearch", action="store_true",
                     help="Enable live search")
-parser.add_argument("-v", "--verbose", action="store_true",
+PARSER.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
-parsed = parser.parse_args()
-if parsed.verbose:
+PARSED = PARSER.parse_args()
+if PARSED.verbose:
     level = logging.DEBUG
-    debug = True
+    DEBUG = True
 else:
     level = logging.WARNING
-    debug = False
+    DEBUG = False
 logging.basicConfig(level=level, format="%(asctime)s - " +
                     "[%(levelname)s] [%(threadName)s] (%(module)s:" +
                     "%(lineno)d) %(message)s")
 
-sen_col = "cyan"  # Color of sentences in Dark mode
-word_col = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
+SEN_COL = "cyan"  # Color of sentences in Dark mode
+WORD_COL = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
 
-reo_version = utils.VERSION
-reo_fold = utils.CONFIG_FOLD
-cdef_fold = utils.CDEF_FOLD
-reo_config = utils.CONFIG_FILE
-livesearch = False
+REO_VERSION = utils.VERSION
+REO_FOLD = utils.CONFIG_FOLD
+CDEF_FOLD = utils.CDEF_FOLD
+REO_CONFIG = utils.CONFIG_FILE
+LIVE_SEARCH = False
 
-if parsed.verinfo:
+if PARSED.verinfo:
     reo_base.verinfo()
     sys.exit()
-if parsed.livesearch:
-    livesearch = True
+if PARSED.livesearch:
+    LIVE_SEARCH = True
 
 
 def main():
@@ -55,7 +55,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Reo")
     app.setDesktopFileName("Reo")
-    main_window = ReoMain(livesearch, word_col, sen_col, debug)
+    main_window = ReoMain(LIVE_SEARCH, WORD_COL, SEN_COL, DEBUG)
     main_window.show()
     sys.exit(app.exec_())
 
