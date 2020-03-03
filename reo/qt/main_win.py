@@ -6,7 +6,6 @@ import threading
 
 from reo.qt.ui_mainwin import Ui_ReoMain
 
-SEARCHED_TEXT = None
 WN_VERSION = '3.1'
 WN_CHECK_ONCE = False
 WN = None
@@ -27,6 +26,7 @@ threading.Thread(target=wn_check).start()
 
 class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     """Define all UI interactions."""
+    searched_text = None
 
     def __init__(self, live_search, word_col, sen_col, debug, *args, **kwargs):
         """Initialize the application."""
@@ -77,13 +77,12 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     def entry_changed(self):
         """To live search or not to live search."""
         term = self.searchEntry.text()
-        clean_term = term.strip().strip('<>"?`![]()/^\\:;,')
-        if self.live_search and not clean_term == SEARCHED_TEXT:
+        clean_term = term.strip().strip('<>"-?`![](){}/\\:;,*')
+        if self.live_search and not clean_term == self.searched_text:
             self.search_def()
 
     def search_def(self):
         """Search for definition."""
-        global SEARCHED_TEXT
         term = self.searchEntry.text()
         self.defView.clear()
         new_ced = QtWidgets.QMessageBox.warning
@@ -98,7 +97,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             self.defView.setHtml(out)
         elif not clean_term == '' and not term.isspace() and not term == '':
             self.defView.setHtml(reo_base.data_obtain(clean_term, self.wordCol, self.senCol, "html", self.debug))
-            SEARCHED_TEXT = clean_term
+            self.searched_text = clean_term
         elif clean_term == '' and not term.isspace() and not term == '':
             new_ced(self, 'Error: Invalid Input!', "Reo thinks that your input was actually just a bunch of useless"
                     " characters. So, 'Invalid Characters' error!")

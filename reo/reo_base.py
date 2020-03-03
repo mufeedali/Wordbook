@@ -26,11 +26,7 @@ def def_processor(definition, term, sen_col, word_col, markup='html', debug=Fals
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n', '')
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n', '')
     definition = html.escape(definition, False)
-    try:
-        term_in_wn = re.search("  " + term, definition, flags=re.IGNORECASE).group(0)
-    except Exception as ex:
-        term_in_wn = term
-        print("Regex search failed" + str(ex))
+    term_in_wn = re.search("  " + term, definition, flags=re.IGNORECASE).group(0) or term
     definition = definition.replace(term_in_wn + '\n', '')
     if debug is True:
         print(f"Searching {term_in_wn.strip()}")
@@ -98,7 +94,7 @@ def fortune():
         fortune_out = fortune_process.stdout.read().decode()
         fortune_out = html.escape(fortune_out, False)
         return f"<tt>{fortune_out}</tt>"
-    except Exception as ex:
+    except OSError as ex:
         fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
         print(f"{fortune_out}\n{str(ex)}")
         return f"<tt>{fortune_out}</tt>"
@@ -113,7 +109,7 @@ def cowfortune():
             cst = cowsay.stdout.read().decode()
             return f"<tt>{cst}</tt>"
         return "<tt>Cowsay fail... Too bad...</tt>"
-    except Exception as ex:
+    except OSError as ex:
         fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
         print(f"{fortune_out}\n{str(ex)}")
         return f"<tt>{fortune_out}</tt>"
@@ -129,7 +125,7 @@ def run_processes(term):
                                         stderr=subprocess.PIPE)
         process_close = subprocess.Popen(["dict", "-m", "-d", "wn", "-s", strategy, term], stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
-    except Exception as ex:
+    except OSError as ex:
         print("Didn't Work! ERROR INFO: " + str(ex))
         return None
     process_def.wait()
@@ -163,7 +159,10 @@ def data_obtain(term, word_col, sen_col, markup='html', debug=False):
         clean_close = 'recursion'
     if clean_close.strip() == '':
         fail = True
-    final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
+    if clean_pron == '' or clean_pron.isspace():
+        final_pron = f"Obtaining pronunciation failed."
+    else:
+        final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
     if not fail:
         if no_def == 1:
             final_close = f'<b>Did you mean</b>:<br><i><font color="{word_col}">  {clean_close}</font></i>'
@@ -188,7 +187,7 @@ def wn_ver_check():
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.STDOUT)
         check_out = check_process.stdout.read().decode()
-    except Exception as ex:
+    except OSError as ex:
         print("Error with dict. Error")
         print(ex)
         return '3.1'
@@ -212,7 +211,7 @@ def verinfo():
         dict_process = subprocess.Popen(["dict", "-V"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         dict_out = dict_process.stdout.read().decode()
         print(dict_out.strip())
-    except Exception as ex:
+    except OSError as ex:
         print("Looks like missing components. (dict)\n" + str(ex))
     print()
     try:
@@ -220,7 +219,7 @@ def verinfo():
         espeak_process.wait()
         espeak_out = espeak_process.stdout.read().decode()
         print(espeak_out.strip())
-    except Exception as ex:
+    except OSError as ex:
         print("You're missing a few components. (espeak-ng)\n" + str(ex))
 
 

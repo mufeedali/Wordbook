@@ -225,14 +225,11 @@ def wn_check():
 
 def check_bin(bin_to_check):
     """Check presence of required binaries."""
-    try:
-        which(bin_to_check)
-        print(bin_to_check + " seems to be installed. OK.")
-        bin_check = True
-    except Exception as ex:
-        logging.fatal(f"{bin_to_check} is not installed! Dependency missing!{str(ex)}")
-        bin_check = False
-    return bin_check
+    bin_check = which(bin_to_check)
+    print(bin_to_check + " seems to be installed. OK.")
+    if bin_check:
+        return True
+    return False
 
 
 def print_checks(espeak_ng, dict_check, dictd, wn_dict):
@@ -406,23 +403,21 @@ class GUI:
     def search_click(self, search_button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
         text = self.search_box.get_text().strip()
+        logging.info("Searching text: " + text)
         except_list = ['fortune -a', 'cowfortune']
         if not text == self.term or pass_check or text in except_list:
             self.def_viewer.get_buffer().set_text("")
+            self.term = text
             if not text.strip() == '':
                 last_iter = self.def_viewer.get_buffer().get_end_iter()
                 out = self.search(text)
                 if out is not None:
-                    self.term = text
-                    try:
-                        self.def_viewer.get_buffer().insert_markup(last_iter, out, -1)
-                    except Exception as ex:
-                        print(ex, "Word = " + text)
+                    self.def_viewer.get_buffer().insert_markup(last_iter, out, -1)
 
     def search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        if not search_text.strip('<>"?`![]()/\\:;,') == '' and not search_text.isspace() and not search_text == '':
-            text = search_text.strip().strip('<>"?`![]()/\\:;,*')
+        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*')
+        if not text == '' and not text.isspace():
             return self.reactor(text)
         logging.error("Invalid Characters.")
         self.new_ced('Error: Invalid Input!', 'Invalid Characters!',

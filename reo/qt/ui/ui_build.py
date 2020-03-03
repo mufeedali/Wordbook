@@ -12,7 +12,7 @@ try:
     pyuic_process = subprocess.Popen(["pyuic5", args.file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     pyuic_process.wait()
     out_PyUic = pyuic_process.stdout.read().decode()
-except Exception as ex:
+except OSError as ex:
     print("Something went wrong... " + str(ex))
     exit(1)
 
