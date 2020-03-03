@@ -28,7 +28,7 @@ threading.Thread(target=wn_check).start()
 class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     """Define all UI interactions."""
 
-    def __init__(self, live_search, word_col, sen_col, debug, *args, obj=None, **kwargs):
+    def __init__(self, live_search, word_col, sen_col, debug, *args, **kwargs):
         """Initialize the application."""
         super(ReoMain, self).__init__(*args, **kwargs)
         self.setupUi(self)

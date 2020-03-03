@@ -60,8 +60,6 @@ except ImportError as import_error:
 
 BUILDER = Gtk.Builder()
 DARK = False
-SEARCH_BOX = None
-DEF_VIEWER = None
 MAX_HIDE = False
 LIVE_SEARCH = False
 DEBUG = False
@@ -69,18 +67,16 @@ DEBUG = False
 
 def darker():
     """Switch to Dark mode."""
-    global DARK
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", True)
-    DARK = True
+    return True
 
 
 def lighter():
     """Switch to Light mode."""
-    global DARK
     settings = Gtk.Settings.get_default()
     settings.set_property("gtk-application-prefer-dark-theme", False)
-    DARK = False
+    return False
 
 
 CUSTOM_DEF_ENABLE = True
@@ -101,10 +97,8 @@ with open(REO_CONFIG, 'r') as CONFIG_FILE:
 
 def window_call():
     """Call the window."""
-    global SEARCH_BOX, DEF_VIEWER
     window = BUILDER.get_object('window')  # main window
-    SEARCH_BOX = BUILDER.get_object('search_entry')  # Search box
-    DEF_VIEWER = BUILDER.get_object('def_view')  # Data Space
+    search_box = BUILDER.get_object('search_entry')  # Search box
     header = BUILDER.get_object('header')  # HeaderBar
     header.set_show_close_button(True)
     if((os.environ.get('GTK_CSD') == '0') and
@@ -118,13 +112,13 @@ def window_call():
     pref_box.destroy()
     window.set_role('Reo')
     window.set_title('Reo')
-    SEARCH_BOX.grab_focus()
+    search_box.grab_focus()
     window.show_all()
 
 
 def load_settings():
     """Load all settings from the config file."""
-    global MAX_HIDE, LIVE_SEARCH, WN_VERSION, WN_CHECK_ONCE, CUSTOM_DEF_ENABLE, DEBUG
+    global MAX_HIDE, LIVE_SEARCH, WN_VERSION, WN_CHECK_ONCE, CUSTOM_DEF_ENABLE, DEBUG, DARK
     live_check = BUILDER.get_object('live_check')
     custom_def_check = BUILDER.get_object('custom_def_check')
     debug_check = BUILDER.get_object('debug_check')
@@ -149,10 +143,10 @@ def load_settings():
         default_radio.set_active(True)
     elif CONFIG['UI-gtk']['Theme'] == "dark":
         dark_radio.set_active(True)
-        darker()
+        DARK = darker()
     elif CONFIG['UI-gtk']['Theme'] == "light":
         light_radio.set_active(True)
-        lighter()
+        DARK = lighter()
     max_hide_check.set_active(CONFIG.getboolean('UI-gtk', 'HideWindowButtonsMaximized'))
     MAX_HIDE = CONFIG.getboolean('UI-gtk', 'HideWindowButtonsMaximized')
     no_csd_check.set_active(CONFIG.getboolean('UI-gtk', 'DisableCSD'))
@@ -160,7 +154,7 @@ def load_settings():
 
 def apply_settings():
     """Apply the settings globally."""
-    global LIVE_SEARCH, MAX_HIDE, WN_VERSION, WN_CHECK_ONCE, CUSTOM_DEF_ENABLE, DEBUG
+    global LIVE_SEARCH, MAX_HIDE, WN_VERSION, WN_CHECK_ONCE, CUSTOM_DEF_ENABLE, DEBUG, DARK
     live_check = BUILDER.get_object('live_check')
     custom_def_check = BUILDER.get_object('custom_def_check')
     debug_check = BUILDER.get_object('debug_check')
@@ -185,10 +179,10 @@ def apply_settings():
         CONFIG.set('UI-gtk', 'Theme', "default")
     elif dark_radio.get_active():
         CONFIG.set('UI-gtk', 'Theme', "dark")
-        darker()
+        DARK = darker()
     elif light_radio.get_active():
         CONFIG.set('UI-gtk', 'Theme', "light")
-        lighter()
+        DARK = lighter()
     CONFIG.set('UI-gtk', 'HideWindowButtonsMaximized', utils.boot_to_str(max_hide_check.get_active()))
     MAX_HIDE = max_hide_check.get_active()
     CONFIG.set('UI-gtk', 'DisableCSD', utils.boot_to_str(no_csd_check.get_active()))
@@ -199,9 +193,9 @@ if not PARSED.verinfo and not PARSED.check:
     GtkSettings = Gtk.Settings.get_default()
     if (GtkSettings.get_property("gtk-application-prefer-dark-theme") or
             GtkSettings.get_property("gtk-theme-name").lower().endswith('-dark')):
-        darker()
+        DARK = darker()
     else:
-        lighter()
+        DARK = lighter()
     PATH = os.path.dirname(os.path.realpath(__file__))
     GLADEFILE = PATH + "/ui/reo.ui"
     # GLADEFILE = "/usr/share/reo/reo.ui"
@@ -209,15 +203,14 @@ if not PARSED.verinfo and not PARSED.check:
     window_call()
     load_settings()
     if PARSED.dark:
-        darker()
+        DARK = darker()
     elif PARSED.light:
-        lighter()
+        DARK = lighter()
 
 
 WN_VERSION = '3.1'
 WN_CHECK_ONCE = False
 WN = None
-SEARCHED = None
 
 
 def wn_check():
@@ -316,12 +309,15 @@ if PARSED.verinfo:
 if PARSED.check:
     dep_check()
 
-TERM = None  # Last searched item.
 threading.Thread(target=wn_check).start()
 
 
 class GUI:
     """Define all UI actions and sub-actions."""
+    searched = False
+    term = None  # Last searched item.
+    def_viewer = BUILDER.get_object('def_view')  # Data Space
+    search_box = BUILDER.get_object('search_entry')  # Search box
 
     @staticmethod
     def on_window_destroy(window):
@@ -381,18 +377,18 @@ class GUI:
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
         text = text.replace('         ', '')
-        SEARCH_BOX.set_text(text)
+        self.search_box.set_text(text)
         if not text == '' and not text.isspace():
             self.search_click()
-            SEARCH_BOX.grab_focus()
+            self.search_box.grab_focus()
 
     def paste_search(self, menu_paste):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-        SEARCH_BOX.set_text(text)
+        self.search_box.set_text(text)
         if not text == '' and not text.isspace():
             self.search_click()
-            SEARCH_BOX.grab_focus()
+            self.search_box.grab_focus()
 
     @staticmethod
     def new_ced(title, primary, secondary):
@@ -409,17 +405,19 @@ class GUI:
 
     def search_click(self, search_button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
-        global TERM
-        text = SEARCH_BOX.get_text().strip()
+        text = self.search_box.get_text().strip()
         except_list = ['fortune -a', 'cowfortune']
-        if not text == TERM or pass_check or text in except_list:
-            DEF_VIEWER.get_buffer().set_text("")
+        if not text == self.term or pass_check or text in except_list:
+            self.def_viewer.get_buffer().set_text("")
             if not text.strip() == '':
-                last_iter = DEF_VIEWER.get_buffer().get_end_iter()
+                last_iter = self.def_viewer.get_buffer().get_end_iter()
                 out = self.search(text)
                 if out is not None:
-                    TERM = text
-                    DEF_VIEWER.get_buffer().insert_markup(last_iter, out, -1)
+                    self.term = text
+                    try:
+                        self.def_viewer.get_buffer().insert_markup(last_iter, out, -1)
+                    except Exception as ex:
+                        print(ex, "Word = " + text)
 
     def search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
@@ -434,7 +432,6 @@ class GUI:
 
     def reactor(self, text):
         """Check easter eggs and set variables."""
-        global SEARCHED
         if DARK:
             sencol = "cyan"  # Color of sentences in Dark mode
             wordcol = "lightgreen"  # Color of: Similar Words,
@@ -460,8 +457,9 @@ class GUI:
                           " ret, rev, rex</span></i></tt>")
             return reo_def
         if text and not text.isspace():
-            SEARCHED = True
+            self.searched = True
             return self.generator(text, wordcol, sencol)
+        return None
 
     @staticmethod
     def custom_def(text, wordcol, sencol):
@@ -494,35 +492,33 @@ class GUI:
     def random_word(self, menu_rand):
         """Choose a random word and pass it to the search box."""
         rw = random.choice(WN)
-        SEARCH_BOX.set_text(rw.strip())
+        self.search_box.set_text(rw.strip())
         self.search_click()
-        SEARCH_BOX.grab_focus()
+        self.search_box.grab_focus()
 
-    @staticmethod
-    def clear(clear_button):
+    def clear(self, clear_button):
         """Clear text in the Search box and the Data space."""
-        SEARCH_BOX.set_text("")
-        DEF_VIEWER.get_buffer().set_text("")
+        self.search_box.set_text("")
+        self.def_viewer.get_buffer().set_text("")
 
     def audio(self, audio_button):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
-        text = SEARCH_BOX.get_text().strip()
-        if SEARCHED and not text == '':
-            reo_base.read_term(SEARCH_BOX.get_text().strip(), speed)
+        text = self.search_box.get_text().strip()
+        if self.searched and not text == '':
+            reo_base.read_term(self.search_box.get_text().strip(), speed)
         elif text == '' or text.isspace():
             self.new_ced("Umm..?", "Umm..?", "Reo can't find any text there! You sure \nyou typed something?")
-        elif not SEARCHED:
+        elif not self.searched:
             self.new_ced("Sorry!!", "Sorry!!",
                          "I'm sorry but you have to do a search first \nbefore trying to  listen to it."
                          " I mean, Reo \nis <b>NOT</b> a Text-To-Speech Software!")
 
     def changed(self, search_entry):
         """Detect changes to Search box and clean or do live searching."""
-        global SEARCHED
-        SEARCHED = False
-        SEARCH_BOX.set_text(SEARCH_BOX.get_text().replace('\n', ' '))
-        SEARCH_BOX.set_text(SEARCH_BOX.get_text().replace('         ', ''))
+        self.searched = False
+        self.search_box.set_text(self.search_box.get_text().replace('\n', ' '))
+        self.search_box.set_text(self.search_box.get_text().replace('         ', ''))
         if LIVE_SEARCH:
             self.search_click()
 
