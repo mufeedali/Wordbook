@@ -7,10 +7,12 @@ It is the Qt5 frontend for Reo. It uses existing tools and as such, easily
 works across most Linux distributions without any changes.
 """
 
-import sys
-import logging
 import argparse  # for CommandLine-Interface (CLI).
+import logging
+import sys
+
 from PyQt5 import QtWidgets
+
 from reo import utils, reo_base
 from reo.qt.main_win import ReoMain
 
@@ -30,9 +32,9 @@ if PARSED.verbose:
 else:
     level = logging.WARNING
     DEBUG = False
-logging.basicConfig(level=level, format="%(asctime)s - " +
-                    "[%(levelname)s] [%(threadName)s] (%(module)s:" +
-                    "%(lineno)d) %(message)s")
+reo_base.log_init(DEBUG)
+logging.basicConfig(level=level,
+                    format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 
 SEN_COL = "cyan"  # Color of sentences in Dark mode
 WORD_COL = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
@@ -55,7 +57,8 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Reo")
     app.setDesktopFileName("Reo")
-    main_window = ReoMain(LIVE_SEARCH, WORD_COL, SEN_COL, DEBUG)
+    logging.info("Executing Reo-Qt")
+    main_window = ReoMain(LIVE_SEARCH, WORD_COL, SEN_COL)
     main_window.show()
     sys.exit(app.exec_())
 

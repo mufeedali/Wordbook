@@ -26,6 +26,20 @@ You can confirm all the requirements by running Reo with the arguments `--check`
 * Lightweight. 1 mb only and further reducible (It does nothing on its own, so yeah)
 * Support for GNOME Dark Mode and launching app in dark mode. Also supports gtk3-nocsd.
 
+## Installation
+
+To install, first make sure of the dependencies as listed above.
+
+```bash
+python setup.py install
+```
+
+For development (i.e. to see changes live as you make them):
+
+```bash
+python setup.py develop
+```
+
 ## Troubleshooting
 
 ### Slow output

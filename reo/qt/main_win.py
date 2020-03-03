@@ -1,9 +1,10 @@
-from PyQt5 import QtWidgets
-from reo import reo_base, utils
-import random
 import lzma
+import random
 import threading
 
+from PyQt5 import QtWidgets
+
+from reo import reo_base, utils
 from reo.qt.ui_mainwin import Ui_ReoMain
 
 WN_VERSION = '3.1'
@@ -28,14 +29,13 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     """Define all UI interactions."""
     searched_text = None
 
-    def __init__(self, live_search, word_col, sen_col, debug, *args, **kwargs):
+    def __init__(self, live_search, word_col, sen_col, *args, **kwargs):
         """Initialize the application."""
         super(ReoMain, self).__init__(*args, **kwargs)
         self.setupUi(self)
         self.live_search = live_search
         self.wordCol = word_col
         self.senCol = sen_col
-        self.debug = debug
         self.searchButton.clicked.connect(self.search_def)
         self.audioButton.clicked.connect(self.term_say)
         self.searchEntry.textChanged.connect(self.entry_changed)
@@ -96,7 +96,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             out = out.replace(' ', '&nbsp;')
             self.defView.setHtml(out)
         elif not clean_term == '' and not term.isspace() and not term == '':
-            self.defView.setHtml(reo_base.data_obtain(clean_term, self.wordCol, self.senCol, "html", self.debug))
+            self.defView.setHtml(reo_base.data_obtain(clean_term, self.wordCol, self.senCol, "html"))
             self.searched_text = clean_term
         elif clean_term == '' and not term.isspace() and not term == '':
             new_ced(self, 'Error: Invalid Input!', "Reo thinks that your input was actually just a bunch of useless"

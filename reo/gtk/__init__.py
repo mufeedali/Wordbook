@@ -6,16 +6,18 @@ It's a simple script basically. It uses existing tools and as such, easily
 works across most Linux distributions without any changes.
 """
 
-import sys
-import logging
 import argparse  # for CommandLine-Interface (CLI).
-import os
-from shutil import which  # for checks.
-import random  # for Random Words
-import lzma
-from reo import reo_base, utils
-import threading
 import configparser
+import logging
+import lzma
+import os
+import random  # for Random Words
+import sys
+import threading
+
+from shutil import which  # for checks.
+
+from reo import reo_base, utils
 
 # Readying ArgParser
 PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
@@ -28,11 +30,9 @@ PARSER.add_argument("-v", "--verbose", action="store_true", help="Make it scream
 PARSED = PARSER.parse_args()
 # logging is the most important. You have to let users know everything.
 if PARSED.verbose:
-    level = logging.DEBUG
+    DEBUG = True
 else:
-    level = logging.WARNING
-logging.basicConfig(level=level,
-                    format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
+    DEBUG = False
 
 CUSTOM_DEF_FOLD = utils.CDEF_FOLD
 REO_CONFIG = utils.CONFIG_FILE
@@ -46,7 +46,7 @@ try:
     if PARSED.check:
         print("PyGObject bindings working")
 except ImportError as import_error:
-    logging.fatal("Importing GObject failed!")
+    print("Importing GObject failed!")
     if not PARSED.check:
         print("Confirm all dependencies by running Reo with '--check' parameter.\n" + str(import_error))
         sys.exit(1)
@@ -62,7 +62,6 @@ BUILDER = Gtk.Builder()
 DARK = False
 MAX_HIDE = False
 LIVE_SEARCH = False
-DEBUG = False
 
 
 def darker():
@@ -101,8 +100,7 @@ def window_call():
     search_box = BUILDER.get_object('search_entry')  # Search box
     header = BUILDER.get_object('header')  # HeaderBar
     header.set_show_close_button(True)
-    if((os.environ.get('GTK_CSD') == '0') and
-       (os.environ.get('XDG_SESSION_TYPE') != 'wayland')):
+    if os.environ.get('GTK_CSD') == '0' and os.environ.get('XDG_SESSION_TYPE') != 'wayland':
         head_label = BUILDER.get_object('head_label')
         titles = BUILDER.get_object('titles')
         titles.set_margin_end(0)
@@ -133,7 +131,8 @@ def load_settings():
     custom_def_check.set_active(CONFIG.getboolean('General', 'CustomDefinitions'))
     CUSTOM_DEF_ENABLE = CONFIG.getboolean('General', 'CustomDefinitions')
     debug_check.set_active(CONFIG.getboolean('General', 'Debug'))
-    DEBUG = CONFIG.getboolean('General', 'Debug')
+    if not PARSED.verbose:
+        DEBUG = CONFIG.getboolean('General', 'Debug')
     force_wn_31.set_active(CONFIG.getboolean('General', 'ForceWordNet31'))
     if CONFIG.getboolean('General', 'ForceWordNet31'):
         logging.info("Using WordNet 3.1 as per local config")
@@ -169,7 +168,8 @@ def apply_settings():
     CONFIG.set('General', 'CustomDefinitions', utils.boot_to_str(custom_def_check.get_active()))
     CUSTOM_DEF_ENABLE = custom_def_check.get_active()
     CONFIG.set('General', 'Debug', utils.boot_to_str(debug_check.get_active()))
-    DEBUG = debug_check.get_active()
+    if not PARSED.verbose:
+        DEBUG = debug_check.get_active()
     CONFIG.set('General', 'ForceWordNet31', utils.boot_to_str(force_wn_31.get_active()))
     if force_wn_31.get_active():
         logging.info("Using WordNet 3.1 as per local config")
@@ -202,6 +202,13 @@ if not PARSED.verinfo and not PARSED.check:
     BUILDER.add_from_file(GLADEFILE)
     window_call()
     load_settings()
+    reo_base.log_init(DEBUG)
+    if DEBUG:
+        level = logging.DEBUG
+    else:
+        level = logging.WARNING
+    logging.basicConfig(level=level,
+                        format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
     if PARSED.dark:
         DARK = darker()
     elif PARSED.light:
@@ -317,7 +324,7 @@ class GUI:
     search_box = BUILDER.get_object('search_entry')  # Search box
 
     @staticmethod
-    def on_window_destroy(window):
+    def on_window_destroy(*args):
         """Clear all windows."""
         Gtk.main_quit()
 
@@ -332,7 +339,7 @@ class GUI:
                 header.set_show_close_button(True)
 
     @staticmethod
-    def pref_launch(pref_item):
+    def pref_launch(*args):
         """Open Preferences Window."""
         pref_dialog = BUILDER.get_object('pref_dialog')
         response = pref_dialog.run()
@@ -342,12 +349,12 @@ class GUI:
         elif response == Gtk.ResponseType.OK:
             pref_dialog.hide()
 
-    def apply_click(self, apply_button):
+    def apply_click(self, *args):
         """Apply settings only."""
         apply_settings()
         self.search_click(pass_check=True)
 
-    def ok_click(self, ok_button):
+    def ok_click(self, *args):
         """Apply settings and hide dialog."""
         pref_dialog = BUILDER.get_object('pref_dialog')
         pref_dialog.response(-5)
@@ -355,13 +362,13 @@ class GUI:
         self.search_click(pass_check=True)
 
     @staticmethod
-    def cancel_button_clicked(cancel_button):
+    def cancel_button_clicked(*args):
         """Hide settings dialog."""
         pref_dialog = BUILDER.get_object('pref_dialog')
         pref_dialog.response(-6)
 
     @staticmethod
-    def icon_press(menu_about):
+    def icon_press(*args):
         """Open About Window."""
         about = BUILDER.get_object('aboutReo')
         about.set_version(REO_VERSION)
@@ -369,7 +376,7 @@ class GUI:
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
             about.hide()
 
-    def sst(self, menu_sst):
+    def sst(self, *args):
         """Search selected text."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
@@ -379,7 +386,7 @@ class GUI:
             self.search_click()
             self.search_box.grab_focus()
 
-    def paste_search(self, menu_paste):
+    def paste_search(self, *args):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
         self.search_box.set_text(text)
@@ -403,7 +410,6 @@ class GUI:
     def search_click(self, search_button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
         text = self.search_box.get_text().strip()
-        logging.info("Searching text: %s", text)
         except_list = ['fortune -a', 'cowfortune']
         if not text == self.term or pass_check or text in except_list:
             self.def_viewer.get_buffer().set_text("")
@@ -476,27 +482,27 @@ class GUI:
         """Check if custom definition exists."""
         if os.path.exists(CUSTOM_DEF_FOLD + '/' + text.lower()) and CUSTOM_DEF_ENABLE:
             return self.custom_def(text, wordcol, sencol)
-        return reo_base.data_obtain(text, wordcol, sencol, "pango", DEBUG)
+        return reo_base.data_obtain(text, wordcol, sencol, "pango")
 
     @staticmethod
-    def ced_ok(ced_ok):
+    def ced_ok(*args):
         """Generate OK response from error dialog."""
         ced = BUILDER.get_object('ced')
         ced.response(Gtk.ResponseType.OK)
 
-    def random_word(self, menu_rand):
+    def random_word(self, *args):
         """Choose a random word and pass it to the search box."""
         rw = random.choice(WN)
         self.search_box.set_text(rw.strip())
         self.search_click()
         self.search_box.grab_focus()
 
-    def clear(self, clear_button):
+    def clear(self, *args):
         """Clear text in the Search box and the Data space."""
         self.search_box.set_text("")
         self.def_viewer.get_buffer().set_text("")
 
-    def audio(self, audio_button):
+    def audio(self, *args):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
         text = self.search_box.get_text().strip()
@@ -509,7 +515,7 @@ class GUI:
                          "I'm sorry but you have to do a search first \nbefore trying to  listen to it."
                          " I mean, Reo \nis <b>NOT</b> a Text-To-Speech Software!")
 
-    def changed(self, search_entry):
+    def changed(self, *args):
         """Detect changes to Search box and clean or do live searching."""
         self.searched = False
         self.search_box.set_text(self.search_box.get_text().replace('\n', ' '))

@@ -5,12 +5,23 @@ reo_base is a part of Reo. It contains a few functions that are reusable across
 both the UIs.
 """
 
-import re
 import html
+import logging
 import os
+import re
 import subprocess
+
 from reo import utils
 from functools import lru_cache
+
+
+def log_init(debug):
+    if debug is True:
+        level = logging.DEBUG
+    else:
+        level = logging.WARNING
+    logging.basicConfig(level=level,
+                        format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 
 
 def fold_gen():
@@ -21,15 +32,14 @@ def fold_gen():
         os.makedirs(utils.CDEF_FOLD)  # create Custom Definitions folder.
 
 
-def def_processor(definition, term, sen_col, word_col, markup='html', debug=False):
+def def_processor(definition, term, sen_col, word_col, markup='html'):
     """Format the definition obtained from 'dict'."""
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n', '')
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n', '')
     definition = html.escape(definition, False)
     term_in_wn = re.search("  " + term, definition, flags=re.IGNORECASE).group(0) or term
     definition = definition.replace(term_in_wn + '\n', '')
-    if debug is True:
-        print(f"Searching {term_in_wn.strip()}")
+    logging.info("Searching %s", term_in_wn.strip())
     re_list = {r'[ \t\r\f\v]+n\s+': f'<b>{term_in_wn}</b> ~ <i>noun</i>:\n      ',
                r'[ \t\r\f\v]+adv\s+': f'<b>{term_in_wn}</b> ~ <i>adverb</i>:\n      ',
                r'[ \t\r\f\v]+adj\s+': f'<b>{term_in_wn}</b> ~ <i>adjective</i>:\n      ',
@@ -138,14 +148,14 @@ def run_processes(term):
     return output
 
 
-def data_obtain(term, word_col, sen_col, markup='html', debug=False):
+def data_obtain(term, word_col, sen_col, markup='html'):
     """Obtain the data to be processed and presented."""
     output = run_processes(term)
     if not output:
         return "Lookup failed. Check logs."
     definition = output[0]
     if not definition == '':
-        clean_def = def_processor(definition, term, sen_col, word_col, markup, debug)
+        clean_def = def_processor(definition, term, sen_col, word_col, markup)
         no_def = 0
     else:
         clean_def = f"Couldn't find definition for '{term}'."
