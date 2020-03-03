@@ -218,7 +218,7 @@ def wn_check():
     global WN_VERSION, WN_CHECK_ONCE, WN
     if not WN_CHECK_ONCE:
         WN_VERSION = reo_base.wn_ver_check()
-        logging.info(f"Using WordNet {WN_VERSION}")
+        logging.info("Using WordNet %s", WN_VERSION)
         WN_CHECK_ONCE = True
     WN = str(lzma.open(utils.get_word_list(WN_VERSION), 'r').read()).split('\\n')
 
@@ -403,7 +403,7 @@ class GUI:
     def search_click(self, search_button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
         text = self.search_box.get_text().strip()
-        logging.info("Searching text: " + text)
+        logging.info("Searching text: %s", text)
         except_list = ['fortune -a', 'cowfortune']
         if not text == self.term or pass_check or text in except_list:
             self.def_viewer.get_buffer().set_text("")
