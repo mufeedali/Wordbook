@@ -16,6 +16,7 @@ from functools import lru_cache
 
 
 def log_init(debug):
+    """Initialize logging."""
     if debug is True:
         level = logging.DEBUG
     else:
@@ -193,9 +194,7 @@ def data_obtain(term, word_col, sen_col, markup='html'):
 def wn_ver_check():
     """Check version of WordNet."""
     try:
-        check_process = subprocess.Popen(["dict", "-d", "wn", "test"],
-                                         stdout=subprocess.PIPE,
-                                         stderr=subprocess.STDOUT)
+        check_process = subprocess.Popen(["dict", "-d", "wn", "test"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         check_out = check_process.stdout.read().decode()
     except OSError as ex:
         print("Error with dict. Error")

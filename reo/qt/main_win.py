@@ -77,7 +77,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     def entry_changed(self):
         """To live search or not to live search."""
         term = self.searchEntry.text()
-        clean_term = term.strip().strip('<>"-?`![](){}/\\:;,*')
+        clean_term = term.strip().strip('<>"-?`![](){}/\\:;,*').rstrip("'")
         if self.live_search and not clean_term == self.searched_text:
             self.search_def()
 

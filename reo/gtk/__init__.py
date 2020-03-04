@@ -422,7 +422,7 @@ class GUI:
 
     def search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*')
+        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*').rstrip("'")
         if not text == '' and not text.isspace():
             return self.reactor(text)
         logging.error("Invalid Characters.")
