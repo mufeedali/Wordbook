@@ -15,14 +15,15 @@ import random  # for Random Words
 import sys
 import threading
 
-from shutil import which  # for checks.
-
 from reo import reo_base, utils
+import gi  # this is the GObject stuff needed for GTK+
+gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
+from gi.repository import Gtk  # this is the GNOME depends
+from gi.repository import Gdk
 
 # Readying ArgParser
 PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
 exc_group = PARSER.add_mutually_exclusive_group()
-exc_group.add_argument("-c", "--check", action="store_true", help="Basic dependency checks.")
 exc_group.add_argument("-i", "--verinfo", action="store_true", help="Advanced Version Info")
 exc_group.add_argument("-gd", "--dark", action="store_true", help="Use GNOME dark theme")
 exc_group.add_argument("-gl", "--light", action="store_true", help="Use GNOME light theme")
@@ -37,26 +38,6 @@ else:
 CUSTOM_DEF_FOLD = utils.CDEF_FOLD
 REO_CONFIG = utils.CONFIG_FILE
 REO_VERSION = utils.VERSION
-
-try:
-    import gi  # this is the GObject stuff needed for GTK+
-    gi.require_version('Gtk', '3.0')  # inform the PC that we need GTK+ 3.
-    from gi.repository import Gtk  # this is the GNOME depends
-    from gi.repository import Gdk
-    if PARSED.check:
-        print("PyGObject bindings working")
-except ImportError as import_error:
-    print("Importing GObject failed!")
-    if not PARSED.check:
-        print("Confirm all dependencies by running Reo with '--check' parameter.\n" + str(import_error))
-        sys.exit(1)
-    elif PARSED.check:
-        print("Install GObject bindings.\n"
-              "For Ubuntu, Debian, etc:\n"
-              "'sudo apt install python3-gobject'\n"
-              "From extra repo for Arch Linux:\n"
-              "'yay -S python-gobject' or 'sudo pacman -S python-gobject'\n"
-              "Thanks for trying this out!")
 
 BUILDER = Gtk.Builder()
 DARK = False
@@ -230,88 +211,9 @@ def wn_check():
     WN = str(lzma.open(utils.get_word_list(WN_VERSION), 'r').read()).split('\\n')
 
 
-def check_bin(bin_to_check):
-    """Check presence of required binaries."""
-    bin_check = which(bin_to_check)
-    print(bin_to_check + " seems to be installed. OK.")
-    if bin_check:
-        return True
-    return False
-
-
-def print_checks(espeak_ng, dict_check, dictd, wn_dict):
-    """Print result of all checks."""
-    if espeak_ng and dict_check and dictd and wn_dict:
-        print("Everything Looks Perfect!\n"
-              "You should be able to run it without any issues!")
-    elif espeak_ng and dict_check and dictd and not wn_dict:
-        print("WordNet's data file is missing. Re-install 'dict-wn'.\n"
-              "For Ubuntu, Debian, etc:\n"
-              "'sudo apt install dict-wn'\n"
-              "From AUR for Arch Linux:\n"
-              "'yay -S dict-wn'\n"
-              "Everything else (NOT everything) looks fine...\n"
-              "... BUT you can't run it.")
-    elif espeak_ng and not dict_check and not dictd and not wn_dict:
-        print("dict and dictd (client and server) are missing.. install it."
-              "\nFor Ubuntu, Debian, etc:\n"
-              "'sudo apt install dictd dict-wn'\n"
-              "From community repo for Arch Linux (but WordNet from AUR):\n"
-              "'yay -S dictd dict-wn'\n"
-              "That should point you in the right direction to getting \n"
-              "it to work.")
-    elif not espeak_ng and not dict_check and not dictd and not wn_dict:
-        print("ALL bits and pieces are Missing...\n"
-              "For Ubuntu, Debian, etc:\n"
-              "'sudo apt install espeak-ng dictd dict-wn'\n"
-              "From community repo for Arch Linux (but WordNet from AUR):\n"
-              "'yay -S espeak-ng dictd dict-wn'\n"
-              "Go on, get it working now!")
-    elif not espeak_ng and dict_check and dictd and wn_dict:
-        print("Everything except eSpeak-ng is working...\n"
-              "For Ubuntu, Debian, etc:\n"
-              "'sudo apt install espeak-ng'\n"
-              "From community repo for Arch Linux:\n"
-              "'yay -S espeak-ng' or 'sudo pacman -S espeak-ng'\n"
-              "It should be alright then.")
-    elif not espeak_ng and dict_check and dictd and wn_dict:
-        print("eSpeak-ng is missing and WordNet might not work as intended.\n"
-              + "Install 'espeak-ng' and re-install the 'dict-wn' package.\n"
-              "For Ubuntu, Debian, etc:\n"
-              "'sudo apt install espeak-ng dict-wn'\n"
-              "From AUR for Arch Linux:\n"
-              "'yay -S espeak-ng dict-wn'\n"
-              "Everything else (NOT everything) looks fine.\n"
-              "Go on, try and run it!")
-    elif not espeak_ng and dict_check and dictd and not wn_dict:
-        print("eSpeak-ng is missing and WordNet's data file is missing. Re-install 'dict-wn'.\n"
-              "For Ubuntu, Debian, etc:\n"
-              "'sudo apt install espeak-ng dict-wn'\n"
-              "From AUR for Arch Linux:\n"
-              "'yay -S espeak-ng dict-wn'\n"
-              "Everything else (NOT everything) looks fine BUT you can't run it.")
-
-
-def dep_check():
-    """Check requirements but not thoroughly."""
-    espeak_ng = check_bin('espeak-ng')
-    dict_check = check_bin('dict')
-    dictd = check_bin('dictd')
-    if os.path.exists('/usr/share/dictd/wn.dict.dz'):
-        print('WordNet database seems to be installed. OK.')
-        wn_dict = True
-    else:
-        logging.warning("WordNet database is not found! Probably won't work.")
-        wn_dict = False
-    print_checks(espeak_ng, dict_check, dictd, wn_dict)
-    sys.exit()
-
-
 if PARSED.verinfo:
     reo_base.verinfo()
     sys.exit()
-if PARSED.check:
-    dep_check()
 
 threading.Thread(target=wn_check).start()
 
