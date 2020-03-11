@@ -170,7 +170,7 @@ def apply_settings():
     utils.save_settings(CONFIG)
 
 
-if not PARSED.verinfo and not PARSED.check:
+if not PARSED.verinfo:
     GtkSettings = Gtk.Settings.get_default()
     if (GtkSettings.get_property("gtk-application-prefer-dark-theme") or
             GtkSettings.get_property("gtk-theme-name").lower().endswith('-dark')):
