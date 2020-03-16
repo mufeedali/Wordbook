@@ -23,10 +23,10 @@ from gi.repository import Gdk
 
 # Readying ArgParser
 PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
-exc_group = PARSER.add_mutually_exclusive_group()
-exc_group.add_argument("-i", "--verinfo", action="store_true", help="Advanced Version Info")
-exc_group.add_argument("-gd", "--dark", action="store_true", help="Use GNOME dark theme")
-exc_group.add_argument("-gl", "--light", action="store_true", help="Use GNOME light theme")
+MGROUP = PARSER.add_mutually_exclusive_group()
+MGROUP.add_argument("-i", "--verinfo", action="store_true", help="Advanced Version Info")
+MGROUP.add_argument("-gd", "--dark", action="store_true", help="Use GNOME dark theme")
+MGROUP.add_argument("-gl", "--light", action="store_true", help="Use GNOME light theme")
 PARSER.add_argument("-v", "--verbose", action="store_true", help="Make it scream louder")
 PARSED = PARSER.parse_args()
 # logging is the most important. You have to let users know everything.
@@ -226,12 +226,12 @@ class GUI:
     search_box = BUILDER.get_object('search_entry')  # Search box
 
     @staticmethod
-    def on_window_destroy(*args):
+    def on_window_destroy(_window):
         """Clear all windows."""
         Gtk.main_quit()
 
     @staticmethod
-    def state_changed(window, state):
+    def state_changed(_window, state):
         """Detect changes to the window state and adapt."""
         header = BUILDER.get_object('header')
         if MAX_HIDE and not os.environ.get('GTK_CSD') == '0':
@@ -241,7 +241,7 @@ class GUI:
                 header.set_show_close_button(True)
 
     @staticmethod
-    def pref_launch(*args):
+    def pref_launch(_item):
         """Open Preferences Window."""
         pref_dialog = BUILDER.get_object('pref_dialog')
         response = pref_dialog.run()
@@ -251,12 +251,12 @@ class GUI:
         elif response == Gtk.ResponseType.OK:
             pref_dialog.hide()
 
-    def apply_click(self, *args):
+    def apply_click(self, _button):
         """Apply settings only."""
         apply_settings()
         self.search_click(pass_check=True)
 
-    def ok_click(self, *args):
+    def ok_click(self, _button):
         """Apply settings and hide dialog."""
         pref_dialog = BUILDER.get_object('pref_dialog')
         pref_dialog.response(-5)
@@ -264,13 +264,13 @@ class GUI:
         self.search_click(pass_check=True)
 
     @staticmethod
-    def cancel_button_clicked(*args):
+    def cancel_button_clicked(_button):
         """Hide settings dialog."""
         pref_dialog = BUILDER.get_object('pref_dialog')
         pref_dialog.response(-6)
 
     @staticmethod
-    def icon_press(*args):
+    def icon_press(_item):
         """Open About Window."""
         about = BUILDER.get_object('aboutReo')
         about.set_version(REO_VERSION)
@@ -278,7 +278,7 @@ class GUI:
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.CANCEL):
             about.hide()
 
-    def sst(self, *args):
+    def sst(self, _item):
         """Search selected text."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
@@ -288,7 +288,7 @@ class GUI:
             self.search_click()
             self.search_box.grab_focus()
 
-    def paste_search(self, *args):
+    def paste_search(self, _item):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
         self.search_box.set_text(text)
@@ -309,7 +309,7 @@ class GUI:
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.OK):
             ced.hide()
 
-    def search_click(self, _search_button=None, pass_check=False):
+    def search_click(self, _button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
         text = self.search_box.get_text().strip()
         except_list = ['fortune -a', 'cowfortune']
@@ -387,24 +387,24 @@ class GUI:
         return reo_base.data_obtain(text, wordcol, sencol, "pango")
 
     @staticmethod
-    def ced_ok(*args):
+    def ced_ok(_button):
         """Generate OK response from error dialog."""
         ced = BUILDER.get_object('ced')
         ced.response(Gtk.ResponseType.OK)
 
-    def random_word(self, *args):
+    def random_word(self, _item):
         """Choose a random word and pass it to the search box."""
         rw = random.choice(WN)
         self.search_box.set_text(rw.strip())
         self.search_click()
         self.search_box.grab_focus()
 
-    def clear(self, *args):
+    def clear(self, _button):
         """Clear text in the Search box and the Data space."""
         self.search_box.set_text("")
         self.def_viewer.get_buffer().set_text("")
 
-    def audio(self, *args):
+    def audio(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
         text = self.search_box.get_text().strip()
@@ -417,7 +417,7 @@ class GUI:
                          "I'm sorry but you have to do a search first \nbefore trying to  listen to it."
                          " I mean, Reo \nis <b>NOT</b> a Text-To-Speech Software!")
 
-    def changed(self, *args):
+    def changed(self, _entry):
         """Detect changes to Search box and clean or do live searching."""
         self.searched = False
         self.search_box.set_text(self.search_box.get_text().replace('\n', ' '))
@@ -426,7 +426,7 @@ class GUI:
             self.search_click()
 
     @staticmethod
-    def quit(menu_quit):
+    def quit(_item):
         """Quit using menu."""
         Gtk.main_quit()
 

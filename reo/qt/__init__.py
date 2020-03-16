@@ -21,9 +21,9 @@ PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
 MGROUP = PARSER.add_mutually_exclusive_group()
 MGROUP.add_argument("-i", "--verinfo", action="store_true",
                     help="Advanced Version Info")
-PARSER.add_argument("-l", "--livesearch", action="store_true",
+MGROUP.add_argument("-l", "--livesearch", action="store_true",
                     help="Enable live search")
-PARSER.add_argument("-v", "--verbose", action="store_true",
+MGROUP.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 PARSED = PARSER.parse_args()
 if PARSED.verbose:
