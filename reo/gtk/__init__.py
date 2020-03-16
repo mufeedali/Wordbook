@@ -309,7 +309,7 @@ class GUI:
         if response in (Gtk.ResponseType.DELETE_EVENT, Gtk.ResponseType.OK):
             ced.hide()
 
-    def search_click(self, search_button=None, pass_check=False):
+    def search_click(self, _search_button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
         text = self.search_box.get_text().strip()
         except_list = ['fortune -a', 'cowfortune']
