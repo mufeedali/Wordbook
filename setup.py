@@ -17,7 +17,7 @@ setup_requirements = []
 
 extra_requirements = {
     'GTK': ['PyGObject'],
-    'Qt': ['PySide2'],
+    'Qt': ['PyQt5'],
 }
 
 setup(
