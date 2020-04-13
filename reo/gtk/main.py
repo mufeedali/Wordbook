@@ -1,10 +1,9 @@
+from .window import ReoGtkWindow
+from gi.repository import Gtk, Gio
 import sys
 import gi
 
 gi.require_version('Gtk', '3.0')
-
-from gi.repository import Gtk, Gio
-from .window import ReoGtkWindow
 
 
 class Application(Gtk.Application):
