@@ -1,7 +1,10 @@
 import os
 
-from gi.repository import Gdk, Gtk
-from reo import reo_base, utils
+from gi.repository import Gdk
+from gi.repository import Gtk
+
+from reo import reo_base
+from reo import utils
 
 CUSTOM_DEF_FOLD = utils.CDEF_FOLD
 CUSTOM_DEF_ENABLE = True

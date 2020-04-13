@@ -1,7 +1,10 @@
-from .window import ReoGtkWindow
-from gi.repository import Gtk, Gio
 import sys
+
 import gi
+from gi.repository import Gio
+from gi.repository import Gtk
+
+from .window import ReoGtkWindow
 
 gi.require_version("Gtk", "3.0")
 
