@@ -39,8 +39,10 @@ class Application(Gtk.Application):
             paste_search_action.connect("activate", window.on_paste_search)
             self.add_action(paste_search_action)
 
-            search_selected_action = Gio.SimpleAction.new("search-selected", None)
-            search_selected_action.connect("activate", window.on_search_selected)
+            search_selected_action = Gio.SimpleAction.new(
+                "search-selected", None)
+            search_selected_action.connect("activate",
+                                           window.on_search_selected)
             self.add_action(search_selected_action)
 
         win = self.props.active_window
