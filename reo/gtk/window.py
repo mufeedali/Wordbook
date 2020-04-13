@@ -72,7 +72,8 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 last_iter = self.def_view.get_buffer().get_end_iter()
                 out = self.__search(text)
                 if out is not None:
-                    self.def_view.get_buffer().insert_markup(last_iter, out, -1)
+                    self.def_view.get_buffer().insert_markup(
+                        last_iter, out, -1)
 
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
@@ -80,13 +81,11 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         if not text == "" and not text.isspace():
             return self.__reactor(text)
         # logging.error("Invalid Characters.")
-        dialog = Gtk.MessageDialog(
-            self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, "Invalid Input"
-        )
+        dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR,
+                                   Gtk.ButtonsType.OK, "Invalid Input")
         dialog.format_secondary_text(
             "Reo thinks that your input was actually just a bunch of useless characters. "
-            "And so, an 'Invalid Characters' error."
-        )
+            "And so, an 'Invalid Characters' error.")
         dialog.run()
         dialog.destroy()
         return None
@@ -122,8 +121,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 "of this application, chosen kind of at random.\n  <b>2:</b> Japanese word meaning 'Wise"
                 f' Center\'\n <b>Similar Words:</b>\n <i><span foreground="{wordcol}">  ro, '
                 "re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb, red, ref, rem, rep, res,"
-                " ret, rev, rex</span></i></tt>"
-            )
+                " ret, rev, rex</span></i></tt>")
             return reo_def
         if text and not text.isspace():
             self.searched = True
@@ -146,17 +144,18 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             for i, j in re_list.items():
                 custom_def_read = custom_def_read.replace(i, j)
             if "\n[warninghide]" in custom_def_read:
-                custom_def_read = custom_def_read.replace("\n[warninghide]", "")
+                custom_def_read = custom_def_read.replace(
+                    "\n[warninghide]", "")
                 return custom_def_read
             return (
-                custom_def_read
-                + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one is to be'
-                " held responsible for errors in this.</span>"
-            )
+                custom_def_read +
+                '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one is to be'
+                " held responsible for errors in this.</span>")
 
     def __generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
-        if os.path.exists(CUSTOM_DEF_FOLD + "/" + text.lower()) and CUSTOM_DEF_ENABLE:
+        if os.path.exists(CUSTOM_DEF_FOLD + "/" +
+                          text.lower()) and CUSTOM_DEF_ENABLE:
             return self.__custom_def(text, wordcol, sencol)
         return reo_base.data_obtain(text, wordcol, sencol, "pango")
 
@@ -167,13 +166,13 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         about_dialog.set_version(utils.VERSION)
         about_dialog.set_comments(
             "Reo is a dictionary application that uses dictd, dict-wn and "
-            "eSpeak-ng to provide a complete user interface."
-        )
-        about_dialog.set_authors(
-            ["Mufeed Ali",]
-        )
+            "eSpeak-ng to provide a complete user interface.")
+        about_dialog.set_authors([
+            "Mufeed Ali",
+        ])
         about_dialog.set_license_type(Gtk.License.MIT_X11)
         about_dialog.set_website("http://lastweakness.github.io/reo")
         about_dialog.set_copyright("Copyright © 2016-2020 Mufeed Ali")
-        about_dialog.connect("response", lambda dialog, response: dialog.destroy())
+        about_dialog.connect(
+            "response", lambda dialog, response: dialog.destroy())
         about_dialog.present()
