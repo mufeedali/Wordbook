@@ -7,9 +7,10 @@ CUSTOM_DEF_FOLD = utils.CDEF_FOLD
 CUSTOM_DEF_ENABLE = True
 DARK = True
 WN_VERSION = '3.1'
+PATH = os.path.dirname(__file__)
 
 
-@Gtk.Template(filename='gtk/ui/window.ui')
+@Gtk.Template(filename=f'{PATH}/ui/window.ui')
 class ReoGtkWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'ReoGtkWindow'
 
@@ -25,7 +26,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def __init__(self, _base=None, **kwargs):
         super().__init__(**kwargs)
 
-        builder = Gtk.Builder.new_from_file('gtk/ui/menu.xml')
+        builder = Gtk.Builder.new_from_file(f'{PATH}/gtk/ui/menu.xml')
         menu = builder.get_object("reo-menu")
 
         popover = Gtk.Popover.new_from_model(self.menu_button, menu)
@@ -74,6 +75,9 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
         text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
+        cleaner = ['(', ')', '<', '>']
+        for item in cleaner:
+            text = text.replace(item, '')
         if not text == '' and not text.isspace():
             return self.__reactor(text)
         # logging.error("Invalid Characters.")

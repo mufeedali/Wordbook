@@ -41,6 +41,9 @@ class Application(Gtk.Application):
             search_selected_action.connect("activate", window.on_search_selected)
             self.add_action(search_selected_action)
 
+            self.add_accelerator('<Primary>s', 'app.search-selected', None)
+            self.add_accelerator('<Primary><Shift>v', 'app.paste-search', None)
+
         win = self.props.active_window
         if not win:
             win = ReoGtkWindow(application=self)
