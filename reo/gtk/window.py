@@ -20,6 +20,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     menu_button = Gtk.Template.Child('reo_menu_button')
 
     term = None
+    searched = False
 
     def __init__(self, _base=None, **kwargs):
         super().__init__(**kwargs)
@@ -49,7 +50,8 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.on_search_press()
             self.search_entry.grab_focus()
 
-    def on_random_word(self, _action, _param):
+    @staticmethod
+    def on_random_word(_action, _param):
         print("Um... yeah... that doesn't work yet.")
 
     def on_clear_press(self, _button):
