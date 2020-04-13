@@ -9,7 +9,7 @@ DARK = True
 WN_VERSION = '3.1'
 
 
-@Gtk.Template(filename='reo/gtk/ui/window.ui')
+@Gtk.Template(filename='gtk/ui/window.ui')
 class ReoGtkWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'ReoGtkWindow'
 
@@ -25,7 +25,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def __init__(self, _base=None, **kwargs):
         super().__init__(**kwargs)
 
-        builder = Gtk.Builder.new_from_file('reo/gtk/ui/menu.xml')
+        builder = Gtk.Builder.new_from_file('gtk/ui/menu.xml')
         menu = builder.get_object("reo-menu")
 
         popover = Gtk.Popover.new_from_model(self.menu_button, menu)
