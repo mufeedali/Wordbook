@@ -26,7 +26,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def __init__(self, _base=None, **kwargs):
         super().__init__(**kwargs)
 
-        builder = Gtk.Builder.new_from_file(f'{PATH}/gtk/ui/menu.xml')
+        builder = Gtk.Builder.new_from_file(f'{PATH}/ui/menu.xml')
         menu = builder.get_object("reo-menu")
 
         popover = Gtk.Popover.new_from_model(self.menu_button, menu)
