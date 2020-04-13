@@ -3,7 +3,7 @@ from gi.repository import Gtk, Gio
 import sys
 import gi
 
-gi.require_version('Gtk', '3.0')
+gi.require_version("Gtk", "3.0")
 
 
 class Application(Gtk.Application):
@@ -11,8 +11,8 @@ class Application(Gtk.Application):
         """Initialize the application."""
 
         super().__init__(
-            application_id='com.github.lastweakness.reo-gtk',
-            flags=Gio.ApplicationFlags.FLAGS_NONE
+            application_id="com.github.lastweakness.reo-gtk",
+            flags=Gio.ApplicationFlags.FLAGS_NONE,
         )
 
     def do_activate(self):
