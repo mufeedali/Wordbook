@@ -33,6 +33,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         self.menu_button.set_popover(popover)
 
         self.search_button.connect("clicked", self.on_search_press)
+        self.search_entry.connect("activate", self.on_search_press)
         self.clear_button.connect("clicked", self.on_clear_press)
 
     def on_search_selected(self, _action, _param):
