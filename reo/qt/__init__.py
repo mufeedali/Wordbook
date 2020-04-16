@@ -27,13 +27,13 @@ MGROUP.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 PARSED = PARSER.parse_args()
 if PARSED.verbose:
-    level = logging.DEBUG
+    LEVEL = logging.DEBUG
     DEBUG = True
 else:
-    level = logging.WARNING
+    LEVEL = logging.WARNING
     DEBUG = False
 reo_base.log_init(DEBUG)
-logging.basicConfig(level=level,
+logging.basicConfig(level=LEVEL,
                     format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 
 SEN_COL = "cyan"  # Color of sentences in Dark mode

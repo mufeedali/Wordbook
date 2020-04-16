@@ -1,6 +1,7 @@
 import lzma
 import random
 import threading
+import sys
 
 from PyQt5 import QtWidgets
 
@@ -33,9 +34,11 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         """Initialize the application."""
         super(ReoMain, self).__init__(*args, **kwargs)
         self.setupUi(self)
+
         self.live_search = live_search
         self.wordCol = word_col
         self.senCol = sen_col
+
         self.searchButton.clicked.connect(self.search_def)
         self.audioButton.clicked.connect(self.term_say)
         self.searchEntry.textChanged.connect(self.entry_changed)
@@ -67,7 +70,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     @staticmethod
     def quit():
         """Quit the application."""
-        exit(0)
+        sys.exit(0)
 
     def random_word(self):
         """Choose a random word and pass it to the search box."""

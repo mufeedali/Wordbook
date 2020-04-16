@@ -30,10 +30,7 @@ MGROUP.add_argument("-gl", "--light", action="store_true", help="Use GNOME light
 PARSER.add_argument("-v", "--verbose", action="store_true", help="Make it scream louder")
 PARSED = PARSER.parse_args()
 # logging is the most important. You have to let users know everything.
-if PARSED.verbose:
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = bool(PARSED.verbose)
 
 CUSTOM_DEF_FOLD = utils.CDEF_FOLD
 REO_CONFIG = utils.CONFIG_FILE
