@@ -10,9 +10,9 @@ import logging
 import os
 import re
 import subprocess
+from functools import lru_cache
 
 from reo import utils
-from functools import lru_cache
 
 
 def log_init(debug):
@@ -59,7 +59,7 @@ def def_processor(definition, term, sen_col, word_col, markup='html'):
                r'";[ \t\r\f\v]*$': r'</font>',
                r'";[ \t\r\f\v]+(.+)$': r'</font> \1',
                r'"[; \t\r\f\v]+(\(.+\))$': r'</font> \1',
-               r'"\s*\-+\s*(.+)\s*([<]*)': r"</font> - \1; \2",
+               r'"\s*\-+\s*(.+)(\s*)([<]*)': r"</font> - \1\2\3",
                r';\s*$': r''}
     for to_replace, replace_with in re_list.items():
         re_clean = re.compile(to_replace, re.MULTILINE)

@@ -1,20 +1,33 @@
 import sys
+
 import gi
-
 gi.require_version('Gtk', '3.0')
+from gi.repository import Gio, GLib, Gtk
 
-from gi.repository import Gtk, Gio
 from .window import ReoGtkWindow
+from reo import reo_base
 
 
 class Application(Gtk.Application):
+    debug = False
+    verinfo = False
+    dark = False
+
     def __init__(self):
         """Initialize the application."""
 
         super().__init__(
             application_id='com.github.lastweakness.reo-gtk',
-            flags=Gio.ApplicationFlags.FLAGS_NONE
+            flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
         )
+        self.add_main_option("dark", ord("d"), GLib.OptionFlags.NONE,
+                             GLib.OptionArg.NONE, "Use Dark mode", None)
+        self.add_main_option("light", ord("l"), GLib.OptionFlags.NONE,
+                             GLib.OptionArg.NONE, "Use Light mode", None)
+        self.add_main_option("verinfo", ord("i"), GLib.OptionFlags.NONE,
+                             GLib.OptionArg.NONE, "Advanced version info", None)
+        self.add_main_option("verbose", ord("v"), GLib.OptionFlags.NONE,
+                             GLib.OptionArg.NONE, "Make it scream louder", None)
 
     def do_activate(self):
         """Activate the application."""
@@ -42,14 +55,44 @@ class Application(Gtk.Application):
             self.add_action(search_selected_action)
 
             self.add_accelerator('<Primary>s', 'app.search-selected', None)
+            self.add_accelerator('<Primary>r', 'app.random-word', None)
             self.add_accelerator('<Primary><Shift>v', 'app.paste-search', None)
 
         win = self.props.active_window
         if not win:
-            win = ReoGtkWindow(application=self)
+            win = ReoGtkWindow(application=self, dark=self.dark)
             setup_actions(win)
 
         win.present()
+
+    @staticmethod
+    def darker():
+        """Switch to Dark mode."""
+        settings = Gtk.Settings.get_default()
+        settings.set_property("gtk-application-prefer-dark-theme", True)
+        return True
+
+    @staticmethod
+    def lighter():
+        """Switch to Light mode."""
+        settings = Gtk.Settings.get_default()
+        settings.set_property("gtk-application-prefer-dark-theme", False)
+        return False
+
+    def do_command_line(self, command_line):
+        """Parse commandline arguments."""
+        options = command_line.get_options_dict().end().unpack()
+        if "verbose" in options:
+            reo_base.log_init(True)
+        if "verinfo" in options:
+            reo_base.verinfo()
+            return 0
+        if "dark" in options:
+            self.dark = self.darker()
+        elif "light" in options:
+            self.dark = self.lighter()
+        self.activate()
+        return 0
 
     def on_quit(self, _action, _param):
         """Quit the application."""

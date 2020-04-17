@@ -1,11 +1,10 @@
 import os
 
 from gi.repository import Gdk, Gtk
+
 from reo import reo_base, utils
 
 CUSTOM_DEF_FOLD = utils.CDEF_FOLD
-CUSTOM_DEF_ENABLE = True
-DARK = True
 WN_VERSION = '3.1'
 PATH = os.path.dirname(__file__)
 
@@ -22,8 +21,10 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     term = None
     searched = False
+    dark = True
+    cdef_enable = True
 
-    def __init__(self, _base=None, **kwargs):
+    def __init__(self, dark=False, **kwargs):
         super().__init__(**kwargs)
 
         builder = Gtk.Builder.new_from_file(f'{PATH}/ui/menu.xml')
@@ -36,7 +37,10 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         self.search_entry.connect("activate", self.on_search_press)
         self.clear_button.connect("clicked", self.on_clear_press)
 
+        self.dark = dark
+
     def on_search_selected(self, _action, _param):
+        """Search selected text from inside or outside the window."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
         text = text.replace('         ', '')
@@ -81,7 +85,6 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             text = text.replace(item, '')
         if not text == '' and not text.isspace():
             return self.__reactor(text)
-        # logging.error("Invalid Characters.")
         dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 'Invalid Input')
         dialog.format_secondary_text(
             "Reo thinks that your input was actually just a bunch of useless characters. "
@@ -93,30 +96,36 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def __reactor(self, text):
         """Check easter eggs and set variables."""
-        if DARK:
+        if self.dark:
             sencol = "cyan"  # Color of sentences in Dark mode
             wordcol = "lightgreen"  # Color of: Similar Words,
 #                                     Synonyms and Antonyms.
         else:
             sencol = "blue"  # Color of sentences in regular
             wordcol = "green"  # Color of: Similar Words, Synonyms, Antonyms.
-        skip = ['00-database-allchars', '00-database-info', '00-database-long', '00-database-short', '00-database-url']
-        if text in skip:
-            return f"<tt> Running Reo with WordNet {WN_VERSION}</tt>"
-        if text == 'fortune -a':
-            return reo_base.fortune()
-        if text == 'cowfortune':
-            return reo_base.cowfortune()
+        reo_def = str(
+            "<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n"
+            "  <b>Reo</b> ~ <i>Japanese Word</i>\n"
+            "  <b>1:</b> Name of this application, chosen kind of at random.\n"
+            "  <b>2:</b> Japanese word meaning 'Wise Center'\n"
+            " <b>Similar Words:</b>\n"
+            f" <i><span foreground=\"{wordcol}\">  ro, re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb,"
+            " red, ref, rem, rep, res, ret, rev, rex</span></i></tt>"
+        )
+        switch_dict = {
+            '00-database-allchars': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
+            '00-database-info': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
+            '00-database-short': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
+            '00-database-url': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
+            'fortune -a': reo_base.fortune(),
+            'cowfortune': reo_base.cowfortune(),
+            'reo': reo_def
+        }
+        if text in switch_dict.keys():
+            return switch_dict.get(text, None)
         if text in ('crash now', 'close now'):
-            Gtk.main_quit()
+            self.destroy()
             return None
-        if text == 'reo':
-            reo_def = str("<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n  <b>Reo</b> ~ <i>Japanese Word</i>\n  <b>1:</b> Name "
-                          "of this application, chosen kind of at random.\n  <b>2:</b> Japanese word meaning 'Wise"
-                          f" Center'\n <b>Similar Words:</b>\n <i><span foreground=\"{wordcol}\">  ro, "
-                          "re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb, red, ref, rem, rep, res,"
-                          " ret, rev, rex</span></i></tt>")
-            return reo_def
         if text and not text.isspace():
             self.searched = True
             return self.__generator(text, wordcol, sencol)
@@ -127,9 +136,14 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         """Present custom definition when available."""
         with open(CUSTOM_DEF_FOLD + '/' + text, 'r') as def_file:
             custom_def_read = def_file.read()
-            re_list = {"<i>($WORDCOL)</i>": wordcol, "<i>($SENCOL)</i>": sencol,
-                       "($WORDCOL)": wordcol, "($SENCOL)": sencol,
-                       "$WORDCOL": wordcol, "$SENCOL": sencol}
+            re_list = {
+                "<i>($WORDCOL)</i>": wordcol,
+                "<i>($SENCOL)</i>": sencol,
+                "($WORDCOL)": wordcol,
+                "($SENCOL)": sencol,
+                "$WORDCOL": wordcol,
+                "$SENCOL": sencol
+            }
             for i, j in re_list.items():
                 custom_def_read = custom_def_read.replace(i, j)
             if "\n[warninghide]" in custom_def_read:
@@ -140,11 +154,12 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def __generator(self, text, wordcol, sencol):
         """Check if custom definition exists."""
-        if os.path.exists(CUSTOM_DEF_FOLD + '/' + text.lower()) and CUSTOM_DEF_ENABLE:
+        if os.path.exists(CUSTOM_DEF_FOLD + '/' + text.lower()) and self.cdef_enable:
             return self.__custom_def(text, wordcol, sencol)
         return reo_base.data_obtain(text, wordcol, sencol, "pango")
 
     def on_about(self, _action, _param):
+        """Show the about window."""
         about_dialog = Gtk.AboutDialog(
             transient_for=self,
             modal=True

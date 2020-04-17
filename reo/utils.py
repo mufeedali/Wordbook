@@ -1,5 +1,5 @@
 """utils contains a few global variables and essential functions."""
-from os.path import expanduser, dirname
+from os.path import dirname, expanduser
 
 CONFIG_FOLD = expanduser('~') + "/.config/reo"
 # ^ This is where stuff like settings, Custom Definitions, etc will go.

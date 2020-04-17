@@ -13,9 +13,8 @@ import sys
 
 from PyQt5 import QtWidgets
 
-from reo import utils, reo_base
+from reo import reo_base, utils
 from reo.qt.main_win import ReoMain
-
 
 PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
 MGROUP = PARSER.add_mutually_exclusive_group()
