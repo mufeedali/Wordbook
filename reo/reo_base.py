@@ -19,7 +19,8 @@ from reo import utils
 _POOL = ThreadPoolExecutor()
 
 
-def threadpool(f):
+def _threadpool(f):
+    """Wraps around a function allowing it to run in a separate thread and return a future object."""
     def wrap(*args, **kwargs):
         return (_POOL).submit(f, *args, **kwargs)
 
@@ -186,7 +187,7 @@ def get_data(term, word_col, sen_col, markup='html'):
     if clean_close.strip() == '':
         fail = True
     if clean_pron == '' or clean_pron.isspace():
-        final_pron = f"Obtaining pronunciation failed."
+        final_pron = "Obtaining pronunciation failed."
     else:
         final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
     if not fail:
@@ -220,7 +221,7 @@ def get_wn_version():
     return '3.1'
 
 
-@threadpool
+@_threadpool
 def get_wn_file():
     """Get the WordNet wordlist according to WordNet version."""
     wn_version = get_wn_version()
