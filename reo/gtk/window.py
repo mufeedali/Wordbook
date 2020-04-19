@@ -1,11 +1,10 @@
 import os
+import random
 
 from gi.repository import Gdk, Gtk
 
 from reo import reo_base, utils
 
-CUSTOM_DEF_FOLD = utils.CDEF_FOLD
-WN_VERSION = '3.1'
 PATH = os.path.dirname(__file__)
 
 
@@ -22,9 +21,10 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     term = None
     searched = False
     dark = True
-    cdef_enable = True
+    wn_future = reo_base.get_wn_file()
 
     def __init__(self, dark=False, **kwargs):
+        """Initialize the window."""
         super().__init__(**kwargs)
 
         builder = Gtk.Builder.new_from_file(f'{PATH}/ui/menu.xml')
@@ -50,17 +50,21 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.search_entry.grab_focus()
 
     def on_paste_search(self, _action, _param):
+        """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
         self.search_entry.set_text(text)
         if not text == '' and not text.isspace():
             self.on_search_press()
             self.search_entry.grab_focus()
 
-    @staticmethod
-    def on_random_word(_action, _param):
-        print("Um... yeah... that doesn't work yet.")
+    def on_random_word(self, _action, _param):
+        """Search a random word from the wordlist."""
+        self.search_entry.set_text(random.choice(self.wn_future.result()[1]))
+        self.on_search_press()
+        self.search_entry.grab_focus()
 
     def on_clear_press(self, _button):
+        """Clear all text in the window."""
         self.def_view.get_buffer().set_text("")
         self.search_entry.set_text("")
 
@@ -103,60 +107,35 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         else:
             sencol = "blue"  # Color of sentences in regular
             wordcol = "green"  # Color of: Similar Words, Synonyms, Antonyms.
-        reo_def = str(
-            "<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n"
-            "  <b>Reo</b> ~ <i>Japanese Word</i>\n"
-            "  <b>1:</b> Name of this application, chosen kind of at random.\n"
-            "  <b>2:</b> Japanese word meaning 'Wise Center'\n"
-            " <b>Similar Words:</b>\n"
-            f" <i><span foreground=\"{wordcol}\">  ro, re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb,"
-            " red, ref, rem, rep, res, ret, rev, rex</span></i></tt>"
-        )
-        switch_dict = {
-            '00-database-allchars': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
-            '00-database-info': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
-            '00-database-short': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
-            '00-database-url': f"<tt> Running Reo with WordNet {WN_VERSION}</tt>",
-            'fortune -a': reo_base.fortune(),
-            'cowfortune': reo_base.cowfortune(),
-            'reo': reo_def
-        }
-        if text in switch_dict.keys():
-            return switch_dict.get(text, None)
+        wn_list = [
+            '00-database-allchars',
+            '00-database-info',
+            '00-database-short',
+            '00-database-url'
+        ]
+        if text in wn_list:
+            return f"<tt> Running Reo with WordNet {self.wn_future.result()[0]}</tt>"
+        if text == 'fortune -a':
+            return reo_base.get_fortune()
+        if text == 'cowfortune':
+            return reo_base.get_cowfortune()
+        if text == 'reo':
+            return str(
+                "<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n"
+                "  <b>Reo</b> ~ <i>Japanese Word</i>\n"
+                "  <b>1:</b> Name of this application, chosen kind of at random.\n"
+                "  <b>2:</b> Japanese word meaning 'Wise Center'\n"
+                " <b>Similar Words:</b>\n"
+                f" <i><span foreground=\"{wordcol}\">  ro, re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, reb,"
+                " red, ref, rem, rep, res, ret, rev, rex</span></i></tt>"
+            )
         if text in ('crash now', 'close now'):
             self.destroy()
             return None
         if text and not text.isspace():
             self.searched = True
-            return self.__generator(text, wordcol, sencol)
+            return reo_base.generate_definition(text, wordcol, sencol, "pango")
         return None
-
-    @staticmethod
-    def __custom_def(text, wordcol, sencol):
-        """Present custom definition when available."""
-        with open(CUSTOM_DEF_FOLD + '/' + text, 'r') as def_file:
-            custom_def_read = def_file.read()
-            re_list = {
-                "<i>($WORDCOL)</i>": wordcol,
-                "<i>($SENCOL)</i>": sencol,
-                "($WORDCOL)": wordcol,
-                "($SENCOL)": sencol,
-                "$WORDCOL": wordcol,
-                "$SENCOL": sencol
-            }
-            for i, j in re_list.items():
-                custom_def_read = custom_def_read.replace(i, j)
-            if "\n[warninghide]" in custom_def_read:
-                custom_def_read = custom_def_read.replace("\n[warninghide]", "")
-                return custom_def_read
-            return(custom_def_read + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one is to be'
-                   ' held responsible for errors in this.</span>')
-
-    def __generator(self, text, wordcol, sencol):
-        """Check if custom definition exists."""
-        if os.path.exists(CUSTOM_DEF_FOLD + '/' + text.lower()) and self.cdef_enable:
-            return self.__custom_def(text, wordcol, sencol)
-        return reo_base.data_obtain(text, wordcol, sencol, "pango")
 
     def on_about(self, _action, _param):
         """Show the about window."""

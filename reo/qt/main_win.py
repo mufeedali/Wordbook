@@ -1,28 +1,10 @@
-import lzma
 import random
-import threading
+import sys
 
 from PyQt5 import QtWidgets
 
 from reo import reo_base, utils
 from reo.qt.ui_mainwin import Ui_ReoMain
-
-WN_VERSION = '3.1'
-WN_CHECK_ONCE = False
-WN = None
-SEARCHED = None
-
-
-def wn_check():
-    """Check if WordNet is properly installed."""
-    global WN_VERSION, WN_CHECK_ONCE, WN
-    if not WN_CHECK_ONCE:
-        WN_VERSION = reo_base.wn_ver_check()
-        WN_CHECK_ONCE = True
-    WN = str(lzma.open(utils.get_word_list(WN_VERSION), 'r').read()).split('\\n')
-
-
-threading.Thread(target=wn_check).start()
 
 
 class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
@@ -33,9 +15,12 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         """Initialize the application."""
         super(ReoMain, self).__init__(*args, **kwargs)
         self.setupUi(self)
+
+        self.wn_future = reo_base.get_wn_file()
         self.live_search = live_search
         self.wordCol = word_col
         self.senCol = sen_col
+
         self.searchButton.clicked.connect(self.search_def)
         self.audioButton.clicked.connect(self.term_say)
         self.searchEntry.textChanged.connect(self.entry_changed)
@@ -47,12 +32,15 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
 
     def about(self):
         """Show an About window."""
-        QtWidgets.QMessageBox.about(self, f'About Reo-Qt {utils.VERSION}',
-                                    f'<p><b>About Reo-Qt {utils.VERSION}</b></p>'
-                                    '<p>Reo is a dictionary application using dictd, espeak, etc.</p>'
-                                    '<p>This program is MIT-licensed.</p>'
-                                    '<p>Copyright (C) 2016-2020 Mufeed Ali (lastweakness)</p>'
-                                    '<p><a href="http://github.com/lastweakness/reo">GitHub</a></p>')
+        QtWidgets.QMessageBox.about(
+            self,
+            f'About Reo-Qt {utils.VERSION}',
+            f'<p><b>About Reo-Qt {utils.VERSION}</b></p>'
+            '<p>Reo is a dictionary application using dictd, espeak, etc.</p>'
+            '<p>This program is MIT-licensed.</p>'
+            '<p>Copyright (C) 2016-2020 Mufeed Ali (lastweakness)</p>'
+            '<p><a href="http://github.com/lastweakness/reo">GitHub</a></p>'
+        )
 
     def paste_search(self):
         """Paste and search."""
@@ -67,40 +55,66 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
     @staticmethod
     def quit():
         """Quit the application."""
-        exit(0)
+        sys.exit()
 
     def random_word(self):
         """Choose a random word and pass it to the search box."""
-        self.searchEntry.setText(random.choice(WN))
+        self.searchEntry.setText(random.choice(self.wn_future.result()[1]))
         self.search_def()
 
     def entry_changed(self):
         """To live search or not to live search."""
-        term = self.searchEntry.text()
-        clean_term = term.strip().strip('<>"-?`![](){}/\\:;,*').rstrip("'")
-        if self.live_search and not clean_term == self.searched_text:
+        if self.live_search:
             self.search_def()
 
     def search_def(self):
         """Search for definition."""
-        term = self.searchEntry.text()
+        term = self.searchEntry.text().strip()
+        clean_term = term.strip('<>".-?`![](){}/\\:;,*').rstrip("'")
+        cleaner = ['(', ')', '<', '>', '[', ']']
+        for item in cleaner:
+            clean_term = clean_term.replace(item, '')
+        if clean_term == self.searched_text:
+            return
         self.defView.clear()
         new_ced = QtWidgets.QMessageBox.warning
-        clean_term = term.strip().strip('<>"?`![]()/^\\:;,*')
+        wn_list = [
+            '00-database-allchars',
+            '00-database-info',
+            '00-database-short',
+            '00-database-url'
+        ]
+        if clean_term in wn_list:
+            self.defView.setHtml(f"<tt> Running Reo with WordNet {self.wn_future.result()[0]}</tt>")
+            return
         if clean_term == 'fortune -a':
-            out = reo_base.fortune().strip().replace('\n', '<br>')
-            out = out.replace(' ', '&nbsp;')
-            self.defView.setHtml(out)
-        elif clean_term == 'cowfortune':
-            out = reo_base.cowfortune().strip().replace('\n', '<br>')
-            out = out.replace(' ', '&nbsp;')
-            self.defView.setHtml(out)
-        elif not clean_term == '' and not term.isspace() and not term == '':
-            self.defView.setHtml(reo_base.data_obtain(clean_term, self.wordCol, self.senCol, "html"))
+            self.defView.setHtml(reo_base.clean_html(reo_base.get_fortune()))
+            return
+        if clean_term == 'cowfortune':
+            self.defView.setHtml(reo_base.clean_html(reo_base.get_cowfortune()))
+            return
+        if clean_term == 'reo':
+            self.defView.setHtml(reo_base.clean_html(str(
+                "<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n"
+                "  <b>Reo</b> ~ <i>Japanese Word</i>\n"
+                "  <b>1:</b> Name of this application, chosen kind of at random.\n"
+                "  <b>2:</b> Japanese word meaning 'Wise Center'\n"
+                " <b>Similar Words:</b>\n"
+                f" <i><font foreground=\"{self.wordCol}\">  ro, re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, "
+                "reb, red, ref, rem, rep, res, ret, rev, rex</font></i></tt>"
+            )))
+            return
+        if clean_term in ('crash now', 'close now'):
+            sys.exit()
+            return
+        if not clean_term == '' and not term.isspace() and not term == '':
+            self.defView.setHtml(reo_base.generate_definition(clean_term, self.wordCol, self.senCol, "html"))
             self.searched_text = clean_term
-        elif clean_term == '' and not term.isspace() and not term == '':
+            return
+        if clean_term == '' and not term.isspace() and not term == '':
             new_ced(self, 'Error: Invalid Input!', "Reo thinks that your input was actually just a bunch of useless"
                     " characters. So, 'Invalid Characters' error!")
+        return
 
     def term_say(self):
         """Say the text out loud."""
@@ -111,4 +125,3 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         elif term == '' or term.isspace():
             new_ced = QtWidgets.QMessageBox.warning
             new_ced(self, "Umm..?", "Reo can't find any text there! You sure \nyou typed something?")
-        print(term)

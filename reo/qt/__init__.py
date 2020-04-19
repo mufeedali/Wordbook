@@ -45,7 +45,7 @@ REO_CONFIG = utils.CONFIG_FILE
 LIVE_SEARCH = False
 
 if PARSED.verinfo:
-    reo_base.verinfo()
+    reo_base.get_version_info()
     sys.exit()
 if PARSED.livesearch:
     LIVE_SEARCH = True
