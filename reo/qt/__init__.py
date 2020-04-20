@@ -34,6 +34,7 @@ else:
 reo_base.log_init(DEBUG)
 logging.basicConfig(level=level,
                     format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
+reo_base.fold_gen()
 
 SEN_COL = "cyan"  # Color of sentences in Dark mode
 WORD_COL = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.

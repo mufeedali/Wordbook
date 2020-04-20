@@ -4,8 +4,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, GLib, Gtk
 
-from reo.gtk.window import ReoGtkWindow
 from reo import reo_base
+from reo.gtk.window import ReoGtkWindow
 
 
 class Application(Gtk.Application):
@@ -81,7 +81,7 @@ class Application(Gtk.Application):
         """Parse commandline arguments."""
         options = command_line.get_options_dict().end().unpack()
         if "verinfo" in options:
-            reo_base.verinfo()
+            reo_base.get_version_info()
             return 0
         if "verbose" in options:
             reo_base.log_init(True)
@@ -98,6 +98,7 @@ class Application(Gtk.Application):
 
         GLib.set_application_name('Reo')
         GLib.set_prgname('com.github.lastweakness.reo')
+        reo_base.fold_gen()
 
     @staticmethod
     def lighter():

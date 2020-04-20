@@ -84,7 +84,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
         text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
-        cleaner = ['(', ')', '<', '>']
+        cleaner = ['(', ')', '<', '>', '[', ']']
         for item in cleaner:
             text = text.replace(item, '')
         if not text == '' and not text.isspace():
