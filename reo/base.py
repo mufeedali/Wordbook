@@ -1,7 +1,7 @@
 """
-reo_base contains the shared code between the Qt5 and Gtk3 frontends.
+base contains the shared code between the Qt5 and Gtk3 frontends.
 
-reo_base is a part of Reo. It contains a few functions that are reusable across
+base is a part of Reo. It contains a few functions that are reusable across
 both the UIs.
 """
 
@@ -17,6 +17,7 @@ from functools import lru_cache
 from reo import utils
 
 _POOL = ThreadPoolExecutor()
+LOGGER = logging.getLogger()
 
 
 def _threadpool(f):
@@ -220,8 +221,7 @@ def log_init(debug):
         level = logging.DEBUG
     else:
         level = logging.WARNING
-    logging.basicConfig(level=level,
-                        format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
+    LOGGER.setLevel(level)
 
 
 def process_definition(definition, term, sen_col, word_col):
@@ -296,9 +296,9 @@ def clean_pango(data):
     return data
 
 
-def generate_definition(text, wordcol, sencol, markup="html"):
+def generate_definition(text, wordcol, sencol, cdef=True, markup="html"):
     """Check if custom definition exists."""
-    if os.path.exists(utils.CDEF_FOLD + '/' + text.lower()):
+    if cdef and os.path.exists(utils.CDEF_FOLD + '/' + text.lower()):
         return get_custom_def(text, wordcol, sencol, markup)
     return get_data(text, wordcol, sencol, markup)
 

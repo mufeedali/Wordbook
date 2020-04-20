@@ -4,8 +4,9 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, GLib, Gtk
 
-from reo import reo_base
+from reo import base
 from reo.gtk.window import ReoGtkWindow
+from reo.settings import Settings
 
 
 class Application(Gtk.Application):
@@ -20,21 +21,9 @@ class Application(Gtk.Application):
             application_id='com.github.lastweakness.reo',
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
         )
-        self.add_main_option("dark", ord("d"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Use Dark mode", None)
-        self.add_main_option("light", ord("l"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Use Light mode", None)
-        self.add_main_option("verinfo", ord("i"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Advanced version info", None)
-        self.add_main_option("verbose", ord("v"), GLib.OptionFlags.NONE,
-                             GLib.OptionArg.NONE, "Make it scream louder", None)
-
-    @staticmethod
-    def darker():
-        """Switch to Dark mode."""
-        settings = Gtk.Settings.get_default()
-        settings.set_property("gtk-application-prefer-dark-theme", True)
-        return True
+        self.add_main_option("info", ord("i"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, "Print version info", None)
+        self.add_main_option("verbose", ord("v"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, "Make it scream louder",
+                             None)
 
     def do_activate(self):
         """Activate the application."""
@@ -48,6 +37,10 @@ class Application(Gtk.Application):
             about_action = Gio.SimpleAction.new("about", None)
             about_action.connect("activate", window.on_about)
             self.add_action(about_action)
+
+            preferences_action = Gio.SimpleAction.new("preferences", None)
+            preferences_action.connect("activate", window.on_preferences)
+            self.add_action(preferences_action)
 
             random_word_action = Gio.SimpleAction.new("random-word", None)
             random_word_action.connect("activate", window.on_random_word)
@@ -69,7 +62,6 @@ class Application(Gtk.Application):
         if not win:
             win = ReoGtkWindow(
                 application=self,
-                dark=self.dark,
                 title='Reo',
                 icon_name='accesories-dictionary'
             )
@@ -81,31 +73,21 @@ class Application(Gtk.Application):
         """Parse commandline arguments."""
         options = command_line.get_options_dict().end().unpack()
         if "verinfo" in options:
-            reo_base.get_version_info()
+            base.get_version_info()
             return 0
-        if "verbose" in options:
-            reo_base.log_init(True)
-        if "dark" in options:
-            self.dark = self.darker()
-        elif "light" in options:
-            self.dark = self.lighter()
+        base.log_init("verbose" in options or Settings.get().debug or False)
         self.activate()
         return 0
 
     def do_startup(self):
         """Manage startup of the application."""
         Gtk.Application.do_startup(self)
+        Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", Settings.get().gtk_dark_ui)
 
         GLib.set_application_name('Reo')
         GLib.set_prgname('com.github.lastweakness.reo')
-        reo_base.fold_gen()
 
-    @staticmethod
-    def lighter():
-        """Switch to Light mode."""
-        settings = Gtk.Settings.get_default()
-        settings.set_property("gtk-application-prefer-dark-theme", False)
-        return False
+        base.fold_gen()
 
     def on_quit(self, _action, _param):
         """Quit the application."""

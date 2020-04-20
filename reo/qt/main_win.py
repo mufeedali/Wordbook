@@ -3,7 +3,7 @@ import sys
 
 from PyQt5 import QtWidgets
 
-from reo import reo_base, utils
+from reo import base, utils
 from reo.qt.ui_mainwin import Ui_ReoMain
 
 
@@ -16,7 +16,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         super(ReoMain, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
-        self.wn_future = reo_base.get_wn_file()
+        self.wn_future = base.get_wn_file()
         self.live_search = live_search
         self.wordCol = word_col
         self.senCol = sen_col
@@ -88,13 +88,13 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             self.defView.setHtml(f"<tt> Running Reo with WordNet {self.wn_future.result()[0]}</tt>")
             return
         if clean_term == 'fortune -a':
-            self.defView.setHtml(reo_base.clean_html(reo_base.get_fortune()))
+            self.defView.setHtml(base.clean_html(base.get_fortune()))
             return
         if clean_term == 'cowfortune':
-            self.defView.setHtml(reo_base.clean_html(reo_base.get_cowfortune()))
+            self.defView.setHtml(base.clean_html(base.get_cowfortune()))
             return
         if clean_term == 'reo':
-            self.defView.setHtml(reo_base.clean_html(str(
+            self.defView.setHtml(base.clean_html(str(
                 "<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n"
                 "  <b>Reo</b> ~ <i>Japanese Word</i>\n"
                 "  <b>1:</b> Name of this application, chosen kind of at random.\n"
@@ -108,7 +108,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             sys.exit()
             return
         if not clean_term == '' and not term.isspace() and not term == '':
-            self.defView.setHtml(reo_base.generate_definition(clean_term, self.wordCol, self.senCol, "html"))
+            self.defView.setHtml(base.generate_definition(clean_term, self.wordCol, self.senCol, True, "html"))
             self.searched_text = clean_term
             return
         if clean_term == '' and not term.isspace() and not term == '':
@@ -121,7 +121,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         term = self.searchEntry.text().strip()
         speed = '120'  # To change eSpeak-ng audio speed.
         if not term == '':
-            reo_base.read_term(term, speed)
+            base.read_term(term, speed)
         elif term == '' or term.isspace():
             new_ced = QtWidgets.QMessageBox.warning
             new_ced(self, "Umm..?", "Reo can't find any text there! You sure \nyou typed something?")

@@ -3,7 +3,9 @@ import random
 
 from gi.repository import Gdk, Gtk
 
-from reo import reo_base, utils
+from reo import base, utils
+from reo.gtk.settings_window import SettingsWindow
+from reo.settings import Settings
 
 PATH = os.path.dirname(__file__)
 
@@ -17,13 +19,13 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     search_button = Gtk.Template.Child('search_button')
     clear_button = Gtk.Template.Child('clear_button')
     menu_button = Gtk.Template.Child('reo_menu_button')
+    header_bar = Gtk.Template.Child('header_bar')
 
     term = None
     searched = False
-    dark = True
-    wn_future = reo_base.get_wn_file()
+    wn_future = base.get_wn_file()
 
-    def __init__(self, dark=False, **kwargs):
+    def __init__(self, config=None, **kwargs):
         """Initialize the window."""
         super().__init__(**kwargs)
 
@@ -35,19 +37,26 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
         self.search_button.connect("clicked", self.on_search_press)
         self.search_entry.connect("activate", self.on_search_press)
+        self.search_entry.connect("changed", self.on_text_changed)
         self.clear_button.connect("clicked", self.on_clear_press)
+        self.connect("notify::is-maximized", self.on_state_changed)
 
-        self.dark = dark
-
-    def on_search_selected(self, _action, _param):
-        """Search selected text from inside or outside the window."""
-        text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
-        text = text.replace('-\n         ', '-').replace('\n', ' ')
-        text = text.replace('         ', '')
-        self.search_entry.set_text(text)
-        if not text == '' and not text.isspace():
+    def on_text_changed(self, _entry):
+        if Settings.get().live_search:
             self.on_search_press()
-            self.search_entry.grab_focus()
+
+    def on_state_changed(self, _window, _state):
+        """Detect changes to the window state and adapt."""
+        if Settings.get().gtk_max_hide and not os.environ.get('GTK_CSD') == '0':
+            if self.props.is_maximized:
+                self.header_bar.set_show_close_button(False)
+            else:
+                self.header_bar.set_show_close_button(True)
+
+    def on_clear_press(self, _button):
+        """Clear all text in the window."""
+        self.def_view.get_buffer().set_text("")
+        self.search_entry.set_text("")
 
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
@@ -63,11 +72,6 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         self.on_search_press()
         self.search_entry.grab_focus()
 
-    def on_clear_press(self, _button):
-        """Clear all text in the window."""
-        self.def_view.get_buffer().set_text("")
-        self.search_entry.set_text("")
-
     def on_search_press(self, _button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
         text = self.search_entry.get_text().strip()
@@ -80,6 +84,16 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 out = self.__search(text)
                 if out is not None:
                     self.def_view.get_buffer().insert_markup(last_iter, out, -1)
+
+    def on_search_selected(self, _action, _param):
+        """Search selected text from inside or outside the window."""
+        text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
+        text = text.replace('-\n         ', '-').replace('\n', ' ')
+        text = text.replace('         ', '')
+        self.search_entry.set_text(text)
+        if not text == '' and not text.isspace():
+            self.on_search_press()
+            self.search_entry.grab_focus()
 
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
@@ -100,7 +114,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def __reactor(self, text):
         """Check easter eggs and set variables."""
-        if self.dark:
+        if Settings.get().gtk_dark_font:
             sencol = "cyan"  # Color of sentences in Dark mode
             wordcol = "lightgreen"  # Color of: Similar Words,
 #                                     Synonyms and Antonyms.
@@ -116,9 +130,9 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         if text in wn_list:
             return f"<tt> Running Reo with WordNet {self.wn_future.result()[0]}</tt>"
         if text == 'fortune -a':
-            return reo_base.get_fortune()
+            return base.get_fortune()
         if text == 'cowfortune':
-            return reo_base.get_cowfortune()
+            return base.get_cowfortune()
         if text == 'reo':
             return str(
                 "<tt>Pronunciation: <b>/ɹˈiːəʊ/</b>\n"
@@ -134,8 +148,18 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             return None
         if text and not text.isspace():
             self.searched = True
-            return reo_base.generate_definition(text, wordcol, sencol, "pango")
+            return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef, markup="pango")
         return None
+
+    def on_preferences(self, _action, _param):
+        """Show settings window."""
+        window = SettingsWindow(transient_for=self)
+        window.connect("destroy", self.on_preferences_destroy)
+        window.load_settings()
+        window.present()
+
+    def on_preferences_destroy(self, _window):
+        self.on_search_press(pass_check=True)
 
     def on_about(self, _action, _param):
         """Show the about window."""

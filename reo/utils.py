@@ -20,9 +20,3 @@ def boot_to_str(boolean):
     if boolean is True:
         return "yes"
     return "no"
-
-
-def save_settings(config):
-    """Save settings."""
-    with open(CONFIG_FILE, 'w') as file:
-        config.write(file)
