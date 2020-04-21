@@ -23,7 +23,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     header_bar = Gtk.Template.Child('header_bar')
 
     term = None
-    searched = False
+    searched_term = None
     wn_future = base.get_wn_file()
 
     def __init__(self, **kwargs):
@@ -85,7 +85,8 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         window.present()
 
     def on_preferences_destroy(self, _window):
-        self.on_search_press(pass_check=True)
+        if self.searched_term:
+            self.on_search_press(pass_check=True)
 
     def on_random_word(self, _action, _param):
         """Search a random word from the wordlist."""
@@ -95,11 +96,14 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def on_search_press(self, _button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
-        text = self.search_entry.get_text().strip()
-        except_list = ['fortune -a', 'cowfortune']
-        if not text == self.term or pass_check or text in except_list:
+        if pass_check:
+            text = self.searched_term
+        else:
+            text = self.search_entry.get_text().strip()
+        except_list = ('fortune -a', 'cowfortune')
+        if pass_check or not text == self.searched_term or text in except_list:
             self.def_view.get_buffer().set_text("")
-            self.term = text
+            self.searched_term = text
             if not text.strip() == '':
                 last_iter = self.def_view.get_buffer().get_end_iter()
                 out = self.__search(text)
@@ -128,13 +132,13 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         cleaner = ['(', ')', '<', '>', '[', ']']
         for item in cleaner:
             text = text.replace(item, '')
-        if self.searched and not text == '':
+        if self.searched_term and not text == '':
             base.read_term(text, speed)
-        elif not self.searched:
+        elif not self.searched_term and not text == '':
             self._new_error(
-                "Sorry!!",
-                "I'm sorry but you have to do a search first before trying to  listen to it. "
-                "I mean, Reo is <b>NOT</b> a Text-To-Speech Software!"
+                "Do a search first!",
+                "You have to do a search first before trying to listen to it. "
+                "Reo is not a Text-To-Speech Software. eSpeak-ng works better for that."
             )
 
     def on_state_change(self, _window, _state):
@@ -205,6 +209,5 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.destroy()
             return None
         if text and not text.isspace():
-            self.searched = True
             return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef, markup="pango")
         return None
