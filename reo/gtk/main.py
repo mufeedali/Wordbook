@@ -4,7 +4,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gio, GLib, Gtk
 
-from reo import base
+from reo import base, utils
 from reo.gtk.window import ReoGtkWindow
 from reo.settings import Settings
 
@@ -80,7 +80,7 @@ class Application(Gtk.Application):
         if "verinfo" in options:
             base.get_version_info()
             return 0
-        base.log_init("verbose" in options or Settings.get().debug or False)
+        utils.log_init("verbose" in options or Settings.get().debug or False)
         self.activate()
         return 0
 

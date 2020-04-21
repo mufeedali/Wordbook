@@ -8,7 +8,6 @@ works across most Linux distributions without any changes.
 """
 
 import argparse  # for CommandLine-Interface (CLI).
-import logging
 import sys
 
 from PyQt5 import QtWidgets
@@ -25,15 +24,7 @@ MGROUP.add_argument("-l", "--livesearch", action="store_true",
 MGROUP.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 PARSED = PARSER.parse_args()
-if PARSED.verbose:
-    level = logging.DEBUG
-    DEBUG = True
-else:
-    level = logging.WARNING
-    DEBUG = False
-base.log_init(DEBUG)
-logging.basicConfig(level=level,
-                    format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
+utils.log_init(bool(PARSED.verbose))
 base.fold_gen()
 
 SEN_COL = "cyan"  # Color of sentences in Dark mode
@@ -57,7 +48,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Reo")
     app.setDesktopFileName("Reo")
-    logging.info("Executing Reo-Qt")
+    utils.log_info("Executing Reo-Qt")
     main_window = ReoMain(LIVE_SEARCH, WORD_COL, SEN_COL)
     main_window.show()
     sys.exit(app.exec_())

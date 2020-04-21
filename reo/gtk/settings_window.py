@@ -2,7 +2,7 @@ import os
 
 from gi.repository import Gtk
 
-from reo import base
+from reo import utils
 from reo.settings import Settings
 
 PATH = os.path.dirname(__file__)
@@ -44,7 +44,7 @@ class SettingsWindow(Gtk.Window):
     @staticmethod
     def on_debug_switch_activate(switch, _gparam):
         Settings.get().debug = switch.get_active()
-        base.log_init(Settings.get().debug)
+        utils.log_init(Settings.get().debug)
 
     @staticmethod
     def on_live_search_activate(switch, _gparam):

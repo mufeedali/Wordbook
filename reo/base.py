@@ -6,7 +6,6 @@ both the UIs.
 """
 
 import html
-import logging
 import lzma
 import os
 import re
@@ -17,7 +16,6 @@ from functools import lru_cache
 from reo import utils
 
 _POOL = ThreadPoolExecutor()
-LOGGER = logging.getLogger()
 
 
 def _threadpool(f):
@@ -215,15 +213,6 @@ def get_wn_version():
     return '3.1'
 
 
-def log_init(debug):
-    """Initialize logging."""
-    if debug is True:
-        level = logging.DEBUG
-    else:
-        level = logging.WARNING
-    LOGGER.setLevel(level)
-
-
 def process_definition(definition, term, sen_col, word_col):
     """Format the definition obtained from 'dict'."""
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n', '')
@@ -231,7 +220,7 @@ def process_definition(definition, term, sen_col, word_col):
     definition = html.escape(definition, False)
     term_in_wn = re.search("  " + term, definition, flags=re.IGNORECASE).group(0) or term
     definition = definition.replace(term_in_wn + '\n', '')
-    logging.info("Searching %s", term_in_wn.strip())
+    utils.log_info(f"Searching {term_in_wn.strip()}")
     re_list = {
         r'[ \t\r\f\v]+n\s+': f'<b>{term_in_wn}</b> ~ <i>noun</i>:\n      ',
         r'[ \t\r\f\v]+adv\s+': f'<b>{term_in_wn}</b> ~ <i>adverb</i>:\n      ',
