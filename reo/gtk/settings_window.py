@@ -37,22 +37,28 @@ class SettingsWindow(Gtk.Window):
         self.dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
         self.dark_font_switch.set_active(Settings.get().gtk_dark_font)
 
-    def on_cdef_switch_activate(self, switch, _gparam):
+    @staticmethod
+    def on_cdef_switch_activate(switch, _gparam):
         Settings.get().cdef = switch.get_active()
 
-    def on_debug_switch_activate(self, switch, _gparam):
+    @staticmethod
+    def on_debug_switch_activate(switch, _gparam):
         Settings.get().debug = switch.get_active()
         base.log_init(Settings.get().debug)
 
-    def on_live_search_activate(self, switch, _gparam):
+    @staticmethod
+    def on_live_search_activate(switch, _gparam):
         Settings.get().live_search = switch.get_active()
 
-    def on_max_hide_swtich_activate(self, switch, _gparam):
+    @staticmethod
+    def on_max_hide_swtich_activate(switch, _gparam):
         Settings.get().gtk_max_hide = switch.get_active()
 
-    def on_dark_ui_swtich_activate(self, switch, _gparam):
+    @staticmethod
+    def on_dark_ui_swtich_activate(switch, _gparam):
         Settings.get().gtk_dark_ui = switch.get_active()
         Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", switch.get_active())
 
-    def on_dark_font_swtich_activate(self, switch, _gparam):
+    @staticmethod
+    def on_dark_font_swtich_activate(switch, _gparam):
         Settings.get().gtk_dark_font = switch.get_active()
