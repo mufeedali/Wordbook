@@ -8,14 +8,12 @@ works across most Linux distributions without any changes.
 """
 
 import argparse  # for CommandLine-Interface (CLI).
-import logging
 import sys
 
 from PyQt5 import QtWidgets
 
-from reo import utils, reo_base
+from reo import base, utils
 from reo.qt.main_win import ReoMain
-
 
 PARSER = argparse.ArgumentParser()  # declare parser as the ArgumentParser used
 MGROUP = PARSER.add_mutually_exclusive_group()
@@ -26,15 +24,8 @@ MGROUP.add_argument("-l", "--livesearch", action="store_true",
 MGROUP.add_argument("-v", "--verbose", action="store_true",
                     help="Make it scream louder")
 PARSED = PARSER.parse_args()
-if PARSED.verbose:
-    LEVEL = logging.DEBUG
-    DEBUG = True
-else:
-    LEVEL = logging.WARNING
-    DEBUG = False
-reo_base.log_init(DEBUG)
-logging.basicConfig(level=LEVEL,
-                    format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
+utils.log_init(bool(PARSED.verbose))
+base.fold_gen()
 
 SEN_COL = "cyan"  # Color of sentences in Dark mode
 WORD_COL = "lightgreen"  # Color of: Similar Words, Synonyms and Antonyms.
@@ -46,7 +37,7 @@ REO_CONFIG = utils.CONFIG_FILE
 LIVE_SEARCH = False
 
 if PARSED.verinfo:
-    reo_base.verinfo()
+    base.get_version_info()
     sys.exit()
 if PARSED.livesearch:
     LIVE_SEARCH = True
@@ -57,7 +48,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Reo")
     app.setDesktopFileName("Reo")
-    logging.info("Executing Reo-Qt")
+    utils.log_info("Executing Reo-Qt")
     main_window = ReoMain(LIVE_SEARCH, WORD_COL, SEN_COL)
     main_window.show()
     sys.exit(app.exec_())

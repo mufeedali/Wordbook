@@ -1,5 +1,7 @@
 """utils contains a few global variables and essential functions."""
-from os.path import expanduser, dirname
+import logging
+import traceback
+from os.path import dirname, expanduser
 
 CONFIG_FOLD = expanduser('~') + "/.config/reo"
 # ^ This is where stuff like settings, Custom Definitions, etc will go.
@@ -8,11 +10,8 @@ CDEF_FOLD = CONFIG_FOLD + "/cdef"
 CONFIG_FILE = CONFIG_FOLD + "/reo.conf"
 VERSION = '0.1.0'
 
-
-def get_word_list(wn_version):
-    """Get the word list filename depending on the WordNet version."""
-    word_list = f"{dirname(__file__)}/data/wn{wn_version}.lzma"
-    return word_list
+logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
+LOGGER = logging.getLogger()
 
 
 def boot_to_str(boolean):
@@ -22,7 +21,56 @@ def boot_to_str(boolean):
     return "no"
 
 
-def save_settings(config):
-    """Save settings."""
-    with open(CONFIG_FILE, 'w') as file:
-        config.write(file)
+def get_word_list(wn_version):
+    """Get the word list filename depending on the WordNet version."""
+    word_list = f"{dirname(__file__)}/data/wn{wn_version}.lzma"
+    return word_list
+
+
+def log_init(debug):
+    """Initialize logging."""
+    if debug is True:
+        level = logging.DEBUG
+    else:
+        level = logging.WARNING
+    LOGGER.setLevel(level)
+
+
+def log_critical(message):
+    """Log a critical error and if possible, its traceback."""
+    LOGGER.critical(message)
+    trace = traceback.format_exc()
+    if trace.strip() != 'NoneType: None':
+        LOGGER.critical(traceback.format_exc())
+
+
+def log_debug(message):
+    """Log a debug message and if possible, its traceback."""
+    LOGGER.debug(message)
+    trace = traceback.format_exc()
+    if trace.strip() != 'NoneType: None':
+        LOGGER.debug(traceback.format_exc())
+
+
+def log_error(message):
+    """Log an error and if possible, its traceback."""
+    LOGGER.error(message)
+    trace = traceback.format_exc()
+    if trace.strip() != 'NoneType: None':
+        LOGGER.error(traceback.format_exc())
+
+
+def log_info(message):
+    """Log a message and if possible, its traceback."""
+    LOGGER.info(message)
+    trace = traceback.format_exc()
+    if trace.strip() != 'NoneType: None':
+        LOGGER.info(trace)
+
+
+def log_warning(message):
+    """Log a warning and if possible, its traceback."""
+    LOGGER.warning(message)
+    trace = traceback.format_exc()
+    if trace.strip() != 'NoneType: None':
+        LOGGER.warning(traceback.format_exc())

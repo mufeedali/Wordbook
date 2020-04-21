@@ -22,7 +22,7 @@ Run `reo-gtk` for the GTK GUI or `reo-qt` for the Qt GUI.
 * Neat output with proper coloring and formatting
 * Random Word
 * Live Search
-* Custom Definitions feature using Pango Markup Syntax for formatting
+* Custom Definitions feature using Pango Markup or an HTML subset for formatting
 * Lightweight. 1 mb only and further reducible (It does nothing on its own, so yeah)
 * Support for GNOME Dark Mode and launching app in dark mode. Also supports gtk3-nocsd.
 
@@ -57,7 +57,7 @@ The Qt GUI is now pretty stable and seems to work well enough but the GTK GUI is
 Right now, the Qt5 GUI already has almost all features of the GTK 3 GUI. Features that are not here yet are:
 
 * Dark mode: It's currently suited for dark mode usage and not light mode, but that said, there's no switch yet.
-* Custom Definitions: I had forgotten about it...
+* Live Search: It's there but only through a commandline option.
 
 Another important thing to note is that the use of Qt5 won't make it cross-platform. It's still Linux-only and probably will remain so.
 

@@ -15,7 +15,7 @@ Submodules
 reo.reo\_base module
 --------------------
 
-.. automodule:: reo.reo_base
+.. automodule:: reo.base
    :members:
    :undoc-members:
    :show-inheritance:
