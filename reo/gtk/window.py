@@ -25,7 +25,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     searched = False
     wn_future = base.get_wn_file()
 
-    def __init__(self, config=None, **kwargs):
+    def __init__(self, **kwargs):
         """Initialize the window."""
         super().__init__(**kwargs)
 
