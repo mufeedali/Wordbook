@@ -14,10 +14,11 @@ PATH = os.path.dirname(__file__)
 class ReoGtkWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'ReoGtkWindow'
 
+    clear_button = Gtk.Template.Child('clear_button')
     def_view = Gtk.Template.Child('def_view')
     search_entry = Gtk.Template.Child('search_entry')
     search_button = Gtk.Template.Child('search_button')
-    clear_button = Gtk.Template.Child('clear_button')
+    speak_button = Gtk.Template.Child('speak_button')
     menu_button = Gtk.Template.Child('reo_menu_button')
     header_bar = Gtk.Template.Child('header_bar')
 
@@ -34,24 +35,34 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
         popover = Gtk.Popover.new_from_model(self.menu_button, menu)
         self.menu_button.set_popover(popover)
+        self.search_entry.grab_focus()
 
+        self.connect("notify::is-maximized", self.on_state_change)
+        self.clear_button.connect("clicked", self.on_clear_press)
         self.search_button.connect("clicked", self.on_search_press)
         self.search_entry.connect("activate", self.on_search_press)
-        self.search_entry.connect("changed", self.on_text_changed)
-        self.clear_button.connect("clicked", self.on_clear_press)
-        self.connect("notify::is-maximized", self.on_state_changed)
+        self.search_entry.connect("changed", self.on_text_change)
+        self.speak_button.connect("clicked", self.on_speak_press)
 
-    def on_text_changed(self, _entry):
-        if Settings.get().live_search:
-            self.on_search_press()
-
-    def on_state_changed(self, _window, _state):
-        """Detect changes to the window state and adapt."""
-        if Settings.get().gtk_max_hide and not os.environ.get('GTK_CSD') == '0':
-            if self.props.is_maximized:
-                self.header_bar.set_show_close_button(False)
-            else:
-                self.header_bar.set_show_close_button(True)
+    def on_about(self, _action, _param):
+        """Show the about window."""
+        about_dialog = Gtk.AboutDialog(
+            transient_for=self,
+            modal=True
+        )
+        about_dialog.set_logo_icon_name("accessories-dictionary")
+        about_dialog.set_program_name("Reo GTK")
+        about_dialog.set_version(utils.VERSION)
+        about_dialog.set_comments(
+            "Reo is a dictionary application that uses dictd, dict-wn and "
+            "eSpeak-ng to provide a complete user interface."
+        )
+        about_dialog.set_authors(["Mufeed Ali", ])
+        about_dialog.set_license_type(Gtk.License.MIT_X11)
+        about_dialog.set_website("http://lastweakness.github.io/reo")
+        about_dialog.set_copyright("Copyright © 2016-2020 Mufeed Ali")
+        about_dialog.connect('response', lambda dialog, response: dialog.destroy())
+        about_dialog.present()
 
     def on_clear_press(self, _button):
         """Clear all text in the window."""
@@ -65,6 +76,16 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         if not text == '' and not text.isspace():
             self.on_search_press()
             self.search_entry.grab_focus()
+
+    def on_preferences(self, _action, _param):
+        """Show settings window."""
+        window = SettingsWindow(transient_for=self)
+        window.connect("destroy", self.on_preferences_destroy)
+        window.load_settings()
+        window.present()
+
+    def on_preferences_destroy(self, _window):
+        self.on_search_press(pass_check=True)
 
     def on_random_word(self, _action, _param):
         """Search a random word from the wordlist."""
@@ -95,6 +116,45 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.on_search_press()
             self.search_entry.grab_focus()
 
+    def on_shortcuts(self, _action, _param):
+        builder = Gtk.Builder.new_from_file(f'{PATH}/ui/shortcuts_window.ui')
+        builder.get_object("shortcuts").set_transient_for(self)
+        builder.get_object("shortcuts").show()
+
+    def on_speak_press(self, _button):
+        """Say the search entry out loud with espeak speech synthesis."""
+        speed = '120'  # To change eSpeak-ng audio speed.
+        text = self.search_entry.get_text().strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
+        cleaner = ['(', ')', '<', '>', '[', ']']
+        for item in cleaner:
+            text = text.replace(item, '')
+        if self.searched and not text == '':
+            base.read_term(text, speed)
+        elif not self.searched:
+            self._new_error(
+                "Sorry!!",
+                "I'm sorry but you have to do a search first before trying to  listen to it. "
+                "I mean, Reo is <b>NOT</b> a Text-To-Speech Software!"
+            )
+
+    def on_state_change(self, _window, _state):
+        """Detect changes to the window state and adapt."""
+        if Settings.get().gtk_max_hide and not os.environ.get('GTK_CSD') == '0':
+            if self.props.is_maximized:
+                self.header_bar.set_show_close_button(False)
+            else:
+                self.header_bar.set_show_close_button(True)
+
+    def on_text_change(self, _entry):
+        if Settings.get().live_search:
+            self.on_search_press()
+
+    def _new_error(self, primary_text, seconday_text):
+        dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, primary_text)
+        dialog.format_secondary_text(seconday_text)
+        dialog.run()
+        dialog.destroy()
+
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
         text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
@@ -103,13 +163,11 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             text = text.replace(item, '')
         if not text == '' and not text.isspace():
             return self.__reactor(text)
-        dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, 'Invalid Input')
-        dialog.format_secondary_text(
+        self._new_error(
+            "Invalid Input",
             "Reo thinks that your input was actually just a bunch of useless characters. "
             "And so, an 'Invalid Characters' error."
         )
-        dialog.run()
-        dialog.destroy()
         return None
 
     def __reactor(self, text):
@@ -150,33 +208,3 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.searched = True
             return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef, markup="pango")
         return None
-
-    def on_preferences(self, _action, _param):
-        """Show settings window."""
-        window = SettingsWindow(transient_for=self)
-        window.connect("destroy", self.on_preferences_destroy)
-        window.load_settings()
-        window.present()
-
-    def on_preferences_destroy(self, _window):
-        self.on_search_press(pass_check=True)
-
-    def on_about(self, _action, _param):
-        """Show the about window."""
-        about_dialog = Gtk.AboutDialog(
-            transient_for=self,
-            modal=True
-        )
-        about_dialog.set_logo_icon_name("accessories-dictionary")
-        about_dialog.set_program_name("Reo GTK")
-        about_dialog.set_version(utils.VERSION)
-        about_dialog.set_comments(
-            "Reo is a dictionary application that uses dictd, dict-wn and "
-            "eSpeak-ng to provide a complete user interface."
-        )
-        about_dialog.set_authors(["Mufeed Ali", ])
-        about_dialog.set_license_type(Gtk.License.MIT_X11)
-        about_dialog.set_website("http://lastweakness.github.io/reo")
-        about_dialog.set_copyright("Copyright © 2016-2020 Mufeed Ali")
-        about_dialog.connect('response', lambda dialog, response: dialog.destroy())
-        about_dialog.present()
