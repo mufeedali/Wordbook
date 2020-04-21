@@ -37,6 +37,7 @@ def log_init(debug):
 
 
 def log_critical(message):
+    """Log a critical error and if possible, its traceback."""
     LOGGER.critical(message)
     trace = traceback.format_exc()
     if trace.strip() != 'NoneType: None':
@@ -44,6 +45,7 @@ def log_critical(message):
 
 
 def log_debug(message):
+    """Log a debug message and if possible, its traceback."""
     LOGGER.debug(message)
     trace = traceback.format_exc()
     if trace.strip() != 'NoneType: None':
@@ -51,6 +53,7 @@ def log_debug(message):
 
 
 def log_error(message):
+    """Log an error and if possible, its traceback."""
     LOGGER.error(message)
     trace = traceback.format_exc()
     if trace.strip() != 'NoneType: None':
@@ -58,6 +61,7 @@ def log_error(message):
 
 
 def log_info(message):
+    """Log a message and if possible, its traceback."""
     LOGGER.info(message)
     trace = traceback.format_exc()
     if trace.strip() != 'NoneType: None':
@@ -65,6 +69,7 @@ def log_info(message):
 
 
 def log_warning(message):
+    """Log a warning and if possible, its traceback."""
     LOGGER.warning(message)
     trace = traceback.format_exc()
     if trace.strip() != 'NoneType: None':

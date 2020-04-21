@@ -85,6 +85,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         window.present()
 
     def on_preferences_destroy(self, _window):
+        """Refresh view when Preferences window is closed. Only necessary for definition now."""
         if self.searched_term:
             self.on_search_press(pass_check=True)
 
@@ -121,6 +122,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.search_entry.grab_focus()
 
     def on_shortcuts(self, _action, _param):
+        """Launch the Keyboard Shortcuts window."""
         builder = Gtk.Builder.new_from_file(f'{PATH}/ui/shortcuts_window.ui')
         builder.get_object("shortcuts").set_transient_for(self)
         builder.get_object("shortcuts").show()
@@ -128,17 +130,13 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def on_speak_press(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
-        text = self.search_entry.get_text().strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
-        cleaner = ['(', ')', '<', '>', '[', ']']
-        for item in cleaner:
-            text = text.replace(item, '')
-        if self.searched_term and not text == '':
+        text = self.searched_term
+        if text:
             base.read_term(text, speed)
-        elif not self.searched_term and not text == '':
+        else:
             self._new_error(
                 "Do a search first!",
-                "You have to do a search first before trying to listen to it. "
-                "Reo is not a Text-To-Speech Software. eSpeak-ng works better for that."
+                "You have to search for something first. "
             )
 
     def on_state_change(self, _window, _state):
@@ -150,10 +148,12 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 self.header_bar.set_show_close_button(True)
 
     def on_text_change(self, _entry):
+        """Detect changes to text and do live search if enabled."""
         if Settings.get().live_search:
             self.on_search_press()
 
     def _new_error(self, primary_text, seconday_text):
+        """Show an error dialog."""
         dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, primary_text)
         dialog.format_secondary_text(seconday_text)
         dialog.run()
@@ -172,6 +172,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             "Reo thinks that your input was actually just a bunch of useless characters. "
             "And so, an 'Invalid Characters' error."
         )
+        self.searched_term = None
         return None
 
     def __reactor(self, text):

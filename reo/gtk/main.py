@@ -10,9 +10,9 @@ from reo.settings import Settings
 
 
 class Application(Gtk.Application):
+    """Manages the windows, properties, etc of Reo."""
     debug = False
     verinfo = False
-    dark = False
 
     def __init__(self):
         """Initialize the application."""
