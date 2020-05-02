@@ -2,11 +2,11 @@ import sys
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gio, GLib, Gtk
+from gi.repository import Gio, GLib, Gtk  # noqa
 
-from reo import base, utils
-from reo.gtk.window import ReoGtkWindow
-from reo.settings import Settings
+from reo import base, utils  # noqa
+from reo.gtk.window import ReoGtkWindow  # noqa
+from reo.settings import Settings  # noqa
 
 
 class Application(Gtk.Application):

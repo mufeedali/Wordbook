@@ -145,7 +145,6 @@
     </property>
     <addaction name="actionPaste_Search"/>
     <addaction name="actionSearch_Selected"/>
-    <addaction name="actionSave_Definition"/>
     <addaction name="actionRandom_Word"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -155,7 +154,16 @@
     <addaction name="actionAbout"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionLive_Search"/>
+    <addaction name="actionDark_Mode"/>
+    <addaction name="actionDebug"/>
+   </widget>
    <addaction name="menuSearch"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionPaste_Search">
@@ -210,6 +218,33 @@
    </property>
    <property name="text">
     <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionLive_Search">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Live Search</string>
+   </property>
+  </action>
+  <action name="actionDark_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dark Mode</string>
+   </property>
+  </action>
+  <action name="actionDebug">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Debug</string>
    </property>
   </action>
  </widget>

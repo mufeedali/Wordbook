@@ -1,14 +1,15 @@
 """utils contains a few global variables and essential functions."""
 import logging
+import os
 import traceback
-from os.path import dirname, expanduser
 
-CONFIG_FOLD = expanduser('~') + "/.config/reo"
-# ^ This is where stuff like settings, Custom Definitions, etc will go.
-CDEF_FOLD = CONFIG_FOLD + "/cdef"
-# ^ The Folder within reo_fold where Custom Definitions are to be kept.
-CONFIG_FILE = CONFIG_FOLD + "/reo.conf"
 VERSION = '0.1.0'
+
+HOME = os.path.expanduser('~')
+LOCAL_FOLD = os.path.join(os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local", "share")), "reo")
+CDEF_FOLD = os.path.join(LOCAL_FOLD, "cdef")
+CONFIG_FOLD = os.path.join(os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config")), "reo")
+CONFIG_FILE = os.path.join(CONFIG_FOLD, "reo.conf")
 
 logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 LOGGER = logging.getLogger()
@@ -23,7 +24,7 @@ def boot_to_str(boolean):
 
 def get_word_list(wn_version):
     """Get the word list filename depending on the WordNet version."""
-    word_list = f"{dirname(__file__)}/data/wn{wn_version}.lzma"
+    word_list = f"{os.path.dirname(__file__)}/data/wn{wn_version}.lzma"
     return word_list
 
 

@@ -5,6 +5,7 @@ from reo import utils
 
 
 class Settings:
+    """Manages all the settings of the application including both the GUIs."""
     config = configparser.ConfigParser()
     instance = None
 
@@ -15,6 +16,7 @@ class Settings:
                 'CustomDefinitions': 'yes',
                 'Debug': 'no',
                 'LiveSearch': 'no',
+                'ConfigVersion': '1',
             }
             self.config['UI-gtk'] = {
                 'DarkUI': 'no',
@@ -31,6 +33,7 @@ class Settings:
         """Load settings."""
         with open(utils.CONFIG_FILE, 'r') as file:
             self.config.read_file(file)
+        print("Version Code: " + self.config.get('General', 'ConfigVersion'))
 
     @property
     def cdef(self):

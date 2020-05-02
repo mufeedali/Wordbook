@@ -38,6 +38,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         self.search_entry.grab_focus()
 
         self.connect("notify::is-maximized", self.on_state_change)
+        self.connect("key-press-event", self.on_key_press_event)
         self.clear_button.connect("clicked", self.on_clear_press)
         self.search_button.connect("clicked", self.on_search_press)
         self.search_entry.connect("activate", self.on_search_press)
@@ -68,6 +69,12 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         """Clear all text in the window."""
         self.def_view.get_buffer().set_text("")
         self.search_entry.set_text("")
+
+    def on_key_press_event(self, _widget, event):
+        """Focus onto the search entry when needed (quick search)."""
+        modifiers = Gtk.accelerator_get_default_mod_mask()
+        if event.keyval > 32 and event.keyval < 126 and (event.state & modifiers) == 0:
+            self.search_entry.grab_focus_without_selecting()
 
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
@@ -124,8 +131,9 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def on_shortcuts(self, _action, _param):
         """Launch the Keyboard Shortcuts window."""
         builder = Gtk.Builder.new_from_file(f'{PATH}/ui/shortcuts_window.ui')
-        builder.get_object("shortcuts").set_transient_for(self)
-        builder.get_object("shortcuts").show()
+        shortcuts_window = builder.get_object("shortcuts")
+        shortcuts_window.set_transient_for(self)
+        shortcuts_window.show()
 
     def on_speak_press(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
@@ -134,7 +142,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         if text:
             base.read_term(text, speed)
         else:
-            self._new_error(
+            self.__new_error(
                 "Do a search first!",
                 "You have to search for something first. "
             )
@@ -152,28 +160,12 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         if Settings.get().live_search:
             self.on_search_press()
 
-    def _new_error(self, primary_text, seconday_text):
+    def __new_error(self, primary_text, seconday_text):
         """Show an error dialog."""
         dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, primary_text)
         dialog.format_secondary_text(seconday_text)
         dialog.run()
         dialog.destroy()
-
-    def __search(self, search_text):
-        """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
-        cleaner = ['(', ')', '<', '>', '[', ']']
-        for item in cleaner:
-            text = text.replace(item, '')
-        if not text == '' and not text.isspace():
-            return self.__reactor(text)
-        self._new_error(
-            "Invalid Input",
-            "Reo thinks that your input was actually just a bunch of useless characters. "
-            "And so, an 'Invalid Characters' error."
-        )
-        self.searched_term = None
-        return None
 
     def __reactor(self, text):
         """Check easter eggs and set variables."""
@@ -211,4 +203,20 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             return None
         if text and not text.isspace():
             return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef, markup="pango")
+        return None
+
+    def __search(self, search_text):
+        """Clean input text, give errors and pass data to reactor."""
+        text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip("'")
+        cleaner = ['(', ')', '<', '>', '[', ']']
+        for item in cleaner:
+            text = text.replace(item, '')
+        if not text == '' and not text.isspace():
+            return self.__reactor(text)
+        self.__new_error(
+            "Invalid Input",
+            "Reo thinks that your input was actually just a bunch of useless characters. "
+            "And so, an 'Invalid Characters' error."
+        )
+        self.searched_term = None
         return None
