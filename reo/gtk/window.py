@@ -1,7 +1,7 @@
 import os
 import random
 
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, GLib, Gtk
 
 from reo import base, utils
 from reo.gtk.settings_window import SettingsWindow
@@ -72,8 +72,13 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def on_key_press_event(self, _widget, event):
         """Focus onto the search entry when needed (quick search)."""
-        modifiers = Gtk.accelerator_get_default_mod_mask()
-        if event.keyval > 32 and event.keyval < 126 and (event.state & modifiers) == 0:
+        modifiers = event.get_state() & Gtk.accelerator_get_default_mod_mask()
+
+        shift_mask = Gdk.ModifierType.SHIFT_MASK
+        key_unicode = Gdk.keyval_to_unicode(event.keyval)
+
+        if (not event.keyval == Gdk.KEY_space and GLib.unichar_isprint(chr(key_unicode))
+                and modifiers in (shift_mask, 0)):
             self.search_entry.grab_focus_without_selecting()
 
     def on_paste_search(self, _action, _param):
