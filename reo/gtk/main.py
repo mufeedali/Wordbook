@@ -11,9 +11,6 @@ from reo.settings import Settings  # noqa
 
 class Application(Gtk.Application):
     """Manages the windows, properties, etc of Reo."""
-    debug = False
-    verinfo = False
-
     def __init__(self):
         """Initialize the application."""
 

@@ -14,17 +14,17 @@ PATH = os.path.dirname(__file__)
 class ReoGtkWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'ReoGtkWindow'
 
-    clear_button = Gtk.Template.Child('clear_button')
-    def_view = Gtk.Template.Child('def_view')
-    search_entry = Gtk.Template.Child('search_entry')
-    search_button = Gtk.Template.Child('search_button')
-    speak_button = Gtk.Template.Child('speak_button')
-    menu_button = Gtk.Template.Child('reo_menu_button')
-    header_bar = Gtk.Template.Child('header_bar')
+    _clear_button = Gtk.Template.Child('clear_button')
+    _def_view = Gtk.Template.Child('def_view')
+    _search_entry = Gtk.Template.Child('search_entry')
+    _search_button = Gtk.Template.Child('search_button')
+    _speak_button = Gtk.Template.Child('speak_button')
+    _menu_button = Gtk.Template.Child('reo_menu_button')
+    _header_bar = Gtk.Template.Child('header_bar')
 
-    term = None
-    searched_term = None
-    wn_future = base.get_wn_file()
+    _term = None
+    _searched_term = None
+    _wn_future = base.get_wn_file()
 
     def __init__(self, **kwargs):
         """Initialize the window."""
@@ -33,17 +33,17 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         builder = Gtk.Builder.new_from_file(f'{PATH}/ui/menu.xml')
         menu = builder.get_object("reo-menu")
 
-        popover = Gtk.Popover.new_from_model(self.menu_button, menu)
-        self.menu_button.set_popover(popover)
-        self.search_entry.grab_focus()
+        popover = Gtk.Popover.new_from_model(self._menu_button, menu)
+        self._menu_button.set_popover(popover)
+        self._search_entry.grab_focus()
 
-        self.connect("notify::is-maximized", self.on_state_change)
-        self.connect("key-press-event", self.on_key_press_event)
-        self.clear_button.connect("clicked", self.on_clear_press)
-        self.search_button.connect("clicked", self.on_search_press)
-        self.search_entry.connect("activate", self.on_search_press)
-        self.search_entry.connect("changed", self.on_text_change)
-        self.speak_button.connect("clicked", self.on_speak_press)
+        self.connect("notify::is-maximized", self._on_window_state_changed)
+        self.connect("key-press-event", self._on_key_press_event)
+        self._clear_button.connect("clicked", self._on_clear_clicked)
+        self._search_button.connect("clicked", self._on_search_clicked)
+        self._search_entry.connect("activate", self._on_search_clicked)
+        self._search_entry.connect("changed", self._on_entry_changed)
+        self._speak_button.connect("clicked", self._on_speak_clicked)
 
     def on_about(self, _action, _param):
         """Show the about window."""
@@ -65,73 +65,36 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         about_dialog.connect('response', lambda dialog, response: dialog.destroy())
         about_dialog.present()
 
-    def on_clear_press(self, _button):
-        """Clear all text in the window."""
-        self.def_view.get_buffer().set_text("")
-        self.search_entry.set_text("")
-
-    def on_key_press_event(self, _widget, event):
-        """Focus onto the search entry when needed (quick search)."""
-        modifiers = event.get_state() & Gtk.accelerator_get_default_mod_mask()
-
-        shift_mask = Gdk.ModifierType.SHIFT_MASK
-        key_unicode = Gdk.keyval_to_unicode(event.keyval)
-
-        if (not event.keyval == Gdk.KEY_space and GLib.unichar_isprint(chr(key_unicode))
-                and modifiers in (shift_mask, 0)):
-            self.search_entry.grab_focus_without_selecting()
-
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-        self.search_entry.set_text(text)
+        self._search_entry.set_text(text)
         if not text == '' and not text.isspace():
-            self.on_search_press()
-            self.search_entry.grab_focus()
+            self._on_search_clicked()
+            self._search_entry.grab_focus()
 
     def on_preferences(self, _action, _param):
         """Show settings window."""
         window = SettingsWindow(transient_for=self)
-        window.connect("destroy", self.on_preferences_destroy)
+        window.connect("destroy", self._on_preferences_destroy)
         window.load_settings()
         window.present()
 
-    def on_preferences_destroy(self, _window):
-        """Refresh view when Preferences window is closed. Only necessary for definition now."""
-        if self.searched_term:
-            self.on_search_press(pass_check=True)
-
     def on_random_word(self, _action, _param):
         """Search a random word from the wordlist."""
-        self.search_entry.set_text(random.choice(self.wn_future.result()[1]))
-        self.on_search_press()
-        self.search_entry.grab_focus()
-
-    def on_search_press(self, _button=None, pass_check=False):
-        """Pass data to search function and set TextView data."""
-        if pass_check:
-            text = self.searched_term
-        else:
-            text = self.search_entry.get_text().strip()
-        except_list = ('fortune -a', 'cowfortune')
-        if pass_check or not text == self.searched_term or text in except_list:
-            self.def_view.get_buffer().set_text("")
-            self.searched_term = text
-            if not text.strip() == '':
-                last_iter = self.def_view.get_buffer().get_end_iter()
-                out = self.__search(text)
-                if out is not None:
-                    self.def_view.get_buffer().insert_markup(last_iter, out, -1)
+        self._search_entry.set_text(random.choice(self._wn_future.result()[1]))
+        self._on_search_clicked()
+        self._search_entry.grab_focus()
 
     def on_search_selected(self, _action, _param):
         """Search selected text from inside or outside the window."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         text = text.replace('-\n         ', '-').replace('\n', ' ')
         text = text.replace('         ', '')
-        self.search_entry.set_text(text)
+        self._search_entry.set_text(text)
         if not text == '' and not text.isspace():
-            self.on_search_press()
-            self.search_entry.grab_focus()
+            self._on_search_clicked()
+            self._search_entry.grab_focus()
 
     def on_shortcuts(self, _action, _param):
         """Launch the Keyboard Shortcuts window."""
@@ -140,10 +103,47 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         shortcuts_window.set_transient_for(self)
         shortcuts_window.show()
 
-    def on_speak_press(self, _button):
+    def _on_clear_clicked(self, _button):
+        """Clear all text in the window."""
+        self._def_view.get_buffer().set_text("")
+        self._search_entry.set_text("")
+
+    def _on_key_press_event(self, _widget, event):
+        """Focus onto the search entry when needed (quick search)."""
+        modifiers = event.get_state() & Gtk.accelerator_get_default_mod_mask()
+
+        shift_mask = Gdk.ModifierType.SHIFT_MASK
+        key_unicode = Gdk.keyval_to_unicode(event.keyval)
+
+        if (not event.keyval == Gdk.KEY_space and GLib.unichar_isprint(chr(key_unicode))
+                and modifiers in (shift_mask, 0)):
+            self._search_entry.grab_focus_without_selecting()
+
+    def _on_preferences_destroy(self, _window):
+        """Refresh view when Preferences window is closed. Only necessary for definition now."""
+        if self._searched_term:
+            self._on_search_press(pass_check=True)
+
+    def _on_search_clicked(self, _button=None, pass_check=False):
+        """Pass data to search function and set TextView data."""
+        if pass_check:
+            text = self._searched_term
+        else:
+            text = self._search_entry.get_text().strip()
+        except_list = ('fortune -a', 'cowfortune')
+        if pass_check or not text == self._searched_term or text in except_list:
+            self._def_view.get_buffer().set_text("")
+            self._searched_term = text
+            if not text.strip() == '':
+                last_iter = self._def_view.get_buffer().get_end_iter()
+                out = self.__search(text)
+                if out is not None:
+                    self._def_view.get_buffer().insert_markup(last_iter, out, -1)
+
+    def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
         speed = '120'  # To change eSpeak-ng audio speed.
-        text = self.searched_term
+        text = self._searched_term
         if text:
             base.read_term(text, speed)
         else:
@@ -152,18 +152,18 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 "You have to search for something first. "
             )
 
-    def on_state_change(self, _window, _state):
+    def _on_window_state_changed(self, _window, _state):
         """Detect changes to the window state and adapt."""
         if Settings.get().gtk_max_hide and not os.environ.get('GTK_CSD') == '0':
             if self.props.is_maximized:
-                self.header_bar.set_show_close_button(False)
+                self._header_bar.set_show_close_button(False)
             else:
-                self.header_bar.set_show_close_button(True)
+                self._header_bar.set_show_close_button(True)
 
-    def on_text_change(self, _entry):
+    def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""
         if Settings.get().live_search:
-            self.on_search_press()
+            self._on_search_clicked()
 
     def __new_error(self, primary_text, seconday_text):
         """Show an error dialog."""
@@ -188,7 +188,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             '00-database-url'
         )
         if text in wn_list:
-            return f"<tt> Running Reo with WordNet {self.wn_future.result()[0]}</tt>"
+            return f"<tt> Running Reo with WordNet {self._wn_future.result()[0]}</tt>"
         if text == 'fortune -a':
             return base.get_fortune()
         if text == 'cowfortune':
@@ -223,5 +223,5 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             "Reo thinks that your input was actually just a bunch of useless characters. "
             "And so, an 'Invalid Characters' error."
         )
-        self.searched_term = None
+        self._searched_term = None
         return None
