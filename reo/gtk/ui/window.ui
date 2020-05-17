@@ -156,6 +156,7 @@
                   <object class="GtkSearchEntry" id="search_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="activates_default">True</property>
                     <property name="primary_icon_name">accessories-dictionary-symbolic</property>
                     <property name="primary_icon_activatable">False</property>
                     <property name="primary_icon_sensitive">False</property>
@@ -171,6 +172,9 @@
                   <object class="GtkButton" id="search_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="has_focus">True</property>
+                    <property name="can_default">True</property>
+                    <property name="has_default">True</property>
                     <property name="receives_default">True</property>
                     <property name="image">image1</property>
                     <property name="always_show_image">True</property>

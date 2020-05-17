@@ -35,13 +35,11 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
         popover = Gtk.Popover.new_from_model(self._menu_button, menu)
         self._menu_button.set_popover(popover)
-        self._search_button.grab_focus()
 
         self.connect("notify::is-maximized", self._on_window_state_changed)
         self.connect("key-press-event", self._on_key_press_event)
         self._clear_button.connect("clicked", self._on_clear_clicked)
         self._search_button.connect("clicked", self._on_search_clicked)
-        self._search_entry.connect("activate", self._on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
         self._speak_button.connect("clicked", self._on_speak_clicked)
 
@@ -89,8 +87,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def on_search_selected(self, _action, _param):
         """Search selected text from inside or outside the window."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
-        text = text.replace('-\n         ', '-').replace('\n', ' ')
-        text = text.replace('         ', '')
+        text = text.replace('         ', '').replace('\n', '')
         self._search_entry.set_text(text)
         if not text == '' and not text.isspace():
             self._on_search_clicked()
