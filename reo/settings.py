@@ -19,8 +19,8 @@ class Settings:
                 'ConfigVersion': '1',
             }
             self.config['UI-gtk'] = {
-                'DarkUI': 'no',
-                'DarkFont': 'no',
+                'DarkUI': 'yes',
+                'DarkFont': 'yes',
                 'HideWindowButtonsMaximized': 'no',
             }
             self.config['UI-qt'] = {

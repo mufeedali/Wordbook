@@ -16,13 +16,13 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     _clear_button = Gtk.Template.Child('clear_button')
     _def_view = Gtk.Template.Child('def_view')
+    _header_bar = Gtk.Template.Child('header_bar')
+    _menu_button = Gtk.Template.Child('reo_menu_button')
     _search_entry = Gtk.Template.Child('search_entry')
     _search_button = Gtk.Template.Child('search_button')
     _speak_button = Gtk.Template.Child('speak_button')
-    _menu_button = Gtk.Template.Child('reo_menu_button')
-    _header_bar = Gtk.Template.Child('header_bar')
+    _stack = Gtk.Template.Child('main_stack')
 
-    _term = None
     _searched_term = None
     _wn_future = base.get_wn_file()
 
@@ -35,7 +35,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
         popover = Gtk.Popover.new_from_model(self._menu_button, menu)
         self._menu_button.set_popover(popover)
-        self._search_entry.grab_focus()
+        self._search_button.grab_focus()
 
         self.connect("notify::is-maximized", self._on_window_state_changed)
         self.connect("key-press-event", self._on_key_press_event)
@@ -107,6 +107,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         """Clear all text in the window."""
         self._def_view.get_buffer().set_text("")
         self._search_entry.set_text("")
+        self._stack.set_visible_child_name('welcome_page')
 
     def _on_key_press_event(self, _widget, event):
         """Focus onto the search entry when needed (quick search)."""
@@ -122,10 +123,16 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def _on_preferences_destroy(self, _window):
         """Refresh view when Preferences window is closed. Only necessary for definition now."""
         if self._searched_term:
-            self._on_search_press(pass_check=True)
+            self._on_search_clicked(pass_check=True)
 
     def _on_search_clicked(self, _button=None, pass_check=False):
         """Pass data to search function and set TextView data."""
+        def page_switch(page):
+            if self._stack.get_visible_child_name == page:
+                return True
+            self._stack.set_visible_child_name(page)
+            return False
+
         if pass_check:
             text = self._searched_term
         else:
@@ -134,7 +141,10 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         if pass_check or not text == self._searched_term or text in except_list:
             self._def_view.get_buffer().set_text("")
             self._searched_term = text
-            if not text.strip() == '':
+            if text.strip() == '':
+                page_switch('welcome_page')
+            else:
+                page_switch('content_page')
                 last_iter = self._def_view.get_buffer().get_end_iter()
                 out = self.__search(text)
                 if out is not None:
@@ -218,10 +228,11 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             text = text.replace(item, '')
         if not text == '' and not text.isspace():
             return self.__reactor(text)
-        self.__new_error(
-            "Invalid Input",
-            "Reo thinks that your input was actually just a bunch of useless characters. "
-            "And so, an 'Invalid Characters' error."
-        )
+        if not Settings.get().live_search:
+            self.__new_error(
+                "Invalid Input",
+                "Reo thinks that your input was actually just a bunch of useless characters. "
+                "And so, an 'Invalid Characters' error."
+            )
         self._searched_term = None
         return None

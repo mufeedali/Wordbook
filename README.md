@@ -2,9 +2,10 @@
 
 **Reo** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 
-Light Mode                             |  Dark Mode
-:-------------------------------------:|:-------------------------------------:
-![Light Mode](images/ss.png?raw=true)  |  ![Dark Mode](images/ss1.png?raw=true)
+Light Mode                                 |  Dark Mode
+:-----------------------------------------:|:--------------------------------------------:
+![Welcome screen](images/ss.png?raw=true)  |  ![Welcome screen](images/ss1.png?raw=true)
+![Searching](images/ss2.png?raw=true)  |  ![Searching](images/ss3.png?raw=true)
 
 ## Requirements
 
