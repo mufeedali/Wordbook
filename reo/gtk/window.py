@@ -115,9 +115,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
         shift_mask = Gdk.ModifierType.SHIFT_MASK
         key_unicode = Gdk.keyval_to_unicode(event.keyval)
-
-        if (not event.keyval == Gdk.KEY_space and GLib.unichar_isprint(chr(key_unicode))
-                and modifiers in (shift_mask, 0)):
+        if GLib.unichar_isgraph(chr(key_unicode)) and modifiers in (shift_mask, 0):
             self._search_entry.grab_focus_without_selecting()
 
     def _on_preferences_destroy(self, _window):
