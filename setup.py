@@ -22,7 +22,7 @@ extra_requirements = {
 
 setup(
     author="Mufeed Ali",
-    author_email='lastweakness@tuta.io',
+    author_email='fushinari@protonmail.com',
     python_requires='>=3.6',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -37,7 +37,7 @@ setup(
     description="Reo is a dictionary application using dictd and espeak.",
     entry_points={
         'gui_scripts': [
-            'reo-gtk=reo.gtk:main [GTK]',
+            'reo=reo.gtk:main [GTK]',
             'reo-qt=reo.qt:main [Qt]',
         ],
     },
@@ -51,7 +51,7 @@ setup(
     package_data={'reo': ['data/*', 'gtk/ui/*', 'qt/ui/*']},
     setup_requires=setup_requirements,
     extras_require=extra_requirements,
-    url='https://github.com/lastweakness/reo',
+    url='https://github.com/fushinari/reo',
     version=utils.VERSION,
     zip_safe=False,
 )

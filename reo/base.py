@@ -1,5 +1,10 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2016-2020 Mufeed Ali
+# SPDX-License-Identifier: MIT
+# Author: Mufeed Ali <fushinari@protonmail.com>
+
 """
-base contains the shared code between the Qt5 and Gtk3 frontends.
+base contains the shared code between the Qt5 and GTK 3 frontends.
 
 base is a part of Reo. It contains a few functions that are reusable across
 both the UIs.
@@ -32,8 +37,7 @@ def clean_html(data):
         '<span foreground="': '<font color="',
         '</span>': '</font>',
         '\n': '<br>',
-        ' ': '&nbsp;',
-        '<font&nbsp;': '<font ',
+        '  ': '&nbsp;&nbsp;',
     }
     for to_replace, replace_with in replace_list.items():
         data = data.replace(to_replace, replace_with)
@@ -51,32 +55,38 @@ def fold_gen():
 @lru_cache(maxsize=None)
 def format_close_words(clp, text):
     """Format the similar words list obtained."""
+    # Clean up
     sub_dict = {
-        r'\s+      \s+': r'  ',
-        f'  ["]*{text.lower()}["]*$': r'',
-        f"(.)  {text.lower()}  (.)": r"\1  \2",
-        f'wn: ["]*{text.lower()}["]*  (.)': r"\1",
-        f'(.)  "{text.lower()}"  (.)': r"\1  \2",
-        r'\s*\n\s*': r'  ',
-        r"\s\s+": r", ",
-        f'["]+{text.lower()}["]+': r"",
-        'wn:[,]*': r''
+        r'\s+      \s+': r'  ',  # clear extra space
+        f'  ["]*{text.lower()}["]*$': r'',  # remove ocurrence of same term at the end
+        f"(.)  {text.lower()}  (.)": r"\1  \2",  # remove ocurrence of same term in the middle with no quotations
+        f'wn: ["]*{text.lower()}["]*  (.)': r"\1",  # remove ocurrence of same term at the beginning
+        f'(.)  "{text.lower()}"  (.)': r"\1  \2",  # remove ocurrence of same term in the middle with quotations
+        r'\s*\n\s*': r'  ',  # clear extra whitespace for replacement with comma
+        r"\s\s+": r", ",  # replace with commas for separation
+        f'["]+{text.lower()}["]+': r"",  # replace single ocurrences of the same term
+        'wn:[,]*': r'',  # remove 'wn:' from the start
     }
     for to_replace, replace_with in sub_dict.items():
         sub_re = re.compile(to_replace)
         clp = sub_re.sub(replace_with, clp).strip()
-    clp = clp.rstrip()
-    return clp
+    # Make them all hyperlinks.
+    new_list = []
+    for item in clp.split(', '):
+        item = item.strip("\"")
+        if item:
+            new_list.append(f'<a href="search:{item}">{item}</a>'.strip())
+    return new_list
 
 
 def get_cowfortune():
     """Present cowsay version of fortune easter egg."""
     try:
-        cowsay = subprocess.Popen(["cowsay", get_fortune()], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        cowsay = subprocess.Popen(["cowsay", get_fortune(mono=False)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         cowsay.wait()
         if cowsay:
             cst = cowsay.stdout.read().decode()
-            return f"<tt>{cst}</tt>"
+            return f"<tt>{html.escape(cst)}</tt>"
         return "<tt>Cowsay fail... Too bad...</tt>"
     except OSError as ex:
         fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
@@ -120,47 +130,54 @@ def get_data(term, word_col, sen_col, markup='html'):
         clean_def = process_definition(definition, term, sen_col, word_col)
         no_def = 0
     else:
-        clean_def = f"Couldn't find definition for '{term}'."
+        clean_def = {
+            "term": term,
+            "definition": f"Couldn't find definition for '{term}'.",
+        }
         no_def = 1
     pron = output[1]
     clean_pron = " /{0}/".format(pron.strip().replace('\n ', ' '))
     close = output[2]
-    clean_close = format_close_words(close, term)
-    fail = False
+    clean_close = ", ".join(format_close_words(close, term))
+    fail_flag = False
     if term.lower() == 'recursion':
         clean_close = 'recursion'
     if clean_close.strip() == '':
-        fail = True
+        fail_flag = True
     if clean_pron == '' or clean_pron.isspace():
         final_pron = "Obtaining pronunciation failed."
     else:
-        final_pron = f"<b>Pronunciation</b>: <b>{clean_pron}</b>"
-    if not fail:
+        final_pron = clean_pron
+    if not fail_flag:
         if no_def == 1:
-            final_close = f'<b>Did you mean</b>:<br><i><font color="{word_col}">  {clean_close}</font></i>'
+            final_close = f'<b>Did you mean</b>:<br>  <i><font color="{word_col}">{clean_close}</font></i>'
         else:
-            final_close = f'<b>Similar Words</b>:<br><i><font color="{word_col}">  {clean_close}</font></i>'
+            final_close = f'<b>Similar Words</b>:<br>  <i><font color="{word_col}">{clean_close}</font></i>'
     else:
         final_close = ''
-    if markup == "pango":
-        final_data = clean_pango(f'{final_pron.strip()}\n{clean_def}\n{final_close.strip()}').replace('&', '&amp;')
-    else:
-        final_data = clean_html(f"<p>{final_pron.strip()}</p><p>{clean_def}</p><p>{final_close.strip()}</p>")
+    final_data = {
+        'term': clean_def['term'],
+        'pronunciation': final_pron,
+        'definition': clean_def['definition'],
+        'close': final_close,
+    }
     return final_data
 
 
-def get_fortune():
+def get_fortune(mono=True):
     """Present fortune easter egg."""
     try:
         fortune_process = subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         fortune_process.wait()
         fortune_out = fortune_process.stdout.read().decode()
         fortune_out = html.escape(fortune_out, False)
-        return f"<tt>{fortune_out}</tt>"
     except OSError as ex:
         fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod'."
-        print(f"{fortune_out}\n{str(ex)}")
+        utils.log_error(f"{fortune_out}\n{str(ex)}")
+    if mono:
         return f"<tt>{fortune_out}</tt>"
+    else:
+        return fortune_out
 
 
 def get_version_info():
@@ -222,32 +239,35 @@ def process_definition(definition, term, sen_col, word_col):
     definition = definition.replace(term_in_wn + '\n', '')
     utils.log_info(f"Searching {term_in_wn.strip()}")
     re_list = {
-        r'[ \t\r\f\v]+n\s+': f'<b>{term_in_wn}</b> ~ <i>noun</i>:\n      ',
-        r'[ \t\r\f\v]+adv\s+': f'<b>{term_in_wn}</b> ~ <i>adverb</i>:\n      ',
-        r'[ \t\r\f\v]+adj\s+': f'<b>{term_in_wn}</b> ~ <i>adjective</i>:\n      ',
-        r'[ \t\r\f\v]+v\s+': f'<b>{term_in_wn}</b> ~ <i>verb</i>:\n      ',
-        r'([-]+)\s+      \s+': r'\1',
-        r'\s+      \s+': r' ',
-        r'"$': r'</font>',
-        r'\s+(\d+):\D': r'\n  <b>\1:  </b>',
-        r'";\s*"': f'</font><b>;</b> <font color="{sen_col}">',
-        r'[;:]\s*"': fr'\n        <font color="{sen_col}">',
-        r'"\s+\[': r'</font>[',
-        r'\[syn:': r'\n        <i>Synonyms: ',
-        r'\[ant:': r'\n        <i>Antonyms: ',
-        r'}\]': r'}</i>',
-        r"\{([^{]*)\}": fr'<font color="{word_col}">\1</font>',
-        r'";[ \t\r\f\v]*$': r'</font>',
-        r'";[ \t\r\f\v]+(.+)$': r'</font> \1',
-        r'"[; \t\r\f\v]+(\(.+\))$': r'</font> \1',
-        r'"\s*\-+\s*(.+)(\s*)([<]*)': r"</font> - \1\2\3",
-        r';\s*$': r'',
-        "`": "'",
+        r'[ \t\r\f\v]+n\s+': '  <i>noun</i>\n      ',  # definition header of noun
+        r'[ \t\r\f\v]+adv\s+': '  <i>adverb</i>\n      ',  # definition header of adverb
+        r'[ \t\r\f\v]+adj\s+': '  <i>adjective</i>\n      ',  # definition header of adjective
+        r'[ \t\r\f\v]+v\s+': '  <i>verb</i>\n      ',  # definition header of verb
+        r'\s+(\d+):\D': r'\n  <b>\1:  </b>',  # numbering
+        r'([-]+)\s+      \s+': r'\1',  # clear whitespaces after hyphen
+        r'\s+      \s+': r' ',  # clear whitespaces (usually the ones after a linebreak)
+        r'" "': '"; "',
+        r'[;:]\s*"([^;:]*)"\s*-': fr'\n        <font color="{sen_col}">\1</font> - ',  # sentences that are quotes
+        r'[;:]\s*"([^;:]*)"\s*\[': fr'\n        <font color="{sen_col}">\1</font>[',  # sentence followed by syn or ant
+        r'[;:]\s*"([^;:]*)"\s*\;': fr';\n        <font color="{sen_col}">\1</font>;',  # sentence followed by another
+        r'[;:]*\s*"([^;:]*)"\s*\;': fr'\n        <font color="{sen_col}">\1</font>;',  # clean up leftovers from last
+        r'[;:]\s*"([^;:]*)"\s*$': fr'\n        <font color="{sen_col}">\1</font>',  # sentences at EOL
+        r'[;:]\s*"(.*)"\s*-': fr'\n        <font color="{sen_col}">\1</font> - ',  # leftover quotes
+        r'\[syn:': r'\n        <i>Synonyms: ',  # synonyms header
+        r'\[ant:': r'\n        <i>Antonyms: ',  # antonyms header
+        r'}\]': r'}</i>',  # syn and ant end markers
+        r"\{([^{]*)\([a-zA-Z]\)\}": fr'<a href="search:\1"><font color="{word_col}">\1</font></a>',  # words with (a)
+        r"\{([^{]*)\}": fr'<a href="search:\1"><font color="{word_col}">\1</font></a>',  # syn and ant words
+        r';\s*$': r'',  # fixes wrong line endings (eg: "change")
+        "`": "'",  # fix wrong character usage
     }
     for to_replace, replace_with in re_list.items():
         re_clean = re.compile(to_replace, re.MULTILINE)
         definition = re_clean.sub(replace_with, definition)
-    return definition.strip()
+    return {
+        'term': term_in_wn,
+        'definition': "  " + definition.strip(),
+    }
 
 
 @lru_cache(maxsize=None)

@@ -1,14 +1,5 @@
-.PHONY: clean clean-pyc clean-build docs help
+.PHONY: clean clean-pyc clean-build help
 .DEFAULT_GOAL := help
-
-define BROWSER_PYSCRIPT
-import os, webbrowser, sys
-
-from urllib.request import pathname2url
-
-webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
-endef
-export BROWSER_PYSCRIPT
 
 define PRINT_HELP_PYSCRIPT
 import re, sys
@@ -20,8 +11,6 @@ for line in sys.stdin:
 		print("%-20s %s" % (target, help))
 endef
 export PRINT_HELP_PYSCRIPT
-
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -43,25 +32,6 @@ clean-pyc: ## remove Python file artifacts
 
 lint: ## check style with flake8
 	flake8 reo tests
-
-docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/reo.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ reo
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
-
-servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
-
-release: dist ## package and upload a release
-	twine upload dist/*
-
-dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
-	ls -l dist
 
 develop: clean ## setup the package for development
 	python setup.py develop

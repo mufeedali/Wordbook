@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2016-2020 Mufeed Ali
+# SPDX-License-Identifier: MIT
+# Author: Mufeed Ali <fushinari@protonmail.com>
+
+import os
 import sys
 
 import gi
@@ -8,6 +14,8 @@ from reo import base, utils  # noqa
 from reo.gtk.window import ReoGtkWindow  # noqa
 from reo.settings import Settings  # noqa
 
+PATH = os.path.dirname(__file__)
+
 
 class Application(Gtk.Application):
     """Manages the windows, properties, etc of Reo."""
@@ -15,7 +23,7 @@ class Application(Gtk.Application):
         """Initialize the application."""
 
         super().__init__(
-            application_id='com.github.lastweakness.reo',
+            application_id='com.github.fushinari.Reo',
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
         )
         self.add_main_option("info", ord("i"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, "Print version info", None)
@@ -65,7 +73,7 @@ class Application(Gtk.Application):
             win = ReoGtkWindow(
                 application=self,
                 title='Reo',
-                icon_name='accesories-dictionary'
+                icon_name='accessories-dictionary'
             )
             setup_actions(win)
 
@@ -87,7 +95,7 @@ class Application(Gtk.Application):
         Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", Settings.get().gtk_dark_ui)
 
         GLib.set_application_name('Reo')
-        GLib.set_prgname('com.github.lastweakness.reo')
+        GLib.set_prgname('com.github.fushinari.Reo')
 
         base.fold_gen()
 

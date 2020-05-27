@@ -1,4 +1,8 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2016-2020 Mufeed Ali
+# SPDX-License-Identifier: MIT
+# Author: Mufeed Ali <fushinari@protonmail.com>
 
 """
 Reo-Qt is a dictionary application made with Python and Qt5.
@@ -38,7 +42,6 @@ def main():
     """Execute the application."""
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("Reo")
-    app.setDesktopFileName("Reo")
     utils.log_info("Launching Reo-Qt")
     main_window = ReoMain()
     main_window.show()

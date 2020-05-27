@@ -1,6 +1,11 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2016-2020 Mufeed Ali
+# SPDX-License-Identifier: MIT
+# Author: Mufeed Ali <fushinari@protonmail.com>
+
 """
-Reo is a dictionary application made with Python and Gtk+3.
+Reo is a dictionary application made with Python and GTK 3.
 
 It's a simple script basically. It uses existing tools and as such, easily
 works across most Linux distributions without any changes.

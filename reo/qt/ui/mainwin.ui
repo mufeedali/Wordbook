@@ -6,19 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>385</height>
+    <width>388</width>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Reo</string>
-  </property>
-  <property name="windowIcon">
-   <iconset theme="accessories-dictionary">
-    <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
-  </property>
-  <property name="unifiedTitleAndToolBarOnMac">
-   <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="autoFillBackground">
@@ -117,12 +110,15 @@
        </layout>
       </item>
       <item>
-       <widget class="QTextEdit" name="defView">
-        <property name="styleSheet">
-         <string notr="true"/>
+       <widget class="QTextBrowser" name="defView">
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
-        <property name="readOnly">
-         <bool>true</bool>
+        <property name="placeholderText">
+         <string/>
+        </property>
+        <property name="openLinks">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -135,7 +131,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>510</width>
+     <width>388</width>
      <height>30</height>
     </rect>
    </property>
@@ -219,6 +215,9 @@
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionLive_Search">
    <property name="checkable">
@@ -263,22 +262,6 @@
     <hint type="destinationlabel">
      <x>707</x>
      <y>53</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clearButton</sender>
-   <signal>clicked()</signal>
-   <receiver>defView</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>745</x>
-     <y>63</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>737</x>
-     <y>117</y>
     </hint>
    </hints>
   </connection>

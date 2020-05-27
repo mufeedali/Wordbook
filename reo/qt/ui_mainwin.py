@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2016-2020 Mufeed Ali
+# SPDX-License-Identifier: MIT
+# Author: Mufeed Ali <fushinari@protonmail.com>
 
 # Form implementation generated from reading ui file 'mainwin.ui'
 #
@@ -13,10 +16,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ReoMain():
     def setupUi(self, ReoMain):
         ReoMain.setObjectName("ReoMain")
-        ReoMain.resize(510, 385)
+        ReoMain.resize(388, 388)
         icon = QtGui.QIcon.fromTheme("accessories-dictionary")
         ReoMain.setWindowIcon(icon)
-        ReoMain.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtWidgets.QWidget(ReoMain)
         self.centralwidget.setAutoFillBackground(True)
         self.centralwidget.setObjectName("centralwidget")
@@ -55,15 +57,16 @@ class Ui_ReoMain():
         self.audioButton.setObjectName("audioButton")
         self.horizontalLayout.addWidget(self.audioButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.defView = QtWidgets.QTextEdit(self.centralwidget)
-        self.defView.setStyleSheet("")
-        self.defView.setReadOnly(True)
+        self.defView = QtWidgets.QTextBrowser(self.centralwidget)
+        self.defView.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.defView.setPlaceholderText("")
+        self.defView.setOpenLinks(False)
         self.defView.setObjectName("defView")
         self.verticalLayout.addWidget(self.defView)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         ReoMain.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(ReoMain)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 510, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 388, 30))
         self.menubar.setObjectName("menubar")
         self.menuSearch = QtWidgets.QMenu(self.menubar)
         self.menuSearch.setObjectName("menuSearch")
@@ -116,7 +119,6 @@ class Ui_ReoMain():
 
         self.retranslateUi(ReoMain)
         self.searchEntry.returnPressed.connect(self.searchButton.click)
-        self.clearButton.clicked.connect(self.defView.clear)
         self.clearButton.clicked.connect(self.searchEntry.clear)
         QtCore.QMetaObject.connectSlotsByName(ReoMain)
 
@@ -140,6 +142,7 @@ class Ui_ReoMain():
         self.actionRandom_Word.setShortcut(_translate("ReoMain", "Ctrl+R"))
         self.actionAbout.setText(_translate("ReoMain", "About Reo"))
         self.actionQuit.setText(_translate("ReoMain", "Quit"))
+        self.actionQuit.setShortcut(_translate("ReoMain", "Ctrl+Q"))
         self.actionLive_Search.setText(_translate("ReoMain", "Live Search"))
         self.actionDark_Mode.setText(_translate("ReoMain", "Dark Mode"))
         self.actionDebug.setText(_translate("ReoMain", "Debug"))

@@ -16,7 +16,7 @@ Light Mode                                 |  Dark Mode
 * GTK 3.20+ [Arch: `gtk3`] or Qt 5.8+ [Arch: `qt5-base`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
-Run `reo-gtk` for the GTK GUI or `reo-qt` for the Qt GUI.
+Run `reo` for the GTK GUI or `reo-qt` for the Qt GUI.
 
 ## Features
 
