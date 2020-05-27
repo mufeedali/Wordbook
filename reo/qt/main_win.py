@@ -120,8 +120,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
 
                 self.defView.setText(out_text)
                 return True
-            else:
-                return False
+            return False
 
     def _on_paste_search_triggered(self):
         """Paste and search."""

@@ -173,9 +173,9 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                     GLib.idle_add(self._speak_button.set_visible, True)
 
                 return True
-            else:
-                self.__page_switch('welcome_page')
-                return False
+
+            self.__page_switch('welcome_page')
+            return False
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
