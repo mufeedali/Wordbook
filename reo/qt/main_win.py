@@ -102,10 +102,12 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
                 text = self.searched_term
             else:
                 text = self.searchEntry.text().strip()
+
         except_list = ('fortune -a', 'cowfortune')
         if pass_check or not text == self.searched_term or text in except_list:
             if pause:
                 self.defView.clear()
+
             self.searched_term = text
             if not text.strip() == '':
                 out = self.__search(text)
@@ -115,8 +117,11 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
                                            f'<p>{out["definition"]}</p>')
                 if out['close']:
                     out_text = out_text + f'<p>{out["close"].strip()}</p>'
-                if out is not None:
-                    self.defView.setText(out_text)
+
+                self.defView.setText(out_text)
+                return True
+            else:
+                return False
 
     def _on_paste_search_triggered(self):
         """Paste and search."""

@@ -143,6 +143,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         """Pass data to search function and set TextView data."""
         if not text:
             text = self._search_entry.get_text().strip()
+
         except_list = ('fortune -a', 'cowfortune')
         if pass_check or not text == self._searched_term or text in except_list:
             if pause:
@@ -150,23 +151,31 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 GLib.idle_add(self._pronunciation_view.set_text, '')
                 GLib.idle_add(self._term_view.set_text, '')
                 GLib.idle_add(self._speak_button.set_visible, False)
+
             self._searched_term = text
             if not text.strip() == '':
                 out = self.__search(text)
+
                 if out is None:
                     return None
+
                 GLib.idle_add(self._term_view.set_markup,
                               f'<span size="large" weight="bold">{out["term"].strip()}</span>')
                 GLib.idle_add(self._pronunciation_view.set_markup,
                               f'<i>{out["pronunciation"].strip()}</i>')
+
                 out_text = base.clean_pango(f'{out["definition"]}')
                 if out['close']:
                     out_text = out_text + base.clean_pango(f'\n\n{out["close"].strip()}').replace('&', '&amp;')
+
                 GLib.idle_add(self._def_view.set_markup, out_text)
                 if text not in except_list:
                     GLib.idle_add(self._speak_button.set_visible, True)
+
+                return True
             else:
                 self.__page_switch('welcome_page')
+                return False
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""

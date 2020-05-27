@@ -120,7 +120,7 @@ def get_custom_def(text, wordcol, sencol, markup="html"):
            'held responsible for errors in this.</font>')
 
 
-def get_data(term, word_col, sen_col, markup='html'):
+def get_data(term, word_col, sen_col):
     """Obtain the data to be processed and presented."""
     output = run_processes(term)
     if not output:
@@ -176,8 +176,7 @@ def get_fortune(mono=True):
         utils.log_error(f"{fortune_out}\n{str(ex)}")
     if mono:
         return f"<tt>{fortune_out}</tt>"
-    else:
-        return fortune_out
+    return fortune_out
 
 
 def get_version_info():
@@ -309,7 +308,7 @@ def generate_definition(text, wordcol, sencol, cdef=True, markup="html"):
     """Check if custom definition exists."""
     if cdef and os.path.exists(utils.CDEF_FOLD + '/' + text.lower()):
         return get_custom_def(text, wordcol, sencol, markup)
-    return get_data(text, wordcol, sencol, markup)
+    return get_data(text, wordcol, sencol)
 
 
 def read_term(text, speed):
