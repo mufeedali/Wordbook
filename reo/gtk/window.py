@@ -157,7 +157,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 out = self.__search(text)
 
                 if out is None:
-                    return None
+                    return
 
                 GLib.idle_add(self._term_view.set_markup,
                               f'<span size="large" weight="bold">{out["term"].strip()}</span>')
@@ -172,10 +172,10 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                 if text not in except_list:
                     GLib.idle_add(self._speak_button.set_visible, True)
 
-                return True
+                return
 
             self.__page_switch('welcome_page')
-            return False
+            return
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""

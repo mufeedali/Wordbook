@@ -112,15 +112,15 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             if not text.strip() == '':
                 out = self.__search(text)
                 if out is None:
-                    return None
+                    return
                 out_text = base.clean_html(f'<p><b>{out["term"].strip()}</b><br>{out["pronunciation"].strip()}</p>'
                                            f'<p>{out["definition"]}</p>')
                 if out['close']:
                     out_text = out_text + f'<p>{out["close"].strip()}</p>'
 
                 self.defView.setText(out_text)
-                return True
-            return False
+                return
+            return
 
     def _on_paste_search_triggered(self):
         """Paste and search."""
