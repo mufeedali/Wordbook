@@ -11,6 +11,7 @@ both the UIs.
 """
 
 import html
+import json
 import lzma
 import os
 import re
@@ -32,12 +33,24 @@ def _threadpool(f):
 
 
 def clean_html(data):
-    """Convert Pango Markup subset to HTML and cleanup. Not a real converter."""
+    """Convert Pango Markup subset used in Reo to HTML and cleanup. Not a real converter."""
     replace_list = {
         '<span foreground="': '<font color="',
         '</span>': '</font>',
         '\n': '<br>',
         '  ': '&nbsp;&nbsp;',
+    }
+    for to_replace, replace_with in replace_list.items():
+        data = data.replace(to_replace, replace_with)
+    return data
+
+
+def clean_pango(data):
+    """Convert HTML subset used in Reo to Pango markup. Not a real converter."""
+    replace_list = {
+        '<font color="': '<span foreground="',
+        '</font>': '</span>',
+        '<br>': '\n',
     }
     for to_replace, replace_with in replace_list.items():
         data = data.replace(to_replace, replace_with)
@@ -79,6 +92,13 @@ def format_close_words(clp, text):
     return new_list
 
 
+def generate_definition(text, wordcol, sencol, cdef=True):
+    """Check if custom definition exists."""
+    if cdef and os.path.exists(utils.CDEF_FOLD + '/' + text.lower()):
+        return get_custom_def(text, wordcol, sencol)
+    return get_data(text, wordcol, sencol)
+
+
 def get_cowfortune():
     """Present cowsay version of fortune easter egg."""
     try:
@@ -94,30 +114,30 @@ def get_cowfortune():
         return f"<tt>{fortune_out}</tt>"
 
 
-def get_custom_def(text, wordcol, sencol, markup="html"):
+def get_custom_def(text, wordcol, sencol):
     """Present custom definition when available."""
     with open(utils.CDEF_FOLD + '/' + text, 'r') as def_file:
-        custom_def_read = def_file.read()
-        re_list = {
-            "<i>($WORDCOL)</i>": wordcol,
-            "<i>($SENCOL)</i>": sencol,
-            "($WORDCOL)": wordcol,
-            "($SENCOL)": sencol,
-            "$WORDCOL": wordcol,
-            "$SENCOL": sencol,
-        }
-        for i, j in re_list.items():
-            custom_def_read = custom_def_read.replace(i, j)
-    if "\n[warninghide]" in custom_def_read:
-        custom_def_read = custom_def_read.replace("\n[warninghide]", "")
-        if markup == "pango":
-            return clean_pango(custom_def_read)
-        return clean_html(custom_def_read)
-    if markup == "pango":
-        return(clean_pango(custom_def_read) + '\n<span foreground="#e6292f">NOTE: This is a Custom definition. No one '
-               'is to be held responsible for errors in this.</span>')
-    return(clean_html(custom_def_read) + '\n<font color="#e6292f">NOTE: This is a Custom definition. No one is to be '
-           'held responsible for errors in this.</font>')
+        custom_def_dict = json.load(def_file)
+    definition = custom_def_dict['definition']
+    close = custom_def_dict['close']
+    re_list = {
+        "<i>($WORDCOL)</i>": wordcol,
+        "<i>($SENCOL)</i>": sencol,
+        "($WORDCOL)": wordcol,
+        "($SENCOL)": sencol,
+        "$WORDCOL": wordcol,
+        "$SENCOL": sencol,
+    }
+    for i, j in re_list.items():
+        definition = definition.replace(i, j)
+        close = close.replace(i, j)
+    final_data = {
+        'term': custom_def_dict['term'],
+        'pronunciation': custom_def_dict['pronunciation'],
+        'definition': definition,
+        'close': close,
+    }
+    return final_data
 
 
 def get_data(term, word_col, sen_col):
@@ -269,6 +289,12 @@ def process_definition(definition, term, sen_col, word_col):
     }
 
 
+def read_term(text, speed):
+    """Say text loudly."""
+    with open(os.devnull, 'w') as null_maker:
+        subprocess.Popen(["espeak-ng", "-s", speed, "-ven-uk-rp", text], stdout=null_maker, stderr=subprocess.STDOUT)
+
+
 @lru_cache(maxsize=None)
 def run_processes(term):
     """Run the processes for obtaining defintion data."""
@@ -290,28 +316,3 @@ def run_processes(term):
     process_close.wait()
     output[2] = process_close.stdout.read().decode()
     return output
-
-
-def clean_pango(data):
-    """Convert HTML subset to Pango markup. Not a real converter."""
-    replace_list = {
-        '<font color="': '<span foreground="',
-        '</font>': '</span>',
-        '<br>': '\n',
-    }
-    for to_replace, replace_with in replace_list.items():
-        data = data.replace(to_replace, replace_with)
-    return data
-
-
-def generate_definition(text, wordcol, sencol, cdef=True, markup="html"):
-    """Check if custom definition exists."""
-    if cdef and os.path.exists(utils.CDEF_FOLD + '/' + text.lower()):
-        return get_custom_def(text, wordcol, sencol, markup)
-    return get_data(text, wordcol, sencol)
-
-
-def read_term(text, speed):
-    """Say text loudly."""
-    with open(os.devnull, 'w') as null_maker:
-        subprocess.Popen(["espeak-ng", "-s", speed, "-ven-uk-rp", text], stdout=null_maker, stderr=subprocess.STDOUT)
