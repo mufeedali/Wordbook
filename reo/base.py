@@ -245,7 +245,7 @@ def process_definition(definition, term, sen_col, word_col):
         r'\s+(\d+):\D': r'\n  <b>\1:  </b>',  # numbering
         r'([-]+)\s+      \s+': r'\1',  # clear whitespaces after hyphen
         r'\s+      \s+': r' ',  # clear whitespaces (usually the ones after a linebreak)
-        r'" "': '"; "',
+        r'" "': '"; "',  # correction for some weird cases where sentences are only separated by a single space
         r'[;:]\s*"([^;:]*)"\s*-': fr'\n        <font color="{sen_col}">\1</font> - ',  # sentences that are quotes
         r'[;:]\s*"([^;:]*)"\s*\[': fr'\n        <font color="{sen_col}">\1</font>[',  # sentence followed by syn or ant
         r'[;:]\s*"([^;:]*)"\s*\;': fr';\n        <font color="{sen_col}">\1</font>;',  # sentence followed by another
@@ -258,7 +258,7 @@ def process_definition(definition, term, sen_col, word_col):
         r"\{([^{]*)\([a-zA-Z]\)\}": fr'<a href="search:\1"><font color="{word_col}">\1</font></a>',  # words with (a)
         r"\{([^{]*)\}": fr'<a href="search:\1"><font color="{word_col}">\1</font></a>',  # syn and ant words
         r';\s*$': r'',  # fixes wrong line endings (eg: "change")
-        "`": "'",  # fix wrong character usage
+        "`": "'",  # correct wrong character usage
     }
     for to_replace, replace_with in re_list.items():
         re_clean = re.compile(to_replace, re.MULTILINE)

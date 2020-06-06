@@ -34,22 +34,15 @@ class Settings:
         else:
             self.load_settings()
 
-    def load_settings(self):
-        """Load settings."""
-        with open(utils.CONFIG_FILE, 'r') as file:
-            self.config.read_file(file)
-        print("Version Code: " + self.config.get('General', 'ConfigVersion'))
-
     @property
     def cdef(self):
         """Get custom definition status."""
         return self.config.getboolean('General', 'CustomDefinitions')
 
     @cdef.setter
-    def cdef(self, val):
+    def cdef(self, value):
         """Set custom definition status."""
-        self.config['General']['CustomDefinitions'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('General', 'CustomDefinitions', value)
 
     @property
     def debug(self):
@@ -57,10 +50,9 @@ class Settings:
         return self.config.getboolean('General', 'Debug')
 
     @debug.setter
-    def debug(self, val):
+    def debug(self, value):
         """Set whether to launch in debug mode."""
-        self.config['General']['Debug'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('General', 'Debug', value)
 
     @staticmethod
     def get():
@@ -75,10 +67,9 @@ class Settings:
         return self.config.getboolean('UI-gtk', 'DarkUI')
 
     @gtk_dark_ui.setter
-    def gtk_dark_ui(self, val):
+    def gtk_dark_ui(self, value):
         """Set GTK theme setting."""
-        self.config['UI-gtk']['DarkUI'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('UI-gtk', 'DarkUI', value)
 
     @property
     def gtk_dark_font(self):
@@ -86,10 +77,9 @@ class Settings:
         return self.config.getboolean('UI-gtk', 'DarkFont')
 
     @gtk_dark_font.setter
-    def gtk_dark_font(self, val):
+    def gtk_dark_font(self, value):
         """Set GTK theme setting."""
-        self.config['UI-gtk']['DarkFont'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('UI-gtk', 'DarkFont', value)
 
     @property
     def gtk_max_hide(self):
@@ -97,10 +87,9 @@ class Settings:
         return self.config.getboolean('UI-gtk', 'HideWindowButtonsMaximized')
 
     @gtk_max_hide.setter
-    def gtk_max_hide(self, val):
+    def gtk_max_hide(self, value):
         """Set whether window buttons should be hidden in maximized state in GTK."""
-        self.config['UI-gtk']['HideWindowButtonsMaximized'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('UI-gtk', 'HideWindowButtonsMaximized', value)
 
     @property
     def live_search(self):
@@ -108,10 +97,15 @@ class Settings:
         return self.config.getboolean('General', 'LiveSearch')
 
     @live_search.setter
-    def live_search(self, val):
+    def live_search(self, value):
         """Set whether to enable Live Search."""
-        self.config['General']['LiveSearch'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('General', 'LiveSearch', value)
+
+    def load_settings(self):
+        """Load settings from file."""
+        with open(utils.CONFIG_FILE, 'r') as file:
+            self.config.read_file(file)
+        print("Version Code: " + self.config.get('General', 'ConfigVersion'))
 
     @property
     def qt_dark_font(self):
@@ -119,12 +113,15 @@ class Settings:
         return self.config.getboolean('UI-qt', 'DarkFont')
 
     @qt_dark_font.setter
-    def qt_dark_font(self, val):
+    def qt_dark_font(self, value):
         """Set Qt theme setting."""
-        self.config['UI-qt']['DarkFont'] = utils.boot_to_str(val)
-        self.save_settings()
+        self.set_boolean_key('UI-qt', 'DarkFont', value)
 
     def save_settings(self):
         """Save settings."""
         with open(utils.CONFIG_FILE, 'w') as file:
             self.config.write(file)
+
+    def set_boolean_key(self, section, key, value):
+        self.config[section][key] = utils.boot_to_str(value)
+        self.save_settings()
