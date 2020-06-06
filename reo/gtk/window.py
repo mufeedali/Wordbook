@@ -255,7 +255,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             self.destroy()
             return None
         if text and not text.isspace():
-            return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef, markup="pango")
+            return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef)
         return None
 
     def __search(self, search_text):
