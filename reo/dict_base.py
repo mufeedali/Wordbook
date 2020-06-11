@@ -48,7 +48,16 @@ class Connection:
         self.sock.connect((hostname, port))
         self.rfile = self.sock.makefile("rb")
         self.wfile = self.sock.makefile("wb", 0)
-        self.saveconnectioninfo()
+
+        # Save off the capabilities and message id.
+        _code, string = self.get200result()
+        capstr, msgid = re.search('<(.*)> (<.*>)$', string).groups()
+        self.capabilities = capstr.split('.')
+        self.messageid = msgid
+
+        self.dbdescs = None
+        self.dbobjs = None
+        self.stratdescs = None
 
     def getresultcode(self):
         """
@@ -88,7 +97,7 @@ class Connection:
         Used when expecting multiple lines of text, terminated by a period
         and a 200 code. Returns: [initialcode, [bodytext_1lineperentry], finalcode]
         """
-        code, text = self.getresultcode()
+        code, _text = self.getresultcode()
         if code < 100 or code >= 200:
             raise Exception(f"Got '{code}' when 100-class response expected")
 
@@ -108,13 +117,6 @@ class Connection:
             dictionary[key] = unquote(val)
         return dictionary
 
-    def saveconnectioninfo(self):
-        """Called by __init__ to handle the initial connection. Will save off the capabilities and messageid."""
-        code, string = self.get200result()
-        capstr, msgid = re.search('<(.*)> (<.*>)$', string).groups()
-        self.capabilities = capstr.split('.')
-        self.messageid = msgid
-
     def getcapabilities(self):
         """Returns a list of the capabilities advertised by the server."""
         return self.capabilities
@@ -128,7 +130,7 @@ class Connection:
         Gets a dict of available databases. The key is the db name and the value is the db description. This command
         may generate network traffic!
         """
-        if hasattr(self, 'dbdescs'):
+        if self.dbdescs is not None:
             return self.dbdescs
 
         self.sendcommand("SHOW DB")
@@ -140,7 +142,7 @@ class Connection:
         Gets a dict of available strategies. The key is the strat name and the value is the strat description. This
         call may generate network traffic!
         """
-        if hasattr(self, 'stratdescs'):
+        if self.stratdescs is not None:
             return self.stratdescs
 
         self.sendcommand("SHOW STRAT")
@@ -152,7 +154,7 @@ class Connection:
         Gets a Database object corresponding to the database name passed in. This function explicitly will *not*
         generate network traffic. If you have not yet run getdbdescs(), it will fail.
         """
-        if not hasattr(self, 'dbobjs'):
+        if self.dbobjs is None:
             self.dbobjs = {}
 
         if dbname in self.dbobjs:
@@ -245,14 +247,17 @@ class Database:
         """Initialize the object -- requires a Connection object and a database name."""
         self.conn = dictconn
         self.name = dbname
+        self.info = None
+        self.description = None
 
     def getname(self):
         """Returns the short name for this database."""
         return self.name
 
     def getdescription(self):
-        if hasattr(self, 'description'):
+        if self.description is not None:
             return self.description
+
         if self.getname() == '*':
             self.description = 'All Databases'
         elif self.getname() == '!':
@@ -263,7 +268,7 @@ class Database:
 
     def getinfo(self):
         """Returns a string of info describing this database."""
-        if hasattr(self, 'info'):
+        if self.info is not None:
             return self.info
 
         if self.getname() == '*':

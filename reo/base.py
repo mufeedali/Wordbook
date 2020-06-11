@@ -252,6 +252,7 @@ def get_wn_version():
 
 
 def parse_wordnet(definition):
+    """Parse the WordNet output. Stolen from Apostrophe's inline_preview.py"""
     lines = definition.splitlines()
     lines = " ".join(lines)
     lines = re.split(r"( adv | adj | n | v |^adv |^adj |^n |^v )", lines)
@@ -318,7 +319,7 @@ def process_definition(definition, term, sen_col, word_col):
     for entry in def_list:
         if not entry["defs"]:
             continue
-        elif entry["class"].startswith("n"):
+        if entry["class"].startswith("n"):
             def_string += "  <i>noun</i>\n"
         elif entry["class"].startswith("v"):
             def_string += "  <i>verb</i>\n"
