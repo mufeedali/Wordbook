@@ -20,6 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 
 from reo import utils
+from reo.dict_base import Connection, Database
 
 _POOL = ThreadPoolExecutor()
 
@@ -237,6 +238,7 @@ def get_wn_file():
 @lru_cache(maxsize=None)
 def get_wn_version():
     """Check version of WordNet."""
+    # TODO: Stops working with the new implementation.
     try:
         check_process = subprocess.Popen(["dict", "-d", "wn", "test"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         check_out = check_process.stdout.read().decode()
@@ -249,43 +251,107 @@ def get_wn_version():
     return '3.1'
 
 
+def parse_wordnet(definition):
+    lines = definition.splitlines()
+    lines = " ".join(lines)
+    lines = re.split(r"( adv | adj | n | v |^adv |^adj |^n |^v )", lines)
+    res = []
+    act_res = {"defs": [], "class": "none", "num": "None"}
+
+    for line in lines:
+        line = line.strip()
+
+        if not line:
+            continue
+        if line in ["adv", "adj", "n", "v"]:
+            if act_res:
+                res.append(act_res.copy())
+            act_res = {"defs": [], "class": line}
+        else:
+            ll = re.split(r"(?: |^)(\d): ", line)
+            act_def = {}
+
+            for lll in ll:
+                if lll.strip().isdigit() or not lll.strip():
+                    if "description" in act_def and act_def["description"]:
+                        act_res["defs"].append(act_def.copy())
+                    act_def = {"num": lll}
+                    continue
+
+                a = re.findall(r"(\[(syn|ant): (.+?)\] ??)+", lll)
+
+                for n in a:
+                    if n[1] == "syn":
+                        act_def["syn"] = list(filter(None, re.findall(r"{(.*?)}.*?", n[2])))
+                    else:
+                        act_def["ant"] = list(filter(None, re.findall(r"{(.*?)}.*?", n[2])))
+
+                tbr = re.search(r"\[.+\]", lll)
+                if tbr:
+                    lll = lll[:tbr.start()]
+                lll = lll.split(";")
+
+                act_def["examples"] = []
+                act_def["description"] = []
+                for llll in lll:
+                    llll = llll.strip()
+                    if llll.strip().startswith("\""):
+                        act_def["examples"].append(llll)
+                    else:
+                        act_def["description"].append(llll)
+
+            if act_def and "description" in act_def:
+                act_res["defs"].append(act_def.copy())
+
+    res.append(act_res.copy())
+    return res
+
+
 def process_definition(definition, term, sen_col, word_col):
     """Format the definition obtained from 'dict'."""
-    definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n', '')
-    definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n', '')
+    utils.log_info(f"Searching {term.strip()}")
     definition = html.escape(definition, False)
-    term_in_wn = re.search("  " + term, definition, flags=re.IGNORECASE).group(0) or term
-    definition = definition.replace(term_in_wn + '\n', '')
-    utils.log_info(f"Searching {term_in_wn.strip()}")
-    re_list = {
-        r'[ \t\r\f\v]+n\s+': '  <i>noun</i>\n      ',  # definition header of noun
-        r'[ \t\r\f\v]+adv\s+': '  <i>adverb</i>\n      ',  # definition header of adverb
-        r'[ \t\r\f\v]+adj\s+': '  <i>adjective</i>\n      ',  # definition header of adjective
-        r'[ \t\r\f\v]+v\s+': '  <i>verb</i>\n      ',  # definition header of verb
-        r'\s+(\d+):\D': r'\n  <b>\1:  </b>',  # numbering
-        r'([-]+)\s+      \s+': r'\1',  # clear whitespaces after hyphen
-        r'\s+      \s+': r' ',  # clear whitespaces (usually the ones after a linebreak)
-        r'" "': '"; "',  # correction for some weird cases where sentences are only separated by a single space
-        r'[;:]\s*"([^;:]*)"\s*-': fr'\n        <font color="{sen_col}">\1</font> - ',  # sentences that are quotes
-        r'[;:]\s*"([^;:]*)"\s*\[': fr'\n        <font color="{sen_col}">\1</font>[',  # sentence followed by syn or ant
-        r'[;:]\s*"([^;:]*)"\s*\;': fr';\n        <font color="{sen_col}">\1</font>;',  # sentence followed by another
-        r'[;:]*\s*"([^;:]*)"\s*\;': fr'\n        <font color="{sen_col}">\1</font>;',  # clean up leftovers from last
-        r'[;:]\s*"([^;:]*)"\s*$': fr'\n        <font color="{sen_col}">\1</font>',  # sentences at EOL
-        r'[;:]\s*"(.*)"\s*-': fr'\n        <font color="{sen_col}">\1</font> - ',  # leftover quotes
-        r'\[syn:': r'\n        <i>Synonyms: ',  # synonyms header
-        r'\[ant:': r'\n        <i>Antonyms: ',  # antonyms header
-        r'}\]': r'}</i>',  # syn and ant end markers
-        r"\{([^{]*)\([a-zA-Z]\)\}": fr'<a href="search:\1"><font color="{word_col}">\1</font></a>',  # words with (a)
-        r"\{([^{]*)\}": fr'<a href="search:\1"><font color="{word_col}">\1</font></a>',  # syn and ant words
-        r';\s*$': r'',  # fixes wrong line endings (eg: "change")
-        "`": "'",  # correct wrong character usage
-    }
-    for to_replace, replace_with in re_list.items():
-        re_clean = re.compile(to_replace, re.MULTILINE)
-        definition = re_clean.sub(replace_with, definition)
+    term_in_wn = re.search(term, definition, flags=re.IGNORECASE).group(0) or term
+    definition = definition.replace(term_in_wn + '\n', "")
+    def_list = parse_wordnet(definition)
+    def_string = ''
+    for entry in def_list:
+        if not entry["defs"]:
+            continue
+        elif entry["class"].startswith("n"):
+            def_string += "  <i>noun</i>\n"
+        elif entry["class"].startswith("v"):
+            def_string += "  <i>verb</i>\n"
+        elif entry["class"].startswith("adj"):
+            def_string += "  <i>adjective</i>\n"
+        elif entry["class"].startswith("adv"):
+            def_string += "  <i>adverb</i>\n"
+        else:
+            continue
+        for definition_entry in entry["defs"]:
+            def_string += f'  <b>{definition_entry["num"]}:</b>  '
+            def_string += " ".join(definition_entry["description"]) + '\n'
+            if definition_entry["examples"]:
+                for example in definition_entry["examples"]:
+                    example = example.strip("")
+                    def_string += f'        <font color="{sen_col}">{example}</font>\n'
+            if "syn" in definition_entry and definition_entry["syn"]:
+                def_string += "        <i>Synonyms:</i> "
+                syn_string = ''
+                for synonym in definition_entry["syn"]:
+                    synonym = synonym.strip("")
+                    syn_string += f'<a href="search:{synonym}"><font color="{word_col}">{synonym}</font></a>, '
+                def_string += syn_string.strip(', ') + '\n'
+            if "ant" in definition_entry and definition_entry["ant"]:
+                def_string += "        <i>Antonyms:</i> "
+                ant_string = ''
+                for antonym in definition_entry["ant"]:
+                    antonym = antonym.strip("")
+                    ant_string += f'<a href="search:{antonym}"><font color="{word_col}">{antonym}</font></a>, '
+                def_string += ant_string.strip(', ') + '\n'
     return {
         'term': term_in_wn,
-        'definition': "  " + definition.strip(),
+        'definition': "  " + def_string.strip(),
     }
 
 
@@ -300,7 +366,7 @@ def run_processes(term):
     """Run the processes for obtaining defintion data."""
     strategy = "lev"
     try:
-        process_def = subprocess.Popen(["dict", "-d", "wn", term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # process_def = subprocess.Popen(["dict", "-d", "wn", term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         process_pron = subprocess.Popen(["espeak-ng", "-ven-uk-rp", "--ipa", "-q", term], stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
         process_close = subprocess.Popen(["dict", "-m", "-d", "wn", "-s", strategy, term], stdout=subprocess.PIPE,
@@ -308,9 +374,14 @@ def run_processes(term):
     except OSError as ex:
         print("Didn't Work! ERROR INFO: " + str(ex))
         return None
-    process_def.wait()
+    # process_def.wait()
     output = ['', '', '']
-    output[0] = process_def.stdout.read().decode()
+    con = Connection('localhost')
+    db = Database(con, 'wn')
+    try:
+        output[0] = db.define(term)[0].getdefstr()
+    except IndexError:
+        output[0] = ''
     process_pron.wait()
     output[1] = process_pron.stdout.read().decode()
     process_close.wait()
