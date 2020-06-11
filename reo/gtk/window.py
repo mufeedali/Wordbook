@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
 # Author: Mufeed Ali <fushinari@protonmail.com>
 
 import os
@@ -66,7 +66,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
             'eSpeak-ng to provide a complete user interface.'
         )
         about_dialog.set_authors(['Mufeed Ali', ])
-        about_dialog.set_license_type(Gtk.License.MIT_X11)
+        about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/reo")
         about_dialog.set_copyright('Copyright © 2016-2020 Mufeed Ali')
         about_dialog.connect('response', lambda dialog, response: dialog.destroy())
@@ -161,8 +161,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
                 GLib.idle_add(self._term_view.set_markup,
                               f'<span size="large" weight="bold">{out["term"].strip()}</span>')
-                GLib.idle_add(self._pronunciation_view.set_markup,
-                              f'<i>{out["pronunciation"].strip()}</i>')
+                GLib.idle_add(self._pronunciation_view.set_markup, f'<i>{out["pronunciation"].strip()}</i>')
 
                 out_text = base.clean_pango(f'{out["definition"]}')
                 if out['close']:
@@ -260,7 +259,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip('\'')
+        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*').rstrip('\'').lstrip('.')
         cleaner = ['(', ')', '<', '>', '[', ']']
         for item in cleaner:
             text = text.replace(item, '')

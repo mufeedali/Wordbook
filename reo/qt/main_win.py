@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
 # Author: Mufeed Ali <fushinari@protonmail.com>
 
 import random
@@ -55,7 +55,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             f'About Reo-Qt {utils.VERSION}',
             f'<p><b>About Reo-Qt {utils.VERSION}</b></p>'
             '<p>Reo is a dictionary application using dictd, espeak, etc.</p>'
-            '<p>This program is MIT-licensed.</p>'
+            '<p>Licensed under GNU General Public License, version 3 or later.</p>'
             '<p>Copyright (C) 2016-2020 Mufeed Ali (fushinari)</p>'
             '<p><a href="https://www.github.com/fushinari/reo">GitHub</a></p>'
         )
@@ -172,12 +172,12 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             sys.exit()
             return None
         if clean_term and not clean_term == '' and not clean_term.isspace():
-            return base.generate_definition(clean_term, wordcol, sencol, True, 'html')
+            return base.generate_definition(clean_term, wordcol, sencol, True)
         return None
 
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>".-?`![](){}/\\:;,*').rstrip('\'')
+        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*').rstrip('\'').lstrip('.')
         cleaner = ['(', ')', '<', '>', '[', ']']
         for item in cleaner:
             text = text.replace(item, '')
