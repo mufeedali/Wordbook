@@ -272,6 +272,7 @@ def process_definition(definition, term, sen_col, word_col):
         r'[;:]*\s*"([^;:]*)"\s*\;': fr'\n        <font color="{sen_col}">\1</font>;',  # clean up leftovers from last
         r'[;:]\s*"([^;:]*)"\s*$': fr'\n        <font color="{sen_col}">\1</font>',  # sentences at EOL
         r'[;:]\s*"(.*)"\s*-': fr'\n        <font color="{sen_col}">\1</font> - ',  # leftover quotes
+        r'[;:]\s*\(': r'\n        (',  # non-example after example (o.k.)
         r'\[syn:': r'\n        <i>Synonyms: ',  # synonyms header
         r'\[ant:': r'\n        <i>Antonyms: ',  # antonyms header
         r'}\]': r'}</i>',  # syn and ant end markers
