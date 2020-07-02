@@ -29,12 +29,12 @@ class SettingsWindow(Gtk.Window):
         """Initialize the Settings window."""
         super().__init__(**kwargs)
 
-        self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
-        self._debug_switch.connect("notify::active", self._on_debug_switch_activate)
-        self._live_search_switch.connect("notify::active", self._on_live_search_activate)
-        self._max_hide_switch.connect("notify::active", self._on_max_hide_swtich_activate)
-        self._dark_ui_switch.connect("notify::active", self._on_dark_ui_swtich_activate)
-        self._dark_font_switch.connect("notify::active", self._on_dark_font_swtich_activate)
+        self._cdef_switch.connect('notify::active', self._on_cdef_switch_activate)
+        self._debug_switch.connect('notify::active', self._on_debug_switch_activate)
+        self._live_search_switch.connect('notify::active', self._on_live_search_activate)
+        self._max_hide_switch.connect('notify::active', self._on_max_hide_swtich_activate)
+        self._dark_ui_switch.connect('notify::active', self._on_dark_ui_swtich_activate)
+        self._dark_font_switch.connect('notify::active', self._on_dark_font_swtich_activate)
 
     def load_settings(self):
         """Load settings from the Settings instance."""
@@ -70,7 +70,7 @@ class SettingsWindow(Gtk.Window):
     def _on_dark_ui_swtich_activate(switch, _gparam):
         """Change UI theme."""
         Settings.get().gtk_dark_ui = switch.get_active()
-        Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", switch.get_active())
+        Gtk.Settings.get_default().set_property('gtk-application-prefer-dark-theme', switch.get_active())
 
     @staticmethod
     def _on_dark_font_swtich_activate(switch, _gparam):

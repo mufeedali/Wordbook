@@ -22,8 +22,8 @@ from reo.settings import Settings
 
 PARSER = argparse.ArgumentParser()
 MGROUP = PARSER.add_mutually_exclusive_group()
-MGROUP.add_argument("-i", "--verinfo", action="store_true", help="Advanced Version Info")
-MGROUP.add_argument("-v", "--verbose", action="store_true", help="Make it scream louder")
+MGROUP.add_argument('-i', '--verinfo', action='store_true', help='Advanced Version Info')
+MGROUP.add_argument('-v', '--verbose', action='store_true', help='Make it scream louder')
 PARSED = PARSER.parse_args()
 utils.log_init(bool(PARSED.verbose) or Settings.get().debug)
 base.fold_gen()
@@ -41,8 +41,8 @@ if PARSED.verinfo:
 def main():
     """Execute the application."""
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName("Reo")
-    utils.log_info("Launching Reo-Qt")
+    app.setApplicationName('Reo')
+    utils.log_info('Launching Reo-Qt')
     main_window = ReoMain()
     main_window.show()
     sys.exit(app.exec_())

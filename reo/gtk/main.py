@@ -26,8 +26,8 @@ class Application(Gtk.Application):
             application_id='com.github.fushinari.Reo',
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
         )
-        self.add_main_option("info", ord("i"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, "Print version info", None)
-        self.add_main_option("verbose", ord("v"), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, "Make it scream louder",
+        self.add_main_option('info', ord('i'), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, 'Print version info', None)
+        self.add_main_option('verbose', ord('v'), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, 'Make it scream louder',
                              None)
 
     def do_activate(self):
@@ -35,32 +35,32 @@ class Application(Gtk.Application):
 
         def setup_actions(window):
             """Setup the Gio actions for the application."""
-            quit_action = Gio.SimpleAction.new("quit", None)
-            quit_action.connect("activate", self.on_quit)
+            quit_action = Gio.SimpleAction.new('quit', None)
+            quit_action.connect('activate', self.on_quit)
             self.add_action(quit_action)
 
-            about_action = Gio.SimpleAction.new("about", None)
-            about_action.connect("activate", window.on_about)
+            about_action = Gio.SimpleAction.new('about', None)
+            about_action.connect('activate', window.on_about)
             self.add_action(about_action)
 
-            paste_search_action = Gio.SimpleAction.new("paste-search", None)
-            paste_search_action.connect("activate", window.on_paste_search)
+            paste_search_action = Gio.SimpleAction.new('paste-search', None)
+            paste_search_action.connect('activate', window.on_paste_search)
             self.add_action(paste_search_action)
 
-            preferences_action = Gio.SimpleAction.new("preferences", None)
-            preferences_action.connect("activate", window.on_preferences)
+            preferences_action = Gio.SimpleAction.new('preferences', None)
+            preferences_action.connect('activate', window.on_preferences)
             self.add_action(preferences_action)
 
-            random_word_action = Gio.SimpleAction.new("random-word", None)
-            random_word_action.connect("activate", window.on_random_word)
+            random_word_action = Gio.SimpleAction.new('random-word', None)
+            random_word_action.connect('activate', window.on_random_word)
             self.add_action(random_word_action)
 
-            search_selected_action = Gio.SimpleAction.new("search-selected", None)
-            search_selected_action.connect("activate", window.on_search_selected)
+            search_selected_action = Gio.SimpleAction.new('search-selected', None)
+            search_selected_action.connect('activate', window.on_search_selected)
             self.add_action(search_selected_action)
 
-            shortcuts_action = Gio.SimpleAction.new("shortcuts", None)
-            shortcuts_action.connect("activate", window.on_shortcuts)
+            shortcuts_action = Gio.SimpleAction.new('shortcuts', None)
+            shortcuts_action.connect('activate', window.on_shortcuts)
             self.add_action(shortcuts_action)
 
             self.add_accelerator('<Primary>s', 'app.search-selected', None)
@@ -82,17 +82,17 @@ class Application(Gtk.Application):
     def do_command_line(self, command_line):
         """Parse commandline arguments."""
         options = command_line.get_options_dict().end().unpack()
-        if "verinfo" in options:
+        if 'verinfo' in options:
             base.get_version_info()
             return 0
-        utils.log_init("verbose" in options or Settings.get().debug or False)
+        utils.log_init('verbose' in options or Settings.get().debug or False)
         self.activate()
         return 0
 
     def do_startup(self):
         """Manage startup of the application."""
         Gtk.Application.do_startup(self)
-        Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", Settings.get().gtk_dark_ui)
+        Gtk.Settings.get_default().set_property('gtk-application-prefer-dark-theme', Settings.get().gtk_dark_ui)
 
         GLib.set_application_name('Reo')
         GLib.set_prgname('com.github.fushinari.Reo')

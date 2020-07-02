@@ -21,7 +21,7 @@ extra_requirements = {
 }
 
 setup(
-    author="Mufeed Ali",
+    author='Mufeed Ali',
     author_email='fushinari@protonmail.com',
     python_requires='>=3.6',
     classifiers=[
@@ -34,7 +34,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="Reo is a dictionary application using dictd and espeak.",
+    description='Reo is a dictionary application using dictd and espeak.',
     entry_points={
         'gui_scripts': [
             'reo=reo.gtk:main [GTK]',
@@ -42,7 +42,7 @@ setup(
         ],
     },
     install_requires=requirements,
-    license="GPL-3",
+    license='GPL-3',
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords='reo',

@@ -168,7 +168,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
                     out_text = out_text + base.clean_pango(f'\n\n{out["close"].strip()}').replace('&', '&amp;')
 
                 GLib.idle_add(self._def_view.set_markup, out_text)
-                if text not in except_list:
+                if text not in except_list and out["term"] != 'Lookup failed.':
                     GLib.idle_add(self._speak_button.set_visible, True)
 
                 return
@@ -259,7 +259,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*').rstrip('\'').lstrip('.')
+        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*')
         cleaner = ['(', ')', '<', '>', '[', ']']
         for item in cleaner:
             text = text.replace(item, '')
