@@ -87,9 +87,11 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
 
     def _on_link_activated(self, url):
         """Search term in link."""
-        term = url.toString()[7:]
-        self.searchEntry.setText(term)
-        self._on_search_clicked(pause=False, text=term)
+        term = url.toString()
+        if term.startswith('search:'):
+            term = term[7:]
+            self.searchEntry.setText(term)
+            self._on_search_clicked(pause=False, text=term)
 
     def _on_live_search_triggered(self):
         """Enable or disable live search."""
@@ -113,10 +115,11 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
                 out = self.__search(text)
                 if out is None:
                     return
-                out_text = base.clean_html(f'<p><b>{out["term"].strip()}</b><br>{out["pronunciation"].strip()}</p>'
+                out_text = base.clean_html(f'<p><b>{out["term"].strip()}</b><br>'
+                                           f'{out["pronunciation"].strip()}</p>'
                                            f'<p>{out["definition"]}</p>')
                 if out['close']:
-                    out_text = out_text + f'<p>{out["close"].strip()}</p>'
+                    out_text = out_text + base.clean_html(f'<p>{out["close"].strip()}</p>')
 
                 self.defView.setText(out_text)
                 return
@@ -137,52 +140,11 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         self.searchEntry.setText(self.defView.textCursor().selectedText())
         self._on_search_clicked()
 
-    def __reactor(self, clean_term):
-        """Search for definition."""
-        if Settings.get().qt_dark_font:
-            sencol = 'cyan'  # Color of sentences in Dark mode
-            wordcol = 'lightgreen'  # Color of: Similar Words, Synonyms and Antonyms.
-        else:
-            sencol = 'blue'  # Color of sentences in regular
-            wordcol = 'green'  # Color of: Similar Words, Synonyms, Antonyms.
-        wn_list = (
-            '00-database-allchars',
-            '00-database-info',
-            '00-database-short',
-            '00-database-url'
-        )
-        if clean_term in wn_list:
-            return f'<tt> Running Reo with WordNet {self.wn_future.result()[0]}</tt>'
-        if clean_term == 'fortune -a':
-            return base.clean_html(base.get_fortune())
-        if clean_term == 'cowfortune':
-            return base.clean_html(base.get_cowfortune())
-        if clean_term == 'reo':
-            return {
-                'term': '<tt>Reo</tt>',
-                'pronunciation': '<tt>/ɹˈiːəʊ/</tt>',
-                'definition': '<tt>  <i>Japanese Word</i><br>'
-                              '  <b>1:</b> Name of this application, chosen kind of at random.<br>'
-                              '  <b>2:</b> Japanese word meaning \'Wise Center\'<br></tt>',
-                'close': '<tt><b>Similar Words:</b><br>'
-                         f'  <i><font foreground=\"{wordcol}\">ro, re, roe, redo, reno, oreo, ceo, leo, neo, rho, rio, '
-                         'reb, red, ref, rem, rep, res, ret, rev, rex</font></i></tt>'
-            }
-        if clean_term in ('crash now', 'close now'):
-            sys.exit()
-            return None
-        if clean_term and not clean_term == '' and not clean_term.isspace():
-            return base.generate_definition(clean_term, wordcol, sencol, True)
-        return None
-
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*')
-        cleaner = ['(', ')', '<', '>', '[', ']']
-        for item in cleaner:
-            text = text.replace(item, '')
+        text = base.cleaner(search_text)
         if not text == '' and not text.isspace():
-            return self.__reactor(text)
+            return base.reactor(text, Settings.get().qt_dark_font, self.wn_future.result()[0], Settings.get().cdef)
         new_ced = QtWidgets.QMessageBox.warning
         new_ced(
             self,

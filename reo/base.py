@@ -16,6 +16,7 @@ import lzma
 import os
 import re
 import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 
@@ -24,12 +25,21 @@ from reo import utils
 _POOL = ThreadPoolExecutor()
 
 
-def _threadpool(f):
+def _threadpool(func):
     """Wraps around a function allowing it to run in a separate thread and return a future object."""
     def wrap(*args, **kwargs):
-        return (_POOL).submit(f, *args, **kwargs)
+        return (_POOL).submit(func, *args, **kwargs)
 
     return wrap
+
+
+def cleaner(search_term):
+    """Clean up search terms."""
+    text = search_term.strip().strip('<>"-?`![](){}/\\:;,*')
+    cleaner_list = ['(', ')', '<', '>', '[', ']']
+    for item in cleaner_list:
+        text = text.replace(item, '')
+    return text
 
 
 def clean_html(data):
@@ -66,23 +76,24 @@ def fold_gen():
 
 
 @lru_cache(maxsize=None)
-def format_close_words(clp, text):
+def format_close_words(clp, text, skip_clean=False):
     """Format the similar words list obtained."""
-    # Clean up
-    sub_dict = {
-        r'\s+      \s+': r'  ',  # clear extra space
-        f'  ["]*{text.lower()}["]*$': r'',  # remove ocurrence of same term at the end
-        f'(.)  {text.lower()}  (.)': r'\1  \2',  # remove ocurrence of same term in the middle with no quotations
-        f'wn: ["]*{text.lower()}["]*  (.)': r'\1',  # remove ocurrence of same term at the beginning
-        f'(.)  "{text.lower()}"  (.)': r'\1  \2',  # remove ocurrence of same term in the middle with quotations
-        r'\s*\n\s*': r'  ',  # clear extra whitespace for replacement with comma
-        r'\s\s+': r', ',  # replace with commas for separation
-        f'["]+{text.lower()}["]+': r'',  # replace single ocurrences of the same term
-        'wn:[,]*': r'',  # remove 'wn:' from the start
-    }
-    for to_replace, replace_with in sub_dict.items():
-        sub_re = re.compile(to_replace)
-        clp = sub_re.sub(replace_with, clp).strip()
+    if not skip_clean:
+        # Clean up
+        sub_dict = {
+            r'\s+      \s+': r'  ',  # clear extra space
+            f'  ["]*{text.lower()}["]*$': r'',  # remove ocurrence of same term at the end
+            f'(.)  {text.lower()}  (.)': r'\1  \2',  # remove ocurrence of same term in the middle with no quotations
+            f'wn: ["]*{text.lower()}["]*  (.)': r'\1',  # remove ocurrence of same term at the beginning
+            f'(.)  "{text.lower()}"  (.)': r'\1  \2',  # remove ocurrence of same term in the middle with quotations
+            r'\s*\n\s*': r'  ',  # clear extra whitespace for replacement with comma
+            r'\s\s+': r', ',  # replace with commas for separation
+            f'["]+{text.lower()}["]+': r'',  # replace single ocurrences of the same term
+            'wn:[,]*': r'',  # remove 'wn:' from the start
+        }
+        for to_replace, replace_with in sub_dict.items():
+            sub_re = re.compile(to_replace)
+            clp = sub_re.sub(replace_with, clp).strip()
     # Make them all hyperlinks.
     new_list = []
     for item in clp.split(', '):
@@ -197,7 +208,7 @@ def get_fortune(mono=True):
         fortune_out = fortune_process.stdout.read().decode()
         fortune_out = html.escape(fortune_out, False)
     except OSError as ex:
-        fortune_out = 'Easter Egg Fail!!! Install \'fortune\' or \'fortunemod\'.'
+        fortune_out = 'Easter Egg Fail! Install \'fortune\' or \'fortune-mod\'.'
         utils.log_error(f'{fortune_out}\n{str(ex)}')
     if mono:
         return f'<tt>{fortune_out}</tt>'
@@ -235,8 +246,8 @@ def get_version_info():
 def get_wn_file():
     """Get the WordNet wordlist according to WordNet version."""
     wn_version = get_wn_version()
-    wn = str(lzma.open(utils.get_word_list(wn_version), 'r').read()).split('\\n')
-    return (wn_version, wn)
+    wn_file = str(lzma.open(utils.get_word_list(wn_version), 'r').read()).split('\\n')
+    return (wn_version, wn_file)
 
 
 @lru_cache(maxsize=None)
@@ -293,6 +304,68 @@ def process_definition(definition, term, sen_col, word_col):
         'term': term_in_wn,
         'definition': '  ' + definition.strip(),
     }
+
+
+def reactor(text, dark_font, wn_ver, cdef):
+    """Return appropriate definitions."""
+    if dark_font:
+        sencol = 'cyan'  # Color of sentences in Dark mode
+        wordcol = 'lightgreen'  # Color of: Similar Words,
+#                                     Synonyms and Antonyms.
+    else:
+        sencol = 'blue'  # Color of sentences in regular
+        wordcol = 'green'  # Color of: Similar Words, Synonyms, Antonyms.
+    wn_list = (
+        '00-database-allchars',
+        '00-database-info',
+        '00-database-short',
+        '00-database-url'
+    )
+    if text in wn_list:
+        return {
+            'term': '<tt>Reo</tt>',
+            'pronunciation': f'<tt>Powered by dictd and WordNet {wn_ver}</tt>',
+            'definition': '<tt>URL: <a href="https://wordnet.princeton.edu/">WordNet</a></tt>',
+            'close': ''
+        }
+    if text == 'fortune -a':
+        return {
+            'term': '<tt>Some random adage</tt>',
+            'pronunciation': '<tt>Courtesy of fortune</tt>',
+            'definition': get_fortune(),
+            'close': ''
+        }
+    if text == 'cowfortune':
+        return {
+            'term': '<tt>Some random adage from a cow</tt>',
+            'pronunciation': '<tt>Courtesy of fortune and cowsay</tt>',
+            'definition': get_cowfortune(),
+            'close': ''
+        }
+    if text.lower() == 'reo':
+        return {
+            'term': '<tt>Reo</tt>',
+            'pronunciation': '<tt>/ɹˈiːəʊ/</tt>',
+            'definition': '<tt><i>Japanese Word</i>\n'
+                          '  <b>1:</b> Name of this application, chosen kind of at random.\n'
+                          '  <b>2:</b> Japanese word meaning \'Wise Center\'</tt>',
+            'close': ('<tt> <b>Similar Words:</b>\n' +
+                      f'  <i><span foreground=\"{wordcol}\">' +
+                      ', '.join(
+                          format_close_words(
+                              'ro, re, roe, redo, reno, oreo, ceo, leo, neo, ' +
+                              'rho, rio, reb, red, ref, rem, rep, res, ret, rev, rex',
+                              'Reo', True
+                          )
+                      ) +
+                      '</span></i></tt>')
+        }
+    if text in ('crash now', 'close now'):
+        sys.exit()
+        return None
+    if text and not text.isspace():
+        return generate_definition(text, wordcol, sencol, cdef=cdef)
+    return None
 
 
 def read_term(text, speed):

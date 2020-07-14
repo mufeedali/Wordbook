@@ -131,8 +131,9 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def _on_link_activated(self, _widget, data):
         """Search for terms that are marked as hyperlinks."""
         # Using GLib.idle_add to prevent segfaults (which shouldn't be happening in the first place)
-        GLib.idle_add(self._search_entry.set_text, data[7:])
-        self._on_search_clicked(pause=False, text=data[7:])
+        if data.startswith('search'):
+            GLib.idle_add(self._search_entry.set_text, data[7:])
+            self._on_search_clicked(pause=False, text=data[7:])
 
     def _on_preferences_destroy(self, _window):
         """Refresh view when Preferences window is closed. Only necessary for definition now."""
@@ -208,64 +209,12 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self._stack.set_visible_child_name, page)
         return False
 
-    def __reactor(self, text):
-        """Check easter eggs and set variables."""
-        if Settings.get().gtk_dark_font:
-            sencol = 'cyan'  # Color of sentences in Dark mode
-            wordcol = 'lightgreen'  # Color of: Similar Words,
-#                                     Synonyms and Antonyms.
-        else:
-            sencol = 'blue'  # Color of sentences in regular
-            wordcol = 'green'  # Color of: Similar Words, Synonyms, Antonyms.
-        wn_list = (
-            '00-database-allchars',
-            '00-database-info',
-            '00-database-short',
-            '00-database-url'
-        )
-        if text in wn_list:
-            return f'<tt> Running Reo with WordNet {self._wn_future.result()[0]}</tt>'
-        if text == 'fortune -a':
-            return {
-                'term': '<tt>Some random adage</tt>',
-                'pronunciation': '<tt>Courtesy of fortune</tt>',
-                'definition': base.get_fortune(),
-                'close': ''
-            }
-        if text == 'cowfortune':
-            return {
-                'term': '<tt>Some random adage from a cow</tt>',
-                'pronunciation': '<tt>Courtesy of fortune and cowsay</tt>',
-                'definition': base.get_cowfortune(),
-                'close': ''
-            }
-        if text == 'reo':
-            return {
-                'term': '<tt>Reo</tt>',
-                'pronunciation': '<tt>/ɹˈiːəʊ/</tt>',
-                'definition': '<tt><i>Japanese Word</i>\n'
-                              '  <b>1:</b> Name of this application, chosen kind of at random.\n'
-                              '  <b>2:</b> Japanese word meaning \'Wise Center\'</tt>',
-                'close': '<tt> <b>Similar Words:</b>\n'
-                         f' <i><span foreground=\"{wordcol}\">  ro, re, roe, redo, reno, '
-                         'oreo, ceo, leo, neo, rho, rio, reb, red, ref, rem, rep, res, ret, rev, rex</span></i></tt>'
-            }
-        if text in ('crash now', 'close now'):
-            self.destroy()
-            return None
-        if text and not text.isspace():
-            return base.generate_definition(text, wordcol, sencol, cdef=Settings.get().cdef)
-        return None
-
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
-        text = search_text.strip().strip('<>"-?`![](){}/\\:;,*')
-        cleaner = ['(', ')', '<', '>', '[', ']']
-        for item in cleaner:
-            text = text.replace(item, '')
+        text = base.cleaner(search_text)
         if not text == '' and not text.isspace():
             self.__page_switch('content_page')
-            return self.__reactor(text)
+            return base.reactor(text, Settings.get().gtk_dark_font, self._wn_future.result()[0], Settings.get().cdef)
         self.__page_switch('welcome_page')
         if not Settings.get().live_search:
             self.__new_error(

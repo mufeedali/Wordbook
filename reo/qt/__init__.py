@@ -12,6 +12,7 @@ works across most Linux distributions without any changes.
 """
 
 import argparse  # for CommandLine-Interface (CLI).
+import signal
 import sys
 
 from PyQt5 import QtWidgets
@@ -22,10 +23,11 @@ from reo.settings import Settings
 
 PARSER = argparse.ArgumentParser()
 MGROUP = PARSER.add_mutually_exclusive_group()
-MGROUP.add_argument('-i', '--verinfo', action='store_true', help='Advanced Version Info')
+MGROUP.add_argument('-i', '--verinfo', action='store_true', help='Print version info')
 MGROUP.add_argument('-v', '--verbose', action='store_true', help='Make it scream louder')
 PARSED = PARSER.parse_args()
 utils.log_init(bool(PARSED.verbose) or Settings.get().debug)
+signal.signal(signal.SIGINT, signal.SIG_DFL)  # Exit if we get a SIGINT. The exit is dirty but causes no issues.
 base.fold_gen()
 
 REO_VERSION = utils.VERSION
