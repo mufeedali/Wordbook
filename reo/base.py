@@ -35,8 +35,8 @@ def _threadpool(func):
 
 def cleaner(search_term):
     """Clean up search terms."""
-    text = search_term.strip().strip('<>"-?`![](){}/\\:;,*')
-    cleaner_list = ['(', ')', '<', '>', '[', ']']
+    text = search_term.strip().strip('<>"-?`![](){}/:;,*')
+    cleaner_list = ['(', ')', '<', '>', '[', ']', '&', '\\']
     for item in cleaner_list:
         text = text.replace(item, '')
     return text
