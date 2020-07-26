@@ -100,12 +100,13 @@ def format_close_words(clp, text, skip_clean=False):
         item = item.strip('"')
         if item:
             new_list.append(f'<a href="search:{item}">{item}</a>'.strip())
-    return new_list
+    new_string = ', '.join(new_list)
+    return new_string
 
 
 def generate_definition(text, wordcol, sencol, cdef=True):
     """Check if custom definition exists."""
-    if cdef and os.path.exists(utils.CDEF_FOLD + '/' + text.lower()):
+    if cdef and os.path.isfile(utils.CDEF_FOLD + '/' + text.lower()):
         return get_custom_def(text, wordcol, sencol)
     return get_data(text, wordcol, sencol)
 
@@ -129,8 +130,14 @@ def get_custom_def(text, wordcol, sencol):
     """Present custom definition when available."""
     with open(utils.CDEF_FOLD + '/' + text, 'r') as def_file:
         custom_def_dict = json.load(def_file)
-    definition = custom_def_dict['definition']
-    close = custom_def_dict['close']
+    if 'linkto' in custom_def_dict:
+        return get_data(custom_def_dict.get('linkto', text), wordcol, sencol)
+    definition = custom_def_dict.get('definition', get_definition(text, wordcol, sencol)[0]['definition'])
+    close = custom_def_dict.get('close', get_close_words(text))
+    if close is None or close.strip() == '':
+        final_close = ''
+    else:
+        final_close = f'<b>Similar Words</b>:<br>  <i><font color="{wordcol}">{close}</font></i>'
     re_list = {
         '<i>($WORDCOL)</i>': wordcol,
         '<i>($SENCOL)</i>': sencol,
@@ -141,49 +148,51 @@ def get_custom_def(text, wordcol, sencol):
     }
     for i, j in re_list.items():
         definition = definition.replace(i, j)
-        close = close.replace(i, j)
+        final_close = final_close.replace(i, j)
+    term = custom_def_dict.get('term', text)
+    pronunciation = custom_def_dict.get('pronunciation', get_pronunciation(term)) or 'Is espeak-ng installed?'
     final_data = {
-        'term': custom_def_dict['term'],
-        'pronunciation': custom_def_dict['pronunciation'],
+        'term': term,
+        'pronunciation': pronunciation,
         'definition': definition,
-        'close': close,
+        'close': final_close,
     }
     return final_data
 
 
+def get_close_words(term):
+    """Run the processes for obtaining definition data."""
+    strategy = 'lev'
+    try:
+        process_close = subprocess.Popen(['dict', '-m', '-d', 'wn', '-s', strategy, term], stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+    except OSError as ex:
+        print('Didn\'t Work! ERROR INFO: ' + str(ex))
+        return None
+    process_close.wait()
+    output = process_close.stdout.read().decode()
+    clean_output = format_close_words(output, term)
+    return clean_output
+
+
 def get_data(term, word_col, sen_col):
     """Obtain the data to be processed and presented."""
-    output = run_processes(term)
-    if not output:
-        return {
-            'term': 'Lookup failed.',
-            'pronunciation': 'Check logs.',
-            'definition': '',
-            'close': '',
-        }
-    definition = output[0]
-    if not definition == '':
-        clean_def = process_definition(definition, term, sen_col, word_col)
-        no_def = 0
+    definition = get_definition(term, word_col, sen_col)
+    clean_def = definition[0]
+    no_def = definition[1]
+    pron = get_pronunciation(term)
+    clean_close = get_close_words(term)
+    if not clean_close or clean_close.strip() == '':
+        fail_flag = True
+        clean_close = ''
     else:
-        clean_def = {
-            'term': term,
-            'definition': f'Couldn\'t find definition for \'{term}\'.',
-        }
-        no_def = 1
-    pron = output[1]
-    clean_pron = ' /{0}/'.format(pron.strip().replace('\n ', ' '))
-    close = output[2]
-    clean_close = ', '.join(format_close_words(close, term))
-    fail_flag = False
+        fail_flag = False
     if term.lower() == 'recursion':
         clean_close = 'recursion'
-    if clean_close.strip() == '':
-        fail_flag = True
-    if clean_pron == '' or clean_pron.isspace():
-        final_pron = 'Obtaining pronunciation failed.'
+    if not pron or pron == '' or pron.isspace():
+        final_pron = 'Is espeak-ng installed?'
     else:
-        final_pron = clean_pron
+        final_pron = pron
     if not fail_flag:
         if no_def == 1:
             final_close = f'<b>Did you mean</b>:<br>  <i><font color="{word_col}">{clean_close}</font></i>'
@@ -200,6 +209,32 @@ def get_data(term, word_col, sen_col):
     return final_data
 
 
+def get_definition(term, word_col, sen_col):
+    """Get the definition from dictd and process it."""
+    try:
+        process_def = subprocess.Popen(['dict', '-d', 'wn', term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except OSError as ex:
+        print('Didn\'t Work! ERROR INFO: ' + str(ex))
+        return (
+            {
+                'term': term,
+                'definition': 'Lookup failed. Are dict and dictd installed?',
+            },
+            True
+        )
+    process_def.wait()
+    definition = process_def.stdout.read().decode()
+    if definition is not None:
+        if definition == '':
+            clean_def = {
+                'term': term,
+                'definition': f'Couldn\'t find definition for \'{term}\'.',
+            }
+            return (clean_def, True)
+        clean_def = process_definition(definition, term, sen_col, word_col)
+        return (clean_def, False)
+
+
 def get_fortune(mono=True):
     """Present fortune easter egg."""
     try:
@@ -213,6 +248,21 @@ def get_fortune(mono=True):
     if mono:
         return f'<tt>{fortune_out}</tt>'
     return fortune_out
+
+
+@lru_cache(maxsize=None)
+def get_pronunciation(term):
+    """Get the pronunciation from espeak and process it."""
+    try:
+        process_pron = subprocess.Popen(['espeak-ng', '-ven-uk-rp', '--ipa', '-q', term], stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE)
+    except OSError as ex:
+        print('Didn\'t Work! ERROR INFO: ' + str(ex))
+        return None
+    process_pron.wait()
+    output = process_pron.stdout.read().decode()
+    clean_output = ' /{0}/'.format(output.strip().replace('\n ', ' '))
+    return clean_output
 
 
 def get_version_info():
@@ -351,12 +401,10 @@ def reactor(text, dark_font, wn_ver, cdef):
                           '  <b>2:</b> Japanese word meaning \'Wise Center\'</tt>',
             'close': ('<tt> <b>Similar Words:</b>\n' +
                       f'  <i><span foreground=\"{wordcol}\">' +
-                      ', '.join(
-                          format_close_words(
-                              'ro, re, roe, redo, reno, oreo, ceo, leo, neo, ' +
-                              'rho, rio, reb, red, ref, rem, rep, res, ret, rev, rex',
-                              'Reo', True
-                          )
+                      format_close_words(
+                          'ro, re, roe, redo, reno, oreo, ceo, leo, neo, ' +
+                          'rho, rio, reb, red, ref, rem, rep, res, ret, rev, rex',
+                          'Reo', True
                       ) +
                       '</span></i></tt>')
         }
@@ -372,26 +420,3 @@ def read_term(text, speed):
     """Say text loudly."""
     with open(os.devnull, 'w') as null_maker:
         subprocess.Popen(['espeak-ng', '-s', speed, '-ven-uk-rp', text], stdout=null_maker, stderr=subprocess.STDOUT)
-
-
-@lru_cache(maxsize=None)
-def run_processes(term):
-    """Run the processes for obtaining defintion data."""
-    strategy = 'lev'
-    try:
-        process_def = subprocess.Popen(['dict', '-d', 'wn', term], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        process_pron = subprocess.Popen(['espeak-ng', '-ven-uk-rp', '--ipa', '-q', term], stdout=subprocess.PIPE,
-                                        stderr=subprocess.PIPE)
-        process_close = subprocess.Popen(['dict', '-m', '-d', 'wn', '-s', strategy, term], stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE)
-    except OSError as ex:
-        print('Didn\'t Work! ERROR INFO: ' + str(ex))
-        return None
-    process_def.wait()
-    output = ['', '', '']
-    output[0] = process_def.stdout.read().decode()
-    process_pron.wait()
-    output[1] = process_pron.stdout.read().decode()
-    process_close.wait()
-    output[2] = process_close.stdout.read().decode()
-    return output

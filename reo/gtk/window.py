@@ -20,6 +20,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'ReoGtkWindow'
 
     _clear_button = Gtk.Template.Child('clear_button')
+    _def_event_box = Gtk.Template.Child('def_event_box')
     _def_view = Gtk.Template.Child('def_view')
     _pronunciation_view = Gtk.Template.Child('pronunciation_view')
     _term_view = Gtk.Template.Child('term_view')
@@ -47,6 +48,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         self.connect('notify::is-maximized', self._on_window_state_changed)
         self.connect('key-press-event', self._on_key_press_event)
         self._clear_button.connect('clicked', self._on_clear_clicked)
+        self._def_event_box.connect('button_press_event', self._on_def_event)
         self._def_view.connect('activate-link', self._on_link_activated)
         self._search_button.connect('clicked', self._on_search_clicked)
         self._search_entry.connect('changed', self._on_entry_changed)
@@ -75,8 +77,8 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-        GLib.idle_add(self._search_entry.set_text, text)
-        if not text == '' and not text.isspace():
+        if text is not None and not text.strip() == '' and not text.isspace():
+            GLib.idle_add(self._search_entry.set_text, text)
             GLib.idle_add(self._on_search_clicked)
             GLib.idle_add(self._search_entry.grab_focus)
 
@@ -97,9 +99,9 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
     def on_search_selected(self, _action, _param):
         """Search selected text from inside or outside the window."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
-        text = text.replace('         ', '').replace('\n', '')
-        GLib.idle_add(self._search_entry.set_text, text)
-        if not text == '' and not text.isspace():
+        if text is not None and not text.strip() == '' and not text.isspace():
+            text = text.replace('         ', '').replace('\n', '')
+            GLib.idle_add(self._search_entry.set_text, text)
             GLib.idle_add(self._on_search_clicked, pause=False, text=text)
             GLib.idle_add(self._search_entry.grab_focus)
 
@@ -119,6 +121,15 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         GLib.idle_add(self._speak_button.set_visible, False)
         self.__page_switch('welcome_page')
 
+    def _on_def_event(self, _eventbox, event):
+        if Settings.get().double_click and event.type == Gdk.EventType._2BUTTON_PRESS:
+            text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
+            if text is not None and not text.strip() == '' and not text.isspace():
+                text = text.split(' ')[0]
+                GLib.idle_add(self._search_entry.set_text, text)
+                GLib.idle_add(self._on_search_clicked, pause=False, text=text)
+                GLib.idle_add(self._search_entry.grab_focus)
+
     def _on_key_press_event(self, _widget, event):
         """Focus onto the search entry when needed (quick search)."""
         modifiers = event.get_state() & Gtk.accelerator_get_default_mod_mask()
@@ -130,7 +141,6 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
 
     def _on_link_activated(self, _widget, data):
         """Search for terms that are marked as hyperlinks."""
-        # Using GLib.idle_add to prevent segfaults (which shouldn't be happening in the first place)
         if data.startswith('search'):
             GLib.idle_add(self._search_entry.set_text, data[7:])
             self._on_search_clicked(pause=False, text=data[7:])

@@ -21,6 +21,7 @@ class Settings:
                 'CustomDefinitions': 'yes',
                 'Debug': 'no',
                 'LiveSearch': 'no',
+                'DoubleClick': 'no',
                 'ConfigVersion': '1',
             }
             self.config['UI-gtk'] = {
@@ -53,6 +54,16 @@ class Settings:
     def debug(self, value):
         """Set whether to launch in debug mode."""
         self.set_boolean_key('General', 'Debug', value)
+
+    @property
+    def double_click(self):
+        """Get whether to search on double click."""
+        return self.config.getboolean('General', 'DoubleClick')
+
+    @double_click.setter
+    def double_click(self, value):
+        """Set whether to search on double click."""
+        self.set_boolean_key('General', 'DoubleClick', value)
 
     @staticmethod
     def get():
