@@ -122,7 +122,7 @@ class ReoGtkWindow(Gtk.ApplicationWindow):
         self.__page_switch('welcome_page')
 
     def _on_def_event(self, _eventbox, event):
-        if Settings.get().double_click and event.type == Gdk.EventType._2BUTTON_PRESS:
+        if Settings.get().double_click and event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
             text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
             if text is not None and not text.strip() == '' and not text.isspace():
                 text = text.split(' ')[0]
