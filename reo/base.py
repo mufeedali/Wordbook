@@ -233,6 +233,13 @@ def get_definition(term, word_col, sen_col):
             return (clean_def, True)
         clean_def = process_definition(definition, term, sen_col, word_col)
         return (clean_def, False)
+    return (
+        {
+            'term': term,
+            'definition': 'Lookup failed. Check logs.',
+        },
+        True
+    )
 
 
 def get_fortune(mono=True):
