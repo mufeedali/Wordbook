@@ -8,7 +8,8 @@ import sys
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gio, GLib, Gtk  # noqa
+gi.require_version('Handy', '1')
+from gi.repository import Gio, GLib, Gtk, Handy  # noqa
 
 from reo import base, utils  # noqa
 from reo.gtk.window import ReoGtkWindow  # noqa
@@ -97,6 +98,7 @@ class Application(Gtk.Application):
         GLib.set_application_name('Reo')
         GLib.set_prgname('com.github.fushinari.Reo')
 
+        Handy.init()
         base.fold_gen()
 
     def on_quit(self, _action, _param):

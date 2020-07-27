@@ -6,7 +6,7 @@
 import os
 import random
 
-from gi.repository import Gdk, GLib, Gtk
+from gi.repository import Gdk, GLib, Gtk, Handy
 
 from reo import base, utils
 from reo.gtk.settings_window import SettingsWindow
@@ -16,7 +16,7 @@ PATH = os.path.dirname(__file__)
 
 
 @Gtk.Template(filename=f'{PATH}/ui/window.ui')
-class ReoGtkWindow(Gtk.ApplicationWindow):
+class ReoGtkWindow(Handy.ApplicationWindow):
     __gtype_name__ = 'ReoGtkWindow'
 
     _clear_button = Gtk.Template.Child('clear_button')
