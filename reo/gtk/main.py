@@ -22,7 +22,6 @@ class Application(Gtk.Application):
     """Manages the windows, properties, etc of Reo."""
     def __init__(self):
         """Initialize the application."""
-
         super().__init__(
             application_id='com.github.fushinari.Reo',
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE

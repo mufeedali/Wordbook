@@ -31,6 +31,7 @@ class ReoGtkWindow(Handy.ApplicationWindow):
     _speak_button = Gtk.Template.Child('speak_button')
     _stack = Gtk.Template.Child('main_stack')
 
+    _pasted = False
     _searched_term = None
     _wn_future = base.get_wn_file()
 
@@ -52,6 +53,8 @@ class ReoGtkWindow(Handy.ApplicationWindow):
         self._def_view.connect('activate-link', self._on_link_activated)
         self._search_button.connect('clicked', self._on_search_clicked)
         self._search_entry.connect('changed', self._on_entry_changed)
+        self._search_entry.connect('drag-data-received', self._on_drag_received)
+        self._search_entry.connect('paste-clipboard', self._on_paste_done)
         self._speak_button.connect('clicked', self._on_speak_clicked)
 
     def on_about(self, _action, _param):
@@ -63,10 +66,7 @@ class ReoGtkWindow(Handy.ApplicationWindow):
         about_dialog.set_logo_icon_name('accessories-dictionary')
         about_dialog.set_program_name('Reo')
         about_dialog.set_version(utils.VERSION)
-        about_dialog.set_comments(
-            'Reo is a dictionary application that uses dictd, dict-wn and '
-            'eSpeak-ng to provide a complete user interface.'
-        )
+        about_dialog.set_comments('Reo is a simple dictionary application.')
         about_dialog.set_authors(['Mufeed Ali', ])
         about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/reo")
@@ -77,6 +77,7 @@ class ReoGtkWindow(Handy.ApplicationWindow):
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
+        text = base.cleaner(text)
         if text is not None and not text.strip() == '' and not text.isspace():
             GLib.idle_add(self._search_entry.set_text, text)
             GLib.idle_add(self._on_search_clicked)
@@ -130,6 +131,21 @@ class ReoGtkWindow(Handy.ApplicationWindow):
                 GLib.idle_add(self._on_search_clicked, pause=False, text=text)
                 GLib.idle_add(self._search_entry.grab_focus)
 
+    def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
+        """Search on receiving drag and drop event."""
+        self._search_entry.set_text('')
+        GLib.idle_add(self.__entry_cleaner)
+        GLib.idle_add(self._search_entry.set_position, -1)
+        GLib.idle_add(self._on_search_clicked)
+
+    def _on_entry_changed(self, _entry):
+        """Detect changes to text and do live search if enabled."""
+        if self._pasted is True:
+            self.__entry_cleaner()
+            self._pasted = False
+        if Settings.get().live_search:
+            GLib.idle_add(self._on_search_clicked)
+
     def _on_key_press_event(self, _widget, event):
         """Focus onto the search entry when needed (quick search)."""
         modifiers = event.get_state() & Gtk.accelerator_get_default_mod_mask()
@@ -144,6 +160,10 @@ class ReoGtkWindow(Handy.ApplicationWindow):
         if data.startswith('search'):
             GLib.idle_add(self._search_entry.set_text, data[7:])
             self._on_search_clicked(pause=False, text=data[7:])
+
+    def _on_paste_done(self, _widget):
+        """Cleanup pasted data."""
+        self._pasted = True
 
     def _on_preferences_destroy(self, _window):
         """Refresh view when Preferences window is closed. Only necessary for definition now."""
@@ -201,10 +221,9 @@ class ReoGtkWindow(Handy.ApplicationWindow):
             else:
                 GLib.idle_add(self._header_bar.set_show_close_button, True)
 
-    def _on_entry_changed(self, _entry):
-        """Detect changes to text and do live search if enabled."""
-        if Settings.get().live_search:
-            GLib.idle_add(self._on_search_clicked)
+    def __entry_cleaner(self):
+        term = self._search_entry.get_text()
+        self._search_entry.set_text(base.cleaner(term))
 
     def __new_error(self, primary_text, seconday_text):
         """Show an error dialog."""

@@ -36,7 +36,7 @@ def _threadpool(func):
 def cleaner(search_term):
     """Clean up search terms."""
     text = search_term.strip().strip('<>"-?`![](){}/:;,*')
-    cleaner_list = ['(', ')', '<', '>', '[', ']', '&', '\\']
+    cleaner_list = ['(', ')', '<', '>', '[', ']', '&', '\\', '\n']
     for item in cleaner_list:
         text = text.replace(item, '')
     return text
@@ -137,7 +137,7 @@ def get_custom_def(text, wordcol, sencol):
     if close is None or close.strip() == '':
         final_close = ''
     else:
-        final_close = f'<b>Similar Words</b>:<br>  <i><font color="{wordcol}">{close}</font></i>'
+        final_close = f'<b>Similar words</b>:<br>  <i><font color="{wordcol}">{close}</font></i>'
     re_list = {
         '<i>($WORDCOL)</i>': wordcol,
         '<i>($SENCOL)</i>': sencol,
@@ -197,7 +197,7 @@ def get_data(term, word_col, sen_col):
         if no_def == 1:
             final_close = f'<b>Did you mean</b>:<br>  <i><font color="{word_col}">{clean_close}</font></i>'
         else:
-            final_close = f'<b>Similar Words</b>:<br>  <i><font color="{word_col}">{clean_close}</font></i>'
+            final_close = f'<b>Similar words</b>:<br>  <i><font color="{word_col}">{clean_close}</font></i>'
     else:
         final_close = ''
     final_data = {
@@ -327,7 +327,11 @@ def process_definition(definition, term, sen_col, word_col):
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.0 (2006) [wn]:\n', '')
     definition = definition.replace('1 definition found\n\nFrom WordNet (r) 3.1 (2011) [wn]:\n', '')
     definition = html.escape(definition, False)
-    term_in_wn = re.search('  ' + term, definition, flags=re.IGNORECASE).group(0) or term
+    term_in_wn = re.search('  ' + term, definition, flags=re.IGNORECASE)
+    if term_in_wn:
+        term_in_wn = term_in_wn.group(0) or term
+    else:
+        term_in_wn = term
     definition = definition.replace(term_in_wn + '\n', '')
     utils.log_info(f'Searching {term_in_wn.strip()}')
     re_list = {
@@ -367,11 +371,11 @@ def reactor(text, dark_font, wn_ver, cdef):
     """Return appropriate definitions."""
     if dark_font:
         sencol = 'cyan'  # Color of sentences in Dark mode
-        wordcol = 'lightgreen'  # Color of: Similar Words,
+        wordcol = 'lightgreen'  # Color of: Similar words,
 #                                     Synonyms and Antonyms.
     else:
         sencol = 'blue'  # Color of sentences in regular
-        wordcol = 'green'  # Color of: Similar Words, Synonyms, Antonyms.
+        wordcol = 'green'  # Color of: Similar words, Synonyms, Antonyms.
     wn_list = (
         '00-database-allchars',
         '00-database-info',
@@ -406,7 +410,7 @@ def reactor(text, dark_font, wn_ver, cdef):
             'definition': '<tt><i>Japanese Word</i>\n'
                           '  <b>1:</b> Name of this application, chosen kind of at random.\n'
                           '  <b>2:</b> Japanese word meaning \'Wise Center\'</tt>',
-            'close': ('<tt> <b>Similar Words:</b>\n' +
+            'close': ('<tt> <b>Similar words:</b>\n' +
                       f'  <i><span foreground=\"{wordcol}\">' +
                       format_close_words(
                           'ro, re, roe, redo, reno, oreo, ceo, leo, neo, ' +

@@ -14,6 +14,7 @@ Light Mode                                 |  Dark Mode
 * Python 3 [Arch: `python`]
 * Python GObject [Arch: `python-gobject`] or PyQt5 [Arch: `python-pyqt5`]
 * GTK 3.20+ [Arch: `gtk3`] or Qt 5.8+ [Arch: `qt5-base`]
+* libhandy 0.84.0+ (libhandy1) [Arch AUR: `libhandy1`] (only needed for the GTK GUI)
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 Run `reo` for the GTK GUI or `reo-qt` for the Qt GUI.
@@ -23,6 +24,7 @@ Run `reo` for the GTK GUI or `reo-qt` for the Qt GUI.
 * Neat output with proper coloring and formatting
 * Random Word
 * Live Search
+* Double click to search
 * Custom Definitions feature using Pango Markup or an HTML subset for formatting
 * Lightweight. 1 mb only and further reducible (It does nothing on its own, so yeah)
 * Support for GNOME Dark Mode and launching app in dark mode.
@@ -58,6 +60,10 @@ The Qt GUI is now pretty stable and seems to work well enough but the GTK GUI is
 * Right now, the Qt5 GUI is feature-complete. Everything that works in the GTK GUI also works in the Qt GUI. Except for a dark UI mode. That's up to the theme and color scheme on your configuration. However, the Qt GUI does have a "Dark Mode" that changes the font color scheme to one more suitable for usage with a dark color scheme.
 * Most settings are shared between the two GUIs. Only GUI-specific settings are separated (dark mode for example).
 * Another important thing to note is that the use of Qt5 won't make it cross-platform. It's still Linux-only and probably will remain so.
+
+### Why libhandy?
+
+Because I like the new rounded corners, lol.
 
 ## Future
 
