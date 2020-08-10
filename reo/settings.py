@@ -22,7 +22,7 @@ class Settings:
                 'Debug': 'no',
                 'LiveSearch': 'no',
                 'DoubleClick': 'no',
-                'ConfigVersion': '1',
+                'ConfigVersion': '2',
             }
             self.config['UI-gtk'] = {
                 'DarkUI': 'yes',
@@ -116,7 +116,10 @@ class Settings:
         """Load settings from file."""
         with open(utils.CONFIG_FILE, 'r') as file:
             self.config.read_file(file)
-        print("Version Code: " + self.config.get('General', 'ConfigVersion'))
+        utils.log_info("Version Code: " + self.config.get('General', 'ConfigVersion'))
+        if self.config.get('General', 'ConfigVersion') == '1':
+            utils.log_info("Updating to ConfigVersion 2")
+            self.set_boolean_key('General', 'DoubleClick', False)
 
     @property
     def qt_dark_font(self):
