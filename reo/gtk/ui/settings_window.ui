@@ -2,519 +2,86 @@
 <!-- Generated with glade 3.36.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <template class="SettingsWindow" parent="GtkWindow">
+  <requires lib="libhandy" version="1.0"/>
+  <template class="SettingsWindow" parent="HdyPreferencesWindow">
     <property name="can_focus">False</property>
     <property name="modal">True</property>
-    <property name="default_width">440</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="default_width">380</property>
     <property name="default_height">350</property>
-    <property name="type_hint">dialog</property>
     <child>
-      <object class="GtkScrolledWindow">
+      <object class="HdyPreferencesPage">
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="hscrollbar_policy">never</property>
-        <property name="shadow_type">in</property>
+        <property name="can_focus">False</property>
+        <property name="icon_name">emblem-system-symbolic</property>
+        <property name="title">General</property>
         <child>
-          <object class="GtkViewport">
+          <object class="HdyPreferencesGroup">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="hscroll_policy">natural</property>
-            <property name="vscroll_policy">natural</property>
             <child>
-              <object class="GtkBox">
+              <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_start">20</property>
-                <property name="margin_end">20</property>
-                <property name="margin_top">20</property>
-                <property name="margin_bottom">20</property>
-                <property name="orientation">vertical</property>
-                <property name="spacing">8</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">cdef_switch</property>
+                <property name="title" translatable="yes">Custom Definitions</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkSwitch" id="cdef_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">&lt;span weight="bold"&gt;General&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">live_search_switch</property>
+                <property name="subtitle" translatable="yes">Show definition as the terms are typed in</property>
+                <property name="title" translatable="yes">Live Search</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkSwitch" id="live_search_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">8</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">2</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Custom Definitions</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">&lt;span size="small"&gt;Enable or disable the display of custom definitions&lt;/span&gt;</property>
-                                <property name="use_markup">True</property>
-                                <style>
-                                  <class name="dim-label"/>
-                                </style>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="cdef_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                            <property name="active">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">2</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Live Search</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">&lt;span size="small"&gt;Show definition as the terms are typed in&lt;/span&gt;</property>
-                                <property name="use_markup">True</property>
-                                <style>
-                                  <class name="dim-label"/>
-                                </style>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="live_search_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">Debugging Mode</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="debug_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">2</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Double Click Search</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">&lt;span size="small"&gt;Select any word by double clicking to search&lt;/span&gt;</property>
-                                <property name="use_markup">True</property>
-                                <style>
-                                  <class name="dim-label"/>
-                                </style>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="double_click_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">If two or more words are selected, only the first word is searched.</property>
-                            <property name="icon_name">emblem-important-symbolic</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">3</property>
-                      </packing>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">debug_switch</property>
+                <property name="title" translatable="yes">Debugging Mode</property>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkSwitch" id="debug_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="margin_top">12</property>
-                    <property name="label" translatable="yes">&lt;span weight="bold"&gt;UI&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">4</property>
-                  </packing>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">double_click_switch</property>
+                <property name="subtitle" translatable="yes">Search any word by double clicking on it</property>
+                <property name="title" translatable="yes">Double Click Search</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkSwitch" id="double_click_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">8</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Hide window buttons when Reo is maximized</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="max_hide_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">Use dark UI theme</property>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="dark_ui_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="tooltip_text" translatable="yes">This setting has no effect if a system-wide dark theme is applied.</property>
-                            <property name="icon_name">emblem-important-symbolic</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="orientation">vertical</property>
-                            <property name="spacing">2</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Use dark font theme</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">&lt;span size="small"&gt;Use cyan and light green instead of blue and green in definitions&lt;/span&gt;</property>
-                                <property name="use_markup">True</property>
-                                <style>
-                                  <class name="dim-label"/>
-                                </style>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="dark_font_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">6</property>
-                  </packing>
                 </child>
               </object>
             </child>
@@ -522,13 +89,70 @@
         </child>
       </object>
     </child>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
+    <child>
+      <object class="HdyPreferencesPage">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="title" translatable="yes">Preferences</property>
-        <property name="has_subtitle">False</property>
-        <property name="show_close_button">True</property>
+        <property name="icon_name">preferences-desktop-apps</property>
+        <property name="title">UI</property>
+        <child>
+          <object class="HdyPreferencesGroup">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="HdyActionRow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">max_hide_switch</property>
+                <property name="title" translatable="yes">Hide window buttons when maximized</property>
+                <child>
+                  <object class="GtkSwitch" id="max_hide_switch">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="hexpand">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">dark_ui_switch</property>
+                <property name="title" translatable="yes">Use dark UI theme</property>
+                <child>
+                  <object class="GtkSwitch" id="dark_ui_switch">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="hexpand">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="HdyActionRow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="activatable_widget">dark_font_switch</property>
+                <property name="subtitle">Use cyan and light green colors</property>
+                <property name="title" translatable="yes">Use dark font theme</property>
+                <child>
+                  <object class="GtkSwitch" id="dark_font_switch">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="hexpand">False</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </template>

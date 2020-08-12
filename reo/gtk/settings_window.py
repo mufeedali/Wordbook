@@ -5,7 +5,7 @@
 
 import os
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Handy
 
 from reo import utils
 from reo.settings import Settings
@@ -14,7 +14,7 @@ PATH = os.path.dirname(__file__)
 
 
 @Gtk.Template(filename=f'{PATH}/ui/settings_window.ui')
-class SettingsWindow(Gtk.Window):
+class SettingsWindow(Handy.PreferencesWindow):
     """Allows the user to customize Reo to some extent."""
     __gtype_name__ = 'SettingsWindow'
 
