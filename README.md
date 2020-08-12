@@ -1,5 +1,7 @@
 # Reo ~ The Simple Dictionary
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/fushinari/reo.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/fushinari/reo/context:python)
+
 **Reo** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 
 Light Mode                                 |  Dark Mode
