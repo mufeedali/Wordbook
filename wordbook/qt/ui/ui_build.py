@@ -7,6 +7,7 @@
 import argparse
 import os
 import subprocess
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("project", help="Name of Project folder")
@@ -19,7 +20,7 @@ try:
     out_PyUic = pyuic_process.stdout.read().decode()
 except OSError as ex:
     print("Something went wrong... " + str(ex))
-    exit(1)
+    sys.exit(1)
 
 clean_output = out_PyUic.replace(os.environ.get("HOME") + f"/Projects/{args.project}/", '').replace('(object)', '()')
 
