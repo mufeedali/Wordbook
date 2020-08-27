@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ReoMain</class>
- <widget class="QMainWindow" name="ReoMain">
+ <class>WordbookMain</class>
+ <widget class="QMainWindow" name="WordbookMain">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Reo</string>
+   <string>Wordbook</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="autoFillBackground">
@@ -204,7 +204,7 @@
      <normaloff>../../.designer/backup</normaloff>../../.designer/backup</iconset>
    </property>
    <property name="text">
-    <string>About Reo</string>
+    <string>About Wordbook</string>
    </property>
   </action>
   <action name="actionQuit">

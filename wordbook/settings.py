@@ -6,7 +6,7 @@
 import configparser
 import os
 
-from reo import utils
+from wordbook import utils
 
 
 class Settings:

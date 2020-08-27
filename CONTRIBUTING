@@ -9,7 +9,7 @@ You can contribute in many ways:
 
 ### Report Bugs
 
-Report bugs at [GitHub](https://github.com/fushinari/reo/issues).
+Report bugs at [GitHub](https://github.com/fushinari/wordbook/issues).
 
 If you are reporting a bug, please include:
 
@@ -29,13 +29,13 @@ and "help wanted" is open to whoever wants to implement it.
 
 ### Write Documentation
 
-Reo could always use more documentation, whether as part of the
-official Reo docs, in docstrings, or even on the web in blog posts,
+Wordbook could always use more documentation, whether as part of the
+official Wordbook docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at [GitHub](https://github.com/fushinari/reo/issues).
+The best way to send feedback is to file an issue at [GitHub](https://github.com/fushinari/wordbook/issues).
 
 If you are proposing a feature:
 
@@ -46,20 +46,20 @@ If you are proposing a feature:
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `reo` for local development.
+Ready to contribute? Here's how to set up `wordbook` for local development.
 
-1. Fork the `reo` repo on GitHub.
+1. Fork the `wordbook` repo on GitHub.
 2. Clone your fork locally:
 
 ```bash
-    git clone git@github.com:your_name_here/reo.git
+    git clone git@github.com:your_name_here/wordbook.git
 ```
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development:
 
 ```bash
-    mkvirtualenv reo
-    cd reo/
+    mkvirtualenv wordbook
+    cd wordbook/
     python setup.py develop
 ```
 
@@ -74,7 +74,7 @@ Ready to contribute? Here's how to set up `reo` for local development.
 5. When you're done making changes, check that your changes pass flake8:
 
 ```bash
-    flake8 reo tests
+    flake8 wordbook tests
 ```
 
 6. Commit your changes and push your branch to GitHub:

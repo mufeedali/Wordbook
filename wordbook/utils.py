@@ -11,10 +11,10 @@ import traceback
 VERSION = '0.1.0'
 
 HOME = os.path.expanduser('~')
-LOCAL_FOLD = os.path.join(os.environ.get('XDG_DATA_HOME', os.path.join(HOME, '.local', 'share')), 'reo')
+LOCAL_FOLD = os.path.join(os.environ.get('XDG_DATA_HOME', os.path.join(HOME, '.local', 'share')), 'wordbook')
 CDEF_FOLD = os.path.join(LOCAL_FOLD, 'cdef')
-CONFIG_FOLD = os.path.join(os.environ.get('XDG_CONFIG_HOME', os.path.join(HOME, '.config')), 'reo')
-CONFIG_FILE = os.path.join(CONFIG_FOLD, 'reo.conf')
+CONFIG_FOLD = os.path.join(os.environ.get('XDG_CONFIG_HOME', os.path.join(HOME, '.config')), 'wordbook')
+CONFIG_FILE = os.path.join(CONFIG_FOLD, 'wordbook.conf')
 
 logging.basicConfig(format='%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s')
 LOGGER = logging.getLogger()
@@ -25,12 +25,6 @@ def boot_to_str(boolean):
     if boolean is True:
         return 'yes'
     return 'no'
-
-
-def get_word_list(wn_version):
-    """Get the word list filename depending on the WordNet version."""
-    word_list = f'{os.path.dirname(__file__)}/data/wn{wn_version}.lzma'
-    return word_list
 
 
 def log_init(debug):

@@ -1,25 +1,24 @@
-# Reo ~ The Simple Dictionary
+# Wordbook ~ A Simple Dictionary
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/fushinari/reo.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/fushinari/reo/context:python)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/fushinari/wordbook.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/fushinari/wordbook/context:python)
 
-**Reo** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
+**Wordbook** is a dictionary application using the WordNet 3.1 (or 3.0) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 
 Light Mode                                 |  Dark Mode
 :-----------------------------------------:|:--------------------------------------------:
 ![Welcome screen](images/ss.png?raw=true)  |  ![Welcome screen](images/ss1.png?raw=true)
-![Searching](images/ss2.png?raw=true)  |  ![Searching](images/ss3.png?raw=true)
+![Searching](images/ss2.png?raw=true)      |  ![Searching](images/ss3.png?raw=true)
 
 ## Requirements
 
-* DICT official client and server (dictd and dict) [Arch: `dictd`]
-* WordNet 3.1 or 3.0 database for dictd (dict-wn) [Arch AUR: `dict-wn`]
-* Python 3 [Arch: `python`]
-* Python GObject [Arch: `python-gobject`] or PyQt5 [Arch: `python-pyqt5`]
 * GTK 3.20+ [Arch: `gtk3`] or Qt 5.8+ [Arch: `qt5-base`]
 * libhandy 0.84.0+ (libhandy1) [Arch AUR: `libhandy1`] (only needed for the GTK GUI)
+* Python 3 [Arch: `python`]
+* Standalone WordNet Python module [Arch AUR: `python-wn`]
+* Python GObject [Arch: `python-gobject`] or PyQt5 [Arch: `python-pyqt5`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
-Run `reo` for the GTK GUI or `reo-qt` for the Qt GUI.
+Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.
 
 ## Features
 
@@ -45,30 +44,17 @@ For development (i.e. to see changes live as you make them):
 python setup.py develop
 ```
 
-## Troubleshooting
-
-### Slow output
-
-If the output is slow, it's possibly because the definition is obtained from dict.org rather than localhost. So, run
-
-```bash
-sudo systemctl enable --now dictd.service
-```
 
 ### Qt5 Interface
 
-The Qt GUI is now pretty stable and seems to work well enough but the GTK GUI is still the recommended one, for now and probably forever. But Qt5 is fun to work with, so I'll be working on it anyway. Things to note:
-
-* Right now, the Qt5 GUI is feature-complete. Everything that works in the GTK GUI also works in the Qt GUI. Except for a dark UI mode. That's up to the theme and color scheme on your configuration. However, the Qt GUI does have a "Dark Mode" that changes the font color scheme to one more suitable for usage with a dark color scheme.
 * Most settings are shared between the two GUIs. Only GUI-specific settings are separated (dark mode for example).
-* Another important thing to note is that the use of Qt5 won't make it cross-platform. It's still Linux-only and probably will remain so.
+* Should work on Windows now if espeak installed in PATH but not officially supported.
+* The GTK interface is still the recommended interface and will usually be the first to receive new features.
 
 ### Why libhandy?
 
-Because I like the new rounded corners, lol.
+Because I like the new rounded corners, lol. Also, pretty settings window.
 
 ## Future
 
 For me, this is more of an experiment than anything else. I try a lot of things, a lot of things work, a lot of things don't and I find it fun to play around with this. I also try code that I don't really understand in other projects (not risky stuff ofc), try to follow code standards and slowly try to get better at writing good code. I'm still bad at it though. Basically, a lot of this is experimentation and I don't plan to stop anytime soon, but somehow or the other, the project is generally stable and works for my daily use and I look up words a lot.
-
-Basically it's just a GUI for some CLI tools. It doesn't even directly interact with dictd. And even the UI is badly done with Glade for GTK and Qt Designer for Qt5. So yeah, I'm lazy.

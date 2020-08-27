@@ -5,9 +5,9 @@
 # Author: Mufeed Ali <fushinari@protonmail.com>
 
 """
-Reo-Qt is a dictionary application made with Python and Qt5.
+Wordbook-Qt is a dictionary application made with Python and Qt5.
 
-It is the Qt5 frontend for Reo. It uses existing tools and as such, easily
+It is the Qt5 frontend for Wordbook. It uses existing tools and as such, easily
 works across most Linux distributions without any changes.
 """
 
@@ -17,9 +17,9 @@ import sys
 
 from PyQt5 import QtWidgets
 
-from reo import base, utils
-from reo.qt.main_win import ReoMain
-from reo.settings import Settings
+from wordbook import base, utils
+from wordbook.qt.main_win import WordbookMain
+from wordbook.settings import Settings
 
 PARSER = argparse.ArgumentParser()
 MGROUP = PARSER.add_mutually_exclusive_group()
@@ -43,9 +43,9 @@ if PARSED.verinfo:
 def main():
     """Execute the application."""
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName('Reo')
-    utils.log_info('Launching Reo-Qt')
-    main_window = ReoMain()
+    app.setApplicationName('Wordbook')
+    utils.log_info('Launching Wordbook-Qt')
+    main_window = WordbookMain()
     main_window.show()
     sys.exit(app.exec_())
 

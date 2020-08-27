@@ -3,4 +3,4 @@
 # SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
 # Author: Mufeed Ali <fushinari@protonmail.com>
 
-"""Top-level package for reo. Empty because everything is in sub-modules."""
+"""Top-level package for wordbook. Empty because everything is in sub-modules."""

@@ -7,15 +7,15 @@ import os
 
 from gi.repository import Gtk, Handy
 
-from reo import utils
-from reo.settings import Settings
+from wordbook import utils
+from wordbook.settings import Settings
 
 PATH = os.path.dirname(__file__)
 
 
 @Gtk.Template(filename=f'{PATH}/ui/settings_window.ui')
 class SettingsWindow(Handy.PreferencesWindow):
-    """Allows the user to customize Reo to some extent."""
+    """Allows the user to customize Wordbook to some extent."""
     __gtype_name__ = 'SettingsWindow'
 
     _cdef_switch = Gtk.Template.Child('cdef_switch')
@@ -71,7 +71,7 @@ class SettingsWindow(Handy.PreferencesWindow):
 
     @staticmethod
     def _on_max_hide_swtich_activate(switch, _gparam):
-        """Change 'Hide window buttons when Reo is maximized' state."""
+        """Change 'Hide window buttons when Wordbook is maximized' state."""
         Settings.get().gtk_max_hide = switch.get_active()
 
     @staticmethod

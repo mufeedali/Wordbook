@@ -8,18 +8,18 @@ import sys
 
 from PyQt5 import QtWidgets
 
-from reo import base, utils
-from reo.qt.ui_mainwin import Ui_ReoMain
-from reo.settings import Settings
+from wordbook import base, utils
+from wordbook.qt.ui_mainwin import Ui_WordbookMain
+from wordbook.settings import Settings
 
 
-class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
+class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
     """Define all UI interactions."""
     searched_term = None
 
     def __init__(self, *args, **kwargs):
         """Initialize the application."""
-        super(ReoMain, self).__init__(*args, **kwargs)
+        super(WordbookMain, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
         self.wn_future = base.get_wn_file()
@@ -52,12 +52,12 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         """Show an About window."""
         QtWidgets.QMessageBox.about(
             self,
-            f'About Reo-Qt {utils.VERSION}',
-            f'<p><b>About Reo-Qt {utils.VERSION}</b></p>'
-            '<p>Reo is a dictionary application using dictd, espeak, etc.</p>'
+            f'About Wordbook-Qt {utils.VERSION}',
+            f'<p><b>About Wordbook-Qt {utils.VERSION}</b></p>'
+            '<p>Wordbook is a dictionary application using espeak-ng, python-wn, etc.</p>'
             '<p>Licensed under GNU General Public License, version 3 or later.</p>'
             '<p>Copyright (C) 2016-2020 Mufeed Ali (fushinari)</p>'
-            '<p><a href="https://www.github.com/fushinari/reo">GitHub</a></p>'
+            '<p><a href="https://www.github.com/fushinari/wordbook">GitHub</a></p>'
         )
 
     def _on_audio_clicked(self):
@@ -68,7 +68,7 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
             base.read_term(term, speed)
         elif term == '' or term.isspace():
             new_ced = QtWidgets.QMessageBox.warning
-            new_ced(self, 'Umm..?', 'Reo can\'t find any text there! You sure you typed something?')
+            new_ced(self, 'Umm..?', 'Wordbook can\'t find any text there! You sure you typed something?')
 
     def _on_entry_changed(self):
         """To live search or not to live search."""
@@ -118,8 +118,6 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
                 out_text = base.clean_html(f'<p><b>{out["term"].strip()}</b><br>'
                                            f'{out["pronunciation"].strip()}</p>'
                                            f'<p>{out["definition"]}</p>')
-                if out['close']:
-                    out_text = out_text + base.clean_html(f'<p>{out["close"].strip()}</p>')
 
                 self.defView.setText(out_text)
                 return
@@ -132,8 +130,10 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
 
     def _on_random_word_triggered(self):
         """Choose a random word and pass it to the search box."""
-        self.searchEntry.setText(random.choice(self.wn_future.result()[1]))
-        self._on_search_clicked()
+        random_word = random.choice(self.wn_future.result()['list'])
+        random_word = random_word.replace('_', ' ')
+        self.searchEntry.setText(random_word)
+        self._on_search_clicked(text=random_word)
 
     def _on_search_selected_triggered(self):
         """Search selected text."""
@@ -144,12 +144,18 @@ class ReoMain(QtWidgets.QMainWindow, Ui_ReoMain):
         """Clean input text, give errors and pass data to reactor."""
         text = base.cleaner(search_text)
         if not text == '' and not text.isspace():
-            return base.reactor(text, Settings.get().qt_dark_font, self.wn_future.result()[0], Settings.get().cdef)
+            return base.reactor(
+                text,
+                Settings.get().qt_dark_font,
+                self.wn_future.result()['version'],
+                self.wn_future.result()['instance'],
+                Settings.get().cdef
+            )
         new_ced = QtWidgets.QMessageBox.warning
         new_ced(
             self,
             'Invalid Input',
-            'Reo thinks that your input was actually just a bunch of useless characters.'
+            'Wordbook thinks that your input was actually just a bunch of useless characters.'
             'And so, an \'Invalid Characters\' error.'
         )
         self.searched_term = None

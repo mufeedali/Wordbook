@@ -11,19 +11,19 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Handy', '1')
 from gi.repository import Gio, GLib, Gtk, Handy  # noqa
 
-from reo import base, utils  # noqa
-from reo.gtk.window import ReoGtkWindow  # noqa
-from reo.settings import Settings  # noqa
+from wordbook import base, utils  # noqa
+from wordbook.gtk.window import WordbookGtkWindow  # noqa
+from wordbook.settings import Settings  # noqa
 
 PATH = os.path.dirname(__file__)
 
 
 class Application(Gtk.Application):
-    """Manages the windows, properties, etc of Reo."""
+    """Manages the windows, properties, etc of Wordbook."""
     def __init__(self):
         """Initialize the application."""
         super().__init__(
-            application_id='com.github.fushinari.Reo',
+            application_id='com.github.fushinari.Wordbook',
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
         )
         self.add_main_option('info', ord('i'), GLib.OptionFlags.NONE, GLib.OptionArg.NONE, 'Print version info', None)
@@ -35,10 +35,6 @@ class Application(Gtk.Application):
 
         def setup_actions(window):
             """Setup the Gio actions for the application."""
-            quit_action = Gio.SimpleAction.new('quit', None)
-            quit_action.connect('activate', self.on_quit)
-            self.add_action(quit_action)
-
             about_action = Gio.SimpleAction.new('about', None)
             about_action.connect('activate', window.on_about)
             self.add_action(about_action)
@@ -70,10 +66,9 @@ class Application(Gtk.Application):
 
         win = self.props.active_window
         if not win:
-            win = ReoGtkWindow(
+            win = WordbookGtkWindow(
                 application=self,
-                title='Reo',
-                icon_name='accessories-dictionary'
+                title='Wordbook',
             )
             setup_actions(win)
 
@@ -94,15 +89,11 @@ class Application(Gtk.Application):
         Gtk.Application.do_startup(self)
         Gtk.Settings.get_default().set_property('gtk-application-prefer-dark-theme', Settings.get().gtk_dark_ui)
 
-        GLib.set_application_name('Reo')
-        GLib.set_prgname('com.github.fushinari.Reo')
+        GLib.set_application_name('Wordbook')
+        GLib.set_prgname('com.github.fushinari.Wordbook')
 
         Handy.init()
         base.fold_gen()
-
-    def on_quit(self, _action, _param):
-        """Quit the application."""
-        self.quit()
 
 
 def main():
