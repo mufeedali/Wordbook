@@ -113,8 +113,9 @@ def get_custom_def(text, wordcol, sencol, wn_instance):
         '$WORDCOL': wordcol,
         '$SENCOL': sencol,
     }
-    for i, j in re_list.items():
-        definition = definition.replace(i, j)
+    if definition is not None:
+        for i, j in re_list.items():
+            definition = definition.replace(i, j)
     term = custom_def_dict.get('term', text)
     pronunciation = custom_def_dict.get('pronunciation', get_pronunciation(term)) or 'Is espeak-ng installed?'
     final_data = {
@@ -229,7 +230,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
     if def_string == '':
         clean_def = {
             'term': term,
-            'definition': f'Couldn\'t find definition for \'{term}\'.',
+            'definition': None,
         }
         return (clean_def, True)
     clean_def = {

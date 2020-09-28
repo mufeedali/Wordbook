@@ -44,6 +44,7 @@ For development (i.e. to see changes live as you make them):
 python setup.py develop
 ```
 
+## Notes
 
 ### Qt5 Interface
 

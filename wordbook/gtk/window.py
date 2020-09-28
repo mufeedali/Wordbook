@@ -212,12 +212,17 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 if out is None:
                     return
 
+                if out["definition"] is not None:
+                    self.__page_switch('content_page')
+                    out_text = base.clean_pango(f'{out["definition"]}')
+                    GLib.idle_add(self._def_view.set_markup, out_text)
+                else:
+                    self.__page_switch('fail_page')
+                    return
+
                 GLib.idle_add(self._term_view.set_markup,
                               f'<span size="large" weight="bold">{out["term"].strip()}</span>')
                 GLib.idle_add(self._pronunciation_view.set_markup, f'<i>{out["pronunciation"].strip()}</i>')
-
-                out_text = base.clean_pango(f'{out["definition"]}')
-                GLib.idle_add(self._def_view.set_markup, out_text)
 
                 if text not in except_list and out["term"] != 'Lookup failed.':
                     GLib.idle_add(self._speak_button.set_visible, True)

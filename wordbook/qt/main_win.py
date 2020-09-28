@@ -115,9 +115,10 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
                 out = self.__search(text)
                 if out is None:
                     return
+
                 out_text = base.clean_html(f'<p><b>{out["term"].strip()}</b><br>'
                                            f'{out["pronunciation"].strip()}</p>'
-                                           f'<p>{out["definition"]}</p>')
+                                           f'<p>{out["definition"] or "Definition not found."}</p>')
 
                 self.defView.setText(out_text)
                 return
