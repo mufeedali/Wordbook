@@ -6,11 +6,14 @@
 import random
 import sys
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtCore, QtWidgets
 
 from wordbook import base, utils
 from wordbook.qt.ui_mainwin import Ui_WordbookMain
 from wordbook.settings import Settings
+
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 
 class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
