@@ -8,23 +8,29 @@ import logging
 import os
 import traceback
 
-VERSION = '0.1.0'
+VERSION = "0.1.0"
 
-HOME = os.path.expanduser('~')
-LOCAL_FOLD = os.path.join(os.environ.get('XDG_DATA_HOME', os.path.join(HOME, '.local', 'share')), 'wordbook')
-CDEF_FOLD = os.path.join(LOCAL_FOLD, 'cdef')
-CONFIG_FOLD = os.path.join(os.environ.get('XDG_CONFIG_HOME', os.path.join(HOME, '.config')), 'wordbook')
-CONFIG_FILE = os.path.join(CONFIG_FOLD, 'wordbook.conf')
+HOME = os.path.expanduser("~")
+LOCAL_FOLD = os.path.join(
+    os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local", "share")), "wordbook"
+)
+CDEF_FOLD = os.path.join(LOCAL_FOLD, "cdef")
+CONFIG_FOLD = os.path.join(
+    os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config")), "wordbook"
+)
+CONFIG_FILE = os.path.join(CONFIG_FOLD, "wordbook.conf")
 
-logging.basicConfig(format='%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s')
+logging.basicConfig(
+    format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s"
+)
 LOGGER = logging.getLogger()
 
 
 def boot_to_str(boolean):
     """Convert boolean to string for configuration parser."""
     if boolean is True:
-        return 'yes'
-    return 'no'
+        return "yes"
+    return "no"
 
 
 def log_init(debug):
@@ -40,7 +46,7 @@ def log_critical(message):
     """Log a critical error and if possible, its traceback."""
     LOGGER.critical(message)
     trace = traceback.format_exc()
-    if trace.strip() != 'NoneType: None':
+    if trace.strip() != "NoneType: None":
         LOGGER.critical(traceback.format_exc())
 
 
@@ -48,7 +54,7 @@ def log_debug(message):
     """Log a debug message and if possible, its traceback."""
     LOGGER.debug(message)
     trace = traceback.format_exc()
-    if trace.strip() != 'NoneType: None':
+    if trace.strip() != "NoneType: None":
         LOGGER.debug(traceback.format_exc())
 
 
@@ -56,7 +62,7 @@ def log_error(message):
     """Log an error and if possible, its traceback."""
     LOGGER.error(message)
     trace = traceback.format_exc()
-    if trace.strip() != 'NoneType: None':
+    if trace.strip() != "NoneType: None":
         LOGGER.error(traceback.format_exc())
 
 
@@ -64,7 +70,7 @@ def log_info(message):
     """Log a message and if possible, its traceback."""
     LOGGER.info(message)
     trace = traceback.format_exc()
-    if trace.strip() != 'NoneType: None':
+    if trace.strip() != "NoneType: None":
         LOGGER.info(trace)
 
 
@@ -72,5 +78,5 @@ def log_warning(message):
     """Log a warning and if possible, its traceback."""
     LOGGER.warning(message)
     trace = traceback.format_exc()
-    if trace.strip() != 'NoneType: None':
+    if trace.strip() != "NoneType: None":
         LOGGER.warning(traceback.format_exc())

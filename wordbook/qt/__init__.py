@@ -23,11 +23,15 @@ from wordbook.settings import Settings
 
 PARSER = argparse.ArgumentParser()
 MGROUP = PARSER.add_mutually_exclusive_group()
-MGROUP.add_argument('-i', '--verinfo', action='store_true', help='Print version info')
-MGROUP.add_argument('-v', '--verbose', action='store_true', help='Make it scream louder')
+MGROUP.add_argument("-i", "--verinfo", action="store_true", help="Print version info")
+MGROUP.add_argument(
+    "-v", "--verbose", action="store_true", help="Make it scream louder"
+)
 PARSED = PARSER.parse_args()
 utils.log_init(bool(PARSED.verbose) or Settings.get().debug)
-signal.signal(signal.SIGINT, signal.SIG_DFL)  # Exit if we get a SIGINT. The exit is dirty but causes no issues.
+signal.signal(
+    signal.SIGINT, signal.SIG_DFL
+)  # Exit if we get a SIGINT. The exit is dirty but causes no issues.
 base.fold_gen()
 
 REO_VERSION = utils.VERSION
@@ -43,12 +47,12 @@ if PARSED.verinfo:
 def main():
     """Execute the application."""
     app = QtWidgets.QApplication(sys.argv)
-    app.setApplicationName('Wordbook')
-    utils.log_info('Launching Wordbook-Qt')
+    app.setApplicationName("Wordbook")
+    utils.log_info("Launching Wordbook-Qt")
     main_window = WordbookMain()
     main_window.show()
     sys.exit(app.exec_())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

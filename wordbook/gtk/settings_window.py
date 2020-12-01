@@ -13,30 +13,39 @@ from wordbook.settings import Settings
 PATH = os.path.dirname(__file__)
 
 
-@Gtk.Template(filename=f'{PATH}/ui/settings_window.ui')
+@Gtk.Template(filename=f"{PATH}/ui/settings_window.ui")
 class SettingsWindow(Handy.PreferencesWindow):
     """Allows the user to customize Wordbook to some extent."""
-    __gtype_name__ = 'SettingsWindow'
 
-    _cdef_switch = Gtk.Template.Child('cdef_switch')
-    _debug_switch = Gtk.Template.Child('debug_switch')
-    _double_click_switch = Gtk.Template.Child('double_click_switch')
-    _live_search_switch = Gtk.Template.Child('live_search_switch')
-    _max_hide_switch = Gtk.Template.Child('max_hide_switch')
-    _dark_ui_switch = Gtk.Template.Child('dark_ui_switch')
-    _dark_font_switch = Gtk.Template.Child('dark_font_switch')
+    __gtype_name__ = "SettingsWindow"
+
+    _cdef_switch = Gtk.Template.Child("cdef_switch")
+    _debug_switch = Gtk.Template.Child("debug_switch")
+    _double_click_switch = Gtk.Template.Child("double_click_switch")
+    _live_search_switch = Gtk.Template.Child("live_search_switch")
+    _max_hide_switch = Gtk.Template.Child("max_hide_switch")
+    _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
+    _dark_font_switch = Gtk.Template.Child("dark_font_switch")
 
     def __init__(self, **kwargs):
         """Initialize the Settings window."""
         super().__init__(**kwargs)
 
-        self._cdef_switch.connect('notify::active', self._on_cdef_switch_activate)
-        self._debug_switch.connect('notify::active', self._on_debug_switch_activate)
-        self._double_click_switch.connect('notify::active', self._double_click_switch_activate)
-        self._live_search_switch.connect('notify::active', self._on_live_search_activate)
-        self._max_hide_switch.connect('notify::active', self._on_max_hide_swtich_activate)
-        self._dark_ui_switch.connect('notify::active', self._on_dark_ui_swtich_activate)
-        self._dark_font_switch.connect('notify::active', self._on_dark_font_swtich_activate)
+        self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
+        self._debug_switch.connect("notify::active", self._on_debug_switch_activate)
+        self._double_click_switch.connect(
+            "notify::active", self._double_click_switch_activate
+        )
+        self._live_search_switch.connect(
+            "notify::active", self._on_live_search_activate
+        )
+        self._max_hide_switch.connect(
+            "notify::active", self._on_max_hide_swtich_activate
+        )
+        self._dark_ui_switch.connect("notify::active", self._on_dark_ui_swtich_activate)
+        self._dark_font_switch.connect(
+            "notify::active", self._on_dark_font_swtich_activate
+        )
 
     def load_settings(self):
         """Load settings from the Settings instance."""
@@ -78,7 +87,9 @@ class SettingsWindow(Handy.PreferencesWindow):
     def _on_dark_ui_swtich_activate(switch, _gparam):
         """Change UI theme."""
         Settings.get().gtk_dark_ui = switch.get_active()
-        Gtk.Settings.get_default().set_property('gtk-application-prefer-dark-theme', switch.get_active())
+        Gtk.Settings.get_default().set_property(
+            "gtk-application-prefer-dark-theme", switch.get_active()
+        )
 
     @staticmethod
     def _on_dark_font_swtich_activate(switch, _gparam):

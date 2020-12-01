@@ -12,5 +12,5 @@ works across most Linux distributions without any changes.
 """
 from .main import main
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

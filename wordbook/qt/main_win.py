@@ -18,6 +18,7 @@ QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
     """Define all UI interactions."""
+
     searched_term = None
 
     def __init__(self, *args, **kwargs):
@@ -55,23 +56,27 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
         """Show an About window."""
         QtWidgets.QMessageBox.about(
             self,
-            f'About Wordbook-Qt {utils.VERSION}',
-            f'<p><b>About Wordbook-Qt {utils.VERSION}</b></p>'
-            '<p>Wordbook is a dictionary application using espeak-ng, python-wn, etc.</p>'
-            '<p>Licensed under GNU General Public License, version 3 or later.</p>'
-            '<p>Copyright (C) 2016-2020 Mufeed Ali (fushinari)</p>'
-            '<p><a href="https://www.github.com/fushinari/wordbook">GitHub</a></p>'
+            f"About Wordbook-Qt {utils.VERSION}",
+            f"<p><b>About Wordbook-Qt {utils.VERSION}</b></p>"
+            "<p>Wordbook is a dictionary application using espeak-ng, python-wn, etc.</p>"
+            "<p>Licensed under GNU General Public License, version 3 or later.</p>"
+            "<p>Copyright (C) 2016-2020 Mufeed Ali (fushinari)</p>"
+            '<p><a href="https://www.github.com/fushinari/wordbook">GitHub</a></p>',
         )
 
     def _on_audio_clicked(self):
         """Say the text out loud."""
         term = self.searchEntry.text().strip()
-        speed = '120'  # To change eSpeak-ng audio speed.
-        if not term == '':
+        speed = "120"  # To change eSpeak-ng audio speed.
+        if not term == "":
             base.read_term(term, speed)
-        elif term == '' or term.isspace():
+        elif term == "" or term.isspace():
             new_ced = QtWidgets.QMessageBox.warning
-            new_ced(self, 'Umm..?', 'Wordbook can\'t find any text there! You sure you typed something?')
+            new_ced(
+                self,
+                "Umm..?",
+                "Wordbook can't find any text there! You sure you typed something?",
+            )
 
     def _on_entry_changed(self):
         """To live search or not to live search."""
@@ -91,7 +96,7 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
     def _on_link_activated(self, url):
         """Search term in link."""
         term = url.toString()
-        if term.startswith('search:'):
+        if term.startswith("search:"):
             term = term[7:]
             self.searchEntry.setText(term)
             self._on_search_clicked(pause=False, text=term)
@@ -108,20 +113,22 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
             else:
                 text = self.searchEntry.text().strip()
 
-        except_list = ('fortune -a', 'cowfortune')
+        except_list = ("fortune -a", "cowfortune")
         if pass_check or not text == self.searched_term or text in except_list:
             if pause:
                 self.defView.clear()
 
             self.searched_term = text
-            if not text.strip() == '':
+            if not text.strip() == "":
                 out = self.__search(text)
                 if out is None:
                     return
 
-                out_text = base.clean_html(f'<p><b>{out["term"].strip()}</b><br>'
-                                           f'{out["pronunciation"].strip()}</p>'
-                                           f'<p>{out["definition"] or "Definition not found."}</p>')
+                out_text = base.clean_html(
+                    f'<p><b>{out["term"].strip()}</b><br>'
+                    f'{out["pronunciation"].strip()}</p>'
+                    f'<p>{out["definition"] or "Definition not found."}</p>'
+                )
 
                 self.defView.setText(out_text)
                 return
@@ -134,8 +141,8 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
 
     def _on_random_word_triggered(self):
         """Choose a random word and pass it to the search box."""
-        random_word = random.choice(self.wn_future.result()['list'])
-        random_word = random_word.replace('_', ' ')
+        random_word = random.choice(self.wn_future.result()["list"])
+        random_word = random_word.replace("_", " ")
         self.searchEntry.setText(random_word)
         self._on_search_clicked(text=random_word)
 
@@ -147,20 +154,20 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""
         text = base.cleaner(search_text)
-        if not text == '' and not text.isspace():
+        if not text == "" and not text.isspace():
             return base.reactor(
                 text,
                 Settings.get().qt_dark_font,
-                self.wn_future.result()['version'],
-                self.wn_future.result()['instance'],
-                Settings.get().cdef
+                self.wn_future.result()["version"],
+                self.wn_future.result()["instance"],
+                Settings.get().cdef,
             )
         new_ced = QtWidgets.QMessageBox.warning
         new_ced(
             self,
-            'Invalid Input',
-            'Wordbook thinks that your input was actually just a bunch of useless characters.'
-            'And so, an \'Invalid Characters\' error.'
+            "Invalid Input",
+            "Wordbook thinks that your input was actually just a bunch of useless characters."
+            "And so, an 'Invalid Characters' error.",
         )
         self.searched_term = None
         return None
