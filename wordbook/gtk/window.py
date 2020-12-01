@@ -5,6 +5,7 @@
 
 import os
 import random
+import threading
 from html import escape
 
 from gi.repository import Gdk, GLib, Gtk, Handy
@@ -32,6 +33,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _stack = Gtk.Template.Child("main_stack")
 
     _complete_list = []
+    _completion_request_count = 0
     _pasted = False
     _searched_term = None
     _wn_future = base.get_wn_file()
@@ -158,7 +160,13 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""
-        self.__update_completions(self._search_entry.get_text())
+        self._completion_request_count += 1
+        if self._completion_request_count == 1:
+            threading.Thread(
+                target=self.__update_completions,
+                args=[self._search_entry.get_text()],
+                daemon=True,
+            ).start()
         if self._pasted is True:
             self.__entry_cleaner()
             self._pasted = False
@@ -191,7 +199,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._pasted = True
 
     def _on_preferences_destroy(self, _window):
-        """Refresh view when Preferences window is closed. Only necessary for definition now."""
+        """Refresh view when Preferences window is closed."""
         self._completer.set_popup_completion(not Settings.get().live_search)
         if self._searched_term is not None:
             self._on_search_clicked(
@@ -292,34 +300,40 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         if not Settings.get().live_search:
             self.__new_error(
                 "Invalid Input",
-                "Wordbook thinks that your input was actually just a bunch of useless characters. "
-                "And so, an 'Invalid Characters' error.",
+                "Wordbook thinks that your input was actually just a bunch of useless "
+                "characters. And so, an 'Invalid Characters' error.",
             )
         self._searched_term = None
         return None
 
     def __update_completions(self, text):
-        while len(self._complete_list) > 0:
-            GLib.idle_add(self._completer.delete_action, 0)
-            self._complete_list.pop(0)
-        for item in self._wn_future.result()["list"]:
-            item = item.replace("_", " ")
-            if item.lower().startswith(text.lower()):
-                self._complete_list.append(item.replace("_", " "))
-            if len(self._complete_list) == 10:
-                break
-        for item in os.listdir(utils.CDEF_FOLD):
-            if len(self._complete_list) >= 10:
-                break
-            item = escape(item).replace("_", " ")
-            if item in self._complete_list:
-                self._complete_list.remove(item)
-            if item.lower().startswith(text.lower()):
-                self._complete_list.append(f"<i>{item}</i>")
-        self._complete_list = sorted(self._complete_list)
-        for item in self._complete_list:
-            GLib.idle_add(
-                self._completer.insert_action_markup,
-                self._complete_list.index(item),
-                item,
-            )
+        while self._completion_request_count > 0:
+            while len(self._complete_list) > 0:
+                GLib.idle_add(self._completer.delete_action, 0)
+                self._complete_list.pop(0)
+
+            for item in self._wn_future.result()["list"]:
+                item = item.replace("_", " ")
+                if item.lower().startswith(text.lower()):
+                    self._complete_list.append(item.replace("_", " "))
+                if len(self._complete_list) == 10:
+                    break
+
+            for item in os.listdir(utils.CDEF_FOLD):
+                if len(self._complete_list) >= 10:
+                    break
+                item = escape(item).replace("_", " ")
+                if item in self._complete_list:
+                    self._complete_list.remove(item)
+                if item.lower().startswith(text.lower()):
+                    self._complete_list.append(f"<i>{item}</i>")
+
+            self._complete_list = sorted(self._complete_list)
+            for item in self._complete_list:
+                GLib.idle_add(
+                    self._completer.insert_action_markup,
+                    self._complete_list.index(item),
+                    item,
+                )
+
+            self._completion_request_count -= 1
