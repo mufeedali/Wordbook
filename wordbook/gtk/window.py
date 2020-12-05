@@ -292,7 +292,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             return base.reactor(
                 text,
                 Settings.get().gtk_dark_font,
-                self._wn_future.result()["version"],
                 self._wn_future.result()["instance"],
                 Settings.get().cdef,
             )

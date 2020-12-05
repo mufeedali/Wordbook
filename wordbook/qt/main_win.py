@@ -158,7 +158,6 @@ class WordbookMain(QtWidgets.QMainWindow, Ui_WordbookMain):
             return base.reactor(
                 text,
                 Settings.get().qt_dark_font,
-                self.wn_future.result()["version"],
                 self.wn_future.result()["instance"],
                 Settings.get().cdef,
             )

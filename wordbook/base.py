@@ -27,7 +27,10 @@ _POOL = ThreadPoolExecutor()
 
 
 def _threadpool(func):
-    """Wraps around a function allowing it to run in a separate thread and return a future object."""
+    """
+    Wraps around a function allowing it to run in a separate thread and
+    return a future object.
+    """
 
     def wrap(*args, **kwargs):
         return (_POOL).submit(func, *args, **kwargs)
@@ -45,7 +48,10 @@ def cleaner(search_term):
 
 
 def clean_html(data):
-    """Convert Pango Markup subset used in Wordbook to HTML and cleanup. Not a real converter."""
+    """
+    Convert Pango Markup subset used in Wordbook to HTML and cleanup.
+    Not a real converter.
+    """
     replace_list = {
         '<span foreground="': '<font color="',
         "</span>": "</font>",
@@ -183,11 +189,12 @@ def get_definition(term, word_col, sen_col, wn_instance):
         orig_pos = pos
         pos = actual_pos[synset.pos()]  # If this fails, nothing beyond it is useful.
 
-        # We need the term as is found in the WordNet database. If suitable term isn't found, return the term entered.
+        # We need the term as is found in the WordNet database.
         lemma_names = synset.lemma_names()
         diff_match = difflib.get_close_matches(term, lemma_names)
         synset_name = diff_match[0].replace("_", " ").strip() if diff_match else term
 
+        # If suitable term isn't found, return the term entered.
         if first_match is None or first_match == "":
             first_match = synset_name
 
@@ -319,16 +326,14 @@ def get_version_info():
 def get_wn_file():
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initalizing WordNet.")
-    wn = WordNet()
-    utils.log_info("Getting WordNet version.")
-    wn_version = wn.get_version()
+    wn_instance = WordNet()
     utils.log_info("Fetching WordNet, wordlist.")
-    wn_file = list(wn.all_lemma_names())
+    wn_file = list(wn_instance.all_lemma_names())
     utils.log_info("WordNet is ready.")
-    return {"instance": wn, "version": wn_version, "list": wn_file}
+    return {"instance": wn_instance, "list": wn_file}
 
 
-def reactor(text, dark_font, wn_ver, wn_instance, cdef):
+def reactor(text, dark_font, wn_instance, cdef):
     """Return appropriate definitions."""
     if dark_font:
         sencol = "cyan"  # Color of sentences in Dark mode
@@ -346,7 +351,7 @@ def reactor(text, dark_font, wn_ver, wn_instance, cdef):
     if text in wn_list:
         return {
             "term": "<tt>Wordbook</tt>",
-            "pronunciation": f"<tt>Powered by WordNet {wn_ver} and espeak-ng.</tt>",
+            "pronunciation": "<tt>Powered by WordNet and espeak-ng.</tt>",
             "definition": '<tt>URL: <a href="https://wordnet.princeton.edu/">WordNet</a></tt>',
         }
     if text == "fortune -a":

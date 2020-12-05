@@ -11,10 +11,10 @@ import traceback
 VERSION = "0.1.0"
 
 HOME = os.path.expanduser("~")
-LOCAL_FOLD = os.path.join(
+DATA_FOLD = os.path.join(
     os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local", "share")), "wordbook"
 )
-CDEF_FOLD = os.path.join(LOCAL_FOLD, "cdef")
+CDEF_FOLD = os.path.join(DATA_FOLD, "cdef")
 CONFIG_FOLD = os.path.join(
     os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config")), "wordbook"
 )
