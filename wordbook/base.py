@@ -170,7 +170,7 @@ def get_data(term, word_col, sen_col, wn_instance):
 
 def get_definition(term, word_col, sen_col, wn_instance):
     """Get the definition from python-wn and process it."""
-    synsets = wn_instance.synsets(term.replace(" ", "_"))  # Get relevant synsets.
+    synsets = wn_instance.synsets(term)  # Get relevant synsets.
 
     # Synsets have 'parts of speech' symbolized by letters. We need their actual names.
     # We also need to track their values across synsets to an extent.
@@ -222,22 +222,22 @@ def get_definition(term, word_col, sen_col, wn_instance):
             for example in synset.examples():
                 def_string += f'        <font color="{sen_col}">{example}</font>\n'
 
-        # syn = []  # Synonyms
+        syn = []  # Synonyms
         # ant = []  # Antonyms
-        # for lemma in synset.lemmas():
-        #     syn_name = lemma.replace("_", " ").strip()
-        #     if not syn_name == orig_synset:
-        #         syn.append(
-        #             f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
-        #         )
+        for lemma in synset.lemmas():
+            syn_name = lemma.replace("_", " ").strip()
+            if not syn_name == orig_synset:
+                syn.append(
+                    f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
+                )
         #     if lemma.antonyms():
         #         ant_name = lemma.antonyms()[0].name().replace("_", " ")
         #         ant.append(
         #             f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
         #         )
-        # if syn:
-        #     syn = ", ".join(syn)
-        #     def_string += f"        Synonyms: <i>{syn}</i>\n"
+        if syn:
+            syn = ", ".join(syn)
+            def_string += f"        Synonyms: <i>{syn}</i>\n"
         # if ant:
         #     ant = ", ".join(ant)
         #     def_string += f"        Antonyms: <i>{ant}</i>\n"
@@ -332,7 +332,7 @@ def get_wn_file():
     utils.log_info("Initalizing WordNet.")
     wn_instance = Wordnet(lexicon="ewn")
     utils.log_info("Fetching WordNet, wordlist.")
-    wn_file = list(wn_instance.words())
+    wn_file = [w.lemma() for w in wn_instance.words()]
     utils.log_info("WordNet is ready.")
     return {"instance": wn_instance, "list": wn_file}
 
