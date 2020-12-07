@@ -124,7 +124,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def on_random_word(self, _action, _param):
         """Search a random word from the wordlist."""
         random_word = random.choice(self._wn_future.result()["list"])
-        random_word = random_word.lemma().replace("_", " ")
+        random_word = random_word.replace("_", " ")
         GLib.idle_add(self._search_entry.set_text, random_word)
         GLib.idle_add(self._on_search_clicked, pause=False, text=random_word)
         GLib.idle_add(self._search_entry.grab_focus)
@@ -382,7 +382,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 self._complete_list.pop(0)
 
             for item in self._wn_future.result()["list"]:
-                item = item.lemma().replace("_", " ")
+                item = item.replace("_", " ")
                 if item.lower().startswith(text.lower()):
                     self._complete_list.append(item.replace("_", " "))
                 if len(self._complete_list) == 10:
