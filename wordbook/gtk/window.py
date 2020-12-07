@@ -5,8 +5,10 @@
 
 import os
 import random
+import re
 import threading
 from html import escape
+from time import sleep
 
 from gi.repository import Gdk, GLib, Gtk, Handy
 
@@ -21,22 +23,26 @@ PATH = os.path.dirname(__file__)
 class WordbookGtkWindow(Handy.ApplicationWindow):
     __gtype_name__ = "WordbookGtkWindow"
 
-    _clear_button = Gtk.Template.Child("clear_button")
-    _def_view = Gtk.Template.Child("def_view")
-    _pronunciation_view = Gtk.Template.Child("pronunciation_view")
-    _term_view = Gtk.Template.Child("term_view")
     _header_bar = Gtk.Template.Child("header_bar")
-    _menu_button = Gtk.Template.Child("wordbook_menu_button")
     _search_entry = Gtk.Template.Child("search_entry")
     _search_button = Gtk.Template.Child("search_button")
     _speak_button = Gtk.Template.Child("speak_button")
+    _clear_button = Gtk.Template.Child("clear_button")
+    _menu_button = Gtk.Template.Child("wordbook_menu_button")
     _stack = Gtk.Template.Child("main_stack")
+    _loading_label = Gtk.Template.Child("loading_label")
+    _loading_progress = Gtk.Template.Child("loading_progress")
+    _def_view = Gtk.Template.Child("def_view")
+    _pronunciation_view = Gtk.Template.Child("pronunciation_view")
+    _term_view = Gtk.Template.Child("term_view")
 
     _complete_list = []
     _completion_request_count = 0
+    _loading_pulse_state = False
     _pasted = False
     _searched_term = None
-    _wn_future = base.get_wn_file()
+    _wn_downloader = base.WordnetDownloader()
+    _wn_future = None
 
     def __init__(self, **kwargs):
         """Initialize the window."""
@@ -59,6 +65,16 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._search_entry.connect("drag-data-received", self._on_drag_received)
         self._search_entry.connect("paste-clipboard", self._on_paste_done)
         self._speak_button.connect("clicked", self._on_speak_clicked)
+
+        # Loading and setup.
+        self._header_bar.set_sensitive(False)
+        if not self._wn_downloader.check_status():
+            self._loading_label.set_text("Downloading WordNet...")
+            threading.Thread(target=self.__download_wn_database).start()
+        else:
+            self._wn_future = base.get_wn_file()
+            self._header_bar.set_sensitive(True)
+            self.__page_switch("welcome_page")
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
@@ -108,7 +124,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def on_random_word(self, _action, _param):
         """Search a random word from the wordlist."""
         random_word = random.choice(self._wn_future.result()["list"])
-        random_word = random_word.replace("_", " ")
+        random_word = random_word.lemma().replace("_", " ")
         GLib.idle_add(self._search_entry.set_text, random_word)
         GLib.idle_add(self._on_search_clicked, pause=False, text=random_word)
         GLib.idle_add(self._search_entry.grab_focus)
@@ -265,6 +281,60 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             else:
                 GLib.idle_add(self._header_bar.set_show_close_button, True)
 
+    def __download_wn_database(self):
+        """
+        docstring
+        """
+        self._wn_downloader.outputting_state = True
+        old_progress = None
+        failed = False
+        threading.Thread(target=self._wn_downloader.download, daemon=True).start()
+        while True:
+            if self._wn_downloader.output_io is not None and old_progress != 1.0:
+                progress = self._wn_downloader.output_io.getvalue().split('\r\x1b[K\r')
+                if progress:
+                    if not failed and progress[-1].find("failed") != -1:
+                        GLib.idle_add(
+                            self._loading_label.set_markup,
+                            "Download failed.\n"
+                            '<span size="small">Try re-launching.</span>'
+                        )
+                        self._loading_progress.hide()
+                    elif not failed:
+                        progress = re.search(r"\s+\(\d+\/\d+\)", progress[-1])
+                        if progress:
+                            progress = progress.group().strip('() ').split('/')
+                            progress = round(float(progress[0])/float(progress[1]), 1)
+                            if not old_progress == progress and progress != 1.0:
+                                GLib.idle_add(
+                                    self._loading_progress.set_fraction,
+                                    progress
+                                )
+                                old_progress = progress
+                            elif not old_progress == progress and progress == 1.0:
+                                self._loading_pulse_state = True
+                                threading.Thread(
+                                    target=self.__loading_pulse,
+                                    daemon=True
+                                ).start()
+                                GLib.idle_add(
+                                    self._loading_label.set_markup,
+                                    "Building database.\n"
+                                    '<span size="small">This should take a really long'
+                                    " while.</span>"
+                                )
+                                old_progress = progress
+            if self._wn_downloader.outputting_state is False:
+                break
+        self._wn_future = base.get_wn_file()
+        GLib.idle_add(self._header_bar.set_sensitive, True)
+        self.__page_switch("welcome_page")
+
+    def __loading_pulse(self):
+        while self._loading_pulse_state is True:
+            sleep(0.1)
+            GLib.idle_add(self._loading_progress.pulse)
+
     def __entry_cleaner(self):
         term = self._search_entry.get_text()
         self._search_entry.set_text(base.cleaner(term))
@@ -312,13 +382,13 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 self._complete_list.pop(0)
 
             for item in self._wn_future.result()["list"]:
-                item = item.replace("_", " ")
+                item = item.lemma().replace("_", " ")
                 if item.lower().startswith(text.lower()):
                     self._complete_list.append(item.replace("_", " "))
                 if len(self._complete_list) == 10:
                     break
 
-            for item in os.listdir(utils.CDEF_FOLD):
+            for item in os.listdir(utils.CDEF_DIR):
                 if len(self._complete_list) >= 10:
                     break
                 item = escape(item).replace("_", " ")
