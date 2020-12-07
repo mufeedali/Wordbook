@@ -11,14 +11,15 @@ import traceback
 VERSION = "0.1.0"
 
 HOME = os.path.expanduser("~")
-DATA_FOLD = os.path.join(
-    os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local", "share")), "wordbook"
-)
-CDEF_FOLD = os.path.join(DATA_FOLD, "cdef")
-CONFIG_FOLD = os.path.join(
+CONFIG_DIR = os.path.join(
     os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config")), "wordbook"
 )
-CONFIG_FILE = os.path.join(CONFIG_FOLD, "wordbook.conf")
+CONFIG_FILE = os.path.join(CONFIG_DIR, "wordbook.conf")
+DATA_DIR = os.path.join(
+    os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local", "share")), "wordbook"
+)
+CDEF_DIR = os.path.join(DATA_DIR, "cdef")
+WN_DIR = os.path.join(DATA_DIR, "wn")
 
 logging.basicConfig(
     format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s"

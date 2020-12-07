@@ -17,13 +17,17 @@ import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
+from io import StringIO
 from functools import lru_cache
+from shutil import rmtree
 
-from wn import WordNet
+import wn
+from wn import Wordnet
 
-from wordbook import utils
+from wordbook import utils, _download
 
 _POOL = ThreadPoolExecutor()
+wn.config.data_directory = os.path.join(utils.WN_DIR)
 
 
 def _threadpool(func):
@@ -77,15 +81,15 @@ def clean_pango(data):
 
 def fold_gen():
     """Make required directories if they don't already exist."""
-    if not os.path.exists(utils.CONFIG_FOLD):  # check for Wordbook folder
-        os.makedirs(utils.CONFIG_FOLD)  # create Wordbook folder
-    if not os.path.exists(utils.CDEF_FOLD):  # check Custom Definitions folder.
-        os.makedirs(utils.CDEF_FOLD)  # create Custom Definitions folder.
+    if not os.path.exists(utils.CONFIG_DIR):  # check for Wordbook folder
+        os.makedirs(utils.CONFIG_DIR)  # create Wordbook folder
+    if not os.path.exists(utils.CDEF_DIR):  # check Custom Definitions folder.
+        os.makedirs(utils.CDEF_DIR)  # create Custom Definitions folder.
 
 
 def generate_definition(text, wordcol, sencol, wn_instance, cdef=True):
     """Check if custom definition exists."""
-    if cdef and os.path.isfile(utils.CDEF_FOLD + "/" + text.lower()):
+    if cdef and os.path.isfile(utils.CDEF_DIR + "/" + text.lower()):
         return get_custom_def(text, wordcol, sencol, wn_instance)
     return get_data(text, wordcol, sencol, wn_instance)
 
@@ -113,7 +117,7 @@ def get_cowfortune():
 
 def get_custom_def(text, wordcol, sencol, wn_instance):
     """Present custom definition when available."""
-    with open(utils.CDEF_FOLD + "/" + text, "r") as def_file:
+    with open(utils.CDEF_DIR + "/" + text, "r") as def_file:
         custom_def_dict = json.load(def_file)
     if "linkto" in custom_def_dict:
         return get_data(
@@ -187,10 +191,10 @@ def get_definition(term, word_col, sen_col, wn_instance):
     for synset in synsets:
         # Try to organize based on parts of speech.
         orig_pos = pos
-        pos = actual_pos[synset.pos()]  # If this fails, nothing beyond it is useful.
+        pos = actual_pos[synset.pos]  # If this fails, nothing beyond it is useful.
 
         # We need the term as is found in the WordNet database.
-        lemma_names = synset.lemma_names()
+        lemma_names = synset.lemmas()
         diff_match = difflib.get_close_matches(term, lemma_names)
         synset_name = diff_match[0].replace("_", " ").strip() if diff_match else term
 
@@ -218,45 +222,45 @@ def get_definition(term, word_col, sen_col, wn_instance):
             for example in synset.examples():
                 def_string += f'        <font color="{sen_col}">{example}</font>\n'
 
-        syn = []  # Synonyms
-        ant = []  # Antonyms
-        for lemma in synset.lemmas():
-            syn_name = lemma.name().replace("_", " ").strip()
-            if not syn_name == orig_synset:
-                syn.append(
-                    f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
-                )
-            if lemma.antonyms():
-                ant_name = lemma.antonyms()[0].name().replace("_", " ")
-                ant.append(
-                    f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
-                )
-        if syn:
-            syn = ", ".join(syn)
-            def_string += f"        Synonyms: <i>{syn}</i>\n"
-        if ant:
-            ant = ", ".join(ant)
-            def_string += f"        Antonyms: <i>{ant}</i>\n"
+        # syn = []  # Synonyms
+        # ant = []  # Antonyms
+        # for lemma in synset.lemmas():
+        #     syn_name = lemma.replace("_", " ").strip()
+        #     if not syn_name == orig_synset:
+        #         syn.append(
+        #             f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
+        #         )
+        #     if lemma.antonyms():
+        #         ant_name = lemma.antonyms()[0].name().replace("_", " ")
+        #         ant.append(
+        #             f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
+        #         )
+        # if syn:
+        #     syn = ", ".join(syn)
+        #     def_string += f"        Synonyms: <i>{syn}</i>\n"
+        # if ant:
+        #     ant = ", ".join(ant)
+        #     def_string += f"        Antonyms: <i>{ant}</i>\n"
 
-        sims = []  # WordNet's "Similar to"
-        for sim in synset.similar_tos():
-            sim_name = sim.lemmas()[0].name().replace("_", " ").strip()
-            sims.append(
-                f'<font color="{word_col}"><a href="search:{sim_name}">{sim_name}</a></font>'.strip()
-            )
-        if sims:
-            sims = ", ".join(sims)
-            def_string += f"        Similar to: <i>{sims}</i>\n"
+        # sims = []  # WordNet's "Similar to"
+        # for sim in synset.similar_tos():
+        #     sim_name = sim.lemmas()[0].name().replace("_", " ").strip()
+        #     sims.append(
+        #         f'<font color="{word_col}"><a href="search:{sim_name}">{sim_name}</a></font>'.strip()
+        #     )
+        # if sims:
+        #     sims = ", ".join(sims)
+        #     def_string += f"        Similar to: <i>{sims}</i>\n"
 
-        also_sees = []  # WorNet's "Also See"
-        for see in synset.also_sees():
-            see_name = see.lemmas()[0].name().replace("_", " ").strip()
-            also_sees.append(
-                f'<font color="{word_col}"><a href="search:{see_name}">{see_name}</a></font>'.strip()
-            )
-        if also_sees:
-            also_sees = ", ".join(also_sees)
-            def_string += f"        Also see: <i>{also_sees}</i>\n"
+        # also_sees = []  # WorNet's "Also See"
+        # for see in synset.also_sees():
+        #     see_name = see.lemmas()[0].name().replace("_", " ").strip()
+        #     also_sees.append(
+        #         f'<font color="{word_col}"><a href="search:{see_name}">{see_name}</a></font>'.strip()
+        #     )
+        # if also_sees:
+        #     also_sees = ", ".join(also_sees)
+        #     def_string += f"        Also see: <i>{also_sees}</i>\n"
 
     if def_string == "":
         clean_def = {
@@ -326,9 +330,9 @@ def get_version_info():
 def get_wn_file():
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initalizing WordNet.")
-    wn_instance = WordNet()
+    wn_instance = Wordnet(lexicon="ewn")
     utils.log_info("Fetching WordNet, wordlist.")
-    wn_file = list(wn_instance.all_lemma_names())
+    wn_file = list(wn_instance.words())
     utils.log_info("WordNet is ready.")
     return {"instance": wn_instance, "list": wn_file}
 
@@ -382,3 +386,21 @@ def read_term(text, speed):
             stdout=null_maker,
             stderr=subprocess.STDOUT,
         )
+
+
+class WordnetDownloader:
+    output_io = None
+    outputting_state = False
+
+    def check_status(self):
+        """
+        Check if the Wordnet database has already been downloaded.
+        """
+        return os.path.isfile(os.path.join(utils.WN_DIR, "wn.db"))
+
+    def download(self):
+        if os.path.isdir(os.path.join(utils.WN_DIR, "downloads")):
+            rmtree(os.path.join(utils.WN_DIR, "downloads"))
+        self.output_io = StringIO()
+        _download.download("ewn", self.output_io)
+        self.outputting_state = False

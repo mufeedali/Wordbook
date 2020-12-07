@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.36.0 -->
+<!-- Generated with glade 3.38.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <requires lib="libhandy" version="1.0"/>
   <template class="SettingsWindow" parent="HdyPreferencesWindow">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="modal">True</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="default_width">380</property>
-    <property name="default_height">350</property>
+    <property name="default-width">380</property>
+    <property name="default-height">350</property>
+    <property name="destroy-with-parent">True</property>
     <child>
       <object class="HdyPreferencesPage">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="icon_name">emblem-system-symbolic</property>
+        <property name="can-focus">False</property>
+        <property name="icon-name">emblem-system-symbolic</property>
         <property name="title">General</property>
         <child>
           <object class="HdyPreferencesGroup">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">cdef_switch</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Custom Definitions</property>
+                <property name="activatable-widget">cdef_switch</property>
                 <child>
                   <object class="GtkSwitch" id="cdef_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                   </object>
@@ -38,14 +38,14 @@
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">live_search_switch</property>
-                <property name="subtitle" translatable="yes">Show definition as the terms are typed in</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Live Search</property>
+                <property name="activatable-widget">live_search_switch</property>
+                <property name="subtitle" translatable="yes">Show definition as the terms are typed in</property>
                 <child>
                   <object class="GtkSwitch" id="live_search_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                   </object>
@@ -55,13 +55,13 @@
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">debug_switch</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Debugging Mode</property>
+                <property name="activatable-widget">debug_switch</property>
                 <child>
                   <object class="GtkSwitch" id="debug_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                   </object>
@@ -71,14 +71,14 @@
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">double_click_switch</property>
-                <property name="subtitle" translatable="yes">Search any word by double clicking on it</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Double Click Search</property>
+                <property name="activatable-widget">double_click_switch</property>
+                <property name="subtitle" translatable="yes">Search any word by double clicking on it</property>
                 <child>
                   <object class="GtkSwitch" id="double_click_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                   </object>
@@ -92,23 +92,23 @@
     <child>
       <object class="HdyPreferencesPage">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="icon_name">preferences-desktop-apps</property>
+        <property name="can-focus">False</property>
+        <property name="icon-name">preferences-desktop-apps</property>
         <property name="title">UI</property>
         <child>
           <object class="HdyPreferencesGroup">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">max_hide_switch</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Hide window buttons when maximized</property>
+                <property name="activatable-widget">max_hide_switch</property>
                 <child>
                   <object class="GtkSwitch" id="max_hide_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="hexpand">False</property>
@@ -119,13 +119,13 @@
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">dark_ui_switch</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Use dark UI theme</property>
+                <property name="activatable-widget">dark_ui_switch</property>
                 <child>
                   <object class="GtkSwitch" id="dark_ui_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="hexpand">False</property>
@@ -136,14 +136,14 @@
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="activatable_widget">dark_font_switch</property>
-                <property name="subtitle">Use cyan and light green colors</property>
+                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Use dark font theme</property>
+                <property name="activatable-widget">dark_font_switch</property>
+                <property name="subtitle">Use cyan and light green colors</property>
                 <child>
                   <object class="GtkSwitch" id="dark_font_switch">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="hexpand">False</property>
