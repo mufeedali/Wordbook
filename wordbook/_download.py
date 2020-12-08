@@ -14,20 +14,24 @@ TIMEOUT = 10  # number of seconds to wait for a server response
 
 def download(project_or_url: str, output_file: TextIO = sys.stderr) -> None:
     """Download the wordnet specified by *project_or_url*.
+
     If *project_or_url* starts with `'http://'` or `'https://'`, then
     it is taken to be a URL and the relevant project information
     (code, label, version, etc.) will be extracted from the retrieved
     file. Otherwise, *project_or_url* must be a known project id,
     optionally followed by `':'` and a known version. If the version
     is unspecified, the latest known version is retrieved.
+
     The retrieved file is cached locally and added to the wordnet
     database. If the URL was previously downloaded, a cached version
     will be used instead.
+
     >>> wn.download('ewn:2020')
     Download complete (13643357 bytes)
     Checking /tmp/tmp_uqntl0l.xml
     Reading /tmp/tmp_uqntl0l.xml
     Building [###############################] (1337590/1337590)
+
     """
     if is_url(project_or_url):
         url = project_or_url
