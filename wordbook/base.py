@@ -183,6 +183,11 @@ def get_definition(term, word_col, sen_col, wn_instance):
         "v": "verb",
         "r": "adverb",
         "a": "adjective",
+        "t": "phrase",
+        "c": "conjunction",
+        "p": "adposition",
+        "x": "other",
+        "u": "unknown",
     }
 
     i = 0  # Initiate a counter.
@@ -223,44 +228,47 @@ def get_definition(term, word_col, sen_col, wn_instance):
                 def_string += f'        <font color="{sen_col}">{example}</font>\n'
 
         syn = []  # Synonyms
-        # ant = []  # Antonyms
+        ant = []  # Antonyms
         for lemma in synset.lemmas():
             syn_name = lemma.replace("_", " ").strip()
             if not syn_name == orig_synset:
                 syn.append(
                     f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
                 )
-        #     if lemma.antonyms():
-        #         ant_name = lemma.antonyms()[0].name().replace("_", " ")
-        #         ant.append(
-        #             f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
-        #         )
+        for ant_synset in synset.get_related("antonym"):
+            ant_names = ant_synset.lemmas()
+            for ant_name in ant_names:
+                ant.append(
+                    f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
+                )
         if syn:
             syn = ", ".join(syn)
             def_string += f"        Synonyms: <i>{syn}</i>\n"
-        # if ant:
-        #     ant = ", ".join(ant)
-        #     def_string += f"        Antonyms: <i>{ant}</i>\n"
+        if ant:
+            ant = ", ".join(ant)
+            def_string += f"        Antonyms: <i>{ant}</i>\n"
 
-        # sims = []  # WordNet's "Similar to"
-        # for sim in synset.similar_tos():
-        #     sim_name = sim.lemmas()[0].name().replace("_", " ").strip()
-        #     sims.append(
-        #         f'<font color="{word_col}"><a href="search:{sim_name}">{sim_name}</a></font>'.strip()
-        #     )
-        # if sims:
-        #     sims = ", ".join(sims)
-        #     def_string += f"        Similar to: <i>{sims}</i>\n"
+        sims = []  # WordNet's "Similar to"
+        for sim_synset in synset.get_related("similar"):
+            sim_names = sim_synset.lemmas()
+            for sim_name in sim_names:
+                sims.append(
+                    f'<font color="{word_col}"><a href="search:{sim_name}">{sim_name}</a></font>'.strip()
+                )
+        if sims:
+            sims = ", ".join(sims)
+            def_string += f"        Similar to: <i>{sims}</i>\n"
 
-        # also_sees = []  # WorNet's "Also See"
-        # for see in synset.also_sees():
-        #     see_name = see.lemmas()[0].name().replace("_", " ").strip()
-        #     also_sees.append(
-        #         f'<font color="{word_col}"><a href="search:{see_name}">{see_name}</a></font>'.strip()
-        #     )
-        # if also_sees:
-        #     also_sees = ", ".join(also_sees)
-        #     def_string += f"        Also see: <i>{also_sees}</i>\n"
+        also_sees = []  # WorNet's "Also See"
+        for also_synset in synset.get_related("also"):
+            see_names = also_synset.lemmas()
+            for see_name in see_names:
+                also_sees.append(
+                    f'<font color="{word_col}"><a href="search:{see_name}">{see_name}</a></font>'.strip()
+                )
+        if also_sees:
+            also_sees = ", ".join(also_sees)
+            def_string += f"        Also see: <i>{also_sees}</i>\n"
 
     if def_string == "":
         clean_def = {
@@ -392,7 +400,8 @@ class WordnetDownloader:
     output_io = None
     outputting_state = False
 
-    def check_status(self):
+    @staticmethod
+    def check_status():
         """
         Check if the Wordnet database has already been downloaded.
         """
