@@ -15,7 +15,7 @@ import argparse  # for CommandLine-Interface (CLI).
 import signal
 import sys
 
-from PyQt5 import QtWidgets
+from PySide6 import QtWidgets
 
 from wordbook import base, utils
 from wordbook.qt.main_win import WordbookMain
@@ -35,8 +35,8 @@ signal.signal(
 base.fold_gen()
 
 REO_VERSION = utils.VERSION
-REO_FOLD = utils.CONFIG_FOLD
-CDEF_FOLD = utils.CDEF_FOLD
+REO_FOLD = utils.CONFIG_DIR
+CDEF_FOLD = utils.CDEF_DIR
 REO_CONFIG = utils.CONFIG_FILE
 
 if PARSED.verinfo:
