@@ -11,11 +11,11 @@ Light Mode                                 |  Dark Mode
 
 ## Requirements
 
-* GTK 3.20+ [Arch: `gtk3`] or Qt 5.8+ [Arch: `qt5-base`]
+* GTK 3.20+ [Arch: `gtk3`] or Qt 6.0+ [Arch: `qt6-base`]
 * libhandy 0.84.0+ (libhandy1) [Arch AUR: `libhandy1`] (only needed for the GTK GUI)
 * Python 3 [Arch: `python`]
 * Standalone WordNet Python module [Arch AUR: `python-wn`]
-* Python GObject [Arch: `python-gobject`] or PyQt5 [Arch: `python-pyqt5`]
+* Python GObject [Arch: `python-gobject`] or PySide6 [Arch: `python-pyside6`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.

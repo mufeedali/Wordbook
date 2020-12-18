@@ -6,7 +6,7 @@
 import random
 import sys
 
-from PyQt5 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 from wordbook import base, utils
 from wordbook.qt.ui_mainwin import Ui_WordbookMain

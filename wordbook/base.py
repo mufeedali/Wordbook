@@ -201,7 +201,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
         # We need the term as is found in the WordNet database.
         lemma_names = synset.lemmas()
         diff_match = difflib.get_close_matches(term, lemma_names)
-        synset_name = diff_match[0].replace("_", " ").strip() if diff_match else term
+        synset_name = diff_match[0].strip() if diff_match else lemma_names[0]
 
         # If suitable term isn't found, return the term entered.
         if first_match is None or first_match == "":
