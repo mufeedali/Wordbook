@@ -10,10 +10,10 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_WordbookMain():
+class Ui_WordbookMain:
     def setupUi(self, WordbookMain):
         WordbookMain.setObjectName("WordbookMain")
         WordbookMain.resize(388, 388)
@@ -75,34 +75,34 @@ class Ui_WordbookMain():
         self.menuSettings = QtWidgets.QMenu(self.menubar)
         self.menuSettings.setObjectName("menuSettings")
         WordbookMain.setMenuBar(self.menubar)
-        self.actionPaste_Search = QtWidgets.QAction(WordbookMain)
+        self.actionPaste_Search = QtGui.QAction(WordbookMain)
         icon = QtGui.QIcon.fromTheme("edit-paste-symbolic")
         self.actionPaste_Search.setIcon(icon)
         self.actionPaste_Search.setObjectName("actionPaste_Search")
-        self.actionSearch_Selected = QtWidgets.QAction(WordbookMain)
+        self.actionSearch_Selected = QtGui.QAction(WordbookMain)
         icon = QtGui.QIcon.fromTheme("edit-find-symbolic")
         self.actionSearch_Selected.setIcon(icon)
         self.actionSearch_Selected.setObjectName("actionSearch_Selected")
-        self.actionRandom_Word = QtWidgets.QAction(WordbookMain)
+        self.actionRandom_Word = QtGui.QAction(WordbookMain)
         icon = QtGui.QIcon.fromTheme("media-playlist-shuffle-symbolic")
         self.actionRandom_Word.setIcon(icon)
         self.actionRandom_Word.setObjectName("actionRandom_Word")
-        self.actionAbout = QtWidgets.QAction(WordbookMain)
+        self.actionAbout = QtGui.QAction(WordbookMain)
         icon = QtGui.QIcon.fromTheme("help-about-symbolic")
         self.actionAbout.setIcon(icon)
         self.actionAbout.setObjectName("actionAbout")
-        self.actionQuit = QtWidgets.QAction(WordbookMain)
+        self.actionQuit = QtGui.QAction(WordbookMain)
         icon = QtGui.QIcon.fromTheme("window-close-symbolic")
         self.actionQuit.setIcon(icon)
         self.actionQuit.setObjectName("actionQuit")
-        self.actionLive_Search = QtWidgets.QAction(WordbookMain)
+        self.actionLive_Search = QtGui.QAction(WordbookMain)
         self.actionLive_Search.setCheckable(True)
         self.actionLive_Search.setObjectName("actionLive_Search")
-        self.actionDark_Mode = QtWidgets.QAction(WordbookMain)
+        self.actionDark_Mode = QtGui.QAction(WordbookMain)
         self.actionDark_Mode.setCheckable(True)
         self.actionDark_Mode.setChecked(True)
         self.actionDark_Mode.setObjectName("actionDark_Mode")
-        self.actionDebug = QtWidgets.QAction(WordbookMain)
+        self.actionDebug = QtGui.QAction(WordbookMain)
         self.actionDebug.setCheckable(True)
         self.actionDebug.setObjectName("actionDebug")
         self.menuSearch.addAction(self.actionPaste_Search)
@@ -136,7 +136,9 @@ class Ui_WordbookMain():
         self.menuSettings.setTitle(_translate("WordbookMain", "Settings"))
         self.actionPaste_Search.setText(_translate("WordbookMain", "Paste && Search"))
         self.actionPaste_Search.setShortcut(_translate("WordbookMain", "Ctrl+Shift+V"))
-        self.actionSearch_Selected.setText(_translate("WordbookMain", "Search Selected Text"))
+        self.actionSearch_Selected.setText(
+            _translate("WordbookMain", "Search Selected Text")
+        )
         self.actionSearch_Selected.setShortcut(_translate("WordbookMain", "Ctrl+S"))
         self.actionRandom_Word.setText(_translate("WordbookMain", "Random Word"))
         self.actionRandom_Word.setShortcut(_translate("WordbookMain", "Ctrl+R"))

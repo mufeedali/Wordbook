@@ -11,11 +11,11 @@ Light Mode                                 |  Dark Mode
 
 ## Requirements
 
-* GTK 3.20+ [Arch: `gtk3`] or Qt 5.8+ [Arch: `qt5-base`]
+* GTK 3.20+ [Arch: `gtk3`] or Qt 6.0+ [Arch: `qt6-base`]
 * libhandy 0.84.0+ (libhandy1) [Arch AUR: `libhandy1`] (only needed for the GTK GUI)
 * Python 3 [Arch: `python`]
-* [Standalone WordNet Python module, `wn==0.0.23`](https://pypi.org/project/wn/0.0.23/) (later versions will not work with master)
-* Python GObject [Arch: `python-gobject`] or PyQt5 [Arch: `python-pyqt5`]
+* Standalone WordNet Python module [Arch AUR: `python-wn`]
+* Python GObject [Arch: `python-gobject`] or PySide6 [Arch: `python-pyside6`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.
@@ -32,14 +32,6 @@ Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.
 
 ## Installation
 
-Before installing Wordbook, you must install the standalone WordNet module. However, only version 0.0.23 will work with Wordbook for now. So, install it as follows:
-
-```bash
-pip install 'wn==0.0.23' --force-reinstall
-```
-
-**Note**: the branch `new-wn` works with newer releases of the `wn` module but is still a work-in-progress, hence this suggestion.
-
 To install, first make sure of the dependencies as listed above.
 
 ```bash
@@ -54,7 +46,7 @@ python setup.py develop
 
 ## Notes
 
-### Qt5 Interface
+### Qt6 Interface
 
 * Most settings are shared between the two GUIs. Only GUI-specific settings are separated (dark mode for example).
 * Should work on Windows now if espeak installed in PATH but not officially supported.
