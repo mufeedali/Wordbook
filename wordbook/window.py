@@ -300,8 +300,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             "Sense Relations",
             "Examples",
         ]
-        if status == "Initializing" or status == "Requesting":
-            GLib.idle_add(self._loading_label.set_label, status)
+        if status in ["Initializing", "Requesting"]:
+            GLib.idle_add(self._loading_label.set_label, f"{status}...")
         elif status == "Receiving" and max:
             self._loading_max = float(max)
         elif status is None and chunk:
