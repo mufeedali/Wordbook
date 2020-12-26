@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=Wordbook
+Exec=wordbook
+Comment=A simple dictionary application
+Terminal=false
+Type=Application
+Icon=com.github.fushinari.Wordbook
+Categories=Education;GTK;
+Keywords=dictionary;
+X-Purism-FormFactor=Workstation;Mobile;

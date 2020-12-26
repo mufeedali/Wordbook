@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/github/fushinari/Wordbook">
+    <file compressed="true" preprocess="xml-stripblanks">ui/menu.xml</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/settings_window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/shortcuts_window.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
+  </gresource>
+</gresources>
+

@@ -6,6 +6,9 @@
 *.pyc
 *.backup
 .idea/
+.flatpak/
+deprecated_stuff/
+_build/
 
 
 # Byte-compiled / optimized / DLL files

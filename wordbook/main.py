@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
-# Author: Mufeed Ali <fushinari@protonmail.com>
-
-import os
-import sys
+# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import gi
 
@@ -13,19 +9,19 @@ gi.require_version("Handy", "1")
 from gi.repository import Gio, GLib, Gtk, Handy  # noqa
 
 from wordbook import base, utils  # noqa
-from wordbook.gtk.window import WordbookGtkWindow  # noqa
+from wordbook.window import WordbookGtkWindow  # noqa
 from wordbook.settings import Settings  # noqa
-
-PATH = os.path.dirname(__file__)
 
 
 class Application(Gtk.Application):
     """Manages the windows, properties, etc of Wordbook."""
 
+    development_mode = False
+
     def __init__(self):
         """Initialize the application."""
         super().__init__(
-            application_id="com.github.fushinari.Wordbook",
+            application_id=utils.APP_ID,
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
         )
         self.add_main_option(
@@ -95,7 +91,12 @@ class Application(Gtk.Application):
         if "verinfo" in options:
             base.get_version_info()
             return 0
-        utils.log_init("verbose" in options or Settings.get().debug or False)
+        utils.log_init(
+            self.development_mode
+            or "verbose" in options
+            or Settings.get().debug
+            or False
+        )
         self.activate()
         return 0
 
@@ -107,13 +108,7 @@ class Application(Gtk.Application):
         )
 
         GLib.set_application_name("Wordbook")
-        GLib.set_prgname("com.github.fushinari.Wordbook")
+        GLib.set_prgname(utils.APP_ID)
 
         Handy.init()
         base.fold_gen()
-
-
-def main():
-    """Launch the application."""
-    app = Application()
-    return app.run(sys.argv)

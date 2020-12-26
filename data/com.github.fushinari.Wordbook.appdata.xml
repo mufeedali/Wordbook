@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>com.github.fushinari.Wordbook</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>GPL-3.0-or-later</project_license>
+
+    <name>Wordbook</name>
+    <summary>A simple dictionary application</summary>
+    <description>
+        <p>A simple dictionary application</p>
+    </description>
+
+    <custom>
+        <value key="Purism::form_factor">workstation</value>
+        <value key="Purism::form_factor">mobile</value>
+    </custom>
+
+    <developer_name>Mufeed Ali</developer_name>
+    <update_contact>fushinari@protonmail.com</update_contact>
+
+    <url type="homepage">https://github.com/fushinari/Wordbook</url>
+    <url type="bugtracker">https://github.com/fushinari/Wordbook/issues</url>
+
+	<launchable type="desktop-id">com.github.fushinari.Wordbook.desktop</launchable>
+	<releases>
+	</releases>
+</component>
+
