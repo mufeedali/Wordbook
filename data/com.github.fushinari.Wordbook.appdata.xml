@@ -21,8 +21,8 @@
     <url type="homepage">https://github.com/fushinari/Wordbook</url>
     <url type="bugtracker">https://github.com/fushinari/Wordbook/issues</url>
 
-	<launchable type="desktop-id">com.github.fushinari.Wordbook.desktop</launchable>
-	<releases>
-	</releases>
+    <launchable type="desktop-id">com.github.fushinari.Wordbook.desktop</launchable>
+    <releases>
+    </releases>
 </component>
 
