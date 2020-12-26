@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
-# Author: Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """utils contains a few global variables and essential functions."""
 import logging
@@ -9,6 +8,9 @@ import os
 import traceback
 
 VERSION = "0.1.0"
+
+APP_ID = "com.github.fushinari.Wordbook"
+RES_PATH = "/com/github/fushinari/Wordbook"
 
 HOME = os.path.expanduser("~")
 CONFIG_DIR = os.path.join(
