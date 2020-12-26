@@ -1,4 +1,7 @@
 version = 1
+exclude_patterns = [
+  "build-aux/flatpak/*"
+]
 
 [[analyzers]]
 name = "python"
