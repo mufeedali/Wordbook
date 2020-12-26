@@ -11,14 +11,12 @@ Light Mode                                 |  Dark Mode
 
 ## Requirements
 
-* GTK 3.20+ [Arch: `gtk3`] or Qt 6.0+ [Arch: `qt6-base`]
-* libhandy 0.84.0+ (libhandy1) [Arch AUR: `libhandy1`] (only needed for the GTK GUI)
+* GTK 3.20+ [Arch: `gtk3`]
+* libhandy 1.0.0+ (libhandy1) [Arch: `libhandy`]
 * Python 3 [Arch: `python`]
 * Standalone WordNet Python module [Arch AUR: `python-wn`]
-* Python GObject [Arch: `python-gobject`] or PySide6 [Arch: `python-pyside6`]
+* Python GObject [Arch: `python-gobject`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
-
-Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.
 
 ## Features
 
@@ -27,7 +25,6 @@ Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.
 * Live Search
 * Double click to search
 * Custom Definitions feature using Pango Markup or an HTML subset for formatting
-* Lightweight. 1 mb only and further reducible (It does nothing on its own, so yeah)
 * Support for GNOME Dark Mode and launching app in dark mode.
 
 ## Installation
@@ -35,26 +32,17 @@ Run `wordbook` for the GTK GUI or `wordbook-qt` for the Qt GUI.
 To install, first make sure of the dependencies as listed above.
 
 ```bash
-python setup.py install
+make setup
+make install
 ```
 
-For development (i.e. to see changes live as you make them):
+For a local build with debugging enabled:
 
 ```bash
-python setup.py develop
+make setup
+make local
+make run
 ```
-
-## Notes
-
-### Qt6 Interface
-
-* Most settings are shared between the two GUIs. Only GUI-specific settings are separated (dark mode for example).
-* Should work on Windows now if espeak installed in PATH but not officially supported.
-* The GTK interface is still the recommended interface and will usually be the first to receive new features.
-
-### Why libhandy?
-
-Because I like the new rounded corners, lol. Also, pretty settings window.
 
 ## Future
 

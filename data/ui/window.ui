@@ -49,7 +49,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="activates-default">True</property>
-                        <property name="primary-icon-name">accessories-dictionary-symbolic</property>
+                        <property name="primary-icon-name">com.github.fushinari.Wordbook-symbolic</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
                         <property name="placeholder-text" translatable="yes">Wordbook</property>
@@ -199,7 +199,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="pixel-size">110</property>
-                    <property name="icon-name">accessories-dictionary-symbolic</property>
+                    <property name="icon-name">com.github.fushinari.Wordbook-symbolic</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>

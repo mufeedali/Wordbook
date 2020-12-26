@@ -1,0 +1,36 @@
+#!@PYTHON@
+
+# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+import os
+import sys
+import signal
+import gettext
+
+VERSION = '@VERSION@'
+pkgdatadir = '@pkgdatadir@'
+localedir = '@localedir@'
+
+sys.path.insert(1, pkgdatadir)
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+gettext.install('wordbook', localedir)
+
+if __name__ == '__main__':
+    import gi
+
+    from gi.repository import Gio
+    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'wordbook.gresource'))
+    resource._register()
+
+    from wordbook.main import Application
+    Application.development_mode = @PROFILE@ == 'development'
+    app = Application()
+
+    try:
+        status = app.run(sys.argv)
+    except SystemExit as e:
+        status = e.code
+
+    sys.exit(status)

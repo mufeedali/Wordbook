@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
-# Author: Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import configparser
 import os

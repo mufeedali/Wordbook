@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
-# Author: Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
 
-from gi.repository import Gtk, Handy
+from gi.repository import Gio, Gtk, Handy
 
 from wordbook import utils
 from wordbook.settings import Settings
@@ -13,7 +12,7 @@ from wordbook.settings import Settings
 PATH = os.path.dirname(__file__)
 
 
-@Gtk.Template(filename=f"{PATH}/ui/settings_window.ui")
+@Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings_window.ui")
 class SettingsWindow(Handy.PreferencesWindow):
     """Allows the user to customize Wordbook to some extent."""
 
@@ -45,6 +44,10 @@ class SettingsWindow(Handy.PreferencesWindow):
         self._dark_ui_switch.connect("notify::active", self._on_dark_ui_swtich_activate)
         self._dark_font_switch.connect(
             "notify::active", self._on_dark_font_swtich_activate
+        )
+
+        self._debug_switch.set_sensitive(
+            not Gio.Application.get_default().development_mode
         )
 
     def load_settings(self):

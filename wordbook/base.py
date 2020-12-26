@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2020 Mufeed Ali
-# SPDX-License-Identifier: GPL-3.0-only or GPL-3.0-or-later
-# Author: Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """
 base contains the shared code between the Qt5 and GTK 3 frontends.
@@ -17,14 +16,13 @@ import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
-from io import StringIO
 from functools import lru_cache
 from shutil import rmtree
 
 import wn
 from wn import Wordnet
 
-from wordbook import utils, _download
+from wordbook import utils
 
 _POOL = ThreadPoolExecutor()
 wn.config.data_directory = os.path.join(utils.WN_DIR)
@@ -397,9 +395,6 @@ def read_term(text, speed):
 
 
 class WordnetDownloader:
-    output_io = None
-    outputting_state = False
-
     @staticmethod
     def check_status():
         """
@@ -407,9 +402,8 @@ class WordnetDownloader:
         """
         return os.path.isfile(os.path.join(utils.WN_DIR, "wn.db"))
 
-    def download(self):
+    @staticmethod
+    def download(progress_handler=None):
         if os.path.isdir(os.path.join(utils.WN_DIR, "downloads")):
             rmtree(os.path.join(utils.WN_DIR, "downloads"))
-        self.output_io = StringIO()
-        _download.download("ewn", self.output_io)
-        self.outputting_state = False
+        wn.download("ewn", progress_handler=progress_handler)

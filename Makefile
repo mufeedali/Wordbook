@@ -1,5 +1,4 @@
-.PHONY: clean clean-pyc clean-build help
-.DEFAULT_GOAL := help
+BUILD := _build
 
 define PRINT_HELP_PYSCRIPT
 import re, sys
@@ -12,29 +11,26 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 
-help:
-	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+help:  ## Print the help message.
+	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc ## remove all build, test, coverage and Python artifacts
+setup:  ## Setup build folder.
+	mkdir -p $(BUILD)
+	meson . $(BUILD)
 
-clean-build: ## remove build artifacts
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
+local:  ## Configure a local build.
+	meson configure $(BUILD) -Dprefix=$$(pwd)/$(BUILD)/testdir
+	ninja -C $(BUILD) install
 
-clean-pyc: ## remove Python file artifacts
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
+develop:  ## Configure a local build with debugging.
+	meson configure $(BUILD) -Dprefix=$$(pwd)/$(BUILD)/testdir -Dprofile=development
+	ninja -C $(BUILD) install
 
-lint: ## check style with flake8
-	flake8 wordbook tests
+run:  ## Run the local build.
+	ninja -C $(BUILD) run
 
-develop: clean ## setup the package for development
-	python setup.py develop
+install:  ## Install system-wide.
+	ninja -C $(BUILD) install
 
-install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+clean:  ## Clean build files.
+	rm -r $(BUILD)
