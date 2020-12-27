@@ -173,7 +173,6 @@ def get_definition(term, word_col, sen_col, wn_instance):
     # Synsets have 'parts of speech' symbolized by letters. We need their actual names.
     # We also need to track their values across synsets to an extent.
     pos = None
-    orig_pos = None
     orig_synset = None
     actual_pos = {
         "s": "adjective",
@@ -205,7 +204,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
         if first_match is None or first_match == "":
             first_match = synset_name
 
-        # Identiy and set the number of definitions for the same part of speech.
+        # Identify and set the number of definitions for the same part of speech.
         if orig_pos is None:
             def_string += f"{synset_name} ~ <b>{pos}</b>\n"
             orig_synset = synset_name
@@ -377,8 +376,7 @@ def reactor(text, dark_font, wn_instance, cdef):
             "definition": get_cowfortune(),
         }
     if text in ("crash now", "close now"):
-        sys.exit()
-        return None
+        return sys.exit()
     if text and not text.isspace():
         return generate_definition(text, wordcol, sencol, wn_instance, cdef=cdef)
     return None
