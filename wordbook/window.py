@@ -48,11 +48,11 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         if Gio.Application.get_default().development_mode is True:
             self.get_style_context().add_class('devel')
 
-        builder = Gtk.Builder.new_from_resource(f"{utils.RES_PATH}/ui/menu.xml")
+        builder = Gtk.Builder.new_from_resource(resource_path=f"{utils.RES_PATH}/ui/menu.xml")
         menu = builder.get_object("wordbook-menu")
         self.set_icon_name(utils.APP_ID)
 
-        popover = Gtk.Popover.new_from_model(self._menu_button, menu)
+        popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
         self._menu_button.set_popover(popover)
 
         self.connect("notify::is-maximized", self._on_window_state_changed)
@@ -143,7 +143,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def on_shortcuts(self, _action, _param):
         """Launch the Keyboard Shortcuts window."""
         builder = Gtk.Builder.new_from_resource(
-            f"{utils.RES_PATH}/ui/shortcuts_window.ui"
+            resource_path=f"{utils.RES_PATH}/ui/shortcuts_window.ui"
         )
         shortcuts_window = builder.get_object("shortcuts")
         shortcuts_window.set_transient_for(self)

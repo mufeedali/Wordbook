@@ -39,11 +39,11 @@ class SettingsWindow(Handy.PreferencesWindow):
             "notify::active", self._on_live_search_activate
         )
         self._max_hide_switch.connect(
-            "notify::active", self._on_max_hide_swtich_activate
+            "notify::active", self._on_max_hide_switch_activate
         )
-        self._dark_ui_switch.connect("notify::active", self._on_dark_ui_swtich_activate)
+        self._dark_ui_switch.connect("notify::active", self._on_dark_ui_switch_activate)
         self._dark_font_switch.connect(
-            "notify::active", self._on_dark_font_swtich_activate
+            "notify::active", self._on_dark_font_switch_activate
         )
 
         self._debug_switch.set_sensitive(
@@ -82,12 +82,12 @@ class SettingsWindow(Handy.PreferencesWindow):
         Settings.get().live_search = switch.get_active()
 
     @staticmethod
-    def _on_max_hide_swtich_activate(switch, _gparam):
+    def _on_max_hide_switch_activate(switch, _gparam):
         """Change 'Hide window buttons when Wordbook is maximized' state."""
         Settings.get().gtk_max_hide = switch.get_active()
 
     @staticmethod
-    def _on_dark_ui_swtich_activate(switch, _gparam):
+    def _on_dark_ui_switch_activate(switch, _gparam):
         """Change UI theme."""
         Settings.get().gtk_dark_ui = switch.get_active()
         Gtk.Settings.get_default().set_property(
@@ -95,6 +95,6 @@ class SettingsWindow(Handy.PreferencesWindow):
         )
 
     @staticmethod
-    def _on_dark_font_swtich_activate(switch, _gparam):
+    def _on_dark_font_switch_activate(switch, _gparam):
         """Change definitions' font colors."""
         Settings.get().gtk_dark_font = switch.get_active()
