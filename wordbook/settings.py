@@ -9,7 +9,7 @@ from wordbook import utils
 
 
 class Settings:
-    """Manages all the settings of the application including both the GUIs."""
+    """Manages all the settings of the application."""
 
     config = configparser.ConfigParser()
     instance = None
@@ -19,18 +19,15 @@ class Settings:
         if not os.path.exists(utils.CONFIG_FILE):
             self.config["General"] = {
                 "CustomDefinitions": "yes",
-                "Debug": "no",
                 "LiveSearch": "no",
                 "DoubleClick": "no",
-                "ConfigVersion": "2",
+                "ConfigVersion": "3",
+                "PronunciationsAccent": "us",
             }
-            self.config["UI-gtk"] = {
+            self.config["UI"] = {
                 "DarkUI": "yes",
                 "DarkFont": "yes",
                 "HideWindowButtonsMaximized": "no",
-            }
-            self.config["UI-qt"] = {
-                "DarkFont": "no",
             }
         else:
             self.load_settings()
@@ -44,16 +41,6 @@ class Settings:
     def cdef(self, value):
         """Set custom definition status."""
         self.set_boolean_key("General", "CustomDefinitions", value)
-
-    @property
-    def debug(self):
-        """Get whether to launch in debug mode."""
-        return self.config.getboolean("General", "Debug")
-
-    @debug.setter
-    def debug(self, value):
-        """Set whether to launch in debug mode."""
-        self.set_boolean_key("General", "Debug", value)
 
     @property
     def double_click(self):
@@ -75,32 +62,32 @@ class Settings:
     @property
     def gtk_dark_ui(self):
         """Get GTK theme setting."""
-        return self.config.getboolean("UI-gtk", "DarkUI")
+        return self.config.getboolean("UI", "DarkUI")
 
     @gtk_dark_ui.setter
     def gtk_dark_ui(self, value):
         """Set GTK theme setting."""
-        self.set_boolean_key("UI-gtk", "DarkUI", value)
+        self.set_boolean_key("UI", "DarkUI", value)
 
     @property
     def gtk_dark_font(self):
         """Get GTK theme setting."""
-        return self.config.getboolean("UI-gtk", "DarkFont")
+        return self.config.getboolean("UI", "DarkFont")
 
     @gtk_dark_font.setter
     def gtk_dark_font(self, value):
         """Set GTK theme setting."""
-        self.set_boolean_key("UI-gtk", "DarkFont", value)
+        self.set_boolean_key("UI", "DarkFont", value)
 
     @property
     def gtk_max_hide(self):
         """Get whether window buttons should be hidden in maximized state in GTK."""
-        return self.config.getboolean("UI-gtk", "HideWindowButtonsMaximized")
+        return self.config.getboolean("UI", "HideWindowButtonsMaximized")
 
     @gtk_max_hide.setter
     def gtk_max_hide(self, value):
         """Set whether window buttons should be hidden in maximized state in GTK."""
-        self.set_boolean_key("UI-gtk", "HideWindowButtonsMaximized", value)
+        self.set_boolean_key("UI", "HideWindowButtonsMaximized", value)
 
     @property
     def live_search(self):
@@ -114,22 +101,65 @@ class Settings:
 
     def load_settings(self):
         """Load settings from file."""
+
+        def rename_section(config, old_name, new_name):
+            items = config.items(old_name)
+            config.add_section(new_name)
+            for item in items:
+                config.set(new_name, item[0], item[1])
+            config.remove_section(old_name)
+
         with open(utils.CONFIG_FILE, "r") as file:
             self.config.read_file(file)
         utils.log_info("Version Code: " + self.config.get("General", "ConfigVersion"))
-        if self.config.get("General", "ConfigVersion") == "1":
-            utils.log_info("Updating to ConfigVersion 2")
-            self.set_boolean_key("General", "DoubleClick", False)
+
+        if self.config.getint("General", "ConfigVersion") < 3:
+            utils.log_info("Updating to ConfigVersion 3")
+
+            # Remove old options.
+            self.config.remove_section("UI-qt")  # Qt UI removed.
+            self.config.remove_option("General", "Debug")  # replaced.
+
+            # Rename existing options.
+            rename_section(self.config, "UI-gtk", "UI")
+
+            # Add new options.
+            self.config.set("General", "PronunciationsAccent", "us")
+
+            if self.config.getint("General", "ConfigVersion") < 2:
+                # Add new option.
+                self.set_boolean_key("General", "DoubleClick", False)
+
+            self.config.set("General", "ConfigVersion", "3")  # Set version.
+            self.save_settings()  # Save before proceeding.
 
     @property
-    def qt_dark_font(self):
-        """Get Qt theme setting."""
-        return self.config.getboolean("UI-qt", "DarkFont")
+    def pronunciations_accent(self):
+        """Get pronunciations accent."""
+        return self.config.get("General", "PronunciationsAccent")
 
-    @qt_dark_font.setter
-    def qt_dark_font(self, value):
-        """Set Qt theme setting."""
-        self.set_boolean_key("UI-qt", "DarkFont", value)
+    @pronunciations_accent.setter
+    def pronunciations_accent(self, value):
+        """Set pronunciations accent."""
+        self.config.set("General", "PronunciationsAccent", value)
+        self.save_settings()  # Manually save because set_boolean_key is not called.
+
+    @property
+    def pronunciations_accent_value(self):
+        """Get pronunciations accent index."""
+        if self.pronunciations_accent == "us":
+            return 0
+        elif self.pronunciations_accent == "gb":
+            return 1
+        return 0
+
+    @pronunciations_accent_value.setter
+    def pronunciations_accent_value(self, value):
+        """Set pronunciations accent index."""
+        if value == 0:
+            self.pronunciations_accent = "us"
+        elif value == 1:
+            self.pronunciations_accent = "gb"
 
     def save_settings(self):
         """Save settings."""

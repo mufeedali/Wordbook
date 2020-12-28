@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
-base contains the shared code between the Qt5 and GTK 3 frontends.
+base contains the shared code between the GTK+ 3 UI and other possible frontends.
 
 base is a part of Wordbook. It contains a few functions that are reusable across
 both the UIs.
@@ -85,11 +85,11 @@ def fold_gen():
         os.makedirs(utils.CDEF_DIR)  # create Custom Definitions folder.
 
 
-def generate_definition(text, wordcol, sencol, wn_instance, cdef=True):
+def generate_definition(text, wordcol, sencol, wn_instance, cdef=True, accent="us"):
     """Check if custom definition exists."""
     if cdef and os.path.isfile(utils.CDEF_DIR + "/" + text.lower()):
-        return get_custom_def(text, wordcol, sencol, wn_instance)
-    return get_data(text, wordcol, sencol, wn_instance)
+        return get_custom_def(text, wordcol, sencol, wn_instance, accent)
+    return get_data(text, wordcol, sencol, wn_instance, accent)
 
 
 def get_cowfortune():
@@ -113,13 +113,13 @@ def get_cowfortune():
         return f"<tt>{fortune_out}</tt>"
 
 
-def get_custom_def(text, wordcol, sencol, wn_instance):
+def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
     """Present custom definition when available."""
     with open(utils.CDEF_DIR + "/" + text, "r") as def_file:
         custom_def_dict = json.load(def_file)
     if "linkto" in custom_def_dict:
         return get_data(
-            custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance
+            custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance, accent
         )
     definition = custom_def_dict.get(
         "definition",
@@ -138,7 +138,7 @@ def get_custom_def(text, wordcol, sencol, wn_instance):
             definition = definition.replace(i, j)
     term = custom_def_dict.get("term", text)
     pronunciation = (
-        custom_def_dict.get("pronunciation", get_pronunciation(term))
+        custom_def_dict.get("pronunciation", get_pronunciation(term, accent))
         or "Is espeak-ng installed?"
     )
     final_data = {
@@ -149,11 +149,11 @@ def get_custom_def(text, wordcol, sencol, wn_instance):
     return final_data
 
 
-def get_data(term, word_col, sen_col, wn_instance):
+def get_data(term, word_col, sen_col, wn_instance, accent="us"):
     """Obtain the data to be processed and presented."""
     definition = get_definition(term, word_col, sen_col, wn_instance)
     clean_def = definition[0]
-    pron = get_pronunciation(clean_def["term"] or term)
+    pron = get_pronunciation(clean_def["term"] or term, accent)
     if not pron or pron == "" or pron.isspace():
         final_pron = "Is espeak-ng installed?"
     else:
@@ -298,16 +298,16 @@ def get_fortune(mono=True):
 
 
 @lru_cache(maxsize=None)
-def get_pronunciation(term):
+def get_pronunciation(term, accent="us"):
     """Get the pronunciation from espeak and process it."""
     try:
         process_pron = subprocess.Popen(
-            ["espeak-ng", "-ven-uk-rp", "--ipa", "-q", term],
+            ["espeak-ng", "-v", f"en-{accent}", "--ipa", "-q", term],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
     except OSError as ex:
-        print("Didn't Work! ERROR INFO: " + str(ex))
+        utils.log_warning("Didn't Work! ERROR INFO: " + str(ex))
         return None
     process_pron.wait()
     output = process_pron.stdout.read().decode()
@@ -342,7 +342,7 @@ def get_wn_file():
     return {"instance": wn_instance, "list": wn_file}
 
 
-def reactor(text, dark_font, wn_instance, cdef):
+def reactor(text, dark_font, wn_instance, cdef, accent="us"):
     """Return appropriate definitions."""
     if dark_font:
         sencol = "cyan"  # Color of sentences in Dark mode
@@ -378,15 +378,17 @@ def reactor(text, dark_font, wn_instance, cdef):
     if text in ("crash now", "close now"):
         return sys.exit()
     if text and not text.isspace():
-        return generate_definition(text, wordcol, sencol, wn_instance, cdef=cdef)
+        return generate_definition(
+            text, wordcol, sencol, wn_instance, cdef=cdef, accent=accent
+        )
     return None
 
 
-def read_term(text, speed):
+def read_term(text, speed=120, accent="us"):
     """Say text loudly."""
     with open(os.devnull, "w") as null_maker:
         subprocess.Popen(
-            ["espeak-ng", "-s", speed, "-ven-uk-rp", text],
+            ["espeak-ng", "-s", speed, "-v", f"en-{accent}", text],
             stdout=null_maker,
             stderr=subprocess.STDOUT,
         )

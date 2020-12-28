@@ -46,9 +46,11 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         super().__init__(**kwargs)
 
         if Gio.Application.get_default().development_mode is True:
-            self.get_style_context().add_class('devel')
+            self.get_style_context().add_class("devel")
 
-        builder = Gtk.Builder.new_from_resource(resource_path=f"{utils.RES_PATH}/ui/menu.xml")
+        builder = Gtk.Builder.new_from_resource(
+            resource_path=f"{utils.RES_PATH}/ui/menu.xml"
+        )
         menu = builder.get_object("wordbook-menu")
         self.set_icon_name(utils.APP_ID)
 
@@ -273,9 +275,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
-        speed = "120"  # To change eSpeak-ng audio speed.
-        text = self._searched_term
-        base.read_term(text, speed)
+        base.read_term(
+            self._searched_term, speed="120", accent=Settings.get().pronunciations_accent
+        )
 
     def _on_window_state_changed(self, _window, _state):
         """Detect changes to the window state and adapt."""
@@ -356,6 +358,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 Settings.get().gtk_dark_font,
                 self._wn_future.result()["instance"],
                 Settings.get().cdef,
+                accent=Settings.get().pronunciations_accent,
             )
         self.__page_switch("welcome_page")
         if not Settings.get().live_search:
