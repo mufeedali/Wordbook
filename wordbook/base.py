@@ -232,9 +232,9 @@ def get_definition(term, word_col, sen_col, wn_instance):
                 syn.append(
                     f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
                 )
-        for ant_synset in synset.get_related("antonym"):
-            ant_names = ant_synset.lemmas()
-            for ant_name in ant_names:
+        for sense in synset.senses():
+            for ant_sense in sense.get_related("antonym"):
+                ant_name = ant_sense.word().lemma()
                 ant.append(
                     f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
                 )
@@ -335,7 +335,7 @@ def get_version_info():
 def get_wn_file():
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initalizing WordNet.")
-    wn_instance = Wordnet(lexicon="ewn")
+    wn_instance = Wordnet(lexicon="ewn:2020")
     utils.log_info("Fetching WordNet, wordlist.")
     wn_file = [w.lemma() for w in wn_instance.words()]
     utils.log_info("WordNet is ready.")
@@ -406,4 +406,4 @@ class WordnetDownloader:
     def download(progress_handler=None):
         if os.path.isdir(os.path.join(utils.WN_DIR, "downloads")):
             rmtree(os.path.join(utils.WN_DIR, "downloads"))
-        wn.download("ewn", progress_handler=progress_handler)
+        wn.download("ewn:2020", progress_handler=progress_handler)
