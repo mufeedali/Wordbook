@@ -94,7 +94,6 @@ class Application(Gtk.Application):
         utils.log_init(
             self.development_mode
             or "verbose" in options
-            or Settings.get().debug
             or False
         )
         self.activate()

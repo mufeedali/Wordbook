@@ -19,9 +19,10 @@ class SettingsWindow(Handy.PreferencesWindow):
     __gtype_name__ = "SettingsWindow"
 
     _cdef_switch = Gtk.Template.Child("cdef_switch")
-    _debug_switch = Gtk.Template.Child("debug_switch")
     _double_click_switch = Gtk.Template.Child("double_click_switch")
     _live_search_switch = Gtk.Template.Child("live_search_switch")
+    _pronunciations_accent_row = Gtk.Template.Child("pronunciations_accent_row")
+
     _max_hide_switch = Gtk.Template.Child("max_hide_switch")
     _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
     _dark_font_switch = Gtk.Template.Child("dark_font_switch")
@@ -31,7 +32,6 @@ class SettingsWindow(Handy.PreferencesWindow):
         super().__init__(**kwargs)
 
         self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
-        self._debug_switch.connect("notify::active", self._on_debug_switch_activate)
         self._double_click_switch.connect(
             "notify::active", self._double_click_switch_activate
         )
@@ -46,16 +46,27 @@ class SettingsWindow(Handy.PreferencesWindow):
             "notify::active", self._on_dark_font_switch_activate
         )
 
-        self._debug_switch.set_sensitive(
-            not Gio.Application.get_default().development_mode
+        # Pronunciations accent choices.
+        liststore = Gio.ListStore.new(Handy.ValueObject)
+        liststore.insert(0, Handy.ValueObject.new("American English"))
+        liststore.insert(1, Handy.ValueObject.new("British English"))
+
+        self._pronunciations_accent_row.bind_name_model(
+            liststore, Handy.ValueObject.dup_string
+        )
+        self._pronunciations_accent_row.connect(
+            "notify::selected-index", self._on_pronunciations_accent_activate
         )
 
     def load_settings(self):
         """Load settings from the Settings instance."""
         self._cdef_switch.set_active(Settings.get().cdef)
-        self._debug_switch.set_active(Settings.get().debug)
         self._double_click_switch.set_active(Settings.get().double_click)
         self._live_search_switch.set_active(Settings.get().live_search)
+        self._pronunciations_accent_row.set_selected_index(
+            Settings.get().pronunciations_accent_value
+        )
+
         self._max_hide_switch.set_active(Settings.get().gtk_max_hide)
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
         self._dark_font_switch.set_active(Settings.get().gtk_dark_font)
@@ -66,12 +77,6 @@ class SettingsWindow(Handy.PreferencesWindow):
         Settings.get().cdef = switch.get_active()
 
     @staticmethod
-    def _on_debug_switch_activate(switch, _gparam):
-        """Change debugging mode state."""
-        Settings.get().debug = switch.get_active()
-        utils.log_init(Settings.get().debug)
-
-    @staticmethod
     def _double_click_switch_activate(switch, _gparam):
         """Change 'double click to search' state."""
         Settings.get().double_click = switch.get_active()
@@ -80,6 +85,11 @@ class SettingsWindow(Handy.PreferencesWindow):
     def _on_live_search_activate(switch, _gparam):
         """Change live search state."""
         Settings.get().live_search = switch.get_active()
+
+    @staticmethod
+    def _on_pronunciations_accent_activate(row, _gparam):
+        """Change pronunciations' accent."""
+        Settings.get().pronunciations_accent_value = row.get_selected_index()
 
     @staticmethod
     def _on_max_hide_switch_activate(switch, _gparam):
