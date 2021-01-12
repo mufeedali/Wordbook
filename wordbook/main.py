@@ -17,13 +17,15 @@ class Application(Gtk.Application):
     """Manages the windows, properties, etc of Wordbook."""
 
     development_mode = False
+    version = "0.0.0"
 
-    def __init__(self):
+    def __init__(self, version):
         """Initialize the application."""
         super().__init__(
             application_id=utils.APP_ID,
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
         )
+        self.version = version
         self.add_main_option(
             "info",
             ord("i"),
@@ -89,7 +91,7 @@ class Application(Gtk.Application):
         """Parse commandline arguments."""
         options = command_line.get_options_dict().end().unpack()
         if "verinfo" in options:
-            base.get_version_info()
+            base.get_version_info(self.version)
             return 0
         utils.log_init(
             self.development_mode

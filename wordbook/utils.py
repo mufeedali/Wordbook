@@ -7,8 +7,6 @@ import logging
 import os
 import traceback
 
-VERSION = "0.1.0"
-
 APP_ID = "com.github.fushinari.Wordbook"
 RES_PATH = "/com/github/fushinari/Wordbook"
 

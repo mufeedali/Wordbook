@@ -315,9 +315,9 @@ def get_pronunciation(term, accent="us"):
     return clean_output
 
 
-def get_version_info():
+def get_version_info(version):
     """Present clear version info."""
-    print("Wordbook - " + utils.VERSION)
+    print("Wordbook - " + version)
     print("Copyright 2016-2020 Mufeed Ali")
     print()
     try:

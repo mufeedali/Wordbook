@@ -96,7 +96,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         about_dialog = Gtk.AboutDialog(transient_for=self, modal=True)
         about_dialog.set_logo_icon_name(utils.APP_ID)
         about_dialog.set_program_name("Wordbook")
-        about_dialog.set_version(utils.VERSION)
+        about_dialog.set_version(Gio.Application.get_default().version)
         about_dialog.set_comments("Wordbook is a simple dictionary application.")
         about_dialog.set_authors(
             [
