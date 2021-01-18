@@ -149,8 +149,10 @@ class Settings:
         """Get pronunciations accent index."""
         if self.pronunciations_accent == "us":
             return 0
-        elif self.pronunciations_accent == "gb":
+
+        if self.pronunciations_accent == "gb":
             return 1
+
         return 0
 
     @pronunciations_accent_value.setter
