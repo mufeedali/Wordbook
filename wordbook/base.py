@@ -230,13 +230,13 @@ def get_definition(term, word_col, sen_col, wn_instance):
             syn_name = lemma.replace("_", " ").strip()
             if not syn_name == orig_synset:
                 syn.append(
-                    f'<font color="{word_col}"><a href="search:{syn_name}">{syn_name}</a></font>'.strip()
+                    f'<font color="{word_col}"><a href="search;{syn_name}">{syn_name}</a></font>'.strip()
                 )
         for sense in synset.senses():
             for ant_sense in sense.get_related("antonym"):
                 ant_name = ant_sense.word().lemma()
                 ant.append(
-                    f'<font color="{word_col}"><a href="search:{ant_name}">{ant_name}</a></font>'.strip()
+                    f'<font color="{word_col}"><a href="search;{ant_name}">{ant_name}</a></font>'.strip()
                 )
         if syn:
             syn = ", ".join(syn)
@@ -250,7 +250,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
             sim_names = sim_synset.lemmas()
             for sim_name in sim_names:
                 sims.append(
-                    f'<font color="{word_col}"><a href="search:{sim_name}">{sim_name}</a></font>'.strip()
+                    f'<font color="{word_col}"><a href="search;{sim_name}">{sim_name}</a></font>'.strip()
                 )
         if sims:
             sims = ", ".join(sims)
@@ -261,7 +261,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
             see_names = also_synset.lemmas()
             for see_name in see_names:
                 also_sees.append(
-                    f'<font color="{word_col}"><a href="search:{see_name}">{see_name}</a></font>'.strip()
+                    f'<font color="{word_col}"><a href="search;{see_name}">{see_name}</a></font>'.strip()
                 )
         if also_sees:
             also_sees = ", ".join(also_sees)

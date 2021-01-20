@@ -201,7 +201,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def _on_link_activated(self, _widget, data):
         """Search for terms that are marked as hyperlinks."""
-        if data.startswith("search:"):
+        if data.startswith("search;"):
             GLib.idle_add(self._search_entry.set_text, data[7:])
             self._on_search_clicked(pause=False, text=data[7:])
 
