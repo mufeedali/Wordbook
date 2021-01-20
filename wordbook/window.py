@@ -22,7 +22,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _search_entry = Gtk.Template.Child("search_entry")
     _search_button = Gtk.Template.Child("search_button")
     _speak_button = Gtk.Template.Child("speak_button")
-    _clear_button = Gtk.Template.Child("clear_button")
     _menu_button = Gtk.Template.Child("wordbook_menu_button")
     _stack = Gtk.Template.Child("main_stack")
     _loading_label = Gtk.Template.Child("loading_label")
@@ -59,7 +58,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         self.connect("notify::is-maximized", self._on_window_state_changed)
         self.connect("key-press-event", self._on_key_press_event)
-        self._clear_button.connect("clicked", self._on_clear_clicked)
         self._def_view.connect("button-press-event", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
         self._search_button.connect("clicked", self._on_search_clicked)
@@ -150,15 +148,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         shortcuts_window = builder.get_object("shortcuts")
         shortcuts_window.set_transient_for(self)
         shortcuts_window.show()
-
-    def _on_clear_clicked(self, _button):
-        """Clear all text in the window."""
-        GLib.idle_add(self._def_view.set_text, "")
-        GLib.idle_add(self._pronunciation_view.set_text, "")
-        GLib.idle_add(self._term_view.set_text, "")
-        GLib.idle_add(self._search_entry.set_text, "")
-        GLib.idle_add(self._speak_button.set_visible, False)
-        self.__page_switch("welcome_page")
 
     def _on_def_event(self, _eventbox, event):
         """Search on double click."""
