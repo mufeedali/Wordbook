@@ -5,22 +5,53 @@
 	<project_license>GPL-3.0-or-later</project_license>
 
     <name>Wordbook</name>
-    <summary>A simple dictionary application</summary>
+    <summary>A dictionary application for GNOME.</summary>
     <description>
-        <p>A simple dictionary application</p>
+        <p>A dictionary application powered by WordNet and eSpeak.</p>
+        <p>Features:</p>
+        <ul>
+            <li>Neat presentation of data</li>
+            <li>Random Word</li>
+            <li>Live Search</li>
+            <li>Double click to search</li>
+            <li>Dark mode</li>
+        </ul>
     </description>
-
-    <custom>
-        <value key="Purism::form_factor">workstation</value>
-        <value key="Purism::form_factor">mobile</value>
-    </custom>
 
     <developer_name>Mufeed Ali</developer_name>
     <update_contact>fushinari@protonmail.com</update_contact>
 
     <url type="homepage">https://github.com/fushinari/Wordbook</url>
     <url type="bugtracker">https://github.com/fushinari/Wordbook/issues</url>
-
+    <content_rating type="oars-1.1" />
     <launchable type="desktop-id">com.github.fushinari.Wordbook.desktop</launchable>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss1.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss2.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss3.png</image>
+        </screenshot>
+    </screenshots>
+
+    <releases>
+        <release version="0.1.0" date="2021-02-02">
+            <description>
+                <p>Initial release</p>
+            </description>
+        </release>
+    </releases>
+
+    <custom>
+        <value key="Purism::form_factor">workstation</value>
+        <value key="Purism::form_factor">mobile</value>
+    </custom>
 </component>
 
