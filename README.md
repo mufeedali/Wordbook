@@ -4,12 +4,12 @@
 
 A dictionary application for GNOME.
 
-**Wordbook** is a dictionary application using the [Open English WordNet](https://github.com/globalwordnet/english-wordnet) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
-
 Light Mode                                 |  Dark Mode
 :-----------------------------------------:|:--------------------------------------------:
 ![Welcome screen](images/ss.png?raw=true)  |  ![Welcome screen](images/ss1.png?raw=true)
 ![Searching](images/ss2.png?raw=true)      |  ![Searching](images/ss3.png?raw=true)
+
+**Wordbook** is a dictionary application using the [Open English WordNet](https://github.com/globalwordnet/english-wordnet) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 
 ## Requirements
 
