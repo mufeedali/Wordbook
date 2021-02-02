@@ -26,6 +26,7 @@ from wordbook import utils
 
 _POOL = ThreadPoolExecutor()
 wn.config.data_directory = os.path.join(utils.WN_DIR)
+wn.config.allow_multithreading = True
 
 
 def _threadpool(func):

@@ -18,6 +18,7 @@ class Application(Gtk.Application):
 
     development_mode = False
     version = "0.0.0"
+    win = None
 
     def __init__(self, version):
         """Initialize the application."""
@@ -77,15 +78,15 @@ class Application(Gtk.Application):
             self.add_accelerator("<Primary><Shift>v", "app.paste-search", None)
             self.add_accelerator("<Primary>comma", "app.preferences", None)
 
-        win = self.props.active_window
-        if not win:
-            win = WordbookGtkWindow(
+        self.win = self.props.active_window
+        if not self.win:
+            self.win = WordbookGtkWindow(
                 application=self,
                 title="Wordbook",
             )
-            setup_actions(win)
+            setup_actions(self.win)
 
-        win.present()
+        self.win.present()
 
     def do_command_line(self, command_line):
         """Parse commandline arguments."""

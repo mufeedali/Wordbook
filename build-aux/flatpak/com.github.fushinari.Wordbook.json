@@ -116,8 +116,8 @@
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/98/4c/318657e4dbc334f9e72735c0e9260d2a695369d7a574fbc57d111d25199d/wn-0.3.0.tar.gz",
-          "sha256": "549fa93a76be712840ffe0f361310eb5a858fae01cab268cfd568d79b7940499"
+          "url": "https://files.pythonhosted.org/packages/52/29/fd9cbb78e70ad451fdd84f0ebcbf4575f18c3dba8f89e4014d796cd79477/wn-0.5.1.tar.gz",
+          "sha256": "5fffc3c747ef96d69676a0034165738f72690fdbfa27a83f644fb8e5d7bd11d9"
         }
       ]
     },
