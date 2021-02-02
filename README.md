@@ -1,4 +1,6 @@
-# Wordbook ~ A Simple Dictionary
+<img height="128" src="data/icons/com.github.fushinari.Wordbook.svg" align="left"/>
+
+# Wordbook
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/fushinari/wordbook.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/fushinari/wordbook/context:python)
 
