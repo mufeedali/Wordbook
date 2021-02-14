@@ -270,10 +270,12 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         GLib.idle_add(self._speak_button.set_visible, True)
 
                     continue
-                else:
-                    status = "welcome"
-                    continue
+
+                status = "welcome"
+                continue
+
             status = "done"
+
         if status == "done":
             self.__page_switch("content_page")
         elif status == "fail":
@@ -406,9 +408,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
 
 class ProgressUpdater(ProgressHandler):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def update(self, n):
         """Update the progress bar."""
         self.kwargs["count"] += n
