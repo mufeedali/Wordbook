@@ -25,17 +25,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _speak_button = Gtk.Template.Child("speak_button")
     _menu_button = Gtk.Template.Child("wordbook_menu_button")
     _stack = Gtk.Template.Child("main_stack")
-    _loading_label = Gtk.Template.Child("loading_label")
-    _loading_progress = Gtk.Template.Child("loading_progress")
+    loading_label = Gtk.Template.Child("loading_label")
+    loading_progress = Gtk.Template.Child("loading_progress")
     _def_view = Gtk.Template.Child("def_view")
     _pronunciation_view = Gtk.Template.Child("pronunciation_view")
     _term_view = Gtk.Template.Child("term_view")
 
     _complete_list = []
     _completion_request_count = 0
-    _loading_max = None
-    _loading_progress_fraction = 0.0
-    _loading_pulse_state = False
     _pasted = False
     _searched_term = None
     _wn_downloader = base.WordnetDownloader()
@@ -74,7 +71,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         # Loading and setup.
         self._header_bar.set_sensitive(False)
         if not self._wn_downloader.check_status():
-            self._loading_label.set_text("Downloading WordNet...")
+            self.loading_label.set_text("Downloading WordNet...")
             threading.Thread(
                 target=self._wn_downloader.download, args=[ProgressUpdater]
             ).start()
@@ -318,9 +315,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             else:
                 GLib.idle_add(self._header_bar.set_show_close_button, True)
 
-    def _progress_complete(self):
+    def progress_complete(self):
         """Run upon completion of loading."""
-        GLib.idle_add(self._loading_label.set_label, "Ready.")
+        GLib.idle_add(self.loading_label.set_label, "Ready.")
         self._wn_future = base.get_wn_file()
         GLib.idle_add(self._header_bar.set_sensitive, True)
         self.__page_switch("welcome_page")
@@ -414,7 +411,7 @@ class ProgressUpdater(ProgressHandler):
         if self.kwargs["total"] > 0:
             progress_fraction = self.kwargs["count"] / self.kwargs["total"]
             GLib.idle_add(
-                Gio.Application.get_default().win._loading_progress.set_fraction,
+                Gio.Application.get_default().win.loading_progress.set_fraction,
                 progress_fraction,
             )
 
@@ -423,16 +420,16 @@ class ProgressUpdater(ProgressHandler):
         """Update the progress label."""
         if message == "Database":
             GLib.idle_add(
-                Gio.Application.get_default().win._loading_label.set_label,
+                Gio.Application.get_default().win.loading_label.set_label,
                 "Building Database...",
             )
         else:
             GLib.idle_add(
-                Gio.Application.get_default().win._loading_label.set_label,
+                Gio.Application.get_default().win.loading_label.set_label,
                 message,
             )
 
     def close(self):
         """Signal the completion of building the WordNet database."""
         if self.kwargs["message"] != "Download":
-            Gio.Application.get_default().win._progress_complete()
+            Gio.Application.get_default().win.progress_complete()
