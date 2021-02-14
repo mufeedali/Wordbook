@@ -41,6 +41,10 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _wn_downloader = base.WordnetDownloader()
     _wn_future = None
 
+    _search_history = []
+    _search_queue = []
+    _active_thread = None
+
     def __init__(self, **kwargs):
         """Initialize the window."""
         super().__init__(**kwargs)
@@ -129,7 +133,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         random_word = random.choice(self._wn_future.result()["list"])
         random_word = random_word.replace("_", " ")
         GLib.idle_add(self._search_entry.set_text, random_word)
-        GLib.idle_add(self._on_search_clicked, pause=False, text=random_word)
+        GLib.idle_add(self._on_search_clicked, text=random_word)
         GLib.idle_add(self._search_entry.grab_focus)
 
     def on_search_selected(self, _action, _param):
@@ -138,7 +142,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         if text is not None and not text.strip() == "" and not text.isspace():
             text = text.replace("         ", "").replace("\n", "")
             GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self._on_search_clicked, pause=False, text=text)
+            GLib.idle_add(self._on_search_clicked, text=text)
             GLib.idle_add(self._search_entry.grab_focus)
 
     def on_shortcuts(self, _action, _param):
@@ -160,7 +164,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             if text is not None and not text.strip() == "" and not text.isspace():
                 text = text.split(" ")[0]
                 GLib.idle_add(self._search_entry.set_text, text)
-                GLib.idle_add(self._on_search_clicked, pause=False, text=text)
+                GLib.idle_add(self._on_search_clicked, text=text)
                 GLib.idle_add(self._search_entry.grab_focus)
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
@@ -187,7 +191,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def _on_entry_completed(self, _entry_completion, index):
         """Enter text into the entry using completions."""
-        self._search_entry.set_text(self._complete_list[index])
+        text = (
+            self._complete_list[index]
+            .replace("<i>", "")
+            .replace("</i>", "")
+            .replace("<b>", "")
+            .replace("</b>", "")
+        )
+        self._search_entry.set_text(text)
         self._search_entry.set_position(-1)
         GLib.idle_add(self._on_search_clicked)
 
@@ -204,7 +215,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Search for terms that are marked as hyperlinks."""
         if data.startswith("search;"):
             GLib.idle_add(self._search_entry.set_text, data[7:])
-            self._on_search_clicked(pause=False, text=data[7:])
+            self._on_search_clicked(text=data[7:])
 
     def _on_paste_done(self, _widget):
         """Cleanup pasted data."""
@@ -214,54 +225,80 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Refresh view when Preferences window is closed."""
         self._completer.set_popup_completion(not Settings.get().live_search)
         if self._searched_term is not None:
-            self._on_search_clicked(
-                pass_check=True, pause=False, text=self._searched_term
-            )
+            self._on_search_clicked(pass_check=True, text=self._searched_term)
 
-    def _on_search_clicked(self, _button=None, pass_check=False, pause=True, text=None):
+    def _on_search_clicked(self, _button=None, pass_check=False, text=None):
         """Pass data to search function and set TextView data."""
         if not text:
             text = self._search_entry.get_text().strip()
+        self.__page_switch("spinner_page")
+        self._add_to_queue(text, pass_check)
 
+    def threaded_search(self, pass_check=False):
         except_list = ("fortune -a", "cowfortune")
-        if pass_check or not text == self._searched_term or text in except_list:
-            if pause:
-                GLib.idle_add(self._def_view.set_text, "")
-                GLib.idle_add(self._pronunciation_view.set_text, "")
-                GLib.idle_add(self._term_view.set_text, "")
-                GLib.idle_add(self._speak_button.set_visible, False)
+        status = None
+        while self._search_queue:
+            text = self._search_queue.pop(0)
+            if pass_check or not text == self._searched_term or text in except_list:
 
-            self._searched_term = text
-            if not text.strip() == "":
-                out = self.__search(text)
+                self._searched_term = text
+                if not text.strip() == "":
+                    out = self.__search(text)
 
-                if out is None:
-                    return
+                    if out is None:
+                        status = "welcome"
+                        continue
 
-                if out["definition"] is not None:
-                    self.__page_switch("content_page")
-                    out_text = base.clean_pango(f'{out["definition"]}')
-                    GLib.idle_add(self._def_view.set_markup, out_text)
+                    if out["definition"] is not None:
+                        status = "done"
+                        out_text = base.clean_pango(f'{out["definition"]}')
+                        GLib.idle_add(self._def_view.set_markup, out_text)
+                    else:
+                        status = "fail"
+                        continue
+
+                    GLib.idle_add(
+                        self._term_view.set_markup,
+                        f'<span size="large" weight="bold">{out["term"].strip()}</span>',
+                    )
+                    GLib.idle_add(
+                        self._pronunciation_view.set_markup,
+                        f'<i>{out["pronunciation"].strip()}</i>',
+                    )
+
+                    if text not in except_list and out["term"] != "Lookup failed.":
+                        GLib.idle_add(self._speak_button.set_visible, True)
+
+                    continue
                 else:
-                    self.__page_switch("fail_page")
-                    return
-
-                GLib.idle_add(
-                    self._term_view.set_markup,
-                    f'<span size="large" weight="bold">{out["term"].strip()}</span>',
-                )
-                GLib.idle_add(
-                    self._pronunciation_view.set_markup,
-                    f'<i>{out["pronunciation"].strip()}</i>',
-                )
-
-                if text not in except_list and out["term"] != "Lookup failed.":
-                    GLib.idle_add(self._speak_button.set_visible, True)
-
-                return
-
+                    status = "welcome"
+                    continue
+            status = "done"
+        if status == "done":
+            self.__page_switch("content_page")
+        elif status == "fail":
+            self.__page_switch("fail_page")
+        elif status == "welcome":
             self.__page_switch("welcome_page")
-            return
+        self._active_thread = None
+
+    def _add_to_queue(self, text, pass_check=False):
+        if self._search_queue:
+            self._search_queue.pop(0)
+        self._search_queue.append(text)
+
+        # Add to history.
+        if not Settings.get().live_search:
+            if len(self._search_history) == 10:
+                self._search_history.pop(0)
+            self._search_history.append(text)
+
+        if self._active_thread is None:
+            # If there is no active thread, create one and start it.
+            self._active_thread = threading.Thread(
+                target=self.threaded_search, args=[pass_check], daemon=True
+            )
+            self._active_thread.start()
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
@@ -309,7 +346,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Clean input text, give errors and pass data to reactor."""
         text = base.cleaner(search_text)
         if not text == "" and not text.isspace():
-            self.__page_switch("content_page")
             return base.reactor(
                 text,
                 Settings.get().gtk_dark_font,
@@ -317,9 +353,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 Settings.get().cdef,
                 accent=Settings.get().pronunciations_accent,
             )
-        self.__page_switch("welcome_page")
         if not Settings.get().live_search:
-            self.__new_error(
+            GLib.idle_add(
+                self.__new_error,
                 "Invalid Input",
                 "Wordbook thinks that your input was actually just a bunch of useless "
                 "characters. And so, an 'Invalid Characters' error.",
@@ -333,12 +369,21 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 GLib.idle_add(self._completer.delete_action, 0)
                 self._complete_list.pop(0)
 
+            for item in self._search_history:
+                if len(self._complete_list) >= 10:
+                    break
+                if item and item.lower().startswith(text.lower()):
+                    item = f"<b>{item}</b>"
+                    if item in self._complete_list:
+                        self._complete_list.remove(item)
+                    self._complete_list.append(item)
+
             for item in self._wn_future.result()["list"]:
+                if len(self._complete_list) >= 10:
+                    break
                 item = item.replace("_", " ")
                 if item.lower().startswith(text.lower()):
                     self._complete_list.append(item.replace("_", " "))
-                if len(self._complete_list) == 10:
-                    break
 
             for item in os.listdir(utils.CDEF_DIR):
                 if len(self._complete_list) >= 10:
