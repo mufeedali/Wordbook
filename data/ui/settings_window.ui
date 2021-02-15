@@ -9,6 +9,7 @@
     <property name="default-width">380</property>
     <property name="default-height">350</property>
     <property name="destroy-with-parent">True</property>
+    <property name="window_position">center-on-parent</property>
     <child>
       <object class="HdyPreferencesPage">
         <property name="visible">True</property>
