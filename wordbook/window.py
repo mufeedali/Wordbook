@@ -7,7 +7,7 @@ import random
 import threading
 from html import escape
 
-from gi.repository import Gdk, Gio, GLib, Gtk, Handy
+from gi.repository import Gdk, Gio, GLib, Gtk, Adw
 from wn.util import ProgressHandler
 
 from wordbook import base, utils
@@ -16,7 +16,7 @@ from wordbook.settings import Settings
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
-class WordbookGtkWindow(Handy.ApplicationWindow):
+class WordbookGtkWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookGtkWindow"
 
     _header_bar = Gtk.Template.Child("header_bar")
@@ -55,17 +55,17 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         menu = builder.get_object("wordbook-menu")
         self.set_icon_name(utils.APP_ID)
 
-        popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
+        popover = Gtk.PopoverMenu.new_from_model(menu)
         self._menu_button.set_popover(popover)
 
         self.connect("notify::is-maximized", self._on_window_state_changed)
-        self.connect("key-press-event", self._on_key_press_event)
-        self._def_view.connect("button-press-event", self._on_def_event)
+        # self.connect("key-pressed", self._on_key_press_event)
+        # self._def_view.connect("button-press-event", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
         self._search_button.connect("clicked", self._on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
-        self._search_entry.connect("drag-data-received", self._on_drag_received)
-        self._search_entry.connect("paste-clipboard", self._on_paste_done)
+        # self._search_entry.connect("drag-data-received", self._on_drag_received)
+        # self._search_entry.connect("paste-clipboard", self._on_paste_done)
         self._speak_button.connect("clicked", self._on_speak_clicked)
 
         # Loading and setup.
@@ -82,14 +82,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
-        self._completer = Gtk.EntryCompletion()
-        self._completer_liststore = Gtk.ListStore(str)
-        self._completer.set_text_column(0)
-        self._completer.set_model(self._completer_liststore)
-        self._completer.set_popup_completion(not Settings.get().live_search)
-        self._completer.get_popup_completion()
-        self._search_entry.set_completion(self._completer)
-        self._completer.connect("action-activated", self._on_entry_completed)
+        # self._completer = Gtk.EntryCompletion()
+        # self._completer_liststore = Gtk.ListStore(str)
+        # self._completer.set_text_column(0)
+        # self._completer.set_model(self._completer_liststore)
+        # self._completer.set_popup_completion(not Settings.get().live_search)
+        # self._completer.get_popup_completion()
+        # self._search_entry.set_completion(self._completer)
+        # self._completer.connect("action-activated", self._on_entry_completed)
 
     def on_about(self, _action, _param):
         """Show the about window."""
@@ -106,17 +106,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/wordbook")
         about_dialog.set_copyright("Copyright © 2016-2020 Mufeed Ali")
-        about_dialog.connect("response", lambda dialog, response: dialog.destroy())
         about_dialog.present()
 
-    def on_paste_search(self, _action, _param):
-        """Search text in clipboard."""
-        text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-        text = base.cleaner(text)
-        if text is not None and not text.strip() == "" and not text.isspace():
-            GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self._on_search_clicked)
-            GLib.idle_add(self._search_entry.grab_focus)
+    # def on_paste_search(self, _action, _param):
+    #     """Search text in clipboard."""
+    #     GLib.idle_add(self._search_entry.set_text, "")
+    #     GLib.idle_add(self._search_entry.emit, "paste-clipboard")
+    #     GLib.idle_add(self._on_search_clicked)
+    #     GLib.idle_add(self._search_entry.grab_focus)
 
     def on_preferences(self, _action, _param):
         """Show settings window."""
@@ -151,18 +148,18 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         shortcuts_window.set_transient_for(self)
         shortcuts_window.show()
 
-    def _on_def_event(self, _eventbox, event):
-        """Search on double click."""
-        if (
-            Settings.get().double_click
-            and event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS
-        ):
-            text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
-            if text is not None and not text.strip() == "" and not text.isspace():
-                text = text.split(" ")[0]
-                GLib.idle_add(self._search_entry.set_text, text)
-                GLib.idle_add(self._on_search_clicked, text=text)
-                GLib.idle_add(self._search_entry.grab_focus)
+    # def _on_def_event(self, _eventbox, event):
+    #     """Search on double click."""
+    #     if (
+    #         Settings.get().double_click
+    #         and event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS
+    #     ):
+    #         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
+    #         if text is not None and not text.strip() == "" and not text.isspace():
+    #             text = text.split(" ")[0]
+    #             GLib.idle_add(self._search_entry.set_text, text)
+    #             GLib.idle_add(self._on_search_clicked, text=text)
+    #             GLib.idle_add(self._search_entry.grab_focus)
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
         """Search on receiving drag and drop event."""
@@ -173,31 +170,31 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""
-        self._completion_request_count += 1
-        if self._completion_request_count == 1:
-            threading.Thread(
-                target=self.__update_completions,
-                args=[self._search_entry.get_text()],
-                daemon=True,
-            ).start()
+        # self._completion_request_count += 1
+        # if self._completion_request_count == 1:
+        #     threading.Thread(
+        #         target=self.__update_completions,
+        #         args=[self._search_entry.get_text()],
+        #         daemon=True,
+        #     ).start()
         if self._pasted is True:
             self.__entry_cleaner()
             self._pasted = False
         if Settings.get().live_search:
             GLib.idle_add(self._on_search_clicked)
 
-    def _on_entry_completed(self, _entry_completion, index):
-        """Enter text into the entry using completions."""
-        text = (
-            self._complete_list[index]
-            .replace("<i>", "")
-            .replace("</i>", "")
-            .replace("<b>", "")
-            .replace("</b>", "")
-        )
-        self._search_entry.set_text(text)
-        self._search_entry.set_position(-1)
-        GLib.idle_add(self._on_search_clicked)
+    # def _on_entry_completed(self, _entry_completion, index):
+    #     """Enter text into the entry using completions."""
+    #     text = (
+    #         self._complete_list[index]
+    #         .replace("<i>", "")
+    #         .replace("</i>", "")
+    #         .replace("<b>", "")
+    #         .replace("</b>", "")
+    #     )
+    #     self._search_entry.set_text(text)
+    #     self._search_entry.set_position(-1)
+    #     GLib.idle_add(self._on_search_clicked)
 
     def _on_key_press_event(self, _widget, event):
         """Focus onto the search entry when needed (quick search)."""
@@ -214,13 +211,13 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             GLib.idle_add(self._search_entry.set_text, data[7:])
             self._on_search_clicked(text=data[7:])
 
-    def _on_paste_done(self, _widget):
-        """Cleanup pasted data."""
-        self._pasted = True
+    # def _on_paste_done(self, _widget):
+    #     """Cleanup pasted data."""
+    #     self._pasted = True
 
     def _on_preferences_destroy(self, _window):
         """Refresh view when Preferences window is closed."""
-        self._completer.set_popup_completion(not Settings.get().live_search)
+        # self._completer.set_popup_completion(not Settings.get().live_search)
         if self._searched_term is not None:
             self._on_search_clicked(pass_check=True, text=self._searched_term)
 
@@ -362,46 +359,46 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._searched_term = None
         return None
 
-    def __update_completions(self, text):
-        while self._completion_request_count > 0:
-            while len(self._complete_list) > 0:
-                GLib.idle_add(self._completer.delete_action, 0)
-                self._complete_list.pop(0)
+    # def __update_completions(self, text):
+    #     while self._completion_request_count > 0:
+    #         while len(self._complete_list) > 0:
+    #             GLib.idle_add(self._completer.delete_action, 0)
+    #             self._complete_list.pop(0)
 
-            for item in self._search_history:
-                if len(self._complete_list) >= 10:
-                    break
-                if item and item.lower().startswith(text.lower()):
-                    item = f"<b>{item}</b>"
-                    if item in self._complete_list:
-                        self._complete_list.remove(item)
-                    self._complete_list.append(item)
+    #         for item in self._search_history:
+    #             if len(self._complete_list) >= 10:
+    #                 break
+    #             if item and item.lower().startswith(text.lower()):
+    #                 item = f"<b>{item}</b>"
+    #                 if item in self._complete_list:
+    #                     self._complete_list.remove(item)
+    #                 self._complete_list.append(item)
 
-            for item in self._wn_future.result()["list"]:
-                if len(self._complete_list) >= 10:
-                    break
-                item = item.replace("_", " ")
-                if item.lower().startswith(text.lower()):
-                    self._complete_list.append(item.replace("_", " "))
+    #         for item in self._wn_future.result()["list"]:
+    #             if len(self._complete_list) >= 10:
+    #                 break
+    #             item = item.replace("_", " ")
+    #             if item.lower().startswith(text.lower()):
+    #                 self._complete_list.append(item.replace("_", " "))
 
-            for item in os.listdir(utils.CDEF_DIR):
-                if len(self._complete_list) >= 10:
-                    break
-                item = escape(item).replace("_", " ")
-                if item in self._complete_list:
-                    self._complete_list.remove(item)
-                if item.lower().startswith(text.lower()):
-                    self._complete_list.append(f"<i>{item}</i>")
+    #         for item in os.listdir(utils.CDEF_DIR):
+    #             if len(self._complete_list) >= 10:
+    #                 break
+    #             item = escape(item).replace("_", " ")
+    #             if item in self._complete_list:
+    #                 self._complete_list.remove(item)
+    #             if item.lower().startswith(text.lower()):
+    #                 self._complete_list.append(f"<i>{item}</i>")
 
-            self._complete_list = sorted(self._complete_list)
-            for item in self._complete_list:
-                GLib.idle_add(
-                    self._completer.insert_action_markup,
-                    self._complete_list.index(item),
-                    item,
-                )
+    #         self._complete_list = sorted(self._complete_list)
+    #         for item in self._complete_list:
+    #             GLib.idle_add(
+    #                 self._completer.insert_action_markup,
+    #                 self._complete_list.index(item),
+    #                 item,
+    #             )
 
-            self._completion_request_count -= 1
+    #         self._completion_request_count -= 1
 
 
 class ProgressUpdater(ProgressHandler):

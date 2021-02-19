@@ -1,13 +1,14 @@
 {
   "app-id": "com.github.fushinari.Wordbook",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "3.38",
+  "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
   "command": "wordbook",
   "finish-args": [
     "--share=network",
     "--socket=pulseaudio",
     "--share=ipc",
+    "--device=dri",
     "--socket=fallback-x11",
     "--socket=wayland"
   ],
@@ -85,25 +86,22 @@
       ]
     },
     {
-      "name": "libhandy",
+      "name": "libadwaita",
       "buildsystem": "meson",
       "config-opts": [
+        "-Dintrospection=enabled",
         "-Dgtk_doc=false",
         "-Dtests=false",
         "-Dexamples=false",
         "-Dvapi=false",
         "-Dglade_catalog=disabled"
       ],
-      "cleanup": [
-        "/include",
-        "/lib/pkgconfig"
-      ],
       "sources": [
         {
           "type": "git",
-          "url": "https://gitlab.gnome.org/GNOME/libhandy.git",
-          "tag": "1.0.3",
-          "commit": "7126d2e8da9dcdeb5751e60ff6a74930804f9637"
+          "url": "https://gitlab.gnome.org/exalm/libadwaita.git",
+          "branch": "main",
+          "commit": "cb4f740c07c2fdddc137e73c139c2adcbad34d02"
         }
       ]
     },

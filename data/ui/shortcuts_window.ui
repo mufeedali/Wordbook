@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <requires lib="gtk" version="4.0"/>
   <object class="GtkShortcutsWindow" id="shortcuts">
-    <property name="modal">True</property>
+    <property name="modal">1</property>
     <child>
       <object class="GtkShortcutsSection">
-        <property name="visible">True</property>
         <property name="section-name">shortcuts</property>
         <property name="max-height">10</property>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="visible">True</property>
             <property name="title" translatable="yes" context="shortcut window">General</property>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
                 <property name="title" translatable="yes" context="shortcut window">Preferences</property>
                 <property name="accelerator">&lt;Primary&gt;comma</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
                 <property name="title" translatable="yes" context="shortcut window">Paste and Search</property>
                 <property name="accelerator">&lt;Primary&gt;&lt;Shift&gt;V</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
                 <property name="title" translatable="yes" context="shortcut window">Random Word</property>
                 <property name="accelerator">&lt;Primary&gt;R</property>
               </object>
             </child>
             <child>
               <object class="GtkShortcutsShortcut">
-                <property name="visible">True</property>
                 <property name="title" translatable="yes" context="shortcut window">Search Selected Text</property>
                 <property name="accelerator">&lt;Primary&gt;S</property>
               </object>
