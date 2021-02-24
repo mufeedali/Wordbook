@@ -34,7 +34,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _complete_list = []
     _completion_request_count = 0
     _pasted = False
-    _searched_term = None
+    searched_term = None
     _wn_downloader = base.WordnetDownloader()
     _wn_future = None
 
@@ -62,7 +62,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.connect("key-press-event", self._on_key_press_event)
         self._def_view.connect("button-press-event", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
-        self._search_button.connect("clicked", self._on_search_clicked)
+        self._search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
         self._search_entry.connect("drag-data-received", self._on_drag_received)
         self._search_entry.connect("paste-clipboard", self._on_paste_done)
@@ -82,14 +82,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
-        self._completer = Gtk.EntryCompletion()
-        self._completer_liststore = Gtk.ListStore(str)
-        self._completer.set_text_column(0)
-        self._completer.set_model(self._completer_liststore)
-        self._completer.set_popup_completion(not Settings.get().live_search)
-        self._completer.get_popup_completion()
-        self._search_entry.set_completion(self._completer)
-        self._completer.connect("action-activated", self._on_entry_completed)
+        self.completer = Gtk.EntryCompletion()
+        self.completer_liststore = Gtk.ListStore(str)
+        self.completer.set_text_column(0)
+        self.completer.set_model(self.completer_liststore)
+        self.completer.set_popup_completion(not Settings.get().live_search)
+        self.completer.get_popup_completion()
+        self._search_entry.set_completion(self.completer)
+        self.completer.connect("action-activated", self._on_entry_completed)
 
     def on_about(self, _action, _param):
         """Show the about window."""
@@ -115,14 +115,12 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         text = base.cleaner(text)
         if text is not None and not text.strip() == "" and not text.isspace():
             GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self._on_search_clicked)
+            GLib.idle_add(self.on_search_clicked)
             GLib.idle_add(self._search_entry.grab_focus)
 
     def on_preferences(self, _action, _param):
         """Show settings window."""
-        window = SettingsWindow(transient_for=self)
-        window.connect("destroy", self._on_preferences_destroy)
-        window.load_settings()
+        window = SettingsWindow(parent=self, transient_for=self)
         window.present()
 
     def on_random_word(self, _action, _param):
@@ -130,7 +128,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         random_word = random.choice(self._wn_future.result()["list"])
         random_word = random_word.replace("_", " ")
         GLib.idle_add(self._search_entry.set_text, random_word)
-        GLib.idle_add(self._on_search_clicked, text=random_word)
+        GLib.idle_add(self.on_search_clicked, text=random_word)
         GLib.idle_add(self._search_entry.grab_focus)
 
     def on_search_selected(self, _action, _param):
@@ -139,7 +137,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         if text is not None and not text.strip() == "" and not text.isspace():
             text = text.replace("         ", "").replace("\n", "")
             GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self._on_search_clicked, text=text)
+            GLib.idle_add(self.on_search_clicked, text=text)
             GLib.idle_add(self._search_entry.grab_focus)
 
     def on_shortcuts(self, _action, _param):
@@ -161,7 +159,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             if text is not None and not text.strip() == "" and not text.isspace():
                 text = text.split(" ")[0]
                 GLib.idle_add(self._search_entry.set_text, text)
-                GLib.idle_add(self._on_search_clicked, text=text)
+                GLib.idle_add(self.on_search_clicked, text=text)
                 GLib.idle_add(self._search_entry.grab_focus)
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
@@ -169,7 +167,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._search_entry.set_text("")
         GLib.idle_add(self.__entry_cleaner)
         GLib.idle_add(self._search_entry.set_position, -1)
-        GLib.idle_add(self._on_search_clicked)
+        GLib.idle_add(self.on_search_clicked)
 
     def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""
@@ -184,7 +182,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             self.__entry_cleaner()
             self._pasted = False
         if Settings.get().live_search:
-            GLib.idle_add(self._on_search_clicked)
+            GLib.idle_add(self.on_search_clicked)
 
     def _on_entry_completed(self, _entry_completion, index):
         """Enter text into the entry using completions."""
@@ -197,7 +195,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         )
         self._search_entry.set_text(text)
         self._search_entry.set_position(-1)
-        GLib.idle_add(self._on_search_clicked)
+        GLib.idle_add(self.on_search_clicked)
 
     def _on_key_press_event(self, _widget, event):
         """Focus onto the search entry when needed (quick search)."""
@@ -212,21 +210,15 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Search for terms that are marked as hyperlinks."""
         if data.startswith("search;"):
             GLib.idle_add(self._search_entry.set_text, data[7:])
-            self._on_search_clicked(text=data[7:])
+            self.on_search_clicked(text=data[7:])
 
     def _on_paste_done(self, _widget):
         """Cleanup pasted data."""
         self._pasted = True
 
-    def _on_preferences_destroy(self, _window):
-        """Refresh view when Preferences window is closed."""
-        self._completer.set_popup_completion(not Settings.get().live_search)
-        if self._searched_term is not None:
-            self._on_search_clicked(pass_check=True, text=self._searched_term)
-
-    def _on_search_clicked(self, _button=None, pass_check=False, text=None):
+    def on_search_clicked(self, _button=None, pass_check=False, text=None):
         """Pass data to search function and set TextView data."""
-        if not text:
+        if text is None:
             text = self._search_entry.get_text().strip()
         self.__page_switch("spinner_page")
         self._add_to_queue(text, pass_check)
@@ -236,9 +228,11 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         status = None
         while self._search_queue:
             text = self._search_queue.pop(0)
-            if pass_check or not text == self._searched_term or text in except_list:
+            if text and (
+                pass_check or not text == self.searched_term or text in except_list
+            ):
 
-                self._searched_term = text
+                self.searched_term = text
                 if not text.strip() == "":
                     out = self.__search(text)
 
@@ -271,7 +265,11 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 status = "welcome"
                 continue
 
-            status = "done"
+            if text and text == self.searched_term:
+                status = "done"
+                continue
+
+            status = "welcome"
 
         if status == "done":
             self.__page_switch("content_page")
@@ -302,7 +300,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
         base.read_term(
-            self._searched_term,
+            self.searched_term,
             speed="120",
             accent=Settings.get().pronunciations_accent,
         )
@@ -359,13 +357,13 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 "Wordbook thinks that your input was actually just a bunch of useless "
                 "characters. And so, an 'Invalid Characters' error.",
             )
-        self._searched_term = None
+        self.searched_term = None
         return None
 
     def __update_completions(self, text):
         while self._completion_request_count > 0:
             while len(self._complete_list) > 0:
-                GLib.idle_add(self._completer.delete_action, 0)
+                GLib.idle_add(self.completer.delete_action, 0)
                 self._complete_list.pop(0)
 
             for item in self._search_history:
@@ -396,7 +394,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             self._complete_list = sorted(self._complete_list)
             for item in self._complete_list:
                 GLib.idle_add(
-                    self._completer.insert_action_markup,
+                    self.completer.insert_action_markup,
                     self._complete_list.index(item),
                     item,
                 )

@@ -27,9 +27,11 @@ class SettingsWindow(Handy.PreferencesWindow):
     _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
     _dark_font_switch = Gtk.Template.Child("dark_font_switch")
 
-    def __init__(self, **kwargs):
+    def __init__(self, parent, **kwargs):
         """Initialize the Settings window."""
         super().__init__(**kwargs)
+
+        self.parent = parent
 
         self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
         self._double_click_switch.connect(
@@ -57,6 +59,7 @@ class SettingsWindow(Handy.PreferencesWindow):
         self._pronunciations_accent_row.connect(
             "notify::selected-index", self._on_pronunciations_accent_activate
         )
+        self.load_settings()
 
     def load_settings(self):
         """Load settings from the Settings instance."""
@@ -71,9 +74,9 @@ class SettingsWindow(Handy.PreferencesWindow):
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
         self._dark_font_switch.set_active(Settings.get().gtk_dark_font)
 
-    @staticmethod
-    def _on_cdef_switch_activate(switch, _gparam):
+    def _on_cdef_switch_activate(self, switch, _gparam):
         """Change custom definition state."""
+        self.__refresh_view()
         Settings.get().cdef = switch.get_active()
 
     @staticmethod
@@ -81,9 +84,9 @@ class SettingsWindow(Handy.PreferencesWindow):
         """Change 'double click to search' state."""
         Settings.get().double_click = switch.get_active()
 
-    @staticmethod
-    def _on_live_search_activate(switch, _gparam):
+    def _on_live_search_activate(self, switch, _gparam):
         """Change live search state."""
+        self.parent.completer.set_popup_completion(not Settings.get().live_search)
         Settings.get().live_search = switch.get_active()
 
     @staticmethod
@@ -104,7 +107,14 @@ class SettingsWindow(Handy.PreferencesWindow):
             "gtk-application-prefer-dark-theme", switch.get_active()
         )
 
-    @staticmethod
-    def _on_dark_font_switch_activate(switch, _gparam):
+    def _on_dark_font_switch_activate(self, switch, _gparam):
         """Change definitions' font colors."""
         Settings.get().gtk_dark_font = switch.get_active()
+        self.__refresh_view()
+
+    def __refresh_view(self):
+        """Refresh definition view."""
+        if self.parent.searched_term is not None:
+            self.parent.on_search_clicked(
+                pass_check=True, text=self.parent.searched_term
+            )
