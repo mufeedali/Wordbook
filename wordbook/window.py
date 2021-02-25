@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2020 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2021 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
@@ -105,7 +105,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         )
         about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/wordbook")
-        about_dialog.set_copyright("Copyright © 2016-2020 Mufeed Ali")
+        about_dialog.set_copyright("Copyright © 2016-2021 Mufeed Ali")
         about_dialog.connect("response", lambda dialog, response: dialog.destroy())
         about_dialog.present()
 
