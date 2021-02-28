@@ -23,7 +23,6 @@ class SettingsWindow(Handy.PreferencesWindow):
     _live_search_switch = Gtk.Template.Child("live_search_switch")
     _pronunciations_accent_row = Gtk.Template.Child("pronunciations_accent_row")
 
-    _max_hide_switch = Gtk.Template.Child("max_hide_switch")
     _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
     _dark_font_switch = Gtk.Template.Child("dark_font_switch")
 
@@ -39,9 +38,6 @@ class SettingsWindow(Handy.PreferencesWindow):
         )
         self._live_search_switch.connect(
             "notify::active", self._on_live_search_activate
-        )
-        self._max_hide_switch.connect(
-            "notify::active", self._on_max_hide_switch_activate
         )
         self._dark_ui_switch.connect("notify::active", self._on_dark_ui_switch_activate)
         self._dark_font_switch.connect(
@@ -70,7 +66,6 @@ class SettingsWindow(Handy.PreferencesWindow):
             Settings.get().pronunciations_accent_value
         )
 
-        self._max_hide_switch.set_active(Settings.get().gtk_max_hide)
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
         self._dark_font_switch.set_active(Settings.get().gtk_dark_font)
 
@@ -93,11 +88,6 @@ class SettingsWindow(Handy.PreferencesWindow):
     def _on_pronunciations_accent_activate(row, _gparam):
         """Change pronunciations' accent."""
         Settings.get().pronunciations_accent_value = row.get_selected_index()
-
-    @staticmethod
-    def _on_max_hide_switch_activate(switch, _gparam):
-        """Change 'Hide window buttons when Wordbook is maximized' state."""
-        Settings.get().gtk_max_hide = switch.get_active()
 
     @staticmethod
     def _on_dark_ui_switch_activate(switch, _gparam):

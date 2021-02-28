@@ -21,13 +21,12 @@ class Settings:
                 "CustomDefinitions": "yes",
                 "LiveSearch": "no",
                 "DoubleClick": "no",
-                "ConfigVersion": "3",
+                "ConfigVersion": "4",
                 "PronunciationsAccent": "us",
             }
             self.config["UI"] = {
                 "DarkUI": "yes",
-                "DarkFont": "yes",
-                "HideWindowButtonsMaximized": "no",
+                "DarkFont": "yes"
             }
         else:
             self.load_settings()
@@ -80,16 +79,6 @@ class Settings:
         self.set_boolean_key("UI", "DarkFont", value)
 
     @property
-    def gtk_max_hide(self):
-        """Get whether window buttons should be hidden in maximized state in GTK."""
-        return self.config.getboolean("UI", "HideWindowButtonsMaximized")
-
-    @gtk_max_hide.setter
-    def gtk_max_hide(self, value):
-        """Set whether window buttons should be hidden in maximized state in GTK."""
-        self.set_boolean_key("UI", "HideWindowButtonsMaximized", value)
-
-    @property
     def live_search(self):
         """Get whether to enable Live Search."""
         return self.config.getboolean("General", "LiveSearch")
@@ -113,25 +102,31 @@ class Settings:
             self.config.read_file(file)
         utils.log_info("Version Code: " + self.config.get("General", "ConfigVersion"))
 
-        if self.config.getint("General", "ConfigVersion") < 3:
-            utils.log_info("Updating to ConfigVersion 3")
+        if self.config.getint("General", "ConfigVersion") < 4:
+            utils.log_info("Updating to ConfigVersion 4")
 
-            # Remove old options.
-            self.config.remove_section("UI-qt")  # Qt UI removed.
-            self.config.remove_option("General", "Debug")  # replaced.
+            # Remove ability to hide window buttons when maximized.
+            self.config.remove_option("UI", "HideWindowButtonsMaximized")
 
-            # Rename existing options.
-            rename_section(self.config, "UI-gtk", "UI")
+            if self.config.getint("General", "ConfigVersion") < 3:
+                utils.log_info("Updating to ConfigVersion 3")
 
-            # Add new options.
-            self.config.set("General", "PronunciationsAccent", "us")
+                # Remove old options.
+                self.config.remove_section("UI-qt")  # Qt UI removed.
+                self.config.remove_option("General", "Debug")  # replaced.
 
-            if self.config.getint("General", "ConfigVersion") < 2:
-                # Add new option.
-                self.set_boolean_key("General", "DoubleClick", False)
+                # Rename existing options.
+                rename_section(self.config, "UI-gtk", "UI")
 
-            self.config.set("General", "ConfigVersion", "3")  # Set version.
-            self.save_settings()  # Save before proceeding.
+                # Add new options.
+                self.config.set("General", "PronunciationsAccent", "us")
+
+                if self.config.getint("General", "ConfigVersion") < 2:
+                    # Add new option.
+                    self.set_boolean_key("General", "DoubleClick", False)
+
+                self.config.set("General", "ConfigVersion", "3")  # Set version.
+                self.save_settings()  # Save before proceeding.
 
     @property
     def pronunciations_accent(self):

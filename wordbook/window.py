@@ -58,7 +58,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
         self._menu_button.set_popover(popover)
 
-        self.connect("notify::is-maximized", self._on_window_state_changed)
         self.connect("key-press-event", self._on_key_press_event)
         self._def_view.connect("button-press-event", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
@@ -304,14 +303,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             speed="120",
             accent=Settings.get().pronunciations_accent,
         )
-
-    def _on_window_state_changed(self, _window, _state):
-        """Detect changes to the window state and adapt."""
-        if Settings.get().gtk_max_hide and not os.environ.get("GTK_CSD") == "0":
-            if self.props.is_maximized:
-                GLib.idle_add(self._header_bar.set_show_close_button, False)
-            else:
-                GLib.idle_add(self._header_bar.set_show_close_button, True)
 
     def progress_complete(self):
         """Run upon completion of loading."""
