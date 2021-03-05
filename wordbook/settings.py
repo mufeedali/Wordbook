@@ -102,11 +102,14 @@ class Settings:
             self.config.read_file(file)
         utils.log_info("Version Code: " + self.config.get("General", "ConfigVersion"))
 
-        if self.config.getint("General", "ConfigVersion") < 4:
-            utils.log_info("Updating to ConfigVersion 4")
-
+        if self.config.getint("General", "ConfigVersion") != 4:
             # Remove ability to hide window buttons when maximized.
-            self.config.remove_option("UI", "HideWindowButtonsMaximized")
+            if self.config.getint("General", "ConfigVersion") == 3:
+                utils.log_info("Updating to ConfigVersion 4")
+                self.config.remove_option("UI", "HideWindowButtonsMaximized")
+            elif self.config.getint("General", "ConfigVersion") < 3:
+                utils.log_info("Updating to ConfigVersion 4")
+                self.config.remove_option("UI-gtk", "HideWindowButtonsMaximized")
 
             if self.config.getint("General", "ConfigVersion") < 3:
                 utils.log_info("Updating to ConfigVersion 3")
@@ -126,7 +129,8 @@ class Settings:
                     self.set_boolean_key("General", "DoubleClick", False)
 
                 self.config.set("General", "ConfigVersion", "3")  # Set version.
-                self.save_settings()  # Save before proceeding.
+
+            self.save_settings()  # Save before proceeding.
 
     @property
     def pronunciations_accent(self):
