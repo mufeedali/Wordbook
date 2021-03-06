@@ -264,7 +264,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             if text and text == orig_term and not self._last_search_fail:
                 status = "done"
                 continue
-            elif text and text == orig_term and self._last_search_fail:
+
+            if text and text == orig_term and self._last_search_fail:
                 status = "fail"
                 continue
 
