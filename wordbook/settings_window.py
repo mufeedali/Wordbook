@@ -32,6 +32,17 @@ class SettingsWindow(Handy.PreferencesWindow):
 
         self.parent = parent
 
+        # Pronunciations accent choices.
+        liststore = Gio.ListStore.new(Handy.ValueObject)
+        liststore.insert(0, Handy.ValueObject.new("American English"))
+        liststore.insert(1, Handy.ValueObject.new("British English"))
+
+        self._pronunciations_accent_row.bind_name_model(
+            liststore, Handy.ValueObject.dup_string
+        )
+
+        self.load_settings()
+
         self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
         self._double_click_switch.connect(
             "notify::active", self._double_click_switch_activate
@@ -43,19 +54,9 @@ class SettingsWindow(Handy.PreferencesWindow):
         self._dark_font_switch.connect(
             "notify::active", self._on_dark_font_switch_activate
         )
-
-        # Pronunciations accent choices.
-        liststore = Gio.ListStore.new(Handy.ValueObject)
-        liststore.insert(0, Handy.ValueObject.new("American English"))
-        liststore.insert(1, Handy.ValueObject.new("British English"))
-
-        self._pronunciations_accent_row.bind_name_model(
-            liststore, Handy.ValueObject.dup_string
-        )
         self._pronunciations_accent_row.connect(
             "notify::selected-index", self._on_pronunciations_accent_activate
         )
-        self.load_settings()
 
     def load_settings(self):
         """Load settings from the Settings instance."""

@@ -5,7 +5,7 @@
 import os
 import random
 import threading
-from html import escape
+from html import escape, unescape
 
 from gi.repository import Gdk, Gio, GLib, Gtk, Handy
 from wn.util import ProgressHandler
@@ -40,6 +40,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     _search_history = []
     _search_queue = []
+    _last_search_fail = False
     _active_thread = None
 
     def __init__(self, **kwargs):
@@ -192,7 +193,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             .replace("<b>", "")
             .replace("</b>", "")
         )
-        self._search_entry.set_text(text)
+        self._search_entry.set_text(unescape(text))
         self._search_entry.set_position(-1)
         GLib.idle_add(self.on_search_clicked)
 
@@ -227,11 +228,10 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         status = None
         while self._search_queue:
             text = self._search_queue.pop(0)
-            if text and (
-                pass_check or not text == self.searched_term or text in except_list
-            ):
+            orig_term = self.searched_term
+            self.searched_term = text
+            if text and (pass_check or not text == orig_term or text in except_list):
 
-                self.searched_term = text
                 if not text.strip() == "":
                     out = self.__search(text)
 
@@ -245,6 +245,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         GLib.idle_add(self._def_view.set_markup, out_text)
                     else:
                         status = "fail"
+                        self._last_search_fail = True
                         continue
 
                     GLib.idle_add(
@@ -259,13 +260,17 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                     if text not in except_list and out["term"] != "Lookup failed.":
                         GLib.idle_add(self._speak_button.set_visible, True)
 
+                    self._last_search_fail = False
                     continue
 
                 status = "welcome"
                 continue
 
-            if text and text == self.searched_term:
+            if text and text == orig_term and not self._last_search_fail:
                 status = "done"
+                continue
+            elif text and text == orig_term and self._last_search_fail:
+                status = "fail"
                 continue
 
             status = "welcome"
@@ -361,7 +366,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 if len(self._complete_list) >= 10:
                     break
                 if item and item.lower().startswith(text.lower()):
-                    item = f"<b>{item}</b>"
+                    item = f"<b>{escape(item)}</b>"
                     if item in self._complete_list:
                         self._complete_list.remove(item)
                     self._complete_list.append(item)
