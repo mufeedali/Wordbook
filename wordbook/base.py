@@ -333,10 +333,16 @@ def get_version_info(version):
 
 
 @_threadpool
-def get_wn_file():
+def get_wn_file(reloader):
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initalizing WordNet.")
-    wn_instance = Wordnet(lexicon="ewn:2020")
+    try:
+        wn_instance = Wordnet(lexicon="ewn:2020")
+    except wn.DatabaseError:
+        utils.log_info(
+            "The WordNet database is either corrupted or is of an older version."
+        )
+        return reloader()
     utils.log_info("Fetching WordNet, wordlist.")
     wn_file = [w.lemma() for w in wn_instance.words()]
     utils.log_info("WordNet is ready.")
@@ -408,3 +414,7 @@ class WordnetDownloader:
         if os.path.isdir(os.path.join(utils.WN_DIR, "downloads")):
             rmtree(os.path.join(utils.WN_DIR, "downloads"))
         wn.download("ewn:2020", progress_handler=progress_handler)
+
+    @staticmethod
+    def delete_db():
+        os.remove(os.path.join(utils.WN_DIR, "wn.db"))

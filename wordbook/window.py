@@ -69,14 +69,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._speak_button.connect("clicked", self._on_speak_clicked)
 
         # Loading and setup.
-        self._header_bar.set_sensitive(False)
-        if not self._wn_downloader.check_status():
-            self.loading_label.set_text("Downloading WordNet...")
-            threading.Thread(
-                target=self._wn_downloader.download, args=[ProgressUpdater]
-            ).start()
-        else:
-            self._wn_future = base.get_wn_file()
+        self.__wn_loader()
+        if self._wn_downloader.check_status():
+            self._wn_future = base.get_wn_file(self.__reloader)
             self._header_bar.set_sensitive(True)
             self.__page_switch("welcome_page")
 
@@ -312,7 +307,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def progress_complete(self):
         """Run upon completion of loading."""
         GLib.idle_add(self.loading_label.set_label, "Ready.")
-        self._wn_future = base.get_wn_file()
+        self._wn_future = base.get_wn_file(self.__reloader)
         GLib.idle_add(self._header_bar.set_sensitive, True)
         self.__page_switch("welcome_page")
 
@@ -396,6 +391,24 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 )
 
             self._completion_request_count -= 1
+
+    def __wn_loader(self):
+        self._header_bar.set_sensitive(False)
+        if not self._wn_downloader.check_status():
+            self.loading_label.set_text("Downloading WordNet...")
+            threading.Thread(
+                target=self._wn_downloader.download, args=[ProgressUpdater]
+            ).start()
+
+    def __reloader(self):
+        self.__page_switch("download_page")
+        self._wn_downloader.delete_db()
+        self.__wn_loader()
+        self.loading_label.set_markup(
+            "Re-downloading WordNet database\n"
+            '<span size="small">Just a database upgrade.\n'
+            "This shouldn't happen too often.</span>"
+        )
 
 
 class ProgressUpdater(ProgressHandler):

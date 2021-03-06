@@ -79,8 +79,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/00/d0/517f29f0ead1635cf9a79e2c7d49302c33c24bc7196f1c27fe1368aa6d8d/wn-0.5.1-py3-none-any.whl",
-          "sha256": "dd9cc3a187e2ce19a30f64c5aaf7ef36065abe7b6500a8f23d92729d4cea8673"
+          "url": "https://files.pythonhosted.org/packages/ef/60/4af67c81d6fd000f091d76ae11e7baae871e46ce1b4cf941fc28f79e6756/wn-0.6.1-py3-none-any.whl",
+          "sha256": "d82c0c20b1fc870c63c51da0410267617d24b8969c3306647684796a0f1aa808"
         }
       ]
     },
