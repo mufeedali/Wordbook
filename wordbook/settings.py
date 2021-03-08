@@ -103,17 +103,12 @@ class Settings:
         utils.log_info("Version Code: " + self.config.get("General", "ConfigVersion"))
 
         if self.config.getint("General", "ConfigVersion") != 4:
-            # Remove ability to hide window buttons when maximized.
-            if self.config.getint("General", "ConfigVersion") == 3:
-                utils.log_info("Updating to ConfigVersion 4")
-                self.config.remove_option("UI", "HideWindowButtonsMaximized")
-            elif self.config.getint("General", "ConfigVersion") < 3:
-                utils.log_info("Updating to ConfigVersion 4")
-                self.config.remove_option("UI-gtk", "HideWindowButtonsMaximized")
+            if self.config.getint("General", "ConfigVersion") == 1:
+                # Add new option.
+                self.set_boolean_key("General", "DoubleClick", False)
+                self.config.set("General", "ConfigVersion", "2")
 
-            if self.config.getint("General", "ConfigVersion") < 3:
-                utils.log_info("Updating to ConfigVersion 3")
-
+            if self.config.getint("General", "ConfigVersion") == 2:
                 # Remove old options.
                 self.config.remove_section("UI-qt")  # Qt UI removed.
                 self.config.remove_option("General", "Debug")  # replaced.
@@ -124,11 +119,13 @@ class Settings:
                 # Add new options.
                 self.config.set("General", "PronunciationsAccent", "us")
 
-                if self.config.getint("General", "ConfigVersion") < 2:
-                    # Add new option.
-                    self.set_boolean_key("General", "DoubleClick", False)
-
                 self.config.set("General", "ConfigVersion", "3")  # Set version.
+
+            # Remove ability to hide window buttons when maximized.
+            if self.config.getint("General", "ConfigVersion") == 3:
+                utils.log_info("Updating to ConfigVersion 4")
+                self.config.remove_option("UI", "HideWindowButtonsMaximized")
+                self.config.set("General", "ConfigVersion", "4")
 
             self.save_settings()  # Save before proceeding.
 
