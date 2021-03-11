@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg height="128px" viewBox="0 0 128 128" width="128px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="99.999992" x2="107.999992" y1="82.999893" y2="82.999893">
+    <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="99.999981" x2="107.999981" y1="82.999344" y2="82.999344">
         <stop offset="0" stop-color="#deddda"/>
         <stop offset="0.511049" stop-color="#ffffff"/>
         <stop offset="1" stop-color="#c0bfbc"/>
@@ -17,6 +17,7 @@
     <mask id="e">
         <g clip-path="url(#c)" filter="url(#d)">
             <g clip-path="url(#b)">
+                <path d="m 26.984375 115 v 10 l 5 -5 l 5 5 v -10 z m 0 0" fill="#e01b24"/>
                 <path d="m 20 28 v 92 h 80 c 4.433594 0 8 -3.566406 8 -8 v -76 c 0 -4.433594 -3.566406 -8 -8 -8 z m 0 0" fill="#1c71d8"/>
                 <path d="m 22 48 v 70 h 78 c 4.433594 0 8 -3.566406 8 -8 v -54 c 0 -4.433594 -3.566406 -8 -8 -8 z m 0 0" fill="url(#a)"/>
                 <path d="m 20 28 v 84 h 80 c 4.433594 0 8 -3.566406 8 -8 v -68 c 0 -4.433594 -3.566406 -8 -8 -8 z m 0 0" fill="#1c71d8"/>
@@ -40,9 +41,8 @@
                     <use x="78.234375" xlink:href="#l" y="64.515625"/>
                     <use x="88.234375" xlink:href="#m" y="64.515625"/>
                 </g>
-                <path d="m 40 68 h 60" fill="none" stroke="#1c71d8" stroke-width="2.4"/>
-                <path d="m 40 69 h 60" fill="none" stroke="#ffffff" stroke-width="2.4"/>
-                <path d="m 26.984375 115 v 10 l 5 -5 l 5 5 v -10 z m 0 0" fill="#e01b24"/>
+                <path d="m 40 240 h 60" fill="none" stroke="#1c71d8" stroke-width="2.4" transform="matrix(1 0 0 1 0 -172)"/>
+                <path d="m 40 241 h 60" fill="none" stroke="#ffffff" stroke-width="2.4" transform="matrix(1 0 0 1 0 -172)"/>
             </g>
         </g>
     </mask>
@@ -73,6 +73,7 @@
     <symbol id="m" overflow="visible">
         <path d="m 6 0.234375 c 1.4375 0 2.671875 -0.5625 3.515625 -1.5625 l 0.640625 1.328125 h 1.953125 v -17.5 h -2.9375 v 6.625 c -0.734375 -0.59375 -1.6875 -0.875 -2.78125 -0.875 c -3.234375 0 -5.390625 2.421875 -5.390625 6.09375 c 0 3.546875 2.0625 5.890625 5 5.890625 z m 3.171875 -3.59375 c -0.53125 0.65625 -1.3125 1.03125 -2.234375 1.03125 c -1.78125 0 -2.890625 -1.359375 -2.890625 -3.515625 c 0 -2.0625 1.046875 -3.34375 2.75 -3.34375 c 0.96875 0 1.828125 0.40625 2.375 1.09375 z m 0 0"/>
     </symbol>
+    <path d="m 26.984375 115 v 10 l 5 -5 l 5 5 v -10 z m 0 0" fill="#e01b24"/>
     <path d="m 20 28 v 92 h 80 c 4.433594 0 8 -3.566406 8 -8 v -76 c 0 -4.433594 -3.566406 -8 -8 -8 z m 0 0" fill="#1c71d8"/>
     <path d="m 22 48 v 70 h 78 c 4.433594 0 8 -3.566406 8 -8 v -54 c 0 -4.433594 -3.566406 -8 -8 -8 z m 0 0" fill="url(#a)"/>
     <path d="m 20 28 v 84 h 80 c 4.433594 0 8 -3.566406 8 -8 v -68 c 0 -4.433594 -3.566406 -8 -8 -8 z m 0 0" fill="#1c71d8"/>
@@ -100,7 +101,6 @@
     </g>
     <path d="m 40 68 h 60" fill="none" stroke="#1c71d8" stroke-width="2.4"/>
     <path d="m 40 69 h 60" fill="none" stroke="#ffffff" stroke-width="2.4"/>
-    <path d="m 26.984375 115 v 10 l 5 -5 l 5 5 v -10 z m 0 0" fill="#e01b24"/>
     <g clip-path="url(#i)" mask="url(#e)">
         <g clip-path="url(#h)" mask="url(#f)">
             <path d="m 128 80.640625 v 47.359375 h -128 v -47.359375 z m 0 0" fill="url(#g)"/>

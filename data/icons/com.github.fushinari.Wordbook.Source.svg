@@ -572,16 +572,16 @@
      width="400px"
      inkscape:window-y="0"
      inkscape:window-x="0"
-     inkscape:window-height="704"
-     inkscape:window-width="1366"
+     inkscape:window-height="997"
+     inkscape:window-width="1920"
      inkscape:showpageshadow="false"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
      showgrid="false"
      inkscape:current-layer="layer9"
-     inkscape:cy="227.81221"
-     inkscape:cx="-139.50075"
-     inkscape:zoom="0.85191344"
+     inkscape:cy="25.284669"
+     inkscape:cx="174.28672"
+     inkscape:zoom="54.52246"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="0.25490196"
@@ -2882,17 +2882,10 @@
          id="path6"
          style="fill:#241f31"
          sodipodi:nodetypes="cccccccccccc" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:8.60831px;line-height:1.25;font-family:sans-serif;fill:#241f31;fill-opacity:1;stroke:none;stroke-width:0.215208"
-         x="164.16605"
-         y="182.03525"
-         id="text876"><tspan
-           sodipodi:role="line"
-           id="tspan874"
-           x="164.16605"
-           y="182.03525"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Cantarell;-inkscape-font-specification:'Cantarell Bold';fill:#241f31;fill-opacity:1;stroke-width:0.215208">W</tspan></text>
+      <path
+         d="m 165.96518,182.03525 h 1.17934 l 1.29986,-4.51076 1.40315,4.51076 h 1.15351 l 1.73888,-5.97417 h -1.11908 l -1.17073,4.50215 -1.33429,-4.46772 h -1.22238 l -1.29124,4.56241 -1.1363,-4.59684 h -1.26542 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.60831px;line-height:1.25;font-family:Cantarell;-inkscape-font-specification:'Cantarell Bold';fill:#241f31;fill-opacity:1;stroke:none;stroke-width:0.215208"
+         id="path1301" />
       <path
          style="fill:#241f31;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 164,183 h 9 v 1 h -9 z"
