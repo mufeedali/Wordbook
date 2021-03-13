@@ -103,7 +103,7 @@
           "type": "git",
           "url": "https://gitlab.gnome.org/GNOME/libhandy.git",
           "tag": "1.2.0",
-          "commit": "7126d2e8da9dcdeb5751e60ff6a74930804f9637"
+          "commit": "7b38a860ffcec6c2ad28153358cc3d037ddb618f"
         }
       ]
     },
