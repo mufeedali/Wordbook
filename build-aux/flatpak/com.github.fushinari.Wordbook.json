@@ -88,6 +88,9 @@
       "name": "libhandy",
       "buildsystem": "meson",
       "config-opts": [
+        "--buildtype=release",
+        "-Dprofiling=false",
+        "-Dintrospection=enabled",
         "-Dgtk_doc=false",
         "-Dtests=false",
         "-Dexamples=false",
@@ -99,8 +102,8 @@
         {
           "type": "git",
           "url": "https://gitlab.gnome.org/GNOME/libhandy.git",
-          "tag": "1.1.90",
-          "commit": "89a1610b62533c9d6c5267cfac0108e724df25ba"
+          "tag": "1.2.0",
+          "commit": "7126d2e8da9dcdeb5751e60ff6a74930804f9637"
         }
       ]
     },
