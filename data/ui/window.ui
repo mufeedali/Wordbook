@@ -17,8 +17,8 @@
   </object>
   <template class="WordbookGtkWindow" parent="HdyApplicationWindow">
     <property name="can-focus">False</property>
-    <property name="default-width">380</property>
-    <property name="default-height">385</property>
+    <property name="default-width">390</property>
+    <property name="default-height">610</property>
     <property name="icon-name">accesories-dictionary</property>
     <child>
       <object class="GtkBox" id="box">
