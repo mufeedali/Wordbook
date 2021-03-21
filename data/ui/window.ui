@@ -126,7 +126,6 @@
                 <property name="title" translatable="yes">Downloading</property>
               </packing>
             </child>
-            <!-- n-columns=1 n-rows=3 -->
             <child>
               <object class="HdyStatusPage" id="before_search_page">
                 <property name="visible">True</property>
@@ -246,7 +245,6 @@
                 <property name="position">2</property>
               </packing>
             </child>
-            <!-- n-columns=1 n-rows=2 -->
             <child>
               <object class="HdyStatusPage" id="search_fail_page">
                 <property name="visible">True</property>
