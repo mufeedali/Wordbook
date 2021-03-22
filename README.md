@@ -10,7 +10,7 @@ Wordbook
 </p>
 
 <p align="center">
-<b>Wordbook</b> is a dictionary application using the <a href="https://github.com/globalwordnet/english-wordnet">Open English WordNet</a> database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme) and built for GNOME.
+<b>Wordbook</b> is a dictionary application built for GNOME using the <a href="https://github.com/globalwordnet/english-wordnet">Open English WordNet</a> database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 </p>
 
 ## Features
