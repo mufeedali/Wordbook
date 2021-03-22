@@ -1,15 +1,32 @@
-<img height="128" src="data/icons/com.github.fushinari.Wordbook.svg" align="left"/>
+<h1 align="center">
+<img height="128" src="data/icons/com.github.fushinari.Wordbook.svg" alt="Wordbook"/><br>
+Wordbook
+</h1>
 
-# Wordbook
+<p align="center">Lookup definitions of any term</p>
 
-A dictionary application for GNOME.
+<p align="center">
+<img src="images/ss2.png?raw=true" alt="Searching (Light mode)" width="290">
+</p>
 
-Light Mode                                 |  Dark Mode
-:-----------------------------------------:|:--------------------------------------------:
-![Welcome screen](images/ss.png?raw=true)  |  ![Welcome screen](images/ss1.png?raw=true)
-![Searching](images/ss2.png?raw=true)      |  ![Searching](images/ss3.png?raw=true)
+<p align="center">
+<b>Wordbook</b> is a dictionary application using the <a href="https://github.com/globalwordnet/english-wordnet">Open English WordNet</a> database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme) and built for GNOME.
+</p>
 
-**Wordbook** is a dictionary application using the [Open English WordNet](https://github.com/globalwordnet/english-wordnet) database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
+## Features
+
+* Fully offline after initial data download
+* Random Word
+* Live Search
+* Double click to search
+* Custom Definitions feature using Pango Markup or an HTML subset for formatting
+* Support for GNOME Dark Mode and launching app in dark mode.
+
+## Screenshots
+
+<img src="images/ss.png?raw=true" alt="Welcome screen (Light mode)" width="290"> <img src="images/ss2.png?raw=true" alt="Searching (Light mode)" width="290">
+
+<img src="images/ss1.png?raw=true" alt="Welcome screen (Dark mode)" width="290"> <img src="images/ss3.png?raw=true" alt="Searching (Dark mode)" width="290">
 
 ## Requirements
 
@@ -19,15 +36,6 @@ Light Mode                                 |  Dark Mode
 * Standalone WordNet Python module [Arch AUR: `python-wn`]
 * Python GObject [Arch: `python-gobject`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
-
-## Features
-
-* Neat output with proper coloring and formatting
-* Random Word
-* Live Search
-* Double click to search
-* Custom Definitions feature using Pango Markup or an HTML subset for formatting
-* Support for GNOME Dark Mode and launching app in dark mode.
 
 ## Installation
 
