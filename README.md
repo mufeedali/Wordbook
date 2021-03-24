@@ -39,6 +39,16 @@ Wordbook
 
 ## Installation
 
+### Using Flatpak
+
+<a href='https://flathub.org/apps/details/com.github.fushinari.Wordbook'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
+
+### Using distro-specific packages
+
+Right now, Wordbook is only packaged for Arch through the AUR as [`wordbook`](https://aur.archlinux.org/packages/wordbook).
+
+### From Source
+
 To install, first make sure of the dependencies as listed above.
 
 ```bash
