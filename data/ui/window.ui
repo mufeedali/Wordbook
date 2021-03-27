@@ -30,7 +30,6 @@
                     <child>
                       <object class="GtkButton" id="search_button">
                         <property name="receives-default">True</property>
-                        <property name="has-default">True</property>
                         <property name="icon-name">edit-find-symbolic</property>
                         <style>
                           <class name="suggested-action"/>

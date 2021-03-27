@@ -80,6 +80,7 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
             self._wn_future = base.get_wn_file(self.__reloader)
             self._header_bar.set_sensitive(True)
             self.__page_switch("welcome_page")
+            GLib.idle_add(self._search_entry.grab_focus_without_selecting)
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.

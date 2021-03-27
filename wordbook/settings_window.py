@@ -82,7 +82,7 @@ class SettingsWindow(Adw.PreferencesWindow):
 
     def _on_live_search_activate(self, switch, _gparam):
         """Change live search state."""
-        self.parent.completer.set_popup_completion(not Settings.get().live_search)
+        # self.parent.completer.set_popup_completion(not Settings.get().live_search)
         Settings.get().live_search = switch.get_active()
 
     @staticmethod
