@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <requires lib="gtk" version="4.0"/>
   <menu id="wordbook-menu">
     <section>
       <attribute name="id">search-section</attribute>
       <item>
-        <attribute name="label" translatable="yes">Paste &amp; Search</attribute>
+        <attribute name="label" translatable="yes">Paste &amp;amp; Search</attribute>
         <attribute name="action">app.paste-search</attribute>
       </item>
       <item>

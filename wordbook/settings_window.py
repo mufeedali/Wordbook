@@ -4,7 +4,7 @@
 
 import os
 
-from gi.repository import Gio, Gtk, Handy
+from gi.repository import Gio, Gtk, Adw
 
 from wordbook import utils
 from wordbook.settings import Settings
@@ -13,7 +13,7 @@ PATH = os.path.dirname(__file__)
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings_window.ui")
-class SettingsWindow(Handy.PreferencesWindow):
+class SettingsWindow(Adw.PreferencesWindow):
     """Allows the user to customize Wordbook to some extent."""
 
     __gtype_name__ = "SettingsWindow"
@@ -33,12 +33,12 @@ class SettingsWindow(Handy.PreferencesWindow):
         self.parent = parent
 
         # Pronunciations accent choices.
-        liststore = Gio.ListStore.new(Handy.ValueObject)
-        liststore.insert(0, Handy.ValueObject.new("American English"))
-        liststore.insert(1, Handy.ValueObject.new("British English"))
+        liststore = Gio.ListStore.new(Adw.ValueObject)
+        liststore.insert(0, Adw.ValueObject.new("American English"))
+        liststore.insert(1, Adw.ValueObject.new("British English"))
 
-        self._pronunciations_accent_row.bind_name_model(
-            liststore, Handy.ValueObject.dup_string
+        self._pronunciations_accent_row.set_model(
+            liststore
         )
 
         self.load_settings()
@@ -63,7 +63,7 @@ class SettingsWindow(Handy.PreferencesWindow):
         self._cdef_switch.set_active(Settings.get().cdef)
         self._double_click_switch.set_active(Settings.get().double_click)
         self._live_search_switch.set_active(Settings.get().live_search)
-        self._pronunciations_accent_row.set_selected_index(
+        self._pronunciations_accent_row.set_selected(
             Settings.get().pronunciations_accent_value
         )
 
@@ -88,7 +88,7 @@ class SettingsWindow(Handy.PreferencesWindow):
     @staticmethod
     def _on_pronunciations_accent_activate(row, _gparam):
         """Change pronunciations' accent."""
-        Settings.get().pronunciations_accent_value = row.get_selected_index()
+        Settings.get().pronunciations_accent_value = row.get_selected()
 
     @staticmethod
     def _on_dark_ui_switch_activate(switch, _gparam):
