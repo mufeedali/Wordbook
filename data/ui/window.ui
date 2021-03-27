@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
-  <requires lib="libhandy" version="1.0"/>
+  <requires lib="libhandy" version="1.2"/>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="icon-name">edit-find-symbolic</property>

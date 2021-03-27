@@ -31,7 +31,7 @@ Wordbook
 ## Requirements
 
 * GTK 3.20+ [Arch: `gtk3`]
-* libhandy 1.0.0+ (libhandy1) [Arch: `libhandy`]
+* libhandy 1.2.0+ (libhandy1) [Arch: `libhandy`]
 * Python 3 [Arch: `python`]
 * Standalone WordNet Python module [Arch AUR: `python-wn`]
 * Python GObject [Arch: `python-gobject`]
