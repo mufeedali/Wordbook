@@ -2,10 +2,11 @@
 # SPDX-FileCopyrightText: 2016-2021 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import os
+# import os
 import random
 import threading
-from html import escape, unescape
+
+# from html import escape, unescape
 
 from gi.repository import Gdk, Gio, GLib, GObject, Gtk, Adw
 from wn.util import ProgressHandler
