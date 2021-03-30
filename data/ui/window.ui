@@ -205,6 +205,8 @@
                 <property name="child">
                   <object class="GtkSpinner">
                     <property name="spinning">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
                   </object>
                 </property>
               </object>

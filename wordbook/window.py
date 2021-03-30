@@ -62,7 +62,8 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
         self._menu_button.set_popover(popover)
 
         self._search_drop_target = Gtk.DropTarget.new(
-                GObject.GType.from_name("gchararray"), Gdk.DragAction.COPY)
+            GObject.GType.from_name("gchararray"), Gdk.DragAction.COPY
+        )
         self._search_entry.add_controller(self._search_drop_target)
 
         self._key_ctrlr.connect("key-pressed", self._on_key_press_event)
@@ -150,18 +151,21 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
         shortcuts_window.set_transient_for(self)
         shortcuts_window.show()
 
-    def _on_def_event(self, _eventbox, event):
+    def _on_def_event(self, _click, n_press, _x, _y):
         """Search on double click."""
-        if (
-            Settings.get().double_click
-            and event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS
-        ):
-            text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
-            if text is not None and not text.strip() == "" and not text.isspace():
-                text = text.split(" ")[0]
-                GLib.idle_add(self._search_entry.set_text, text)
-                GLib.idle_add(self.on_search_clicked, text=text)
-                GLib.idle_add(self._search_entry.grab_focus)
+
+        if Settings.get().double_click and n_press == 2:
+            print("Clipboard stuff has changed and I don't like it...")
+            # text = (
+            #     Gdk.Display.get_default()
+            #     .get_primary_clipboard()
+            #     .get_content()
+            # )  # WHY DOES THIS RETURN NONE???
+            # if text is not None and not text.strip() == "" and not text.isspace():
+            #     text = text.split(" ")[0]
+            #     GLib.idle_add(self._search_entry.set_text, text)
+            #     GLib.idle_add(self.on_search_clicked, text=text)
+            #     GLib.idle_add(self._search_entry.grab_focus)
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
         """Search on receiving drag and drop event."""
