@@ -207,6 +207,8 @@
                     <property name="spinning">True</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
+                    <property name="width-request">32</property>
+                    <property name="height-request">32</property>
                   </object>
                 </property>
               </object>
