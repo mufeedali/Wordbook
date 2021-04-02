@@ -25,6 +25,8 @@
                       <object class="GtkEntry" id="search_entry">
                         <property name="hexpand">True</property>
                         <property name="activates-default">True</property>
+                        <property name="primary-icon-name">edit-find-symbolic</property>
+                        <property name="primary-icon-activatable">False</property>
                       </object>
                     </child>
                     <child>

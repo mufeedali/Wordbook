@@ -205,7 +205,7 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
     #     self._search_entry.set_position(-1)
     #     GLib.idle_add(self.on_search_clicked)
 
-    def _on_key_press_event(self, _a, keyval, keycode, state):
+    def _on_key_press_event(self, _a, keyval, _keycode, state):
         """Focus onto the search entry when needed (quick search)."""
         modifiers = state & Gtk.accelerator_get_default_mod_mask()
 

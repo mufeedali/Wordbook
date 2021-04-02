@@ -67,6 +67,14 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Pronunciations Accent</property>
+                <property name="model">
+                  <object class="GtkStringList">
+                    <items>
+                      <item>American English</item>
+                      <item>British English</item>
+                    </items>
+                  </object>
+                </property>
               </object>
             </child>
           </object>

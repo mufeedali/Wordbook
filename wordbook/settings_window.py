@@ -4,7 +4,7 @@
 
 import os
 
-from gi.repository import Gio, Gtk, Adw
+from gi.repository import Gtk, Adw
 
 from wordbook import utils
 from wordbook.settings import Settings
@@ -32,15 +32,6 @@ class SettingsWindow(Adw.PreferencesWindow):
 
         self.parent = parent
 
-        # Pronunciations accent choices.
-        liststore = Gio.ListStore.new(Adw.ValueObject)
-        liststore.insert(0, Adw.ValueObject.new("American English"))
-        liststore.insert(1, Adw.ValueObject.new("British English"))
-
-        self._pronunciations_accent_row.set_model(
-            liststore
-        )
-
         self.load_settings()
 
         self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
@@ -55,7 +46,7 @@ class SettingsWindow(Adw.PreferencesWindow):
             "notify::active", self._on_dark_font_switch_activate
         )
         self._pronunciations_accent_row.connect(
-            "notify::selected-index", self._on_pronunciations_accent_activate
+            "notify::selected", self._on_pronunciations_accent_activate
         )
 
     def load_settings(self):
