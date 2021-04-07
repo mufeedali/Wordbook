@@ -3,7 +3,6 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
   <template class="SettingsWindow" parent="AdwPreferencesWindow">
-    <property name="can-focus">False</property>
     <property name="modal">True</property>
     <property name="default-width">380</property>
     <property name="default-height">350</property>
@@ -11,17 +10,14 @@
     <child>
       <object class="AdwPreferencesPage">
         <property name="visible">True</property>
-        <property name="can-focus">False</property>
         <property name="icon-name">emblem-system-symbolic</property>
         <property name="title">General</property>
         <child>
           <object class="AdwPreferencesGroup">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <child>
               <object class="AdwActionRow">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Custom Definitions</property>
                 <property name="activatable-widget">cdef_switch</property>
                 <child>
@@ -35,7 +31,6 @@
             <child>
               <object class="AdwActionRow">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Live Search</property>
                 <property name="activatable-widget">live_search_switch</property>
                 <property name="subtitle" translatable="yes">Show definition as the terms are typed in</property>
@@ -50,7 +45,6 @@
             <child>
               <object class="AdwActionRow">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Double Click Search</property>
                 <property name="activatable-widget">double_click_switch</property>
                 <property name="subtitle" translatable="yes">Search any word by double clicking on it</property>
@@ -65,7 +59,6 @@
             <child>
               <object class="AdwComboRow" id="pronunciations_accent_row">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Pronunciations Accent</property>
                 <property name="model">
                   <object class="GtkStringList">
@@ -84,17 +77,14 @@
     <child>
       <object class="AdwPreferencesPage">
         <property name="visible">True</property>
-        <property name="can-focus">False</property>
         <property name="icon-name">preferences-desktop-apps</property>
         <property name="title">UI</property>
         <child>
           <object class="AdwPreferencesGroup">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <child>
               <object class="AdwActionRow">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Use dark UI theme</property>
                 <property name="activatable-widget">dark_ui_switch</property>
                 <child>
@@ -108,7 +98,6 @@
             <child>
               <object class="AdwActionRow">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
                 <property name="title" translatable="yes">Use dark font theme</property>
                 <property name="activatable-widget">dark_font_switch</property>
                 <property name="subtitle">Use cyan and light green colors</property>

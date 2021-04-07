@@ -3,9 +3,9 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
   <template class="WordbookGtkWindow" parent="AdwApplicationWindow">
-    <property name="can-focus">False</property>
     <property name="default-width">390</property>
     <property name="default-height">610</property>
+    <property name="default-widget">search_button</property>
     <property name="icon-name">accesories-dictionary</property>
     <child>
       <object class="GtkBox" id="box">
@@ -13,7 +13,6 @@
         <child>
           <object class="AdwHeaderBar" id="header_bar">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <child type="title">
               <object class="GtkBox">
                 <property name="orientation">vertical</property>
@@ -22,16 +21,13 @@
                     <property name="hexpand">True</property>
                     <property name="spacing">4</property>
                     <child>
-                      <object class="GtkEntry" id="search_entry">
+                      <object class="GtkSearchEntry" id="search_entry">
                         <property name="hexpand">True</property>
                         <property name="activates-default">True</property>
-                        <property name="primary-icon-name">edit-find-symbolic</property>
-                        <property name="primary-icon-activatable">False</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkButton" id="search_button">
-                        <property name="receives-default">True</property>
                         <property name="icon-name">edit-find-symbolic</property>
                         <style>
                           <class name="suggested-action"/>
@@ -40,6 +36,7 @@
                     </child>
                     <child>
                       <object class="GtkMenuButton" id="wordbook_menu_button">
+                        <property name="can-focus">False</property>
                         <property name="direction">none</property>
                       </object>
                     </child>
@@ -114,7 +111,6 @@
                         <child>
                           <object class="AdwClamp">
                             <property name="visible">True</property>
-                            <property name="can-focus">False</property>
                             <child>
                               <object class="GtkBox">
                                 <property name="orientation">vertical</property>
@@ -130,6 +126,7 @@
                                         <property name="orientation">vertical</property>
                                         <child>
                                           <object class="GtkLabel" id="term_view">
+                                            <property name="can-focus">False</property>
                                             <property name="label" translatable="yes">&lt;span size=&quot;large&quot; weight=&quot;bold&quot;&gt;Term&lt;/span&gt;</property>
                                             <property name="use-markup">True</property>
                                             <property name="single-line-mode">True</property>
@@ -138,6 +135,7 @@
                                         </child>
                                         <child>
                                           <object class="GtkLabel" id="pronunciation_view">
+                                            <property name="can-focus">False</property>
                                             <property name="label" translatable="yes">&lt;i&gt;/Pronunciation/&lt;/i&gt;</property>
                                             <property name="use-markup">True</property>
                                             <property name="selectable">True</property>
@@ -149,6 +147,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="speak_button">
+                                        <property name="can-focus">False</property>
                                         <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="icon-name">audio-volume-high-symbolic</property>
@@ -161,6 +160,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="def_view">
+                                    <property name="can-focus">False</property>
                                     <property name="margin-start">18</property>
                                     <property name="margin-end">18</property>
                                     <property name="margin-top">6</property>

@@ -82,7 +82,6 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
             self._wn_future = base.get_wn_file(self.__reloader)
             self._header_bar.set_sensitive(True)
             self.__page_switch("welcome_page")
-            GLib.idle_add(self._search_entry.grab_focus_without_selecting)
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
@@ -114,7 +113,7 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
 
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
-        text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
+        text = Gdk.Display.get_default().get_clipboard().get_content()
         text = base.cleaner(text)
         if text is not None and not text.strip() == "" and not text.isspace():
             GLib.idle_add(self._search_entry.set_text, text)
@@ -205,14 +204,23 @@ class WordbookGtkWindow(Adw.ApplicationWindow):
     #     self._search_entry.set_position(-1)
     #     GLib.idle_add(self.on_search_clicked)
 
-    def _on_key_press_event(self, _a, keyval, _keycode, state):
+    def _on_search_key_press_event(self, ctrlr, keyval, _keycode, state):
+        if not self._search_entry.is_focus():
+            self._search_entry.grab_focus()
+        return Gdk.EVENT_PROPAGATE
+
+    def _on_key_press_event(self, ctrlr, keyval, _keycode, state):
         """Focus onto the search entry when needed (quick search)."""
         modifiers = state & Gtk.accelerator_get_default_mod_mask()
 
         shift_mask = Gdk.ModifierType.SHIFT_MASK
         key_unicode = Gdk.keyval_to_unicode(keyval)
         if GLib.unichar_isgraph(chr(key_unicode)) and modifiers in (shift_mask, 0):
-            self._search_entry.grab_focus_without_selecting()
+            # if not self._search_entry.is_focus():
+            #     self._search_entry.grab_focus()
+
+            forward = ctrlr.forward(self._search_entry)
+            return forward
 
     def _on_link_activated(self, _widget, data):
         """Search for terms that are marked as hyperlinks."""
