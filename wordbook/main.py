@@ -9,7 +9,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Gio, GLib, Gtk, Adw  # noqa
 
 from wordbook import base, utils  # noqa
-from wordbook.window import WordbookGtkWindow  # noqa
+from wordbook.window import WordbookWindow  # noqa
 from wordbook.settings import Settings  # noqa
 
 
@@ -78,9 +78,9 @@ class Application(Gtk.Application):
             self.set_accels_for_action("app.paste-search", ["<Primary><Shift>v"])
             self.set_accels_for_action("app.preferences", ["<Primary>comma"])
 
-        self.win = self.props.active_window
+        self.win = self.get_active_window()
         if not self.win:
-            self.win = WordbookGtkWindow(
+            self.win = WordbookWindow(
                 application=self,
                 title="Wordbook",
             )
@@ -110,7 +110,6 @@ class Application(Gtk.Application):
         )
 
         GLib.set_application_name("Wordbook")
-        GLib.set_prgname(utils.APP_ID)
 
         Adw.init()
         base.fold_gen()

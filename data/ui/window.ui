@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="WordbookGtkWindow" parent="AdwApplicationWindow">
+  <template class="WordbookWindow" parent="AdwApplicationWindow">
     <property name="default-width">390</property>
     <property name="default-height">610</property>
     <property name="default-widget">search_button</property>
@@ -29,6 +29,7 @@
                     <child>
                       <object class="GtkButton" id="search_button">
                         <property name="icon-name">edit-find-symbolic</property>
+                        <property name="focus-on-click">False</property>
                         <style>
                           <class name="suggested-action"/>
                         </style>
@@ -36,7 +37,7 @@
                     </child>
                     <child>
                       <object class="GtkMenuButton" id="wordbook_menu_button">
-                        <property name="can-focus">False</property>
+                        <property name="focus-on-click">False</property>
                         <property name="direction">none</property>
                       </object>
                     </child>
@@ -147,7 +148,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="speak_button">
-                                        <property name="can-focus">False</property>
+                                        <property name="focus-on-click">False</property>
                                         <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="icon-name">audio-volume-high-symbolic</property>
@@ -170,7 +171,7 @@
                                     <property name="xalign">0</property>
                                     <property name="yalign">0</property>
                                     <attributes>
-                                      <attribute name="scale" value="1.1000000000000001"></attribute>
+                                      <attribute name="scale" value="1.1"></attribute>
                                     </attributes>
                                         <child>
                                           <object class="GtkGestureClick" id="def_ctrlr"/>

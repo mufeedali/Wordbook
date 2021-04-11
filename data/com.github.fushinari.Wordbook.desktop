@@ -1,12 +1,12 @@
 [Desktop Entry]
-Encoding=UTF-8
-Version=1.0
 Name=Wordbook
-Exec=wordbook
+GenericName=Dictionary
 Comment=Lookup definitions for any term
+Exec=wordbook
 Terminal=false
 Type=Application
 Icon=com.github.fushinari.Wordbook
-Categories=Education;GTK;
+Categories=Education;GNOME;GTK;
 Keywords=dictionary;
 X-Purism-FormFactor=Workstation;Mobile;
+StartupNotify=true

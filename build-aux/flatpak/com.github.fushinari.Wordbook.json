@@ -85,11 +85,31 @@
       ]
     },
     {
-      "name": "libhandy",
+      "name" : "libsass",
+      "buildsystem" : "meson",
+      "sources" : [
+        {
+          "type" : "git",
+          "url" : "https://github.com/lazka/libsass.git",
+          "branch" : "meson"
+        }
+      ]
+    },
+    {
+      "name" : "sassc",
+      "buildsystem" : "meson",
+      "sources" : [
+        {
+          "type" : "git",
+          "url" : "https://github.com/lazka/sassc.git",
+          "branch" : "meson"
+        }
+      ]
+    },
+    {
+      "name": "libadwaita",
       "buildsystem": "meson",
       "config-opts": [
-        "--buildtype=release",
-        "-Dprofiling=false",
         "-Dintrospection=enabled",
         "-Dgtk_doc=false",
         "-Dtests=false",
@@ -97,13 +117,11 @@
         "-Dvapi=false",
         "-Dglade_catalog=disabled"
       ],
-      "cleanup": ["/include", "/lib/pkgconfig"],
       "sources": [
         {
           "type": "git",
-          "url": "https://gitlab.gnome.org/GNOME/libhandy.git",
-          "tag": "1.2.0",
-          "commit": "7b38a860ffcec6c2ad28153358cc3d037ddb618f"
+          "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
+          "branch": "main"
         }
       ]
     },

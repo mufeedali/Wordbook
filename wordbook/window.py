@@ -17,8 +17,8 @@ from wordbook.settings import Settings
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
-class WordbookGtkWindow(Adw.ApplicationWindow):
-    __gtype_name__ = "WordbookGtkWindow"
+class WordbookWindow(Adw.ApplicationWindow):
+    __gtype_name__ = "WordbookWindow"
 
     _header_bar = Gtk.Template.Child("header_bar")
     _search_entry = Gtk.Template.Child("search_entry")
