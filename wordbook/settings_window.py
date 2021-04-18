@@ -71,7 +71,8 @@ class SettingsWindow(Adw.PreferencesWindow):
         """Change 'double click to search' state."""
         Settings.get().double_click = switch.get_active()
 
-    def _on_live_search_activate(self, switch, _gparam):
+    @staticmethod
+    def _on_live_search_activate(switch, _gparam):
         """Change live search state."""
         # self.parent.completer.set_popup_completion(not Settings.get().live_search)
         Settings.get().live_search = switch.get_active()

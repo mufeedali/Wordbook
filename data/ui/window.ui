@@ -220,8 +220,5 @@
         </child>
       </object>
     </child>
-    <child>
-      <object class="GtkEventControllerKey" id="key_ctrlr"/>
-    </child>
   </template>
 </interface>

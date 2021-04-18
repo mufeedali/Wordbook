@@ -32,7 +32,6 @@ class WordbookWindow(Adw.ApplicationWindow):
     _def_ctrlr = Gtk.Template.Child("def_ctrlr")
     _pronunciation_view = Gtk.Template.Child("pronunciation_view")
     _term_view = Gtk.Template.Child("term_view")
-    _key_ctrlr = Gtk.Template.Child("key_ctrlr")
 
     _complete_list = []
     _completion_request_count = 0
@@ -67,7 +66,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
         self._search_entry.add_controller(self._search_drop_target)
 
-        self._key_ctrlr.connect("key-pressed", self._on_key_press_event)
         self._def_ctrlr.connect("pressed", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
         self._search_button.connect("clicked", self.on_search_clicked)
@@ -113,12 +111,18 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
-        text = Gdk.Display.get_default().get_clipboard().get_content()
-        text = base.cleaner(text)
-        if text is not None and not text.strip() == "" and not text.isspace():
-            GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self.on_search_clicked)
-            GLib.idle_add(self._search_entry.grab_focus)
+        clipboard = Gdk.Display.get_default().get_clipboard()
+
+        def on_paste(_clipboard, result):
+            text = clipboard.read_text_finish(result)
+            text = base.cleaner(text)
+            if text is not None and not text.strip() == "" and not text.isspace():
+                GLib.idle_add(self._search_entry.set_text, text)
+                GLib.idle_add(self.on_search_clicked)
+                GLib.idle_add(self._search_entry.grab_focus)
+
+        cancellable = Gio.Cancellable()
+        clipboard.read_text_async(cancellable, on_paste)
 
     def on_preferences(self, _action, _param):
         """Show settings window."""
@@ -135,12 +139,18 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def on_search_selected(self, _action, _param):
         """Search selected text from inside or outside the window."""
-        text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
-        if text is not None and not text.strip() == "" and not text.isspace():
-            text = text.replace("         ", "").replace("\n", "")
-            GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self.on_search_clicked, text=text)
-            GLib.idle_add(self._search_entry.grab_focus)
+        clipboard = Gdk.Display.get_default().get_primary_clipboard()
+
+        def on_paste(_clipboard, result):
+            text = clipboard.read_text_finish(result)
+            text = base.cleaner(text)
+            if text is not None and not text.strip() == "" and not text.isspace():
+                GLib.idle_add(self._search_entry.set_text, text)
+                GLib.idle_add(self.on_search_clicked)
+                GLib.idle_add(self._search_entry.grab_focus)
+
+        cancellable = Gio.Cancellable()
+        clipboard.read_text_async(cancellable, on_paste)
 
     def on_shortcuts(self, _action, _param):
         """Launch the Keyboard Shortcuts window."""
@@ -155,17 +165,18 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Search on double click."""
 
         if Settings.get().double_click and n_press == 2:
-            print("Clipboard stuff has changed and I don't like it...")
-            # text = (
-            #     Gdk.Display.get_default()
-            #     .get_primary_clipboard()
-            #     .get_content()
-            # )  # WHY DOES THIS RETURN NONE???
-            # if text is not None and not text.strip() == "" and not text.isspace():
-            #     text = text.split(" ")[0]
-            #     GLib.idle_add(self._search_entry.set_text, text)
-            #     GLib.idle_add(self.on_search_clicked, text=text)
-            #     GLib.idle_add(self._search_entry.grab_focus)
+            clipboard = Gdk.Display.get_default().get_primary_clipboard()
+
+            def on_paste(_clipboard, result):
+                text = clipboard.read_text_finish(result)
+                text = base.cleaner(text)
+                if text is not None and not text.strip() == "" and not text.isspace():
+                    GLib.idle_add(self._search_entry.set_text, text)
+                    GLib.idle_add(self.on_search_clicked)
+                    GLib.idle_add(self._search_entry.grab_focus)
+
+            cancellable = Gio.Cancellable()
+            clipboard.read_text_async(cancellable, on_paste)
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
         """Search on receiving drag and drop event."""
@@ -203,24 +214,6 @@ class WordbookWindow(Adw.ApplicationWindow):
     #     self._search_entry.set_text(unescape(text))
     #     self._search_entry.set_position(-1)
     #     GLib.idle_add(self.on_search_clicked)
-
-    def _on_search_key_press_event(self, ctrlr, keyval, _keycode, state):
-        if not self._search_entry.is_focus():
-            self._search_entry.grab_focus()
-        return Gdk.EVENT_PROPAGATE
-
-    def _on_key_press_event(self, ctrlr, keyval, _keycode, state):
-        """Focus onto the search entry when needed (quick search)."""
-        modifiers = state & Gtk.accelerator_get_default_mod_mask()
-
-        shift_mask = Gdk.ModifierType.SHIFT_MASK
-        key_unicode = Gdk.keyval_to_unicode(keyval)
-        if GLib.unichar_isgraph(chr(key_unicode)) and modifiers in (shift_mask, 0):
-            # if not self._search_entry.is_focus():
-            #     self._search_entry.grab_focus()
-
-            forward = ctrlr.forward(self._search_entry)
-            return forward
 
     def _on_link_activated(self, _widget, data):
         """Search for terms that are marked as hyperlinks."""
