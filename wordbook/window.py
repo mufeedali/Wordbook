@@ -43,9 +43,11 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _last_search_fail = False
     _active_thread = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, term="", **kwargs):
         """Initialize the window."""
         super().__init__(**kwargs)
+
+        self.lookup_term = term
 
         if Gio.Application.get_default().development_mode is True:
             self.get_style_context().add_class("devel")
@@ -54,7 +56,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             resource_path=f"{utils.RES_PATH}/ui/menu.xml"
         )
         menu = builder.get_object("wordbook-menu")
-        self.set_icon_name(utils.APP_ID)
+        self.set_default_icon_name(utils.APP_ID)
 
         popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
         self._menu_button.set_popover(popover)
@@ -74,6 +76,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             self._wn_future = base.get_wn_file(self.__reloader)
             self._header_bar.set_sensitive(True)
             self.__page_switch("welcome_page")
+            if self.lookup_term:
+                self.trigger_search(self.lookup_term)
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
@@ -109,9 +113,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         text = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
         text = base.cleaner(text)
         if text is not None and not text.strip() == "" and not text.isspace():
-            GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self.on_search_clicked)
-            GLib.idle_add(self._search_entry.grab_focus)
+            self.trigger_search(text)
 
     def on_preferences(self, _action, _param):
         """Show settings window."""
@@ -122,18 +124,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Search a random word from the wordlist."""
         random_word = random.choice(self._wn_future.result()["list"])
         random_word = random_word.replace("_", " ")
-        GLib.idle_add(self._search_entry.set_text, random_word)
-        GLib.idle_add(self.on_search_clicked, text=random_word)
-        GLib.idle_add(self._search_entry.grab_focus)
+        self.trigger_search(random_word)
 
     def on_search_selected(self, _action, _param):
         """Search selected text from inside or outside the window."""
         text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
         if text is not None and not text.strip() == "" and not text.isspace():
             text = text.replace("         ", "").replace("\n", "")
-            GLib.idle_add(self._search_entry.set_text, text)
-            GLib.idle_add(self.on_search_clicked, text=text)
-            GLib.idle_add(self._search_entry.grab_focus)
+            self.trigger_search(text)
 
     def on_shortcuts(self, _action, _param):
         """Launch the Keyboard Shortcuts window."""
@@ -153,9 +151,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             text = Gtk.Clipboard.get(Gdk.SELECTION_PRIMARY).wait_for_text()
             if text is not None and not text.strip() == "" and not text.isspace():
                 text = text.split(" ")[0]
-                GLib.idle_add(self._search_entry.set_text, text)
-                GLib.idle_add(self.on_search_clicked, text=text)
-                GLib.idle_add(self._search_entry.grab_focus)
+                self.trigger_search(text)
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
         """Search on receiving drag and drop event."""
@@ -279,6 +275,12 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             self.__page_switch("welcome_page")
         self._active_thread = None
 
+    def trigger_search(self, text):
+        """Trigger search action."""
+        GLib.idle_add(self._search_entry.set_text, text)
+        GLib.idle_add(self.on_search_clicked, text=text)
+        GLib.idle_add(self._search_entry.grab_focus)
+
     def _add_to_queue(self, text, pass_check=False):
         if self._search_queue:
             self._search_queue.pop(0)
@@ -311,6 +313,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._wn_future = base.get_wn_file(self.__reloader)
         GLib.idle_add(self._header_bar.set_sensitive, True)
         self.__page_switch("welcome_page")
+        if self.lookup_term:
+            self.trigger_search(self.lookup_term)
 
     def __entry_cleaner(self):
         term = self._search_entry.get_text()

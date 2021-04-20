@@ -18,6 +18,8 @@ class Application(Gtk.Application):
 
     development_mode = False
     version = "0.0.0"
+
+    lookup_term = ""
     win = None
 
     def __init__(self, version):
@@ -26,7 +28,18 @@ class Application(Gtk.Application):
             application_id=utils.APP_ID,
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
         )
+
         self.version = version
+
+        # Add command line options
+        self.add_main_option(
+            "look-up",
+            b"l",
+            GLib.OptionFlags.NONE,
+            GLib.OptionArg.STRING,
+            "Term to look up",
+            None,
+        )
         self.add_main_option(
             "info",
             ord("i"),
@@ -83,6 +96,7 @@ class Application(Gtk.Application):
             self.win = WordbookGtkWindow(
                 application=self,
                 title="Wordbook",
+                term=self.lookup_term,
             )
             setup_actions(self.win)
 
@@ -91,14 +105,22 @@ class Application(Gtk.Application):
     def do_command_line(self, command_line):
         """Parse commandline arguments."""
         options = command_line.get_options_dict().end().unpack()
+        term = ""
+
         if "verinfo" in options:
             base.get_version_info(self.version)
             return 0
-        utils.log_init(
-            self.development_mode
-            or "verbose" in options
-            or False
-        )
+
+        if "look-up" in options:
+            term = options["look-up"]
+
+        utils.log_init(self.development_mode or "verbose" in options or False)
+
+        if self.win is not None:
+            self.win.trigger_search(term)
+        else:
+            self.lookup_term = term
+
         self.activate()
         return 0
 
