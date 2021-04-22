@@ -4,9 +4,10 @@
 
 import gi
 
+gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Handy", "1")
-from gi.repository import Gio, GLib, Gtk, Handy  # noqa
+from gi.repository import Gdk, Gio, GLib, Gtk, Handy  # noqa
 
 from wordbook import base, utils  # noqa
 from wordbook.window import WordbookGtkWindow  # noqa
@@ -136,3 +137,11 @@ class Application(Gtk.Application):
 
         Handy.init()
         base.fold_gen()
+
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_resource(f'{utils.RES_PATH}/ui/css/style.css')
+        screen = Gdk.Screen.get_default()
+        Gtk.StyleContext.add_provider_for_screen(
+            screen, css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )

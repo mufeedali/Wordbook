@@ -7,7 +7,7 @@ import random
 import threading
 from html import escape, unescape
 
-from gi.repository import Gdk, Gio, GLib, Gtk, Handy
+from gi.repository import Gdk, Gio, GLib, GObject, Gtk, Handy
 from wn.util import ProgressHandler
 
 from wordbook import base, utils
@@ -20,10 +20,15 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     __gtype_name__ = "WordbookGtkWindow"
 
     _header_bar = Gtk.Template.Child("header_bar")
+    _flap_toggle_button = Gtk.Template.Child("flap_toggle_button")
     _search_entry = Gtk.Template.Child("search_entry")
     _search_button = Gtk.Template.Child("search_button")
     _speak_button = Gtk.Template.Child("speak_button")
     _menu_button = Gtk.Template.Child("wordbook_menu_button")
+    _flap = Gtk.Template.Child("main_flap")
+    _recents_listbox = Gtk.Template.Child("recents_listbox")
+    _clamp = Gtk.Template.Child("main_clamp")
+    _clamped_box = Gtk.Template.Child("clamped_box")
     _stack = Gtk.Template.Child("main_stack")
     loading_label = Gtk.Template.Child("loading_label")
     loading_progress = Gtk.Template.Child("loading_progress")
@@ -51,17 +56,19 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         if Gio.Application.get_default().development_mode is True:
             self.get_style_context().add_class("devel")
+        self.set_default_icon_name(utils.APP_ID)
 
         builder = Gtk.Builder.new_from_resource(
             resource_path=f"{utils.RES_PATH}/ui/menu.xml"
         )
         menu = builder.get_object("wordbook-menu")
-        self.set_default_icon_name(utils.APP_ID)
 
         popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
         self._menu_button.set_popover(popover)
 
+        self.connect("check-resize", self._on_resize)
         self.connect("key-press-event", self._on_key_press_event)
+        self._recents_listbox.connect("row-activated", self._on_recents_activated)
         self._def_view.connect("button-press-event", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
         self._search_button.connect("clicked", self.on_search_clicked)
@@ -69,6 +76,13 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._search_entry.connect("drag-data-received", self._on_drag_received)
         self._search_entry.connect("paste-clipboard", self._on_paste_done)
         self._speak_button.connect("clicked", self._on_speak_clicked)
+
+        self._flap.bind_property(
+            "reveal-flap",
+            self._flap_toggle_button,
+            "active",
+            GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE,
+        )
 
         # Loading and setup.
         self.__wn_loader()
@@ -142,6 +156,88 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         shortcuts_window.set_transient_for(self)
         shortcuts_window.show()
 
+    def on_search_clicked(self, _button=None, pass_check=False, text=None):
+        """Pass data to search function and set TextView data."""
+        if text is None:
+            text = self._search_entry.get_text().strip()
+        self.__page_switch("spinner_page")
+        self._add_to_queue(text, pass_check)
+
+    def threaded_search(self, pass_check=False):
+        except_list = ("fortune -a", "cowfortune")
+        status = None
+        while self._search_queue:
+            text = self._search_queue.pop(0)
+            orig_term = self.searched_term
+            self.searched_term = text
+            if text and (pass_check or not text == orig_term or text in except_list):
+
+                if not text.strip() == "":
+                    out = self.__search(text)
+
+                    if out is None:
+                        status = "welcome"
+                        continue
+
+                    if out["definition"] is not None:
+                        # Add to history
+                        if text not in self._search_history:
+                            row = Handy.ActionRow(visible=True, activatable=True)
+                            row.set_title(text)
+                            row.set_hexpand(False)
+                            GLib.idle_add(self._recents_listbox.add, row)
+                        self._search_history.append(text)
+
+                        status = "done"
+                        out_text = base.clean_pango(f'{out["definition"]}')
+                        GLib.idle_add(self._def_view.set_markup, out_text)
+                    else:
+                        status = "fail"
+                        self._last_search_fail = True
+                        continue
+
+                    GLib.idle_add(
+                        self._term_view.set_markup,
+                        f'<span size="large" weight="bold">{out["term"].strip()}</span>',
+                    )
+                    GLib.idle_add(
+                        self._pronunciation_view.set_markup,
+                        f'<i>{out["pronunciation"].strip()}</i>',
+                    )
+
+                    if text not in except_list and out["term"] != "Lookup failed.":
+                        GLib.idle_add(self._speak_button.set_visible, True)
+
+                    self._last_search_fail = False
+                    continue
+
+                status = "welcome"
+                continue
+
+            if text and text == orig_term and not self._last_search_fail:
+                status = "done"
+                continue
+
+            if text and text == orig_term and self._last_search_fail:
+                status = "fail"
+                continue
+
+            status = "welcome"
+
+        if status == "done":
+            self.__page_switch("content_page")
+        elif status == "fail":
+            self.__page_switch("fail_page")
+        elif status == "welcome":
+            self.__page_switch("welcome_page")
+        self._active_thread = None
+
+    def trigger_search(self, text):
+        """Trigger search action."""
+        GLib.idle_add(self._search_entry.set_text, text)
+        GLib.idle_add(self.on_search_clicked, text=text)
+        GLib.idle_add(self._search_entry.grab_focus)
+
     def _on_def_event(self, _eventbox, event):
         """Search on double click."""
         if (
@@ -207,90 +303,33 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Cleanup pasted data."""
         self._pasted = True
 
-    def on_search_clicked(self, _button=None, pass_check=False, text=None):
-        """Pass data to search function and set TextView data."""
-        if text is None:
-            text = self._search_entry.get_text().strip()
-        self.__page_switch("spinner_page")
-        self._add_to_queue(text, pass_check)
+    def _on_recents_activated(self, _widget, row):
+        term = row.get_title()
+        self.trigger_search(term)
 
-    def threaded_search(self, pass_check=False):
-        except_list = ("fortune -a", "cowfortune")
-        status = None
-        while self._search_queue:
-            text = self._search_queue.pop(0)
-            orig_term = self.searched_term
-            self.searched_term = text
-            if text and (pass_check or not text == orig_term or text in except_list):
+    def _on_resize(self, _widget):
+        size = self.get_size()
+        max_size = self._clamp.get_maximum_size()
 
-                if not text.strip() == "":
-                    out = self.__search(text)
-
-                    if out is None:
-                        status = "welcome"
-                        continue
-
-                    if out["definition"] is not None:
-                        status = "done"
-                        out_text = base.clean_pango(f'{out["definition"]}')
-                        GLib.idle_add(self._def_view.set_markup, out_text)
-                    else:
-                        status = "fail"
-                        self._last_search_fail = True
-                        continue
-
-                    GLib.idle_add(
-                        self._term_view.set_markup,
-                        f'<span size="large" weight="bold">{out["term"].strip()}</span>',
-                    )
-                    GLib.idle_add(
-                        self._pronunciation_view.set_markup,
-                        f'<i>{out["pronunciation"].strip()}</i>',
-                    )
-
-                    if text not in except_list and out["term"] != "Lookup failed.":
-                        GLib.idle_add(self._speak_button.set_visible, True)
-
-                    self._last_search_fail = False
-                    continue
-
-                status = "welcome"
-                continue
-
-            if text and text == orig_term and not self._last_search_fail:
-                status = "done"
-                continue
-
-            if text and text == orig_term and self._last_search_fail:
-                status = "fail"
-                continue
-
-            status = "welcome"
-
-        if status == "done":
-            self.__page_switch("content_page")
-        elif status == "fail":
-            self.__page_switch("fail_page")
-        elif status == "welcome":
-            self.__page_switch("welcome_page")
-        self._active_thread = None
-
-    def trigger_search(self, text):
-        """Trigger search action."""
-        GLib.idle_add(self._search_entry.set_text, text)
-        GLib.idle_add(self.on_search_clicked, text=text)
-        GLib.idle_add(self._search_entry.grab_focus)
+        if size.width < max_size:
+            self._clamped_box.get_style_context().remove_class("clamped-card-mid")
+            self._clamped_box.get_style_context().remove_class("clamped-card-large")
+            self._clamped_box.set_margin_start(0)
+            self._clamped_box.set_margin_end(0)
+            self._clamped_box.set_margin_top(0)
+            self._clamped_box.set_margin_bottom(0)
+        elif size.width > max_size:
+            self._clamped_box.get_style_context().remove_class("clamped-card-mid")
+            self._clamped_box.get_style_context().add_class("clamped-card-large")
+            self._clamped_box.set_margin_start(12)
+            self._clamped_box.set_margin_end(12)
+            self._clamped_box.set_margin_top(12)
+            self._clamped_box.set_margin_bottom(12)
 
     def _add_to_queue(self, text, pass_check=False):
         if self._search_queue:
             self._search_queue.pop(0)
         self._search_queue.append(text)
-
-        # Add to history.
-        if not Settings.get().live_search:
-            if len(self._search_history) == 10:
-                self._search_history.pop(0)
-            self._search_history.append(text)
 
         if self._active_thread is None:
             # If there is no active thread, create one and start it.
@@ -361,15 +400,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             while len(self._complete_list) > 0:
                 GLib.idle_add(self.completer.delete_action, 0)
                 self._complete_list.pop(0)
-
-            for item in self._search_history:
-                if len(self._complete_list) >= 10:
-                    break
-                if item and item.lower().startswith(text.lower()):
-                    item = f"<b>{escape(item)}</b>"
-                    if item in self._complete_list:
-                        self._complete_list.remove(item)
-                    self._complete_list.append(item)
 
             for item in self._wn_future.result()["list"]:
                 if len(self._complete_list) >= 10:
