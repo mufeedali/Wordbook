@@ -1,0 +1,22 @@
+.clamped-card {
+  background-color: @theme_base_color;
+  border-left: 1px solid @borders;
+  border-right: 1px solid @borders;
+}
+
+.clamped-card-large {
+  border: 1px solid @borders;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
+}
+
+.pron-card {
+  background-color: @theme_bg_color;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
+  border: 1px solid @borders;
+}
