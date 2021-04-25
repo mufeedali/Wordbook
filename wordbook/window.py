@@ -66,7 +66,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
         self._menu_button.set_popover(popover)
 
-        self.connect("check-resize", self._on_resize)
         self.connect("key-press-event", self._on_key_press_event)
         self._recents_listbox.connect("row-activated", self._on_recents_activated)
         self._def_view.connect("button-press-event", self._on_def_event)
@@ -306,25 +305,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def _on_recents_activated(self, _widget, row):
         term = row.get_title()
         self.trigger_search(term)
-
-    def _on_resize(self, _widget):
-        size = self.get_size()
-        max_size = self._clamp.get_maximum_size()
-
-        if size.width < max_size:
-            self._clamped_box.get_style_context().remove_class("clamped-card-mid")
-            self._clamped_box.get_style_context().remove_class("clamped-card-large")
-            self._clamped_box.set_margin_start(0)
-            self._clamped_box.set_margin_end(0)
-            self._clamped_box.set_margin_top(0)
-            self._clamped_box.set_margin_bottom(0)
-        elif size.width > max_size:
-            self._clamped_box.get_style_context().remove_class("clamped-card-mid")
-            self._clamped_box.get_style_context().add_class("clamped-card-large")
-            self._clamped_box.set_margin_start(12)
-            self._clamped_box.set_margin_end(12)
-            self._clamped_box.set_margin_top(12)
-            self._clamped_box.set_margin_bottom(12)
 
     def _add_to_queue(self, text, pass_check=False):
         if self._search_queue:
