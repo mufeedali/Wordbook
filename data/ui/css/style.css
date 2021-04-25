@@ -1,5 +1,8 @@
 clamp .clamped-box {
   background-color: @theme_base_color;
+}
+
+clamp.medium .clamped-box {
   border-left: 1px solid @borders;
   border-right: 1px solid @borders;
 }
