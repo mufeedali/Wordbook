@@ -43,7 +43,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _wn_downloader = base.WordnetDownloader()
     _wn_future = None
 
-    _search_history = []
+    _search_history = None
+    _search_history_list = []
     _search_queue = []
     _last_search_fail = False
     _active_thread = None
@@ -65,6 +66,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         popover = Gtk.Popover.new_from_model(self._menu_button, model=menu)
         self._menu_button.set_popover(popover)
+
+        self._search_history = Gio.ListStore.new(HistoryObject)
+        self._recents_listbox.bind_model(self._search_history, self.__create_label)
 
         self.connect("key-press-event", self._on_key_press_event)
         self._recents_listbox.connect("row-activated", self._on_recents_activated)
@@ -180,12 +184,10 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
                     if out["definition"] is not None:
                         # Add to history
-                        if text not in self._search_history:
-                            row = Handy.ActionRow(visible=True, activatable=True)
-                            row.set_title(text)
-                            row.set_hexpand(False)
-                            GLib.idle_add(self._recents_listbox.add, row)
-                        self._search_history.append(text)
+                        history_object = HistoryObject(text)
+                        if text not in self._search_history_list:
+                            self._search_history_list.append(text)
+                            self._search_history.append(history_object)
 
                         status = "done"
                         out_text = base.clean_pango(f'{out["definition"]}')
@@ -303,7 +305,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._pasted = True
 
     def _on_recents_activated(self, _widget, row):
-        term = row.get_title()
+        term = row.get_child().get_children()[0].get_label()
         self.trigger_search(term)
 
     def _add_to_queue(self, text, pass_check=False):
@@ -334,6 +336,13 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.__page_switch("welcome_page")
         if self.lookup_term:
             self.trigger_search(self.lookup_term)
+
+    @staticmethod
+    def __create_label(element):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, visible=True)
+        label = Gtk.Label(label=element.term, margin=8, visible=True)
+        box.add(label)
+        return box
 
     def __entry_cleaner(self):
         term = self._search_entry.get_text()
@@ -424,6 +433,14 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             '<span size="small">Just a database upgrade.\n'
             "This shouldn't happen too often.</span>"
         )
+
+
+class HistoryObject(GObject.Object):
+    term = ""
+
+    def __init__(self, term):
+        super().__init__()
+        self.term = term
 
 
 class ProgressUpdater(ProgressHandler):
