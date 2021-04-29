@@ -165,6 +165,7 @@
                             <child>
                               <object class="GtkListBox" id="recents_listbox">
                                 <property name="visible">True</property>
+                                <property name="selection-mode">none</property>
                               </object>
                             </child>
                           </object>
