@@ -1,5 +1,7 @@
 clamp .clamped-box {
   background-color: @theme_base_color;
+  transition-property: margin;
+  transition-duration: 200ms;
 }
 
 clamp.medium .clamped-box {
