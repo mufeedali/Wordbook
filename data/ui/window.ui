@@ -53,6 +53,7 @@
                       <object class="GtkSearchEntry" id="search_entry">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="has-focus">True</property>
                         <property name="activates-default">True</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
@@ -65,7 +66,6 @@
                       <object class="GtkButton" id="search_button">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="has-focus">True</property>
                         <property name="can-default">True</property>
                         <property name="has-default">True</property>
                         <property name="receives-default">True</property>

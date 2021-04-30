@@ -394,8 +394,11 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 if len(self._complete_list) >= 10:
                     break
                 item = item.replace("_", " ")
-                if item.lower().startswith(text.lower()):
-                    self._complete_list.append(item.replace("_", " "))
+                if (
+                    item.lower().startswith(text.lower())
+                    and item not in self._complete_list
+                ):
+                    self._complete_list.append(item)
 
             for item in os.listdir(utils.CDEF_DIR):
                 if len(self._complete_list) >= 10:
