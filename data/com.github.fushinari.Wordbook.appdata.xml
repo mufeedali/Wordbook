@@ -43,6 +43,17 @@
     </screenshots>
 
     <releases>
+        <release version="0.3.0" date="2021-04-30">
+            <description>
+                <ul>
+                    <li>Switched to a brand new icon</li>
+                    <li>Moved history from completions to a new sidebar</li>
+                    <li>Added "--look-up" CLI argument</li>
+                    <li>Made some UI improvements to adapt better to different display sizes</li>
+                    <li>Made some other minor improvements</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.2.0" date="2021-03-08">
             <description>
                 <ul>
