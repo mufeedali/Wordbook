@@ -95,6 +95,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             self.__page_switch("welcome_page")
             if self.lookup_term:
                 self.trigger_search(self.lookup_term)
+            else:
+                GLib.idle_add(self._search_entry.grab_focus)
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
@@ -336,6 +338,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.__page_switch("welcome_page")
         if self.lookup_term:
             self.trigger_search(self.lookup_term)
+        else:
+            GLib.idle_add(self._search_entry.grab_focus)
 
     @staticmethod
     def __create_label(element):

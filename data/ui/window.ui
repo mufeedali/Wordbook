@@ -37,6 +37,7 @@
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
+                <property name="valign">center</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
