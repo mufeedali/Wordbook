@@ -202,6 +202,7 @@
               <object class="HdyClamp" id="main_clamp">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="tightening-threshold">500</property>
                 <child>
                   <object class="GtkBox" id="clamped_box">
                     <property name="visible">True</property>
