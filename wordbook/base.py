@@ -213,7 +213,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
         elif orig_pos == pos:
             i += 1
         else:
-            def_string += f"{synset_name} ~ <b>{pos}</b>\n"
+            def_string += f"\n{synset_name} ~ <b>{pos}</b>\n"
             orig_synset = synset_name
             i = 1
 
@@ -291,7 +291,7 @@ def get_fortune(mono=True):
         fortune_out = fortune_process.stdout.read().decode()
         fortune_out = html.escape(fortune_out, False)
     except OSError as ex:
-        fortune_out = "Easter Egg Fail! Install 'fortune' or 'fortune-mod'."
+        fortune_out = "Easter egg fail! Install 'fortune' or 'fortune-mod'."
         utils.log_error(f"{fortune_out}\n{str(ex)}")
     if mono:
         return f"<tt>{fortune_out}</tt>"
@@ -308,7 +308,7 @@ def get_pronunciation(term, accent="us"):
             stderr=subprocess.PIPE,
         )
     except OSError as ex:
-        utils.log_warning("Didn't Work! ERROR INFO: " + str(ex))
+        utils.log_warning("Didn't Work! Error: " + str(ex))
         return None
     process_pron.wait()
     output = process_pron.stdout.read().decode()
@@ -354,22 +354,10 @@ def reactor(text, dark_font, wn_instance, cdef, accent="us"):
     if dark_font:
         sencol = "cyan"  # Color of sentences in Dark mode
         wordcol = "lightgreen"  # Color of: Similar words,
-    #                                     Synonyms and Antonyms.
+        #                                   Synonyms and Antonyms.
     else:
         sencol = "blue"  # Color of sentences in regular
         wordcol = "green"  # Color of: Similar words, Synonyms, Antonyms.
-    wn_list = (
-        "00-database-allchars",
-        "00-database-info",
-        "00-database-short",
-        "00-database-url",
-    )
-    if text in wn_list:
-        return {
-            "term": "<tt>Wordbook</tt>",
-            "pronunciation": "<tt>Powered by WordNet and espeak-ng.</tt>",
-            "definition": '<tt>URL: <a href="https://wordnet.princeton.edu/">WordNet</a></tt>',
-        }
     if text == "fortune -a":
         return {
             "term": "<tt>Some random adage</tt>",
