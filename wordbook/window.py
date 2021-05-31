@@ -184,16 +184,23 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         status = "welcome"
                         continue
 
-                    if out["definition"] is not None:
+                    def success_result(text, out_string):
                         # Add to history
                         history_object = HistoryObject(text)
                         if text not in self._search_history_list:
                             self._search_history_list.append(text)
                             self._search_history.append(history_object)
 
-                        status = "done"
-                        out_text = base.clean_pango(f'{out["definition"]}')
+                        out_text = base.clean_pango(out_string)
                         GLib.idle_add(self._def_view.set_markup, out_text)
+                        return "done"
+
+                    if out["out_string"] is not None:
+                        status = success_result(text, out["out_string"])
+                    elif out["result"] is not None:
+                        status = success_result(
+                            text, self.__process_result(out["result"])
+                        )
                     else:
                         status = "fail"
                         self._last_search_fail = True
@@ -368,6 +375,66 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             return True
         GLib.idle_add(self._stack.set_visible_child_name, page)
         return False
+
+    def __process_result(self, result: dict):
+        out_string = ""
+        word_col = result["word_col"]
+        sen_col = result["sen_col"]
+        for pos in result.keys():
+            i = 0
+            orig_synset = None
+            if pos not in ("word_col", "sen_col") and result[pos]:
+                for synset in sorted(result[pos], key=lambda k: k["name"]):
+                    synset_name = synset["name"]
+                    if orig_synset is None:
+                        i = 1
+                        out_string += f"{synset_name} ~ <b>{pos}</b>\n"
+                        orig_synset = synset_name
+                    elif synset_name != orig_synset:
+                        i = 1
+                        print("here")
+                        out_string += f"\n{synset_name} ~ <b>{pos}</b>\n"
+                    else:
+                        i += 1
+                    out_string += f'  <b>{i}</b>: {synset["definition"]}\n'
+
+                    for example in synset["examples"]:
+                        out_string += (
+                            f'        <font color="{sen_col}">{example}</font>\n'
+                        )
+
+                    pretty_syn = self.__process_word_links(synset["syn"], word_col)
+                    if pretty_syn:
+                        out_string += f"        Synonyms: <i>{pretty_syn}</i>\n"
+
+                    pretty_ant = self.__process_word_links(synset["ant"], word_col)
+                    if pretty_ant:
+                        out_string += f"        Antonyms: <i>{pretty_ant}</i>\n"
+
+                    pretty_sims = self.__process_word_links(synset["sim"], word_col)
+                    if pretty_sims:
+                        out_string += f"        Similar to: <i>{pretty_sims}</i>\n"
+
+                    pretty_alsos = self.__process_word_links(
+                        synset["also_sees"], word_col
+                    )
+                    if pretty_alsos:
+                        out_string += f"        Also see: <i>{pretty_alsos}</i>\n"
+                out_string += "\n"
+        return out_string
+
+    def __process_word_links(self, word_list, word_col):
+        pretty_list = []
+        for word in word_list:
+            pretty_list.append(
+                f'<font color="{word_col}">'
+                f'<a href="search;{word}">{word}</a>'
+                "</font>".strip()
+            )
+        if pretty_list:
+            pretty_list = ", ".join(pretty_list)
+            return pretty_list
+        return ""
 
     def __search(self, search_text):
         """Clean input text, give errors and pass data to reactor."""

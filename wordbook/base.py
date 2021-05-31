@@ -5,8 +5,7 @@
 """
 base contains the shared code between the GTK+ 3 UI and other possible frontends.
 
-base is a part of Wordbook. It contains a few functions that are reusable across
-both the UIs.
+base is a part of Wordbook.
 """
 
 import difflib
@@ -123,8 +122,8 @@ def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
             custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance, accent
         )
     definition = custom_def_dict.get(
-        "definition",
-        get_definition(text, wordcol, sencol, wn_instance)[0]["definition"],
+        "out_string",
+        get_definition(text, wordcol, sencol, wn_instance)[0]["out_string"],
     )
     re_list = {
         "<i>($WORDCOL)</i>": wordcol,
@@ -145,7 +144,7 @@ def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
     final_data = {
         "term": term,
         "pronunciation": pronunciation,
-        "definition": definition,
+        "out_string": definition,
     }
     return final_data
 
@@ -162,121 +161,105 @@ def get_data(term, word_col, sen_col, wn_instance, accent="us"):
     final_data = {
         "term": clean_def["term"],
         "pronunciation": final_pron,
-        "definition": clean_def["definition"],
+        "result": clean_def["result"],
+        "out_string": clean_def["out_string"],
     }
     return final_data
 
 
 def get_definition(term, word_col, sen_col, wn_instance):
     """Get the definition from python-wn and process it."""
+    result_dict = None
     synsets = wn_instance.synsets(term)  # Get relevant synsets.
 
-    # Synsets have 'parts of speech' symbolized by letters. We need their actual names.
-    # We also need to track their values across synsets to an extent.
-    pos = None
-    orig_synset = None
-    actual_pos = {
-        "s": "adjective",
-        "n": "noun",
-        "v": "verb",
-        "r": "adverb",
-        "a": "adjective",
-        "t": "phrase",
-        "c": "conjunction",
-        "p": "adposition",
-        "x": "other",
-        "u": "unknown",
-    }
+    if synsets:
+        # Synsets have 'parts of speech'. We need their real names.
+        # We also need to track their values across synsets to an extent.
+        pos = None
+        orig_synset = None
+        actual_pos = {
+            "s": "adjective",
+            "n": "noun",
+            "v": "verb",
+            "r": "adverb",
+            "a": "adjective",
+            "t": "phrase",
+            "c": "conjunction",
+            "p": "adposition",
+            "x": "other",
+            "u": "unknown",
+        }
 
-    i = 0  # Initiate a counter.
-    def_string = ""  # Initiate a string for the definition to go into.
-    first_match = None
-    for synset in synsets:
-        # Try to organize based on parts of speech.
-        orig_pos = pos
-        pos = actual_pos[synset.pos]  # If this fails, nothing beyond it is useful.
+        result_dict = {
+            "adjective": [],
+            "noun": [],
+            "verb": [],
+            "adverb": [],
+            "phrase": [],
+            "conjunction": [],
+            "adposition": [],
+            "other": [],
+            "unknown": [],
+            "word_col": word_col,
+            "sen_col": sen_col,
+        }
+        first_match = None
+        for synset in synsets:
+            # Try to organize based on parts of speech.
+            pos = actual_pos[synset.pos]  # If this fails, nothing beyond it is useful.
 
-        # We need the term as is found in the WordNet database.
-        lemma_names = synset.lemmas()
-        diff_match = difflib.get_close_matches(term, lemma_names)
-        synset_name = diff_match[0].strip() if diff_match else lemma_names[0]
+            # We need the term as is found in the WordNet database.
+            lemma_names = synset.lemmas()
+            diff_match = difflib.get_close_matches(term, lemma_names)
+            synset_name = diff_match[0].strip() if diff_match else lemma_names[0]
 
-        # If suitable term isn't found, return the term entered.
-        if first_match is None or first_match == "":
-            first_match = synset_name
+            # If suitable term isn't found, return the term entered.
+            if first_match is None or first_match == "":
+                first_match = synset_name
 
-        # Identify and set the number of definitions for the same part of speech.
-        if orig_pos is None:
-            def_string += f"{synset_name} ~ <b>{pos}</b>\n"
-            orig_synset = synset_name
-            i += 1
-        elif orig_pos == pos:
-            i += 1
-        else:
-            def_string += f"\n{synset_name} ~ <b>{pos}</b>\n"
-            orig_synset = synset_name
-            i = 1
+            syn = []  # Synonyms
+            ant = []  # Antonyms
+            for lemma in synset.lemmas():
+                syn_name = lemma.replace("_", " ").strip()
+                if not syn_name == orig_synset:
+                    syn.append(syn_name)
+            for sense in synset.senses():
+                for ant_sense in sense.get_related("antonym"):
+                    ant_name = ant_sense.word().lemma()
+                    ant.append(ant_name)
 
-        # Get the definition for each synset.
-        def_string += f"  <b>{i}</b>: {synset.definition()}\n"
+            sims = []  # WordNet's "Similar to"
+            for sim_synset in synset.get_related("similar"):
+                sims.extend(sim_synset.lemmas())
 
-        # Get examples if available.
-        if synset.examples():
-            for example in synset.examples():
-                def_string += f'        <font color="{sen_col}">{example}</font>\n'
+            also_sees = []  # WorNet's "Also See"
+            for also_synset in synset.get_related("also"):
+                also_sees.extend(also_synset.lemmas())
 
-        syn = []  # Synonyms
-        ant = []  # Antonyms
-        for lemma in synset.lemmas():
-            syn_name = lemma.replace("_", " ").strip()
-            if not syn_name == orig_synset:
-                syn.append(
-                    f'<font color="{word_col}"><a href="search;{syn_name}">{syn_name}</a></font>'.strip()
-                )
-        for sense in synset.senses():
-            for ant_sense in sense.get_related("antonym"):
-                ant_name = ant_sense.word().lemma()
-                ant.append(
-                    f'<font color="{word_col}"><a href="search;{ant_name}">{ant_name}</a></font>'.strip()
-                )
-        if syn:
-            syn = ", ".join(syn)
-            def_string += f"        Synonyms: <i>{syn}</i>\n"
-        if ant:
-            ant = ", ".join(ant)
-            def_string += f"        Antonyms: <i>{ant}</i>\n"
+            synset_dict = {
+                "name": synset_name,
+                "definition": synset.definition(),
+                "examples": synset.examples(),
+                "syn": syn,
+                "ant": ant,
+                "sim": sims,
+                "also_sees": also_sees,
+            }
 
-        sims = []  # WordNet's "Similar to"
-        for sim_synset in synset.get_related("similar"):
-            sim_names = sim_synset.lemmas()
-            for sim_name in sim_names:
-                sims.append(
-                    f'<font color="{word_col}"><a href="search;{sim_name}">{sim_name}</a></font>'.strip()
-                )
-        if sims:
-            sims = ", ".join(sims)
-            def_string += f"        Similar to: <i>{sims}</i>\n"
+            # Get the definition for each synset.
+            result_dict[pos].append(synset_dict)
 
-        also_sees = []  # WorNet's "Also See"
-        for also_synset in synset.get_related("also"):
-            see_names = also_synset.lemmas()
-            for see_name in see_names:
-                also_sees.append(
-                    f'<font color="{word_col}"><a href="search;{see_name}">{see_name}</a></font>'.strip()
-                )
-        if also_sees:
-            also_sees = ", ".join(also_sees)
-            def_string += f"        Also see: <i>{also_sees}</i>\n"
-
-    if def_string == "":
+    if result_dict is None:
         clean_def = {
             "term": term,
-            "definition": None,
+            "result": None,
+            "out_string": None,
         }
         return (clean_def, True)
     clean_def = {
         "term": first_match,
-        "definition": def_string.strip(),
+        "result": result_dict,
+        "out_string": None,
     }
     return (clean_def, False)
 
@@ -362,13 +345,13 @@ def reactor(text, dark_font, wn_instance, cdef, accent="us"):
         return {
             "term": "<tt>Some random adage</tt>",
             "pronunciation": "<tt>Courtesy of fortune</tt>",
-            "definition": get_fortune(),
+            "out_string": get_fortune(),
         }
     if text == "cowfortune":
         return {
             "term": "<tt>Some random adage from a cow</tt>",
             "pronunciation": "<tt>Courtesy of fortune and cowsay</tt>",
-            "definition": get_cowfortune(),
+            "out_string": get_cowfortune(),
         }
     if text in ("crash now", "close now"):
         return sys.exit()
