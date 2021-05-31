@@ -139,7 +139,7 @@ class Application(Gtk.Application):
         base.fold_gen()
 
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_resource(f'{utils.RES_PATH}/ui/css/style.css')
+        css_provider.load_from_resource(f"{utils.RES_PATH}/ui/css/style.css")
         screen = Gdk.Screen.get_default()
         Gtk.StyleContext.add_provider_for_screen(
             screen, css_provider,
