@@ -43,6 +43,14 @@
     </screenshots>
 
     <releases>
+        <release version="0.3.1" date="2021-06-06">
+            <description>
+                <ul>
+                    <li>Made some minor tweaks to the UI</li>
+                    <li>Fixed search entry focus on launch</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.3.0" date="2021-04-30">
             <description>
                 <ul>
