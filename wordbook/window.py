@@ -230,7 +230,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         if status == "done":
             self.__page_switch("content_page")
-            self._content_scroll.get_vadjustment().set_value(0)
         elif status == "fail":
             self.__page_switch("fail_page")
         elif status == "welcome":
@@ -364,6 +363,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         dialog.destroy()
 
     def __page_switch(self, page):
+        if page == "content_page":
+            GLib.idle_add(self._content_scroll.get_vadjustment().set_value, 0)
         if self._stack.get_visible_child_name == page:
             return True
         GLib.idle_add(self._stack.set_visible_child_name, page)
