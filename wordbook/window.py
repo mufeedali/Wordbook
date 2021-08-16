@@ -106,7 +106,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.completer.set_text_column(0)
         self.completer.set_model(self.completer_liststore)
         self.completer.set_popup_completion(not Settings.get().live_search)
-        self.completer.get_popup_completion()
         self._search_entry.set_completion(self.completer)
         self.completer.connect("action-activated", self._on_entry_completed)
 
@@ -416,7 +415,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 if item.lower().startswith(text.lower()):
                     self._complete_list.append(f"<i>{item}</i>")
 
-            self._complete_list = sorted(self._complete_list)
+            self._complete_list = sorted(self._complete_list, key=str.casefold)
             for item in self._complete_list:
                 GLib.idle_add(
                     self.completer.insert_action_markup,
