@@ -453,7 +453,7 @@ class HistoryObject(GObject.Object):
 
 
 class ProgressUpdater(ProgressHandler):
-    def update(self, n):
+    def update(self, n: int = 1, force: bool = False):
         """Update the progress bar."""
         self.kwargs["count"] += n
         if self.kwargs["total"] > 0:
