@@ -4,6 +4,7 @@
 
 import gi
 
+from gettext import gettext as _
 gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Handy", "1")
@@ -96,7 +97,7 @@ class Application(Gtk.Application):
         if not self.win:
             self.win = WordbookGtkWindow(
                 application=self,
-                title="Wordbook",
+                title=_("Wordbook"),
                 term=self.lookup_term,
             )
             setup_actions(self.win)
@@ -132,14 +133,14 @@ class Application(Gtk.Application):
             "gtk-application-prefer-dark-theme", Settings.get().gtk_dark_ui
         )
 
-        GLib.set_application_name("Wordbook")
+        GLib.set_application_name(_("Wordbook"))
         GLib.set_prgname(utils.APP_ID)
 
         Handy.init()
         base.fold_gen()
 
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_resource(f"{utils.RES_PATH}/ui/css/style.css")
+        css_provider.load_from_resource(f"{utils.RES_PATH}/style.css")
         screen = Gdk.Screen.get_default()
         Gtk.StyleContext.add_provider_for_screen(
             screen, css_provider,

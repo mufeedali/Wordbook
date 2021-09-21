@@ -4,6 +4,7 @@
 
 import os
 
+from gettext import gettext as _
 from gi.repository import Gio, Gtk, Handy
 
 from wordbook import utils
@@ -18,7 +19,6 @@ class SettingsWindow(Handy.PreferencesWindow):
 
     __gtype_name__ = "SettingsWindow"
 
-    _cdef_switch = Gtk.Template.Child("cdef_switch")
     _double_click_switch = Gtk.Template.Child("double_click_switch")
     _live_search_switch = Gtk.Template.Child("live_search_switch")
     _pronunciations_accent_row = Gtk.Template.Child("pronunciations_accent_row")
@@ -34,8 +34,8 @@ class SettingsWindow(Handy.PreferencesWindow):
 
         # Pronunciations accent choices.
         liststore = Gio.ListStore.new(Handy.ValueObject)
-        liststore.insert(0, Handy.ValueObject.new("American English"))
-        liststore.insert(1, Handy.ValueObject.new("British English"))
+        liststore.insert(0, Handy.ValueObject.new(_("American English")))
+        liststore.insert(1, Handy.ValueObject.new(_("British English")))
 
         self._pronunciations_accent_row.bind_name_model(
             liststore, Handy.ValueObject.dup_string
@@ -43,7 +43,6 @@ class SettingsWindow(Handy.PreferencesWindow):
 
         self.load_settings()
 
-        self._cdef_switch.connect("notify::active", self._on_cdef_switch_activate)
         self._double_click_switch.connect(
             "notify::active", self._double_click_switch_activate
         )
@@ -60,7 +59,6 @@ class SettingsWindow(Handy.PreferencesWindow):
 
     def load_settings(self):
         """Load settings from the Settings instance."""
-        self._cdef_switch.set_active(Settings.get().cdef)
         self._double_click_switch.set_active(Settings.get().double_click)
         self._live_search_switch.set_active(Settings.get().live_search)
         self._pronunciations_accent_row.set_selected_index(
@@ -69,11 +67,6 @@ class SettingsWindow(Handy.PreferencesWindow):
 
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
         self._dark_font_switch.set_active(Settings.get().gtk_dark_font)
-
-    def _on_cdef_switch_activate(self, switch, _gparam):
-        """Change custom definition state."""
-        self.__refresh_view()
-        Settings.get().cdef = switch.get_active()
 
     @staticmethod
     def _double_click_switch_activate(switch, _gparam):

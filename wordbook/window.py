@@ -7,6 +7,7 @@ import random
 import threading
 from html import escape, unescape
 
+from gettext import gettext as _
 from gi.repository import Gdk, Gio, GLib, GObject, Gtk, Handy
 from wn.util import ProgressHandler
 
@@ -61,7 +62,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.set_default_icon_name(utils.APP_ID)
 
         builder = Gtk.Builder.new_from_resource(
-            resource_path=f"{utils.RES_PATH}/ui/menu.xml"
+            resource_path=f"{utils.RES_PATH}/ui/menu.ui"
         )
         menu = builder.get_object("wordbook-menu")
 
@@ -113,9 +114,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Show the about window."""
         about_dialog = Gtk.AboutDialog(transient_for=self, modal=True)
         about_dialog.set_logo_icon_name(utils.APP_ID)
-        about_dialog.set_program_name("Wordbook")
+        about_dialog.set_program_name(_("Wordbook"))
         about_dialog.set_version(Gio.Application.get_default().version)
-        about_dialog.set_comments("Wordbook is a dictionary application.")
+        about_dialog.set_comments(_("Lookup definitions of any English term."))
         about_dialog.set_authors(
             [
                 "Mufeed Ali",
@@ -123,7 +124,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         )
         about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/wordbook")
-        about_dialog.set_copyright("Copyright © 2016-2021 Mufeed Ali")
+        about_dialog.set_copyright(_("Copyright © 2016–2021 Mufeed Ali"))
         about_dialog.connect("response", lambda dialog, response: dialog.destroy())
         about_dialog.present()
 
@@ -215,7 +216,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         f'<i>{out["pronunciation"].strip()}</i>',
                     )
 
-                    if text not in except_list and out["term"] != "Lookup failed.":
+                    if text not in except_list:
                         GLib.idle_add(self._speak_button.set_visible, True)
 
                     self._last_search_fail = False
@@ -339,7 +340,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def progress_complete(self):
         """Run upon completion of loading."""
-        GLib.idle_add(self.loading_label.set_label, "Ready.")
+        GLib.idle_add(self.loading_label.set_label, _("Ready."))
         self._wn_future = base.get_wn_file(self.__reloader)
         GLib.idle_add(self._header_bar.set_sensitive, True)
         self.__page_switch("welcome_page")
@@ -450,9 +451,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         if not Settings.get().live_search:
             GLib.idle_add(
                 self.__new_error,
-                "Invalid Input",
-                "Wordbook thinks that your input was actually just a bunch of useless "
-                "characters. And so, an 'Invalid Characters' error.",
+                _("Invalid input"),
+                _("Nothing definable was found in your search input"),
             )
         self.searched_term = None
         return None
@@ -473,14 +473,15 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                 ):
                     self._complete_list.append(item)
 
-            for item in os.listdir(utils.CDEF_DIR):
-                if len(self._complete_list) >= 10:
-                    break
-                item = escape(item).replace("_", " ")
-                if item in self._complete_list:
-                    self._complete_list.remove(item)
-                if item.lower().startswith(text.lower()):
-                    self._complete_list.append(f"<i>{item}</i>")
+            if Settings.get().cdef:
+                for item in os.listdir(utils.CDEF_DIR):
+                    if len(self._complete_list) >= 10:
+                        break
+                    item = escape(item).replace("_", " ")
+                    if item in self._complete_list:
+                        self._complete_list.remove(item)
+                    if item.lower().startswith(text.lower()):
+                        self._complete_list.append(f"<i>{item}</i>")
 
             self._complete_list = sorted(self._complete_list, key=str.casefold)
             for item in self._complete_list:
@@ -495,7 +496,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def __wn_loader(self):
         self._header_bar.set_sensitive(False)
         if not self._wn_downloader.check_status():
-            self.loading_label.set_text("Downloading WordNet...")
+            self.loading_label.set_text(_("Downloading WordNet…"))
             threading.Thread(
                 target=self._wn_downloader.download, args=[ProgressUpdater]
             ).start()
@@ -505,9 +506,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._wn_downloader.delete_db()
         self.__wn_loader()
         self.loading_label.set_markup(
-            "Re-downloading WordNet database\n"
-            '<span size="small">Just a database upgrade.\n'
-            "This shouldn't happen too often.</span>"
+            _("Re-downloading WordNet database\n") +
+            '<span size="small">' + _("Just a database upgrade.") + "\n" +
+            _("This shouldn't happen too often.") + "</span>"
         )
 
 
@@ -536,7 +537,7 @@ class ProgressUpdater(ProgressHandler):
         if message == "Database":
             GLib.idle_add(
                 Gio.Application.get_default().win.loading_label.set_label,
-                "Building Database...",
+                _("Building Database…"),
             )
         else:
             GLib.idle_add(

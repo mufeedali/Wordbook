@@ -3,14 +3,14 @@
 Wordbook
 </h1>
 
-<p align="center">Lookup definitions of any term</p>
+<p align="center">Lookup definitions of any English term</p>
 
 <p align="center">
 <img src="images/ss2.png?raw=true" alt="Searching (Light mode)" width="290">
 </p>
 
 <p align="center">
-<b>Wordbook</b> is a dictionary application built for GNOME using the <a href="https://github.com/globalwordnet/english-wordnet">Open English WordNet</a> database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
+<b>Wordbook</b> is an offline English-English dictionary application built for GNOME using the <a href="https://github.com/globalwordnet/english-wordnet">Open English WordNet</a> database for definitions and the reliable eSpeak for pronunciations (both audio and phoneme).
 </p>
 
 ## Features

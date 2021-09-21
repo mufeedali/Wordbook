@@ -221,7 +221,7 @@
                               <object class="GtkLabel" id="loading_label">
                                 <property name="visible">True</property>
                                 <property name="margin-bottom">4</property>
-                                <property name="label" translatable="yes">Loading...</property>
+                                <property name="label" translatable="yes">Loading…</property>
                                 <style>
                                   <class name="dim-label"/>
                                 </style>
@@ -253,7 +253,7 @@
                             <property name="visible">True</property>
                             <property name="icon-name">com.github.fushinari.Wordbook-symbolic</property>
                             <property name="title" translatable="yes">Wordbook</property>
-                            <property name="description" translatable="yes">Lookup definitions of any term</property>
+                            <property name="description" translatable="yes">Lookup definitions of any English term</property>
                           </object>
                           <packing>
                             <property name="name">welcome_page</property>
@@ -295,7 +295,7 @@
                                             <child>
                                               <object class="GtkLabel" id="term_view">
                                                 <property name="visible">True</property>
-                                                <property name="label" translatable="yes">&lt;span size=&quot;large&quot; weight=&quot;bold&quot;&gt;Term&lt;/span&gt;</property>
+                                                <property name="label" translatable="no">&lt;span size=&quot;large&quot; weight=&quot;bold&quot;&gt;Term&lt;/span&gt;</property>
                                                 <property name="use-markup">True</property>
                                                 <property name="single-line-mode">True</property>
                                                 <property name="xalign">0</property>
@@ -396,7 +396,7 @@
                           </object>
                           <packing>
                             <property name="name">spinner_page</property>
-                            <property name="title" translatable="yes">Loading</property>
+                            <property name="title" translatable="yes">Loading…</property>
                             <property name="position">4</property>
                           </packing>
                         </child>

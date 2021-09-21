@@ -12,23 +12,23 @@
         <attribute name="action">app.search-selected</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">Random Word</attribute>
+        <attribute name="label" translatable="yes">_Random Word</attribute>
         <attribute name="action">app.random-word</attribute>
       </item>
     </section>
     <section>
       <attribute name="id">edit-section</attribute>
       <item>
-        <attribute name="label" translatable="yes">Preferences</attribute>
+        <attribute name="label" translatable="yes">_Preferences</attribute>
         <attribute name="action">app.preferences</attribute>
       </item>
       <attribute name="id">help-section</attribute>
       <item>
-        <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
+        <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
         <attribute name="action">app.shortcuts</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">About Wordbook</attribute>
+        <attribute name="label" translatable="yes">_About Wordbook</attribute>
         <attribute name="action">app.about</attribute>
       </item>
     </section>
