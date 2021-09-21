@@ -1,0 +1,193 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the wordbook package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: wordbook\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-21 23:26+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/resources/ui/menu.ui:7
+msgid "Paste & Search"
+msgstr ""
+
+#: data/resources/ui/menu.ui:11
+msgid "Search Selected Text"
+msgstr ""
+
+#: data/resources/ui/menu.ui:15
+msgid "_Random Word"
+msgstr ""
+
+#: data/resources/ui/menu.ui:22
+msgid "_Preferences"
+msgstr ""
+
+#: data/resources/ui/menu.ui:27
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: data/resources/ui/menu.ui:31
+msgid "_About Wordbook"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:27
+msgid "Live Search"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:29
+msgid "Show definition as the terms are typed in"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:44
+msgid "Double Click Search"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:46
+msgid "Search any word by double clicking on it"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:61
+msgid "Pronunciations Accent"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:82
+msgid "Use dark UI theme"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:98
+msgid "Use dark font theme"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:13
+msgctxt "shortcut window"
+msgid "General"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:17
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:23
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:30
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:37
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:44
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr ""
+
+#: data/resources/ui/window.ui:137
+msgid "History"
+msgstr ""
+
+#: data/resources/ui/window.ui:224 data/resources/ui/window.ui:399
+msgid "Loading…"
+msgstr ""
+
+#: data/resources/ui/window.ui:237
+msgid "Downloading English WordNet"
+msgstr ""
+
+#: data/resources/ui/window.ui:248
+msgid "Downloading"
+msgstr ""
+
+#: data/resources/ui/window.ui:255 wordbook/main.py:100 wordbook/main.py:136
+#: wordbook/window.py:117
+msgid "Wordbook"
+msgstr ""
+
+#: data/resources/ui/window.ui:256
+msgid "Lookup definitions of any English term"
+msgstr ""
+
+#: data/resources/ui/window.ui:260
+msgid "Welcome"
+msgstr ""
+
+#: data/resources/ui/window.ui:308
+msgid "<i>/Pronunciation/</i>"
+msgstr ""
+
+#: data/resources/ui/window.ui:376
+msgid "Content"
+msgstr ""
+
+#: data/resources/ui/window.ui:384
+msgid "No definition found"
+msgstr ""
+
+#: data/resources/ui/window.ui:388
+msgid "Search Failure"
+msgstr ""
+
+#: wordbook/settings_window.py:37
+msgid "American English"
+msgstr ""
+
+#: wordbook/settings_window.py:38
+msgid "British English"
+msgstr ""
+
+#: wordbook/window.py:119
+msgid "Lookup definitions of any English term."
+msgstr ""
+
+#: wordbook/window.py:127
+msgid "Copyright © 2016–2021 Mufeed Ali"
+msgstr ""
+
+#: wordbook/window.py:343
+msgid "Ready."
+msgstr ""
+
+#: wordbook/window.py:454
+msgid "Invalid input"
+msgstr ""
+
+#: wordbook/window.py:455
+msgid "Nothing definable was found in your search input"
+msgstr ""
+
+#: wordbook/window.py:499
+msgid "Downloading WordNet…"
+msgstr ""
+
+#: wordbook/window.py:509
+msgid "Re-downloading WordNet database\n"
+msgstr ""
+
+#: wordbook/window.py:510
+msgid "Just a database upgrade."
+msgstr ""
+
+#: wordbook/window.py:511
+msgid "This shouldn't happen too often."
+msgstr ""
+
+#: wordbook/window.py:540
+msgid "Building Database…"
+msgstr ""

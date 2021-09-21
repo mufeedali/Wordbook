@@ -4,10 +4,11 @@
 # SPDX-FileCopyrightText: 2016-2021 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import gettext
+import locale
 import os
 import sys
 import signal
-import gettext
 
 VERSION = '@VERSION@'
 pkgdatadir = '@pkgdatadir@'
@@ -23,11 +24,16 @@ sys.path.insert(1, pkgdatadir)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install('wordbook', localedir)
 
+locale.bindtextdomain('wordbook', localedir)
+locale.textdomain('wordbook')
+gettext.bindtextdomain('wordbook', localedir)
+gettext.textdomain('wordbook')
+
 if __name__ == '__main__':
     import gi
 
     from gi.repository import Gio
-    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'wordbook.gresource'))
+    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'resources.gresource'))
     resource._register()
 
     from wordbook.main import Application

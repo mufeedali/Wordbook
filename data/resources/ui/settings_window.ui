@@ -6,7 +6,7 @@
   <template class="SettingsWindow" parent="HdyPreferencesWindow">
     <property name="can-focus">False</property>
     <property name="modal">True</property>
-    <property name="default-width">380</property>
+    <property name="default-width">450</property>
     <property name="default-height">350</property>
     <property name="destroy-with-parent">True</property>
     <property name="window-position">center-on-parent</property>
@@ -20,22 +20,6 @@
           <object class="HdyPreferencesGroup">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <child>
-              <object class="HdyActionRow">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="title" translatable="yes">Custom Definitions</property>
-                <property name="activatable-widget">cdef_switch</property>
-                <child>
-                  <object class="GtkSwitch" id="cdef_switch">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-              </object>
-            </child>
             <child>
               <object class="HdyActionRow">
                 <property name="visible">True</property>

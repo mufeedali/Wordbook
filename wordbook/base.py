@@ -104,7 +104,7 @@ def get_cowfortune():
         if cowsay:
             cst = cowsay.stdout.read().decode()
             return f"<tt>{html.escape(cst)}</tt>"
-        return "<tt>Cowsay fail... Too bad...</tt>"
+        return "<tt>Cowsay fail… Too bad…</tt>"
     except OSError as ex:
         fortune_out = (
             "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."

@@ -1,19 +1,14 @@
 pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
 gnome = import('gnome')
 
-gnome.compile_resources('wordbook',
-  'com.github.fushinari.Wordbook.gresource.xml',
-  gresource_bundle: true,
-  install: true,
-  install_dir: pkgdatadir,
-)
-
 subdir('icons')
+subdir('resources')
 
-desktop_file = configure_file(
-  input: app_id + '.desktop',
-  output: app_id + '.desktop',
-  copy: true,
+desktop_file = i18n.merge_file(
+  input: application_id + '.desktop.in',
+  output: application_id + '.desktop',
+  type: 'desktop',
+  po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('datadir'), 'applications')
 )
@@ -25,10 +20,10 @@ if desktop_utils.found()
   )
 endif
 
-appstream_file = configure_file(
-  input: app_id + '.appdata.xml',
-  output: app_id + '.appdata.xml',
-  copy: true,
+appstream_file = i18n.merge_file(
+  input: application_id + '.metainfo.xml.in',
+  output: application_id + '.metainfo.xml',
+  po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('datadir'), 'appdata')
 )
@@ -40,7 +35,7 @@ if appstream_util.found()
   )
 endif
 
-install_data(app_id + '.gschema.xml',
+install_data(application_id + '.gschema.xml',
   install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=Wordbook
+Exec=wordbook
+Comment=Lookup definitions for any English term
+Terminal=false
+Type=Application
+Icon=com.github.fushinari.Wordbook
+Categories=Education;GTK;
+# Translators: These are search terms to find this application. Do NOT translate or localize the semicolons. The list MUST also end with a semicolon.
+Keywords=dictionary;
+# Translators: Do NOT translate or transliterate this text (these are enum types)!
+X-Purism-FormFactor=Workstation;Mobile;

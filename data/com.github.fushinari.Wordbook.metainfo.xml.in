@@ -5,9 +5,9 @@
     <project_license>GPL-3.0-or-later</project_license>
 
     <name>Wordbook</name>
-    <summary>Lookup definitions for any term</summary>
+    <summary>Lookup definitions for any English term</summary>
     <description>
-        <p>Wordbook is an offline dictionary application powered by WordNet and eSpeak.</p>
+        <p>Wordbook is an offline English-English dictionary application powered by WordNet and eSpeak.</p>
         <p>Features:</p>
         <ul>
             <li>Fully offline after initial data download</li>
@@ -80,7 +80,10 @@
             </description>
         </release>
     </releases>
-
+    <kudos>
+        <kudo>ModernToolkit</kudo>
+        <kudo>HiDpiIcon</kudo>
+    </kudos>
     <custom>
         <value key="Purism::form_factor">workstation</value>
         <value key="Purism::form_factor">mobile</value>
