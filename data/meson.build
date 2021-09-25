@@ -4,9 +4,15 @@ gnome = import('gnome')
 subdir('icons')
 subdir('resources')
 
+desktop_conf = configuration_data()
+desktop_conf.set('icon', application_id)
 desktop_file = i18n.merge_file(
-  input: base_id + '.desktop.in',
-  output: base_id + '.desktop',
+  input: configure_file(
+    input: '@0@.desktop.in.in'.format(base_id),
+    output: '@BASENAME@',
+    configuration: desktop_conf
+  ),
+  output: '@0@.desktop'.format(application_id),
   type: 'desktop',
   po_dir: '../po',
   install: true,
