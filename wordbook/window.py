@@ -192,8 +192,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                             self._search_history_list.append(text)
                             self._search_history.append(history_object)
 
-                        out_text = base.clean_pango(out_string)
-                        GLib.idle_add(self._def_view.set_markup, out_text)
+                        GLib.idle_add(self._def_view.set_markup, out_string)
                         return "done"
 
                     if out["out_string"] is not None:
@@ -400,7 +399,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
                     for example in synset["examples"]:
                         out_string += (
-                            f'        <font color="{sen_col}">{example}</font>\n'
+                            f'        <span foreground="{sen_col}">{example}</span>\n'
                         )
 
                     pretty_syn = self.__process_word_links(synset["syn"], word_col)
@@ -427,9 +426,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         pretty_list = []
         for word in word_list:
             pretty_list.append(
-                f'<font color="{word_col}">'
+                f'<span foreground="{word_col}">'
                 f'<a href="search;{word}">{word}</a>'
-                "</font>".strip()
+                "</span>"
             )
         if pretty_list:
             pretty_list = ", ".join(pretty_list)
@@ -505,9 +504,12 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._wn_downloader.delete_db()
         self.__wn_loader()
         self.loading_label.set_markup(
-            _("Re-downloading WordNet database\n") +
-            '<span size="small">' + _("Just a database upgrade.") + "\n" +
-            _("This shouldn't happen too often.") + "</span>"
+            _("Re-downloading WordNet database\n")
+            + '<span size="small">'
+            + _("Just a database upgrade.")
+            + "\n"
+            + _("This shouldn't happen too often.")
+            + "</span>"
         )
 
 

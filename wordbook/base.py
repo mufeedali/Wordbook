@@ -49,34 +49,6 @@ def cleaner(search_term):
     return text
 
 
-def clean_html(data):
-    """
-    Convert Pango Markup subset used in Wordbook to HTML and cleanup.
-    Not a real converter.
-    """
-    replace_list = {
-        '<span foreground="': '<font color="',
-        "</span>": "</font>",
-        "\n": "<br>",
-        "  ": "&nbsp;&nbsp;",
-    }
-    for to_replace, replace_with in replace_list.items():
-        data = data.replace(to_replace, replace_with)
-    return data
-
-
-def clean_pango(data):
-    """Convert HTML subset used in Wordbook to Pango markup. Not a real converter."""
-    replace_list = {
-        '<font color="': '<span foreground="',
-        "</font>": "</span>",
-        "<br>": "\n",
-    }
-    for to_replace, replace_with in replace_list.items():
-        data = data.replace(to_replace, replace_with)
-    return data
-
-
 def fold_gen():
     """Make required directories if they don't already exist."""
     if not os.path.exists(utils.CONFIG_DIR):  # check for Wordbook folder

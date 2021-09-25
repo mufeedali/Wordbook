@@ -5,6 +5,7 @@
 import gi
 
 from gettext import gettext as _
+
 gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("Handy", "1")
@@ -145,6 +146,5 @@ class Application(Gtk.Application):
         css_provider.load_from_resource(f"{utils.RES_PATH}/style.css")
         screen = Gdk.Screen.get_default()
         Gtk.StyleContext.add_provider_for_screen(
-            screen, css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
