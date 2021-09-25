@@ -195,78 +195,78 @@
               </object>
             </child>
             <child>
-              <object class="HdyClamp" id="main_clamp">
+              <object class="GtkScrolledWindow" id="main_scroll">
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tightening-threshold">500</property>
+                <property name="can-focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
                 <child>
-                  <object class="GtkBox" id="clamped_box">
+                  <object class="GtkViewport">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkStack" id="main_stack">
+                      <object class="HdyClamp" id="main_clamp">
                         <property name="visible">True</property>
-                        <property name="transition-type">crossfade</property>
-                        <!-- n-columns=1 n-rows=2 -->
+                        <property name="can-focus">False</property>
+                        <property name="tightening-threshold">500</property>
                         <child>
-                          <object class="GtkGrid" id="download_grid">
+                          <object class="GtkBox" id="clamped_box">
                             <property name="visible">True</property>
-                            <property name="halign">center</property>
-                            <property name="valign">center</property>
+                            <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkLabel" id="loading_label">
+                              <object class="GtkStack" id="main_stack">
                                 <property name="visible">True</property>
-                                <property name="margin-bottom">4</property>
-                                <property name="label" translatable="yes">Loading…</property>
-                                <style>
-                                  <class name="dim-label"/>
-                                </style>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkProgressBar" id="loading_progress">
-                                <property name="visible">True</property>
-                                <property name="text" translatable="yes">Downloading English WordNet</property>
-                                <property name="ellipsize">end</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="name">download_page</property>
-                            <property name="title" translatable="yes">Downloading</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="HdyStatusPage" id="before_search_page">
-                            <property name="visible">True</property>
-                            <property name="icon-name">com.github.fushinari.Wordbook-symbolic</property>
-                            <property name="title" translatable="yes">Wordbook</property>
-                            <property name="description" translatable="yes">Lookup definitions of any English term</property>
-                          </object>
-                          <packing>
-                            <property name="name">welcome_page</property>
-                            <property name="title" translatable="yes">Welcome</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkScrolledWindow" id="content_scroll">
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="hexpand">True</property>
-                            <property name="vexpand">True</property>
-                            <property name="hscrollbar-policy">never</property>
-                            <child>
-                              <object class="GtkViewport">
-                                <property name="visible">True</property>
+                                <property name="transition-type">crossfade</property>
+                                <!-- n-columns=1 n-rows=2 -->
+                                <child>
+                                  <object class="GtkGrid" id="download_grid">
+                                    <property name="visible">True</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <child>
+                                      <object class="GtkLabel" id="loading_label">
+                                        <property name="visible">True</property>
+                                        <property name="margin-bottom">4</property>
+                                        <property name="label" translatable="yes">Loading…</property>
+                                        <style>
+                                          <class name="dim-label"/>
+                                        </style>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkProgressBar" id="loading_progress">
+                                        <property name="visible">True</property>
+                                        <property name="text" translatable="yes">Downloading English WordNet</property>
+                                        <property name="ellipsize">end</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="name">download_page</property>
+                                    <property name="title" translatable="yes">Downloading</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="HdyStatusPage" id="before_search_page">
+                                    <property name="visible">True</property>
+                                    <property name="icon-name">com.github.fushinari.Wordbook-symbolic</property>
+                                    <property name="title" translatable="yes">Wordbook</property>
+                                    <property name="description" translatable="yes">Lookup definitions of any English term</property>
+                                  </object>
+                                  <packing>
+                                    <property name="name">welcome_page</property>
+                                    <property name="title" translatable="yes">Welcome</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -328,7 +328,8 @@
                                             <property name="image">audio_icon</property>
                                             <property name="relief">none</property>
                                             <property name="always-show-image">True</property>
-                                            <property name="hexpand">0</property>
+                                            <property name="hexpand">False</property>
+                                            <property name="tooltip-text" translatable="yes">Listen to Pronunciation</property>
                                             <style>
                                               <class name="circular"/>
                                             </style>
@@ -363,44 +364,45 @@
                                       </packing>
                                     </child>
                                   </object>
+                                  <packing>
+                                    <property name="name">content_page</property>
+                                    <property name="title" translatable="yes">Content</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="HdyStatusPage" id="search_fail_page">
+                                    <property name="visible">True</property>
+                                    <property name="vexpand">True</property>
+                                    <property name="icon-name">edit-find-symbolic</property>
+                                    <property name="description" translatable="yes">No definition found</property>
+                                  </object>
+                                  <packing>
+                                    <property name="name">fail_page</property>
+                                    <property name="title" translatable="yes">Search Failure</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinner">
+                                    <property name="visible">True</property>
+                                    <property name="active">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="name">spinner_page</property>
+                                    <property name="title" translatable="yes">Loading…</property>
+                                    <property name="position">4</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
+                            <style>
+                              <class name="clamped-box"/>
+                            </style>
                           </object>
-                          <packing>
-                            <property name="name">content_page</property>
-                            <property name="title" translatable="yes">Content</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="HdyStatusPage" id="search_fail_page">
-                            <property name="visible">True</property>
-                            <property name="icon-name">edit-find-symbolic</property>
-                            <property name="description" translatable="yes">No definition found</property>
-                          </object>
-                          <packing>
-                            <property name="name">fail_page</property>
-                            <property name="title" translatable="yes">Search Failure</property>
-                            <property name="position">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinner">
-                            <property name="visible">True</property>
-                            <property name="active">True</property>
-                          </object>
-                          <packing>
-                            <property name="name">spinner_page</property>
-                            <property name="title" translatable="yes">Loading…</property>
-                            <property name="position">4</property>
-                          </packing>
                         </child>
                       </object>
                     </child>
-                    <style>
-                      <class name="clamped-box"/>
-                    </style>
                   </object>
                 </child>
               </object>

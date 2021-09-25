@@ -33,7 +33,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _stack = Gtk.Template.Child("main_stack")
     loading_label = Gtk.Template.Child("loading_label")
     loading_progress = Gtk.Template.Child("loading_progress")
-    _content_scroll = Gtk.Template.Child("content_scroll")
+    _main_scroll = Gtk.Template.Child("main_scroll")
     _def_view = Gtk.Template.Child("def_view")
     _pronunciation_view = Gtk.Template.Child("pronunciation_view")
     _term_view = Gtk.Template.Child("term_view")
@@ -371,7 +371,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
     def __page_switch(self, page):
         if page == "content_page":
-            GLib.idle_add(self._content_scroll.get_vadjustment().set_value, 0)
+            GLib.idle_add(self._main_scroll.get_vadjustment().set_value, 0)
         if self._stack.get_visible_child_name == page:
             return True
         GLib.idle_add(self._stack.set_visible_child_name, page)
