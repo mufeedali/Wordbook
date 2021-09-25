@@ -192,7 +192,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                             self._search_history_list.append(text)
                             self._search_history.append(history_object)
 
-                        print(out_string)
                         GLib.idle_add(self._def_view.set_markup, out_string)
                         return "done"
 
@@ -211,9 +210,10 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         self._term_view.set_markup,
                         f'<span size="large" weight="bold">{out["term"].strip()}</span>',
                     )
+                    pron = out["pronunciation"].strip().replace("\n", "")
                     GLib.idle_add(
                         self._pronunciation_view.set_markup,
-                        f'<i>{out["pronunciation"].strip()}</i>',
+                        f"<i>{pron}</i>",
                     )
 
                     if text not in except_list:
@@ -381,6 +381,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         out_string = ""
         word_col = result["word_col"]
         sen_col = result["sen_col"]
+        first = True
         for pos in result.keys():
             i = 0
             orig_synset = None
@@ -389,38 +390,41 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                     synset_name = synset["name"]
                     if orig_synset is None:
                         i = 1
-                        out_string += f"{synset_name} ~ <b>{pos}</b>\n"
+                        if not first:
+                            out_string += "\n\n"
+                        out_string += f"{synset_name} ~ <b>{pos}</b>"
                         orig_synset = synset_name
+                        first = False
                     elif synset_name != orig_synset:
                         i = 1
-                        out_string += f"\n{synset_name} ~ <b>{pos}</b>\n"
+                        out_string += f"\n\n{synset_name} ~ <b>{pos}</b>"
+                        orig_synset = synset_name
                     else:
                         i += 1
-                    out_string += f'  <b>{i}</b>: {synset["definition"]}\n'
+                    out_string += f'\n  <b>{i}</b>: {synset["definition"]}'
 
                     for example in synset["examples"]:
                         out_string += (
-                            f'        <span foreground="{sen_col}">{example}</span>\n'
+                            f'\n        <span foreground="{sen_col}">{example}</span>'
                         )
 
                     pretty_syn = self.__process_word_links(synset["syn"], word_col)
                     if pretty_syn:
-                        out_string += f"        Synonyms: <i>{pretty_syn}</i>\n"
+                        out_string += f"\n        Synonyms:<i> {pretty_syn}</i>"
 
                     pretty_ant = self.__process_word_links(synset["ant"], word_col)
                     if pretty_ant:
-                        out_string += f"        Antonyms: <i>{pretty_ant}</i>\n"
+                        out_string += f"\n        Antonyms:<i> {pretty_ant}</i>"
 
                     pretty_sims = self.__process_word_links(synset["sim"], word_col)
                     if pretty_sims:
-                        out_string += f"        Similar to: <i>{pretty_sims}</i>\n"
+                        out_string += f"\n        Similar to:<i> {pretty_sims}</i>"
 
                     pretty_alsos = self.__process_word_links(
                         synset["also_sees"], word_col
                     )
                     if pretty_alsos:
-                        out_string += f"        Also see: <i>{pretty_alsos}</i>\n"
-                out_string += "\n"
+                        out_string += f"\n        Also see:<i> {pretty_alsos}</i>"
         return out_string
 
     def __process_word_links(self, word_list, word_col):
