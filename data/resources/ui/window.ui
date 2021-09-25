@@ -3,19 +3,15 @@
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <requires lib="libhandy" version="1.2"/>
-  <object class="GtkImage" id="image1">
+  <object class="GtkImage" id="search_icon">
     <property name="visible">True</property>
     <property name="icon-name">edit-find-symbolic</property>
   </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="icon-name">edit-clear-symbolic</property>
-  </object>
-  <object class="GtkImage" id="image3">
+  <object class="GtkImage" id="audio_icon">
     <property name="visible">True</property>
     <property name="icon-name">audio-volume-high-symbolic</property>
   </object>
-  <object class="GtkImage" id="image4">
+  <object class="GtkImage" id="show_sidebar_icon">
     <property name="visible">True</property>
     <property name="icon-name">sidebar-show-symbolic</property>
   </object>
@@ -33,23 +29,17 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="show-close-button">True</property>
+            <property name="centering-policy">strict</property>
             <child type="title">
-              <object class="GtkBox">
+              <object class="HdyClamp">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <property name="valign">center</property>
+                <property name="can-focus">False</property>
+                <property name="tightening-threshold">300</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="hexpand">True</property>
                     <property name="spacing">4</property>
-                    <child>
-                      <object class="GtkToggleButton" id="flap_toggle_button">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="image">image4</property>
-                      </object>
-                    </child>
                     <child>
                       <object class="GtkSearchEntry" id="search_entry">
                         <property name="visible">True</property>
@@ -70,30 +60,36 @@
                         <property name="can-default">True</property>
                         <property name="has-default">True</property>
                         <property name="receives-default">True</property>
-                        <property name="image">image1</property>
+                        <property name="image">search_icon</property>
                         <property name="always-show-image">True</property>
+                        <property name="tooltip-text" translatable="yes">Search</property>
                         <style>
                           <class name="suggested-action"/>
                         </style>
                       </object>
-                      <packing>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkMenuButton" id="wordbook_menu_button">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
-                        <property name="direction">none</property>
-                      </object>
-                      <packing>
-                        <property name="position">3</property>
-                      </packing>
                     </child>
                   </object>
                 </child>
               </object>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="flap_toggle_button">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="image">show_sidebar_icon</property>
+                <property name="tooltip-text" translatable="yes">Show History</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="wordbook_menu_button">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="direction">none</property>
+              </object>
+              <packing>
+                <property name="pack-type">end</property>
+              </packing>
             </child>
           </object>
         </child>
@@ -329,7 +325,7 @@
                                             <property name="receives-default">True</property>
                                             <property name="halign">center</property>
                                             <property name="valign">center</property>
-                                            <property name="image">image3</property>
+                                            <property name="image">audio_icon</property>
                                             <property name="relief">none</property>
                                             <property name="always-show-image">True</property>
                                             <property name="hexpand">0</property>

@@ -59,7 +59,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
         if Gio.Application.get_default().development_mode is True:
             self.get_style_context().add_class("devel")
-        self.set_default_icon_name(utils.APP_ID)
+        self.set_default_icon_name(Gio.Application.get_default().app_id)
 
         builder = Gtk.Builder.new_from_resource(
             resource_path=f"{utils.RES_PATH}/ui/menu.ui"
@@ -113,7 +113,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     def on_about(self, _action, _param):
         """Show the about window."""
         about_dialog = Gtk.AboutDialog(transient_for=self, modal=True)
-        about_dialog.set_logo_icon_name(utils.APP_ID)
+        about_dialog.set_logo_icon_name(Gio.Application.get_default().app_id)
         about_dialog.set_program_name(_("Wordbook"))
         about_dialog.set_version(Gio.Application.get_default().version)
         about_dialog.set_comments(_("Lookup definitions of any English term."))
@@ -393,7 +393,6 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         orig_synset = synset_name
                     elif synset_name != orig_synset:
                         i = 1
-                        print("here")
                         out_string += f"\n{synset_name} ~ <b>{pos}</b>\n"
                     else:
                         i += 1

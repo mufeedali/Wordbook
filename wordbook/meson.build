@@ -4,11 +4,14 @@ moduledir = join_paths(pkgdatadir, 'wordbook')
 python = import('python')
 
 conf = configuration_data()
+
+conf.set_quoted('APP_ID', application_id)
+conf.set_quoted('VERSION', meson.project_version())
 conf.set_quoted('PROFILE', profile)
+
 conf.set('PYTHON', python.find_installation('python3').path())
-conf.set('VERSION', meson.project_version())
-conf.set('localedir', join_paths(get_option('prefix'), get_option('localedir')))
-conf.set('pkgdatadir', pkgdatadir)
+conf.set_quoted('localedir', join_paths(get_option('prefix'), get_option('localedir')))
+conf.set_quoted('pkgdatadir', pkgdatadir)
 conf.set('datadir', get_option('datadir'))
 conf.set('prefix', get_option('prefix'))
 

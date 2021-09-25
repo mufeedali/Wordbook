@@ -5,8 +5,8 @@ subdir('icons')
 subdir('resources')
 
 desktop_file = i18n.merge_file(
-  input: application_id + '.desktop.in',
-  output: application_id + '.desktop',
+  input: base_id + '.desktop.in',
+  output: base_id + '.desktop',
   type: 'desktop',
   po_dir: '../po',
   install: true,
@@ -21,8 +21,8 @@ if desktop_utils.found()
 endif
 
 appstream_file = i18n.merge_file(
-  input: application_id + '.metainfo.xml.in',
-  output: application_id + '.metainfo.xml',
+  input: base_id + '.metainfo.xml.in',
+  output: base_id + '.metainfo.xml',
   po_dir: '../po',
   install: true,
   install_dir: join_paths(get_option('datadir'), 'appdata')
@@ -35,7 +35,7 @@ if appstream_util.found()
   )
 endif
 
-install_data(application_id + '.gschema.xml',
+install_data(base_id + '.gschema.xml',
   install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 

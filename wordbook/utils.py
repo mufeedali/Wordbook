@@ -7,16 +7,16 @@ import logging
 import os
 import traceback
 
-APP_ID = "com.github.fushinari.Wordbook"
+from gi.repository import GLib
+
 RES_PATH = "/com/github/fushinari/Wordbook"
 
-HOME = os.path.expanduser("~")
 CONFIG_DIR = os.path.join(
-    os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config")), "wordbook"
+    GLib.get_user_config_dir(), "wordbook"
 )
 CONFIG_FILE = os.path.join(CONFIG_DIR, "wordbook.conf")
 DATA_DIR = os.path.join(
-    os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local", "share")), "wordbook"
+    GLib.get_user_data_dir(), "wordbook"
 )
 CDEF_DIR = os.path.join(DATA_DIR, "cdef")
 WN_DIR = os.path.join(DATA_DIR, "wn")

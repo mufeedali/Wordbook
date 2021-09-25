@@ -18,19 +18,21 @@ from wordbook.settings import Settings  # noqa
 class Application(Gtk.Application):
     """Manages the windows, properties, etc of Wordbook."""
 
+    app_id = ""
     development_mode = False
     version = "0.0.0"
 
     lookup_term = ""
     win = None
 
-    def __init__(self, version):
+    def __init__(self, app_id, version):
         """Initialize the application."""
         super().__init__(
-            application_id=utils.APP_ID,
+            application_id=app_id,
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
         )
 
+        self.app_id = app_id
         self.version = version
 
         # Add command line options
@@ -134,7 +136,7 @@ class Application(Gtk.Application):
         )
 
         GLib.set_application_name(_("Wordbook"))
-        GLib.set_prgname(utils.APP_ID)
+        GLib.set_prgname(self.app_id)
 
         Handy.init()
         base.fold_gen()
