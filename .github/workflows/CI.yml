@@ -15,5 +15,5 @@ jobs:
     - uses: bilelmoussaoui/flatpak-github-actions@v2
       with:
         bundle: "wordbook-dev.flatpak"
-        manifest-path: "build-aux/flatpak/com.github.fushinari.Wordbook.json"
+        manifest-path: "build-aux/flatpak/com.github.fushinari.Wordbook.Devel.json"
         run-tests: "true"
