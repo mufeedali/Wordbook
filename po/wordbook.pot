@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-21 23:26+0530\n"
+"POT-Creation-Date: 2021-09-25 19:25+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,48 +99,60 @@ msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr ""
 
-#: data/resources/ui/window.ui:137
+#: data/resources/ui/window.ui:65
+msgid "Search"
+msgstr ""
+
+#: data/resources/ui/window.ui:80
+msgid "Show History"
+msgstr ""
+
+#: data/resources/ui/window.ui:133
 msgid "History"
 msgstr ""
 
-#: data/resources/ui/window.ui:224 data/resources/ui/window.ui:399
+#: data/resources/ui/window.ui:230 data/resources/ui/window.ui:393
 msgid "Loading…"
 msgstr ""
 
-#: data/resources/ui/window.ui:237
+#: data/resources/ui/window.ui:243
 msgid "Downloading English WordNet"
 msgstr ""
 
-#: data/resources/ui/window.ui:248
+#: data/resources/ui/window.ui:254
 msgid "Downloading"
 msgstr ""
 
-#: data/resources/ui/window.ui:255 wordbook/main.py:100 wordbook/main.py:136
+#: data/resources/ui/window.ui:261 wordbook/main.py:103 wordbook/main.py:139
 #: wordbook/window.py:117
 msgid "Wordbook"
 msgstr ""
 
-#: data/resources/ui/window.ui:256
+#: data/resources/ui/window.ui:262
 msgid "Lookup definitions of any English term"
 msgstr ""
 
-#: data/resources/ui/window.ui:260
+#: data/resources/ui/window.ui:266
 msgid "Welcome"
 msgstr ""
 
-#: data/resources/ui/window.ui:308
+#: data/resources/ui/window.ui:304
 msgid "<i>/Pronunciation/</i>"
 msgstr ""
 
-#: data/resources/ui/window.ui:376
+#: data/resources/ui/window.ui:332
+msgid "Listen to Pronunciation"
+msgstr ""
+
+#: data/resources/ui/window.ui:369
 msgid "Content"
 msgstr ""
 
-#: data/resources/ui/window.ui:384
+#: data/resources/ui/window.ui:378
 msgid "No definition found"
 msgstr ""
 
-#: data/resources/ui/window.ui:388
+#: data/resources/ui/window.ui:382
 msgid "Search Failure"
 msgstr ""
 
@@ -164,30 +176,30 @@ msgstr ""
 msgid "Ready."
 msgstr ""
 
-#: wordbook/window.py:454
+#: wordbook/window.py:453
 msgid "Invalid input"
 msgstr ""
 
-#: wordbook/window.py:455
+#: wordbook/window.py:454
 msgid "Nothing definable was found in your search input"
 msgstr ""
 
-#: wordbook/window.py:499
+#: wordbook/window.py:498
 msgid "Downloading WordNet…"
 msgstr ""
 
-#: wordbook/window.py:509
-msgid "Re-downloading WordNet database\n"
+#: wordbook/window.py:508
+msgid "Re-downloading WordNet database"
 msgstr ""
 
 #: wordbook/window.py:510
 msgid "Just a database upgrade."
 msgstr ""
 
-#: wordbook/window.py:511
+#: wordbook/window.py:512
 msgid "This shouldn't happen too often."
 msgstr ""
 
-#: wordbook/window.py:540
+#: wordbook/window.py:542
 msgid "Building Database…"
 msgstr ""

@@ -192,6 +192,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                             self._search_history_list.append(text)
                             self._search_history.append(history_object)
 
+                        print(out_string)
                         GLib.idle_add(self._def_view.set_markup, out_string)
                         return "done"
 
@@ -504,8 +505,8 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._wn_downloader.delete_db()
         self.__wn_loader()
         self.loading_label.set_markup(
-            _("Re-downloading WordNet database\n")
-            + '<span size="small">'
+            _("Re-downloading WordNet database")
+            + '\n<span size="small">'
             + _("Just a database upgrade.")
             + "\n"
             + _("This shouldn't happen too often.")
