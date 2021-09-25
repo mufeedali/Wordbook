@@ -10,7 +10,7 @@ install_data (
 # Symbolic
 icondir = join_paths(get_option('datadir'), 'icons/hicolor/symbolic/apps')
 install_data (
-    application_id + '-symbolic.svg',
+    base_id + '-symbolic.svg',
     install_dir: icondir
 )
 
