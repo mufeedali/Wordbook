@@ -11,13 +11,9 @@ from gi.repository import GLib
 
 RES_PATH = "/com/github/fushinari/Wordbook"
 
-CONFIG_DIR = os.path.join(
-    GLib.get_user_config_dir(), "wordbook"
-)
+CONFIG_DIR = os.path.join(GLib.get_user_config_dir(), "wordbook")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "wordbook.conf")
-DATA_DIR = os.path.join(
-    GLib.get_user_data_dir(), "wordbook"
-)
+DATA_DIR = os.path.join(GLib.get_user_data_dir(), "wordbook")
 CDEF_DIR = os.path.join(DATA_DIR, "cdef")
 WN_DIR = os.path.join(DATA_DIR, "wn")
 
