@@ -9,6 +9,7 @@ from html import escape, unescape
 
 from gettext import gettext as _
 from gi.repository import Gdk, Gio, GLib, GObject, Gtk, Handy
+from wn import Error
 from wn.util import ProgressHandler
 
 from wordbook import base, utils
@@ -21,6 +22,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     __gtype_name__ = "WordbookGtkWindow"
 
     _header_bar = Gtk.Template.Child("header_bar")
+    _title_clamp = Gtk.Template.Child("title_clamp")
     _flap_toggle_button = Gtk.Template.Child("flap_toggle_button")
     _search_entry = Gtk.Template.Child("search_entry")
     _search_button = Gtk.Template.Child("search_button")
@@ -93,7 +95,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.__wn_loader()
         if self._wn_downloader.check_status():
             self._wn_future = base.get_wn_file(self.__reloader)
-            self._header_bar.set_sensitive(True)
+            self.__set_header_sensitive(True)
             self.__page_switch("welcome_page")
             if self.lookup_term:
                 self.trigger_search(self.lookup_term)
@@ -107,6 +109,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.completer.set_text_column(0)
         self.completer.set_model(self.completer_liststore)
         self.completer.set_popup_completion(not Settings.get().live_search)
+        self.completer.set_popup_set_width(True)
         self._search_entry.set_completion(self.completer)
         self.completer.connect("action-activated", self._on_entry_completed)
 
@@ -342,7 +345,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         """Run upon completion of loading."""
         GLib.idle_add(self.loading_label.set_label, _("Ready."))
         self._wn_future = base.get_wn_file(self.__reloader)
-        GLib.idle_add(self._header_bar.set_sensitive, True)
+        GLib.idle_add(self.__set_header_sensitive, True)
         self.__page_switch("welcome_page")
         if self.lookup_term:
             self.trigger_search(self.lookup_term)
@@ -496,13 +499,23 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
 
             self._completion_request_count -= 1
 
+    def __try_dl(self):
+        try:
+            self._wn_downloader.download(ProgressUpdater)
+        except Error:
+            GLib.idle_add(self.loading_label.set_text, _("Download failed :("))
+            GLib.idle_add(self.loading_progress.set_visible, False)
+
+    def __set_header_sensitive(self, status):
+        self._title_clamp.set_sensitive(status)
+        self._flap_toggle_button.set_sensitive(status)
+        # self._menu_button.set_sensitive(status)
+
     def __wn_loader(self):
-        self._header_bar.set_sensitive(False)
+        self.__set_header_sensitive(False)
         if not self._wn_downloader.check_status():
             self.loading_label.set_text(_("Downloading WordNet…"))
-            threading.Thread(
-                target=self._wn_downloader.download, args=[ProgressUpdater]
-            ).start()
+            threading.Thread(target=self.__try_dl).start()
 
     def __reloader(self):
         self.__page_switch("download_page")
