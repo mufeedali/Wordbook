@@ -31,7 +31,7 @@
             <property name="show-close-button">True</property>
             <property name="centering-policy">strict</property>
             <child type="title">
-              <object class="HdyClamp">
+              <object class="HdyClamp" id="title_clamp">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tightening-threshold">300</property>
