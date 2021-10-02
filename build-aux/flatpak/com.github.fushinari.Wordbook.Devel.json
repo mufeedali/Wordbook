@@ -1,7 +1,7 @@
 {
   "app-id": "com.github.fushinari.Wordbook",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "40",
+  "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
   "command": "wordbook",
   "finish-args": [
@@ -24,13 +24,11 @@
     },
     {
       "name": "espeak-ng",
-      "buildsystem": "simple",
-      "build-commands": [
-        "./autogen.sh",
-        "CC=clang CFLAGS=-Wextra ./configure --prefix=${FLATPAK_DEST}",
-        "make",
-        "make install"
-      ],
+      "cleanup": [ "*.la" ],
+      "no-parallel-make": true,
+      "build-options": {
+        "ldflags": "-Wl,--allow-multiple-definition"
+      },
       "sources": [
         {
           "type": "git",

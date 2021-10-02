@@ -132,8 +132,10 @@ class Application(Gtk.Application):
     def do_startup(self):
         """Manage startup of the application."""
         Gtk.Application.do_startup(self)
-        Gtk.Settings.get_default().set_property(
-            "gtk-application-prefer-dark-theme", Settings.get().gtk_dark_ui
+        Handy.StyleManager.get_default().set_color_scheme(
+            Handy.ColorScheme.PREFER_DARK
+            if Settings.get().gtk_dark_ui
+            else Handy.ColorScheme.PREFER_LIGHT
         )
 
         GLib.set_application_name(_("Wordbook"))
