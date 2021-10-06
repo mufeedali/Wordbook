@@ -133,7 +133,7 @@ class Application(Gtk.Application):
         """Manage startup of the application."""
         Gtk.Application.do_startup(self)
         Handy.StyleManager.get_default().set_color_scheme(
-            Handy.ColorScheme.PREFER_DARK
+            Handy.ColorScheme.FORCE_DARK
             if Settings.get().gtk_dark_ui
             else Handy.ColorScheme.PREFER_LIGHT
         )
