@@ -88,7 +88,7 @@ class SettingsWindow(Handy.PreferencesWindow):
         """Change UI theme."""
         Settings.get().gtk_dark_ui = switch.get_active()
         Handy.StyleManager.get_default().set_color_scheme(
-            Handy.ColorScheme.PREFER_DARK
+            Handy.ColorScheme.FORCE_DARK
             if switch.get_active()
             else Handy.ColorScheme.PREFER_LIGHT
         )

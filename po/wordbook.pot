@@ -62,7 +62,7 @@ msgid "Pronunciations Accent"
 msgstr ""
 
 #: data/resources/ui/settings_window.ui:82
-msgid "Prefer dark UI theme"
+msgid "Fork dark UI theme"
 msgstr ""
 
 #: data/resources/ui/settings_window.ui:98
