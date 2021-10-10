@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import configparser
+import json
 import os
 
 from wordbook import utils
@@ -21,12 +22,15 @@ class Settings:
                 "CustomDefinitions": "yes",
                 "LiveSearch": "no",
                 "DoubleClick": "no",
-                "ConfigVersion": "4",
+                "ConfigVersion": "5",
                 "PronunciationsAccent": "us",
             }
             self.config["UI"] = {
                 "DarkUI": "yes",
                 "DarkFont": "yes"
+            }
+            self.config["Misc"] = {
+                "History": json.dumps([])
             }
         else:
             self.load_settings()
@@ -79,6 +83,17 @@ class Settings:
         self.set_boolean_key("UI", "DarkFont", value)
 
     @property
+    def history(self):
+        """Get search history."""
+        return json.loads(self.config.get("Misc", "History"))
+
+    @history.setter
+    def history(self, value):
+        """Set search history."""
+        self.config.set("Misc", "History", json.dumps(value))
+        self.save_settings()  # Manually save because set_boolean_key is not called.
+
+    @property
     def live_search(self):
         """Get whether to enable Live Search."""
         return self.config.getboolean("General", "LiveSearch")
@@ -102,7 +117,7 @@ class Settings:
             self.config.read_file(file)
         utils.log_info("Version Code: " + self.config.get("General", "ConfigVersion"))
 
-        if self.config.getint("General", "ConfigVersion") != 4:
+        if self.config.getint("General", "ConfigVersion") != 5:
             if self.config.getint("General", "ConfigVersion") == 1:
                 # Add new option.
                 self.set_boolean_key("General", "DoubleClick", False)
@@ -126,6 +141,12 @@ class Settings:
                 utils.log_info("Updating to ConfigVersion 4")
                 self.config.remove_option("UI", "HideWindowButtonsMaximized")
                 self.config.set("General", "ConfigVersion", "4")
+
+            if self.config.getint("General", "ConfigVersion") == 4:
+                utils.log_info("Updating to ConfigVersion 5")
+                self.config.add_section("Misc")
+                self.config.set("Misc", "History", json.dumps([]))
+                self.config.set("General", "ConfigVersion", "5")
 
             self.save_settings()  # Save before proceeding.
 

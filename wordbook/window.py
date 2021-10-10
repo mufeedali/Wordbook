@@ -74,6 +74,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._recents_listbox.bind_model(self._search_history, self.__create_label)
 
+        self.connect("destroy", self._on_destroy)
         self.connect("key-press-event", self._on_key_press_event)
         self._recents_listbox.connect("row-activated", self._on_recents_activated)
         self._def_view.connect("button-press-event", self._on_def_event)
@@ -112,6 +113,12 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self.completer.set_popup_set_width(True)
         self._search_entry.set_completion(self.completer)
         self.completer.connect("action-activated", self._on_entry_completed)
+
+        # Load History.
+        self._search_history_list = Settings.get().history
+        for text in self._search_history_list:
+            history_object = HistoryObject(text)
+            self._search_history.insert(0, history_object)
 
     def on_about(self, _action, _param):
         """Show the about window."""
@@ -193,7 +200,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
                         history_object = HistoryObject(text)
                         if text not in self._search_history_list:
                             self._search_history_list.append(text)
-                            self._search_history.append(history_object)
+                            self._search_history.insert(0, history_object)
 
                         GLib.idle_add(self._def_view.set_markup, out_string)
                         return "done"
@@ -262,6 +269,10 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
             if text is not None and not text.strip() == "" and not text.isspace():
                 text = text.split(" ")[0]
                 self.trigger_search(text)
+
+    def _on_destroy(self, _window):
+        """Detect closing of the window."""
+        Settings.get().history = self._search_history_list[-10:]
 
     def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
         """Search on receiving drag and drop event."""
