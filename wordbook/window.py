@@ -25,7 +25,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
     _title_clamp = Gtk.Template.Child("title_clamp")
     _flap_toggle_button = Gtk.Template.Child("flap_toggle_button")
     _search_entry = Gtk.Template.Child("search_entry")
-    _search_button = Gtk.Template.Child("search_button")
+    search_button = Gtk.Template.Child("search_button")
     _speak_button = Gtk.Template.Child("speak_button")
     _menu_button = Gtk.Template.Child("wordbook_menu_button")
     _flap = Gtk.Template.Child("main_flap")
@@ -79,7 +79,7 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         self._recents_listbox.connect("row-activated", self._on_recents_activated)
         self._def_view.connect("button-press-event", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
-        self._search_button.connect("clicked", self.on_search_clicked)
+        self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
         self._search_entry.connect("drag-data-received", self._on_drag_received)
         self._search_entry.connect("paste-clipboard", self._on_paste_done)
@@ -119,6 +119,9 @@ class WordbookGtkWindow(Handy.ApplicationWindow):
         for text in self._search_history_list:
             history_object = HistoryObject(text)
             self._search_history.insert(0, history_object)
+
+        # Set search button visibility.
+        self.search_button.set_visible(not Settings.get().live_search)
 
     def on_about(self, _action, _param):
         """Show the about window."""
