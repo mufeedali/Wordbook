@@ -20,7 +20,7 @@ class Settings:
         if not os.path.exists(utils.CONFIG_FILE):
             self.config["General"] = {
                 "CustomDefinitions": "yes",
-                "LiveSearch": "no",
+                "LiveSearch": "yes",
                 "DoubleClick": "no",
                 "ConfigVersion": "5",
                 "PronunciationsAccent": "us",
