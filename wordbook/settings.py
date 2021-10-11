@@ -30,7 +30,7 @@ class Settings:
                 "DarkFont": "yes"
             }
             self.config["Misc"] = {
-                "History": json.dumps([])
+                "History": "[]"
             }
         else:
             self.load_settings()
@@ -145,7 +145,7 @@ class Settings:
             if self.config.getint("General", "ConfigVersion") == 4:
                 utils.log_info("Updating to ConfigVersion 5")
                 self.config.add_section("Misc")
-                self.config.set("Misc", "History", json.dumps([]))
+                self.config.set("Misc", "History", "[]")
                 self.config.set("General", "ConfigVersion", "5")
 
             self.save_settings()  # Save before proceeding.
