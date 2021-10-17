@@ -14,6 +14,7 @@ APP_ID = @APP_ID@
 VERSION = @VERSION@
 pkgdatadir = @pkgdatadir@
 localedir = @localedir@
+
 builddir = os.environ.get('MESON_BUILD_ROOT')
 if builddir:
     sys.dont_write_bytecode = True
@@ -23,7 +24,6 @@ if builddir:
 
 sys.path.insert(1, pkgdatadir)
 signal.signal(signal.SIGINT, signal.SIG_DFL)
-gettext.install('wordbook', localedir)
 
 locale.bindtextdomain('wordbook', localedir)
 locale.textdomain('wordbook')

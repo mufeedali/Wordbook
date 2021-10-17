@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-25 19:25+0530\n"
+"POT-Creation-Date: 2021-10-17 23:55+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,189 +17,185 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/resources/ui/menu.ui:7
-msgid "Paste & Search"
-msgstr ""
-
-#: data/resources/ui/menu.ui:11
-msgid "Search Selected Text"
-msgstr ""
-
-#: data/resources/ui/menu.ui:15
-msgid "_Random Word"
-msgstr ""
-
-#: data/resources/ui/menu.ui:22
-msgid "_Preferences"
-msgstr ""
-
-#: data/resources/ui/menu.ui:27
-msgid "_Keyboard Shortcuts"
-msgstr ""
-
-#: data/resources/ui/menu.ui:31
-msgid "_About Wordbook"
-msgstr ""
-
-#: data/resources/ui/settings_window.ui:27
+#: data/resources/ui/settings_window.ui:18
 msgid "Live Search"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:29
+#: data/resources/ui/settings_window.ui:20
 msgid "Show definition as the terms are typed in"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:44
+#: data/resources/ui/settings_window.ui:31
 msgid "Double Click Search"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:46
+#: data/resources/ui/settings_window.ui:33
 msgid "Search any word by double clicking on it"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:61
+#: data/resources/ui/settings_window.ui:44
 msgid "Pronunciations Accent"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:82
-msgid "Fork dark UI theme"
+#: data/resources/ui/settings_window.ui:67
+msgid "Force dark UI theme"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:98
+#: data/resources/ui/settings_window.ui:79
 msgid "Use dark font theme"
 msgstr ""
 
-#: data/resources/ui/shortcuts_window.ui:13
+#: data/resources/ui/shortcuts_window.ui:12
 msgctxt "shortcut window"
 msgid "General"
 msgstr ""
 
-#: data/resources/ui/shortcuts_window.ui:17
+#: data/resources/ui/shortcuts_window.ui:15
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr ""
 
-#: data/resources/ui/shortcuts_window.ui:23
+#: data/resources/ui/shortcuts_window.ui:21
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr ""
 
-#: data/resources/ui/shortcuts_window.ui:30
+#: data/resources/ui/shortcuts_window.ui:27
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr ""
 
-#: data/resources/ui/shortcuts_window.ui:37
+#: data/resources/ui/shortcuts_window.ui:33
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr ""
 
-#: data/resources/ui/shortcuts_window.ui:44
+#: data/resources/ui/shortcuts_window.ui:39
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr ""
 
-#: data/resources/ui/window.ui:65
+#: data/resources/ui/window.ui:9
+msgid "Paste & Search"
+msgstr ""
+
+#: data/resources/ui/window.ui:13
+msgid "Search Selected Text"
+msgstr ""
+
+#: data/resources/ui/window.ui:17
+msgid "_Random Word"
+msgstr ""
+
+#: data/resources/ui/window.ui:24
+msgid "_Preferences"
+msgstr ""
+
+#: data/resources/ui/window.ui:28
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: data/resources/ui/window.ui:32
+msgid "_About Wordbook"
+msgstr ""
+
+#: data/resources/ui/window.ui:64
 msgid "Search"
 msgstr ""
 
-#: data/resources/ui/window.ui:80
+#: data/resources/ui/window.ui:77
 msgid "Show History"
 msgstr ""
 
-#: data/resources/ui/window.ui:133
+#: data/resources/ui/window.ui:119
 msgid "History"
 msgstr ""
 
-#: data/resources/ui/window.ui:230 data/resources/ui/window.ui:393
-msgid "Loading…"
-msgstr ""
-
-#: data/resources/ui/window.ui:243
-msgid "Downloading English WordNet"
-msgstr ""
-
-#: data/resources/ui/window.ui:254
+#: data/resources/ui/window.ui:191
 msgid "Downloading"
 msgstr ""
 
-#: data/resources/ui/window.ui:261 wordbook/main.py:103 wordbook/main.py:139
-#: wordbook/window.py:117
-msgid "Wordbook"
+#: data/resources/ui/window.ui:199 data/resources/ui/window.ui:340
+msgid "Loading…"
 msgstr ""
 
-#: data/resources/ui/window.ui:262
-msgid "Lookup definitions of any English term"
+#: data/resources/ui/window.ui:211
+msgid "Downloading English WordNet"
 msgstr ""
 
-#: data/resources/ui/window.ui:266
+#: data/resources/ui/window.ui:226
 msgid "Welcome"
 msgstr ""
 
-#: data/resources/ui/window.ui:304
-msgid "<i>/Pronunciation/</i>"
+#: data/resources/ui/window.ui:230 wordbook/main.py:35 wordbook/main.py:86
+#: wordbook/main.py:119
+msgid "Wordbook"
 msgstr ""
 
-#: data/resources/ui/window.ui:332
-msgid "Listen to Pronunciation"
+#: data/resources/ui/window.ui:231
+msgid "Lookup definitions of any English term"
 msgstr ""
 
-#: data/resources/ui/window.ui:369
+#: data/resources/ui/window.ui:239
 msgid "Content"
 msgstr ""
 
-#: data/resources/ui/window.ui:378
-msgid "No definition found"
+#: data/resources/ui/window.ui:269
+msgid "/Pronunciation/"
 msgstr ""
 
-#: data/resources/ui/window.ui:382
+#: data/resources/ui/window.ui:291
+msgid "Listen to Pronunciation"
+msgstr ""
+
+#: data/resources/ui/window.ui:327
 msgid "Search Failure"
 msgstr ""
 
-#: wordbook/settings_window.py:37
-msgid "American English"
+#: data/resources/ui/window.ui:332
+msgid "No definition found"
 msgstr ""
 
-#: wordbook/settings_window.py:38
-msgid "British English"
-msgstr ""
-
-#: wordbook/window.py:119
+#: wordbook/main.py:121
 msgid "Lookup definitions of any English term."
 msgstr ""
 
-#: wordbook/window.py:127
+#: wordbook/main.py:129
 msgid "Copyright © 2016–2021 Mufeed Ali"
 msgstr ""
 
-#: wordbook/window.py:343
+#: wordbook/window.py:367
 msgid "Ready."
 msgstr ""
 
-#: wordbook/window.py:453
+#: wordbook/window.py:487
 msgid "Invalid input"
 msgstr ""
 
-#: wordbook/window.py:454
+#: wordbook/window.py:488
 msgid "Nothing definable was found in your search input"
 msgstr ""
 
-#: wordbook/window.py:498
+#: wordbook/window.py:533
+msgid "Download failed :("
+msgstr ""
+
+#: wordbook/window.py:544
 msgid "Downloading WordNet…"
 msgstr ""
 
-#: wordbook/window.py:508
+#: wordbook/window.py:552
 msgid "Re-downloading WordNet database"
 msgstr ""
 
-#: wordbook/window.py:510
+#: wordbook/window.py:554
 msgid "Just a database upgrade."
 msgstr ""
 
-#: wordbook/window.py:512
+#: wordbook/window.py:556
 msgid "This shouldn't happen too often."
 msgstr ""
 
-#: wordbook/window.py:542
+#: wordbook/window.py:586
 msgid "Building Database…"
 msgstr ""

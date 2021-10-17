@@ -2,11 +2,9 @@
 <gresources>
   <gresource prefix="/com/github/fushinari/Wordbook/">
     <file compressed="true">style.css</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/shortcuts_window.ui</file>
 
-    <file compressed="true" preprocess="xml-stripblanks">ui/menu.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/settings_window.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks">ui/shortcuts_window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">ui/window.ui</file>
   </gresource>
 </gresources>
-
