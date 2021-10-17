@@ -4,7 +4,7 @@
 
 import os
 
-from gi.repository import Gtk, Adw
+from gi.repository import Adw, Gtk
 
 from wordbook import utils
 from wordbook.settings import Settings

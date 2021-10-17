@@ -7,7 +7,7 @@ import random
 import threading
 
 from gettext import gettext as _
-from gi.repository import Gdk, Gio, GLib, GObject, Gtk, Adw
+from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 from wn import Error
 from wn.util import ProgressHandler
 
@@ -63,14 +63,10 @@ class WordbookWindow(Adw.ApplicationWindow):
             self.get_style_context().add_class("devel")
         self.set_default_icon_name(Gio.Application.get_default().app_id)
 
-        builder = Gtk.Builder.new_from_resource(
-            resource_path=f"{utils.RES_PATH}/ui/menu.ui"
-        )
-        menu = builder.get_object("wordbook-menu")
+        self.setup_widgets()
+        self.setup_actions()
 
-        popover = Gtk.PopoverMenu.new_from_model(menu)
-        self._menu_button.set_popover(popover)
-
+    def setup_widgets(self):
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._recents_listbox.bind_model(self._search_history, self.__create_label)
 
@@ -82,7 +78,9 @@ class WordbookWindow(Adw.ApplicationWindow):
             GObject.GType.from_name("gchararray"), Gdk.DragAction.COPY
         )
         self._search_entry.add_controller(self._search_drop_target)
-        self._search_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "edit-find-symbolic")
+        # self._search_entry.set_icon_from_icon_name(
+        #     Gtk.EntryIconPosition.PRIMARY, "edit-find-symbolic"
+        # )
 
         self._def_ctrlr.connect("pressed", self._on_def_event)
         self._def_view.connect("activate-link", self._on_link_activated)
@@ -130,23 +128,23 @@ class WordbookWindow(Adw.ApplicationWindow):
         # Set search button visibility.
         self.search_button.set_visible(not Settings.get().live_search)
 
-    def on_about(self, _action, _param):
-        """Show the about window."""
-        about_dialog = Gtk.AboutDialog(transient_for=self, modal=True)
-        about_dialog.set_logo_icon_name(Gio.Application.get_default().app_id)
-        about_dialog.set_program_name(_("Wordbook"))
-        about_dialog.set_version(Gio.Application.get_default().version)
-        about_dialog.set_comments(_("Lookup definitions of any English term."))
-        about_dialog.set_authors(
-            [
-                "Mufeed Ali",
-            ]
-        )
-        about_dialog.set_license_type(Gtk.License.GPL_3_0)
-        about_dialog.set_website("https://www.github.com/fushinari/wordbook")
-        about_dialog.set_copyright(_("Copyright © 2016–2021 Mufeed Ali"))
-        # about_dialog.connect("response", lambda dialog, response: dialog.destroy())
-        about_dialog.present()
+    def setup_actions(self):
+        """Setup the Gio actions for the application."""
+        paste_search_action = Gio.SimpleAction.new("paste-search", None)
+        paste_search_action.connect("activate", self.on_paste_search)
+        self.add_action(paste_search_action)
+
+        preferences_action = Gio.SimpleAction.new("preferences", None)
+        preferences_action.connect("activate", self.on_preferences)
+        self.add_action(preferences_action)
+
+        random_word_action = Gio.SimpleAction.new("random-word", None)
+        random_word_action.connect("activate", self.on_random_word)
+        self.add_action(random_word_action)
+
+        search_selected_action = Gio.SimpleAction.new("search-selected", None)
+        search_selected_action.connect("activate", self.on_search_selected)
+        self.add_action(search_selected_action)
 
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
@@ -184,15 +182,6 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         cancellable = Gio.Cancellable()
         clipboard.read_text_async(cancellable, on_paste)
-
-    def on_shortcuts(self, _action, _param):
-        """Launch the Keyboard Shortcuts window."""
-        builder = Gtk.Builder.new_from_resource(
-            resource_path=f"{utils.RES_PATH}/ui/shortcuts_window.ui"
-        )
-        shortcuts_window = builder.get_object("shortcuts")
-        shortcuts_window.set_transient_for(self)
-        shortcuts_window.show()
 
     def on_search_clicked(self, _button=None, pass_check=False, text=None):
         """Pass data to search function and set TextView data."""
