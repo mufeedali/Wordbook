@@ -280,9 +280,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                 text = clipboard.read_text_finish(result)
                 text = base.cleaner(text)
                 if text is not None and not text.strip() == "" and not text.isspace():
-                    GLib.idle_add(self._search_entry.set_text, text)
-                    GLib.idle_add(self.on_search_clicked)
-                    GLib.idle_add(self._search_entry.grab_focus)
+                    self.trigger_search(text)
 
             cancellable = Gio.Cancellable()
             clipboard.read_text_async(cancellable, on_paste)
@@ -530,8 +528,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         try:
             self._wn_downloader.download(ProgressUpdater)
         except Error:
-            GLib.idle_add(self.loading_label.set_text, _("Download failed :("))
-            GLib.idle_add(self.loading_progress.set_visible, False)
+            self.__page_switch("network_fail_page")
 
     def __set_header_sensitive(self, status):
         self._title_clamp.set_sensitive(status)

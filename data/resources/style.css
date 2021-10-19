@@ -4,12 +4,12 @@ clamp .clamped-box {
   transition-duration: 200ms;
 }
 
-clamp.medium .clamped-box {
+.clamped-box.medium {
   border-left: 1px solid @borders;
   border-right: 1px solid @borders;
 }
 
-clamp.large .clamped-box {
+.clamped-box.large {
   border: 1px solid @borders;
   border-radius: 9px;
   margin: 12px;
