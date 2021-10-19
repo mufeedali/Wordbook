@@ -4,6 +4,7 @@
 
 # import os
 import random
+import sys
 import threading
 
 from gettext import gettext as _
@@ -34,6 +35,8 @@ class WordbookWindow(Adw.ApplicationWindow):
     _stack = Gtk.Template.Child("main_stack")
     download_status_page = Gtk.Template.Child("download_status_page")
     loading_progress = Gtk.Template.Child("loading_progress")
+    _retry_button = Gtk.Template.Child("retry_button")
+    _exit_button = Gtk.Template.Child("exit_button")
     _main_scroll = Gtk.Template.Child("main_scroll")
     _def_view = Gtk.Template.Child("def_view")
     _def_ctrlr = Gtk.Template.Child("def_ctrlr")
@@ -82,6 +85,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_entry.connect("changed", self._on_entry_changed)
         # self._search_entry.connect("paste-clipboard", self._on_paste_done)
         self._speak_button.connect("clicked", self._on_speak_clicked)
+        self._retry_button.connect("clicked", self._on_retry_clicked)
+        self._exit_button.connect("clicked", self._on_exit_clicked)
 
         self._flap.bind_property(
             "reveal-flap",
@@ -317,6 +322,9 @@ class WordbookWindow(Adw.ApplicationWindow):
     #     self._search_entry.set_position(-1)
     #     GLib.idle_add(self.on_search_clicked)
 
+    def _on_exit_clicked(self, _widget):
+        sys.exit()
+
     def _on_link_activated(self, _widget, data):
         """Search for terms that are marked as hyperlinks."""
         if data.startswith("search;"):
@@ -330,6 +338,10 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_recents_activated(self, _widget, row):
         term = row.get_first_child().get_first_child().get_label()
         self.trigger_search(term)
+
+    def _on_retry_clicked(self, _widget):
+        self.__page_switch("download_page")
+        self.__wn_loader()
 
     def _add_to_queue(self, text, pass_check=False):
         if self._search_queue:

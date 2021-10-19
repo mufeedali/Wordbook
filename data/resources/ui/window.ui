@@ -40,7 +40,7 @@
     <property name="default-widget">search_button</property>
     <property name="icon-name">accesories-dictionary</property>
     <child>
-      <object class="GtkBox" id="box">
+      <object class="GtkBox">
         <property name="orientation">vertical</property>
         <child>
           <object class="AdwHeaderBar" id="header_bar">
@@ -193,8 +193,13 @@
                                         <property name="title" translatable="yes">Setting things up…</property>
                                         <property name="description" translatable="yes">Downloading WordNet…</property>
                                         <property name="child">
-                                          <object class="GtkProgressBar" id="loading_progress">
-                                            <property name="ellipsize">end</property>
+                                          <object class="AdwClamp">
+                                            <property name="tightening-threshold">200</property>
+                                            <child>
+                                              <object class="GtkProgressBar" id="loading_progress">
+                                                <property name="ellipsize">end</property>
+                                              </object>
+                                            </child>
                                           </object>
                                         </property>
                                       </object>
@@ -319,6 +324,29 @@
                                       <object class="AdwStatusPage">
                                         <property name="icon-name">network-error-symbolic</property>
                                         <property name="title" translatable="yes">Download failed</property>
+                                        <property name="child">
+                                          <object class="GtkBox">
+                                            <property name="spacing">12</property>
+                                            <property name="halign">center</property>
+                                            <child>
+                                              <object class="GtkButton" id="retry_button">
+                                                <property name="label" translatable="yes">Retry</property>
+                                                <style>
+                                                  <class name="pill"/>
+                                                  <class name="suggested-action"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="exit_button">
+                                                <property name="label" translatable="yes">Exit</property>
+                                                <style>
+                                                  <class name="pill"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </property>
                                       </object>
                                     </property>
                                   </object>
