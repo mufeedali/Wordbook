@@ -148,7 +148,6 @@ def get_definition(term, word_col, sen_col, wn_instance):
         # Synsets have 'parts of speech'. We need their real names.
         # We also need to track their values across synsets to an extent.
         pos = None
-        orig_synset = None
         actual_pos = {
             "s": "adjective",
             "n": "noun",
@@ -193,7 +192,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
             ant = []  # Antonyms
             for lemma in synset.lemmas():
                 syn_name = lemma.replace("_", " ").strip()
-                if not syn_name == synset_name:
+                if not syn_name == first_match:
                     syn.append(syn_name)
             for sense in synset.senses():
                 for ant_sense in sense.get_related("antonym"):
