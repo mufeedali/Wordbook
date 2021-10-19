@@ -193,7 +193,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
             ant = []  # Antonyms
             for lemma in synset.lemmas():
                 syn_name = lemma.replace("_", " ").strip()
-                if not syn_name == orig_synset:
+                if not syn_name == synset_name:
                     syn.append(syn_name)
             for sense in synset.senses():
                 for ant_sense in sense.get_related("antonym"):
