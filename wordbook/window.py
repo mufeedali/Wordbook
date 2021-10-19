@@ -32,7 +32,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _clamp = Gtk.Template.Child("main_clamp")
     _clamped_box = Gtk.Template.Child("clamped_box")
     _stack = Gtk.Template.Child("main_stack")
-    loading_label = Gtk.Template.Child("loading_label")
+    download_status_page = Gtk.Template.Child("download_status_page")
     loading_progress = Gtk.Template.Child("loading_progress")
     _main_scroll = Gtk.Template.Child("main_scroll")
     _def_view = Gtk.Template.Child("def_view")
@@ -353,7 +353,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def progress_complete(self):
         """Run upon completion of loading."""
-        GLib.idle_add(self.loading_label.set_label, _("Ready."))
+        GLib.idle_add(self.download_status_page.set_title, _("Ready."))
         self._wn_future = base.get_wn_file(self.__reloader)
         GLib.idle_add(self.__set_header_sensitive, True)
         self.__page_switch("welcome_page")
@@ -524,25 +524,24 @@ class WordbookWindow(Adw.ApplicationWindow):
     def __set_header_sensitive(self, status):
         self._title_clamp.set_sensitive(status)
         self._flap_toggle_button.set_sensitive(status)
-        # self._menu_button.set_sensitive(status)
+        self._menu_button.set_sensitive(status)
 
     def __wn_loader(self):
         self.__set_header_sensitive(False)
         if not self._wn_downloader.check_status():
-            self.loading_label.set_text(_("Downloading WordNet…"))
+            self.download_status_page.set_description(_("Downloading WordNet…"))
             threading.Thread(target=self.__try_dl).start()
 
     def __reloader(self):
         self.__page_switch("download_page")
         self._wn_downloader.delete_db()
         self.__wn_loader()
-        self.loading_label.set_markup(
+        self.download_status_page.set_description(
             _("Re-downloading WordNet database")
-            + '\n<span size="small">'
+            + "\n"
             + _("Just a database upgrade.")
             + "\n"
             + _("This shouldn't happen too often.")
-            + "</span>"
         )
 
 
@@ -570,12 +569,12 @@ class ProgressUpdater(ProgressHandler):
         """Update the progress label."""
         if message == "Database":
             GLib.idle_add(
-                Gio.Application.get_default().win.loading_label.set_label,
+                Gio.Application.get_default().win.download_status_page.set_description,
                 _("Building Database…"),
             )
         else:
             GLib.idle_add(
-                Gio.Application.get_default().win.loading_label.set_label,
+                Gio.Application.get_default().win.download_status_page.set_description,
                 message,
             )
 
