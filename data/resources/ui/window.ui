@@ -336,6 +336,18 @@
                                 </child>
                                 <child>
                                   <object class="GtkStackPage">
+                                    <property name="name">network_fail_page</property>
+                                    <property name="title" translatable="yes">Network Failure</property>
+                                    <property name="child">
+                                      <object class="AdwStatusPage">
+                                        <property name="icon-name">network-error-symbolic</property>
+                                        <property name="title">Download failed</property>
+                                      </object>
+                                    </property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkStackPage">
                                     <property name="name">spinner_page</property>
                                     <property name="title" translatable="yes">Loading…</property>
                                     <property name="child">
