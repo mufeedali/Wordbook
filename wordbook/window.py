@@ -42,6 +42,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     _complete_list = []
     _completion_request_count = 0
+    doubled = False
     _pasted = False
     searched_term = None
     _wn_downloader = base.WordnetDownloader()
@@ -74,19 +75,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         # self.connect("key-press-event", self._on_key_press_event)
         self._recents_listbox.connect("row-activated", self._on_recents_activated)
 
-        self._search_drop_target = Gtk.DropTarget.new(
-            GObject.GType.from_name("gchararray"), Gdk.DragAction.COPY
-        )
-        self._search_entry.add_controller(self._search_drop_target)
-        # self._search_entry.set_icon_from_icon_name(
-        #     Gtk.EntryIconPosition.PRIMARY, "edit-find-symbolic"
-        # )
-
-        self._def_ctrlr.connect("pressed", self._on_def_event)
+        self._def_ctrlr.connect("pressed", self._on_def_press_event)
+        self._def_ctrlr.connect("stopped", self._on_def_stop_event)
         self._def_view.connect("activate-link", self._on_link_activated)
         self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
-        self._search_drop_target.connect("accept", self._on_drag_received)
         # self._search_entry.connect("paste-clipboard", self._on_paste_done)
         self._speak_button.connect("clicked", self._on_speak_clicked)
 
@@ -270,10 +263,15 @@ class WordbookWindow(Adw.ApplicationWindow):
         GLib.idle_add(self.on_search_clicked, text=text)
         GLib.idle_add(self._search_entry.grab_focus)
 
-    def _on_def_event(self, _click, n_press, _x, _y):
-        """Search on double click."""
+    def _on_def_press_event(self, _click, n_press, _x, _y):
+        if Settings.get().double_click:
+            self.doubled = (n_press == 2)
+        else:
+            self.doubled = False
 
-        if Settings.get().double_click and n_press == 2:
+    def _on_def_stop_event(self, _click):
+        """Search on double click."""
+        if self.doubled:
             clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
             def on_paste(_clipboard, result):
@@ -288,13 +286,6 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_destroy(self, _window):
         """Detect closing of the window."""
         Settings.get().history = self._search_history_list[-10:]
-
-    def _on_drag_received(self, _widget, _drag_context, _x, _y, _data, _info, _time):
-        """Search on receiving drag and drop event."""
-        self._search_entry.set_text("")
-        GLib.idle_add(self.__entry_cleaner)
-        GLib.idle_add(self._search_entry.set_position, -1)
-        GLib.idle_add(self.on_search_clicked)
 
     def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""
