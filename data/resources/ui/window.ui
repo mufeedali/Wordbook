@@ -37,6 +37,7 @@
   <template class="WordbookWindow" parent="AdwApplicationWindow">
     <property name="default-width">390</property>
     <property name="default-height">610</property>
+    <property name="focus-widget">search_entry</property>
     <property name="default-widget">search_button</property>
     <property name="icon-name">accesories-dictionary</property>
     <child>
@@ -53,8 +54,9 @@
                     <property name="hexpand">True</property>
                     <property name="spacing">4</property>
                     <child>
-                      <object class="GtkSearchEntry" id="search_entry">
+                      <object class="GtkEntry" id="search_entry">
                         <property name="hexpand">True</property>
+                        <property name="primary-icon-name">edit-find-symbolic</property>
                         <property name="activates-default">True</property>
                       </object>
                     </child>

@@ -103,8 +103,6 @@ class WordbookWindow(Adw.ApplicationWindow):
             self.__page_switch("welcome_page")
             if self.lookup_term:
                 self.trigger_search(self.lookup_term)
-            else:
-                GLib.idle_add(self._search_entry.grab_focus)
 
         # Completions. This is kept separate because it uses its own weird logic.
         # This and related code might need refactoring later on.
@@ -266,7 +264,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Trigger search action."""
         GLib.idle_add(self._search_entry.set_text, text)
         GLib.idle_add(self.on_search_clicked, text=text)
-        GLib.idle_add(self._search_entry.grab_focus)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         if Settings.get().double_click:
@@ -371,8 +368,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.__page_switch("welcome_page")
         if self.lookup_term:
             self.trigger_search(self.lookup_term)
-        else:
-            GLib.idle_add(self._search_entry.grab_focus)
 
     @staticmethod
     def __create_label(element):
