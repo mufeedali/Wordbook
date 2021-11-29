@@ -43,33 +43,33 @@
       "name": "python3-wn",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\""
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" --no-build-isolation"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/5f/64/43575537846896abac0b15c3e5ac678d787a4021e906703f1766bfb8ea11/urllib3-1.26.6-py2.py3-none-any.whl",
-          "sha256": "39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4"
+          "url": "https://files.pythonhosted.org/packages/6d/6c/9908d4db66488217c665a9a5744319406e41f3c46fa5929a8886f2fe1090/tomli-1.2.2-py3-none-any.whl",
+          "sha256": "f04066f68f5554911363063a30b108d2b5a5b1a010aa8b6132af78489fe3aade"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/44/6f/7120676b6d73228c96e17f1f794d8ab046fc910d781c8d151120c3f1569e/toml-0.10.2-py2.py3-none-any.whl",
-          "sha256": "806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"
+          "url": "https://files.pythonhosted.org/packages/af/f4/524415c0744552cce7d8bf3669af78e8a069514405ea4fcbd0cc44733744/urllib3-1.26.7-py2.py3-none-any.whl",
+          "sha256": "c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/d7/77/ff688d1504cdc4db2a938e2b7b9adee5dd52e34efbd2431051efc9984de9/idna-3.2-py3-none-any.whl",
-          "sha256": "14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"
+          "url": "https://files.pythonhosted.org/packages/04/a2/d918dcd22354d8958fe113e1a3630137e0fc8b44859ade3063982eacd2a4/idna-3.3-py3-none-any.whl",
+          "sha256": "84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/33/53/b7f6126a2b9fd878b025fe3c40266cfaad696f312165008ce045bffa3fe7/charset_normalizer-2.0.4-py3-none-any.whl",
-          "sha256": "0c8911edd15d19223366a194a513099a302055a962bca2cec0f54b8b63175d8b"
+          "url": "https://files.pythonhosted.org/packages/c8/27/141554fc0f42c05dd318fbb0be0e3e018da686544a3ff452762e49ccac58/charset_normalizer-2.0.8-py3-none-any.whl",
+          "sha256": "83fcdeb225499d6344c8f7f34684c2981270beacc32ede2e669e94f7fa544405"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/05/1b/0a0dece0e8aa492a6ec9e4ad2fe366b511558cdc73fd3abc82ba7348e875/certifi-2021.5.30-py2.py3-none-any.whl",
-          "sha256": "50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"
+          "url": "https://files.pythonhosted.org/packages/37/45/946c02767aabb873146011e665728b680884cd8fe70dde973c640e45b775/certifi-2021.10.8-py2.py3-none-any.whl",
+          "sha256": "d62a0163eb4c2344ac042ab2bdf75399a71a2d8c7d47eac2e2ee91b9d6339569"
         },
         {
           "type": "file",
@@ -78,8 +78,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/c8/37/ca2baf8efd8b7e78aa879c331b13754feadd152f934ef391eb429336cae3/wn-0.8.0-py3-none-any.whl",
-          "sha256": "4e69ecccb188f98787ce2cb5ea34e6941f38a8cf9bd72e41cc0c5c1b50c3b667"
+          "url": "https://files.pythonhosted.org/packages/ce/f1/53b07100f5c3d41fd33fc78ebb9e99d736b0460ced8acff94840311ffc60/wn-0.9.1-py3-none-any.whl",
+          "sha256": "89d08c429c1d078511b767209c72a7112d332c91941acfa45cb5db9b99d94582"
         }
       ]
     },
