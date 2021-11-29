@@ -83,7 +83,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._def_view.connect("activate-link", self._on_link_activated)
         self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
-        # self._search_entry.connect("paste-clipboard", self._on_paste_done)
         self._speak_button.connect("clicked", self._on_speak_clicked)
         self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
@@ -300,9 +299,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         #         daemon=True,
         #     ).start()
 
-        if self._pasted is True:
-            self.__entry_cleaner()
-            self._pasted = False
         if Settings.get().live_search:
             GLib.idle_add(self.on_search_clicked)
 
@@ -327,6 +323,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         if data.startswith("search;"):
             GLib.idle_add(self._search_entry.set_text, data[7:])
             self.on_search_clicked(text=data[7:])
+        return Gdk.EVENT_STOP
 
     def _on_paste_done(self, _widget):
         """Cleanup pasted data."""
