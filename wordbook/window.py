@@ -587,5 +587,5 @@ class ProgressUpdater(ProgressHandler):
 
     def close(self):
         """Signal the completion of building the WordNet database."""
-        if self.kwargs["message"] != "Download":
+        if self.kwargs["message"] not in ("Download", "Read"):
             Gio.Application.get_default().win.progress_complete()

@@ -30,8 +30,13 @@ parser.add_argument('--requirements-file', '-r',
 parser.add_argument('--build-only', action='store_const',
                     dest='cleanup', const='all',
                     help='Clean up all files after build')
-parser.add_argument('--no-build-isolation', action='store_true', default=False,
-                    help='https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support')
+parser.add_argument('--build-isolation', action='store_true',
+                    default=False,
+                    help=(
+                        'Do not disable build isolation. '
+                        'Mostly useful on pip that does\'t '
+                        'support the feature.'
+                    ))
 parser.add_argument('--output', '-o',
                     help='Specify output file name')
 parser.add_argument('--runtime',
@@ -176,7 +181,8 @@ if opts.output:
     output_package = opts.output
 elif opts.requirements_file:
     output_package = 'python{}-{}'.format(
-        python_version, opts.requirements_file.replace('.txt', ''),
+        python_version,
+        os.path.basename(opts.requirements_file).replace('.txt', ''),
     )
 elif len(packages) == 1:
     output_package = 'python{}-{}'.format(
@@ -190,7 +196,7 @@ modules = []
 vcs_modules = []
 sources = {}
 
-tempdir_prefix = 'pip-generator-{}'.format(output_filename.replace('.json', ''))
+tempdir_prefix = 'pip-generator-{}'.format(os.path.basename(output_package))
 with tempfile.TemporaryDirectory(prefix=tempdir_prefix) as tempdir:
     pip_download = flatpak_cmd + [
         'download',
@@ -220,7 +226,7 @@ with tempfile.TemporaryDirectory(prefix=tempdir_prefix) as tempdir:
 
     fprint('Downloading arch independent packages')
     for filename in os.listdir(tempdir):
-        if not filename.endswith(('bz2', 'gz', 'xz', 'any.whl', 'zip')):
+        if not filename.endswith(('bz2', 'any.whl', 'gz', 'xz', 'zip')):
             version = get_file_version(filename)
             name = get_package_name(filename)
             url = get_tar_package_url_pypi(name, version)
@@ -364,13 +370,14 @@ for package in packages:
     pip_command = [
         pip_executable,
         'install',
+        '--verbose',
         '--exists-action=i',
         '--no-index',
         '--find-links="file://${PWD}"',
         '--prefix=${FLATPAK_DEST}',
         '"{}"'.format(name_for_pip)
     ]
-    if opts.no_build_isolation:
+    if not opts.build_isolation:
         pip_command.append('--no-build-isolation')
 
     module = OrderedDict([
@@ -402,5 +409,5 @@ else:
 
 print()
 with open(output_filename, 'w') as output:
-    output.write(json.dumps(pypi_module, indent=4))
+    output.write(json.dumps(pypi_module, indent=2))
     print('Output saved to {}'.format(output_filename))
