@@ -223,14 +223,24 @@ class WordbookWindow(Adw.ApplicationWindow):
                         self._last_search_fail = True
                         continue
 
+                    term_view_text = f'<span size="large" weight="bold">{out["term"].strip()}</span>'
                     GLib.idle_add(
                         self._term_view.set_markup,
-                        f'<span size="large" weight="bold">{out["term"].strip()}</span>',
+                        term_view_text,
                     )
-                    pron = out["pronunciation"].strip().replace("\n", "")
+                    GLib.idle_add(
+                        self._term_view.set_tooltip_markup,
+                        term_view_text,
+                    )
+
+                    pron = "<i>" + out["pronunciation"].strip().replace("\n", "") + "</i>"
                     GLib.idle_add(
                         self._pronunciation_view.set_markup,
-                        f"<i>{pron}</i>",
+                        pron,
+                    )
+                    GLib.idle_add(
+                        self._pronunciation_view.set_tooltip_markup,
+                        pron,
                     )
 
                     if text not in except_list:
