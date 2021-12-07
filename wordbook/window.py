@@ -218,6 +218,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                             text, self.__process_result(out["result"])
                         )
                     else:
+                        GLib.idle_add(self._def_view.set_markup, "")
                         status = "fail"
                         self._last_search_fail = True
                         continue
