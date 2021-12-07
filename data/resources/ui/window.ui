@@ -86,6 +86,9 @@
                 <property name="direction">none</property>
               </object>
             </child>
+            <style>
+              <class name="flat"/>
+            </style>
           </object>
         </child>
         <child>
