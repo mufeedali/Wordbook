@@ -18,12 +18,11 @@ class SettingsWindow(Adw.PreferencesWindow):
 
     __gtype_name__ = "SettingsWindow"
 
+    _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
+
     _double_click_switch = Gtk.Template.Child("double_click_switch")
     _live_search_switch = Gtk.Template.Child("live_search_switch")
     _pronunciations_accent_row = Gtk.Template.Child("pronunciations_accent_row")
-
-    _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
-    _dark_font_switch = Gtk.Template.Child("dark_font_switch")
 
     def __init__(self, parent, **kwargs):
         """Initialize the Settings window."""
@@ -40,9 +39,6 @@ class SettingsWindow(Adw.PreferencesWindow):
             "notify::active", self._on_live_search_activate
         )
         self._dark_ui_switch.connect("notify::active", self._on_dark_ui_switch_activate)
-        self._dark_font_switch.connect(
-            "notify::active", self._on_dark_font_switch_activate
-        )
         self._pronunciations_accent_row.connect(
             "notify::selected", self._on_pronunciations_accent_activate
         )
@@ -56,7 +52,6 @@ class SettingsWindow(Adw.PreferencesWindow):
         )
 
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
-        self._dark_font_switch.set_active(Settings.get().gtk_dark_font)
 
     @staticmethod
     def _double_click_switch_activate(switch, _gparam):
@@ -83,15 +78,3 @@ class SettingsWindow(Adw.PreferencesWindow):
             if switch.get_active()
             else Adw.ColorScheme.PREFER_LIGHT
         )
-
-    def _on_dark_font_switch_activate(self, switch, _gparam):
-        """Change definitions' font colors."""
-        Settings.get().gtk_dark_font = switch.get_active()
-        self.__refresh_view()
-
-    def __refresh_view(self):
-        """Refresh definition view."""
-        if self.parent.searched_term is not None:
-            self.parent.on_search_clicked(
-                pass_check=True, text=self.parent.searched_term
-            )

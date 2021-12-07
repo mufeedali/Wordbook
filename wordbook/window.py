@@ -21,6 +21,7 @@ from wordbook.settings import Settings
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
+    _key_ctrlr = Gtk.Template.Child("key_ctrlr")
     _header_bar = Gtk.Template.Child("header_bar")
     _title_clamp = Gtk.Template.Child("title_clamp")
     _flap_toggle_button = Gtk.Template.Child("flap_toggle_button")
@@ -43,8 +44,8 @@ class WordbookWindow(Adw.ApplicationWindow):
     _pronunciation_view = Gtk.Template.Child("pronunciation_view")
     _term_view = Gtk.Template.Child("term_view")
 
-    _complete_list = []
-    _completion_request_count = 0
+    style_manager = None
+
     doubled = False
     _pasted = False
     searched_term = None
@@ -93,6 +94,9 @@ class WordbookWindow(Adw.ApplicationWindow):
             "active",
             GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE,
         )
+
+        self.style_manager = self.get_application().get_style_manager()
+        self.style_manager.connect('notify::dark', self._on_dark_style)
 
         # Loading and setup.
         self.__wn_loader()
@@ -274,6 +278,13 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Trigger search action."""
         GLib.idle_add(self._search_entry.set_text, text)
         GLib.idle_add(self.on_search_clicked, text=text)
+
+    def _on_dark_style(self, _object, _param):
+        """Refresh definition view."""
+        if self.searched_term is not None:
+            self.on_search_clicked(
+                pass_check=True, text=self.searched_term
+            )
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         if Settings.get().double_click:
@@ -489,7 +500,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         if not text == "" and not text.isspace():
             return base.reactor(
                 text,
-                Settings.get().gtk_dark_font,
+                self.style_manager.get_dark(),
                 self._wn_future.result()["instance"],
                 Settings.get().cdef,
                 accent=Settings.get().pronunciations_accent,

@@ -9,10 +9,25 @@
     <property name="destroy-with-parent">True</property>
     <child>
       <object class="AdwPreferencesPage">
-        <property name="icon-name">emblem-system-symbolic</property>
-        <property name="title">General</property>
+        <child>
+          <object class="AdwPreferencesGroup" id="appearance">
+            <property name="title" translatable="yes">Appearance</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Force Dark Mode</property>
+                <property name="activatable_widget">dark_ui_switch</property>
+                <child>
+                  <object class="GtkSwitch" id="dark_ui_switch">
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
         <child>
           <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Behavior</property>
             <child>
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Live Search</property>
@@ -20,7 +35,6 @@
                 <property name="subtitle" translatable="yes">Show definition as the terms are typed in</property>
                 <child>
                   <object class="GtkSwitch" id="live_search_switch">
-                    <property name="halign">center</property>
                     <property name="valign">center</property>
                   </object>
                 </child>
@@ -33,7 +47,6 @@
                 <property name="subtitle" translatable="yes">Search any word by double clicking on it</property>
                 <child>
                   <object class="GtkSwitch" id="double_click_switch">
-                    <property name="halign">center</property>
                     <property name="valign">center</property>
                   </object>
                 </child>
@@ -50,41 +63,6 @@
                     </items>
                   </object>
                 </property>
-              </object>
-            </child>
-          </object>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="AdwPreferencesPage">
-        <property name="icon-name">preferences-desktop-apps</property>
-        <property name="title">UI</property>
-        <child>
-          <object class="AdwPreferencesGroup">
-            <child>
-              <object class="AdwActionRow">
-                <property name="title" translatable="yes">Force dark UI theme</property>
-                <property name="activatable-widget">dark_ui_switch</property>
-                <child>
-                  <object class="GtkSwitch" id="dark_ui_switch">
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow">
-                <property name="title" translatable="yes">Use dark font theme</property>
-                <property name="activatable-widget">dark_font_switch</property>
-                <property name="subtitle">Use cyan and light green colors</property>
-                <child>
-                  <object class="GtkSwitch" id="dark_font_switch">
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                  </object>
-                </child>
               </object>
             </child>
           </object>
