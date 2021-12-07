@@ -246,6 +246,7 @@
                                                     <property name="label" translatable="no">Term&gt;</property>
                                                     <property name="use-markup">True</property>
                                                     <property name="single-line-mode">True</property>
+                                                    <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
                                                     <property name="xalign">0</property>
                                                     <property name="hexpand">False</property>
                                                   </object>
@@ -255,6 +256,7 @@
                                                     <property name="label" translatable="yes">/Pronunciation/</property>
                                                     <property name="use-markup">True</property>
                                                     <property name="selectable">True</property>
+                                                    <property name="ellipsize">PANGO_ELLIPSIZE_END</property>
                                                     <property name="single-line-mode">True</property>
                                                     <property name="xalign">0</property>
                                                     <property name="hexpand">False</property>
