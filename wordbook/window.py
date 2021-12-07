@@ -75,7 +75,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._recents_listbox.bind_model(self._search_history, self.__create_label)
 
         self.connect("unrealize", self._on_destroy)
-        # self.connect("key-press-event", self._on_key_press_event)
+        self._key_ctrlr.connect("key-pressed", self._on_key_pressed)
         self._recents_listbox.connect("row-activated", self._on_recents_activated)
 
         self._def_ctrlr.connect("pressed", self._on_def_press_event)
@@ -325,9 +325,18 @@ class WordbookWindow(Adw.ApplicationWindow):
             self.on_search_clicked(text=data[7:])
         return Gdk.EVENT_STOP
 
-    def _on_paste_done(self, _widget):
-        """Cleanup pasted data."""
-        self._pasted = True
+    def _on_key_pressed(self, _button, keyval, _keycode, state):
+        modifiers = state & Gtk.accelerator_get_default_mod_mask()
+        shift_mask = Gdk.ModifierType.SHIFT_MASK
+        unicode_key_val = Gdk.keyval_to_unicode(keyval)
+        if (GLib.unichar_isgraph(chr(unicode_key_val)) and
+                modifiers in (shift_mask, 0) and not self._search_entry.is_focus()):
+            self._search_entry.grab_focus_without_selecting()
+            text = self._search_entry.get_text() + chr(unicode_key_val)
+            self._search_entry.set_text(text)
+            self._search_entry.set_position(len(text))
+            return Gdk.EVENT_STOP
+        return Gdk.EVENT_PROPAGATE
 
     def _on_recents_activated(self, _widget, row):
         term = row.get_first_child().get_first_child().get_label()
