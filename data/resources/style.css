@@ -1,22 +1,11 @@
 clamp .clamped-box {
-  background-color: @theme_base_color;
+  border-radius: 0px;
   transition-property: margin;
   transition-duration: 200ms;
 }
 
-.clamped-box.medium {
-  border-left: 1px solid @borders;
-  border-right: 1px solid @borders;
-}
-
 .clamped-box.large {
-  border: 1px solid @borders;
-  border-radius: 9px;
+  border-radius: 12px;
   margin: 12px;
 }
 
-.pron-card {
-  background-color: @theme_bg_color;
-  border-radius: 9px;
-  border: 1px solid @borders;
-}
