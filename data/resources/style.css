@@ -11,3 +11,11 @@ clamp .clamped-box {
   border-bottom-right-radius: 12px;
   margin: 12px;
 }
+
+.pron-card {
+  border-bottom: 1px solid @borders;
+}
+
+.top-border {
+  border-top: 1px solid @borders;
+}
