@@ -126,10 +126,12 @@ class Settings:
         with open(utils.CONFIG_FILE, "r") as file:
             self.config.read_file(file)
 
-        config_version = self.config.get(
-            "Misc",
-            "ConfigVersion",
-            fallback=self.config.get("General", "ConfigVersion", fallback="6")
+        config_version = int(
+            self.config.get(
+                "Misc",
+                "ConfigVersion",
+                fallback=self.config.get("General", "ConfigVersion", fallback="6")
+            )
         )
 
         utils.log_info(f"Version Code: {config_version}")
