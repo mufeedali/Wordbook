@@ -1,8 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg height="16px" viewBox="0 0 16 16" width="16px" xmlns="http://www.w3.org/2000/svg">
-    <g fill="#241f31">
-        <path d="m 1 7.988281 v -7.988281 h 14 v 15.976562 h -14 z m 13 0.011719 v -7 h -11 v 14 h 11 c 0.015625 -2.332031 0 -7 0 -7 z m 0 0"/>
-        <path d="m 5.964844 10.035156 h 1.179687 l 1.300781 -4.511718 l 1.402344 4.511718 h 1.152344 l 1.738281 -5.972656 h -1.117187 l -1.171875 4.5 l -1.332031 -4.46875 h -1.222657 l -1.292969 4.5625 l -1.136718 -4.59375 h -1.265625 z m 0 0"/>
-        <path d="m 4 11 h 9 v 1 h -9 z m 0 0"/>
+<svg height="16px" viewBox="0 0 16 16" width="16px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <filter id="a" height="100%" width="100%" x="0%" y="0%">
+        <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+    </filter>
+    <mask id="b">
+        <g filter="url(#a)">
+            <rect fill-opacity="0.1" height="16" width="16"/>
+        </g>
+    </mask>
+    <linearGradient id="c" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-opacity="0"/>
+        <stop offset="0.2"/>
+        <stop offset="0.8" stop-opacity="0.94902"/>
+        <stop offset="1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="d" gradientTransform="matrix(1.372549 0 0 1 -19.647058 -154)" x1="42" x2="93" xlink:href="#c" y1="273" y2="273"/>
+    <clipPath id="e">
+        <rect height="152" width="192"/>
+    </clipPath>
+    <mask id="f">
+        <g filter="url(#a)">
+            <rect fill-opacity="0.1" height="16" width="16"/>
+        </g>
+    </mask>
+    <linearGradient id="g" gradientTransform="matrix(1.45098 0 0 1 -26.941177 -150)" x1="42" x2="93" xlink:href="#c" y1="273" y2="273"/>
+    <clipPath id="h">
+        <rect height="152" width="192"/>
+    </clipPath>
+    <mask id="i">
+        <g filter="url(#a)">
+            <rect fill-opacity="0.1" height="16" width="16"/>
+        </g>
+    </mask>
+    <linearGradient id="j" gradientTransform="matrix(1.176471 0 0 1 -1.411765 -146)" x1="42" x2="93" xlink:href="#c" y1="273" y2="273"/>
+    <clipPath id="k">
+        <rect height="152" width="192"/>
+    </clipPath>
+    <mask id="l">
+        <g filter="url(#a)">
+            <rect fill-opacity="0.1" height="16" width="16"/>
+        </g>
+    </mask>
+    <linearGradient id="m" gradientTransform="matrix(0.745098 0 0 1 18.705883 -158)" x1="42" x2="93" xlink:href="#c" y1="273" y2="273"/>
+    <clipPath id="n">
+        <rect height="152" width="192"/>
+    </clipPath>
+    <g clip-path="url(#e)" mask="url(#b)" transform="matrix(1 0 0 1 -168 -16)">
+        <path d="m 38 118 h 70 v 2 h -70 z m 0 0" fill="url(#d)"/>
     </g>
+    <g clip-path="url(#h)" mask="url(#f)" transform="matrix(1 0 0 1 -168 -16)">
+        <path d="m 34 122 h 74 v 2 h -74 z m 0 0" fill="url(#g)"/>
+    </g>
+    <g clip-path="url(#k)" mask="url(#i)" transform="matrix(1 0 0 1 -168 -16)">
+        <path d="m 48 126 h 60 v 2 h -60 z m 0 0" fill="url(#j)"/>
+    </g>
+    <g clip-path="url(#n)" mask="url(#l)" transform="matrix(1 0 0 1 -168 -16)">
+        <path d="m 50 114 h 38 v 2 h -38 z m 0 0" fill="url(#m)"/>
+    </g>
+    <path d="m 5 0 c -1.644531 0 -3 1.355469 -3 3 v 9 c 0 1.292969 0.839844 2.40625 2 2.824219 v -11.824219 c 0 -0.570312 0.429688 -1 1 -1 h 7 c 0.570312 0 1 0.429688 1 1 v 9 c 0 0.570312 -0.429688 1 -1 1 h -1 v 2 h 1 c 1.644531 0 3 -1.355469 3 -3 v -9 c 0 -1.644531 -1.355469 -3 -3 -3 z m 0 0"/>
+    <path d="m 14 6 c -0.550781 0 -1 0.449219 -1 1 c 0 0.570312 -0.429688 1 -1 1 h -7 c -1.644531 0 -3 1.355469 -3 3 h 2 c 0 -0.570312 0.429688 -1 1 -1 h 7 c 1.644531 0 3 -1.355469 3 -3 c 0 -0.550781 -0.449219 -1 -1 -1 z m 0 0"/>
+    <path d="m 5 11 h 5 v 5 l -2.5 -2 l -2.5 2 z m 0 0"/>
 </svg>
