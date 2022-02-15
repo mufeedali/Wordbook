@@ -87,7 +87,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._speak_button.connect("clicked", self._on_speak_clicked)
         self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
-        self._main_scroll.get_vadjustment().connect("value-changed", self._on_scroll_event)
+        self._main_scroll.get_vadjustment().connect(
+            "value-changed", self._on_scroll_event
+        )
 
         self._flap.bind_property(
             "reveal-flap",
@@ -97,7 +99,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
 
         self.style_manager = self.get_application().get_style_manager()
-        self.style_manager.connect('notify::dark', self._on_dark_style)
+        self.style_manager.connect("notify::dark", self._on_dark_style)
 
         # Loading and setup.
         self.__wn_loader()
@@ -127,6 +129,9 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         # Set search button visibility.
         self.search_button.set_visible(not Settings.get().live_search)
+
+        # Workaround for focus-widget not working
+        self._search_entry.grab_focus_without_selecting()
 
     def setup_actions(self):
         """Setup the Gio actions for the application."""
@@ -228,7 +233,9 @@ class WordbookWindow(Adw.ApplicationWindow):
                         self._last_search_fail = True
                         continue
 
-                    term_view_text = f'<span size="large" weight="bold">{out["term"].strip()}</span>'
+                    term_view_text = (
+                        f'<span size="large" weight="bold">{out["term"].strip()}</span>'
+                    )
                     GLib.idle_add(
                         self._term_view.set_markup,
                         term_view_text,
@@ -238,7 +245,9 @@ class WordbookWindow(Adw.ApplicationWindow):
                         term_view_text,
                     )
 
-                    pron = "<i>" + out["pronunciation"].strip().replace("\n", "") + "</i>"
+                    pron = (
+                        "<i>" + out["pronunciation"].strip().replace("\n", "") + "</i>"
+                    )
                     GLib.idle_add(
                         self._pronunciation_view.set_markup,
                         pron,
@@ -283,13 +292,11 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_dark_style(self, _object, _param):
         """Refresh definition view."""
         if self.searched_term is not None:
-            self.on_search_clicked(
-                pass_check=True, text=self.searched_term
-            )
+            self.on_search_clicked(pass_check=True, text=self.searched_term)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         if Settings.get().double_click:
-            self.doubled = (n_press == 2)
+            self.doubled = n_press == 2
         else:
             self.doubled = False
 
@@ -352,8 +359,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         modifiers = state & Gtk.accelerator_get_default_mod_mask()
         shift_mask = Gdk.ModifierType.SHIFT_MASK
         unicode_key_val = Gdk.keyval_to_unicode(keyval)
-        if (GLib.unichar_isgraph(chr(unicode_key_val)) and
-                modifiers in (shift_mask, 0) and not self._search_entry.is_focus()):
+        if (
+            GLib.unichar_isgraph(chr(unicode_key_val))
+            and modifiers in (shift_mask, 0)
+            and not self._search_entry.is_focus()
+        ):
             self._search_entry.grab_focus_without_selecting()
             text = self._search_entry.get_text() + chr(unicode_key_val)
             self._search_entry.set_text(text)
@@ -416,10 +426,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
         box.append(label)
         return box
-
-    def __entry_cleaner(self):
-        term = self._search_entry.get_text()
-        self._search_entry.set_text(base.cleaner(term))
 
     def __new_error(self, primary_text, seconday_text):
         """Show an error dialog."""
@@ -488,7 +494,8 @@ class WordbookWindow(Adw.ApplicationWindow):
                         out_string += f"\n        Also see:<i> {pretty_alsos}</i>"
         return out_string
 
-    def __process_word_links(self, word_list, word_col):
+    @staticmethod
+    def __process_word_links(word_list, word_col):
         pretty_list = []
         for word in word_list:
             pretty_list.append(
