@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2021 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2022 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import configparser
@@ -100,6 +100,7 @@ class Settings:
             old_name,  # the old section name
             new_name,  # the new section name
         ):
+            """Rename a section in the config."""
             items = config.items(old_name)
             config.add_section(new_name)
             for item in items:
@@ -114,6 +115,7 @@ class Settings:
             new_option_name=None,  # the new option name
             new_value=None,  # the new value
         ):
+            """Move an option from one section to another."""
             if new_section is None:
                 new_section = section
             if new_option_name is None:
@@ -135,6 +137,7 @@ class Settings:
         )
 
         utils.log_info(f"Version Code: {config_version}")
+        # Migrating older config files.
         if config_version != 6:
             if config_version == 1:
                 # Add new option.

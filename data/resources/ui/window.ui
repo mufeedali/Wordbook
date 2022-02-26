@@ -114,7 +114,7 @@
                     <property name="margin-bottom">12</property>
                     <property name="spacing">12</property>
                     <child>
-                      <object class="GtkImage" id="recents_image">
+                      <object class="GtkImage" id="history_image">
                         <property name="icon-name">document-open-recent-symbolic</property>
                       </object>
                     </child>
@@ -134,7 +134,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkStack" id="recents_stack">
+                  <object class="GtkStack" id="history_stack">
                     <property name="vexpand">True</property>
                     <child>
                       <object class="GtkStackPage">
@@ -146,7 +146,7 @@
                             <property name="child">
                               <object class="GtkViewport">
                                 <property name="child">
-                                  <object class="GtkListBox" id="recents_listbox">
+                                  <object class="GtkListBox" id="history_listbox">
                                     <property name="selection-mode">none</property>
                                   </object>
                                 </property>
@@ -310,9 +310,9 @@
                                 </child>
                                 <child>
                                   <object class="GtkStackPage">
-                                    <property name="name">fail_page</property>
+                                    <property name="name">search_fail_page</property>
                                     <property name="child">
-                                      <object class="AdwStatusPage" id="search_fail_page">
+                                      <object class="AdwStatusPage" id="search_fail_status_page">
                                         <property name="vexpand">True</property>
                                         <property name="icon-name">edit-find-symbolic</property>
                                         <property name="description" translatable="yes">No definition found</property>
