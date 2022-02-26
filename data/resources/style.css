@@ -1,14 +1,17 @@
 clamp .clamped-box {
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
+  border-radius: 0px;
   border-top: 1px solid @borders;
-  transition-property: margin;
+  transition-property: margin, border-radius;
   transition-duration: 200ms;
 }
 
+.clamped-box.medium {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
 .clamped-box.large {
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-radius: 12px;
   margin: 12px;
 }
 
