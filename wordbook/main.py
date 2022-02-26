@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2021 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2022 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import gi
@@ -126,10 +126,11 @@ class Application(Adw.Application):
         )
         about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/wordbook")
-        about_dialog.set_copyright(_("Copyright © 2016–2021 Mufeed Ali"))
+        about_dialog.set_copyright(_("Copyright © 2016-2022 Mufeed Ali"))
         about_dialog.present()
 
     def setup_actions(self):
+        """Setup the Gio actions for the application."""
         about_action = Gio.SimpleAction.new("about", None)
         about_action.connect("activate", self.on_about)
         self.add_action(about_action)
