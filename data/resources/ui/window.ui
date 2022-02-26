@@ -324,7 +324,7 @@
                                   <object class="GtkStackPage">
                                     <property name="name">network_fail_page</property>
                                     <property name="child">
-                                      <object class="AdwStatusPage">
+                                      <object class="AdwStatusPage" id="network_fail_status_page">
                                         <property name="icon-name">network-error-symbolic</property>
                                         <property name="title" translatable="yes">Download failed</property>
                                         <property name="child">
