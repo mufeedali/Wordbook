@@ -22,12 +22,15 @@ from wordbook.settings_window import SettingsWindow
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
+    search_button = Gtk.Template.Child("search_button")
+    download_status_page = Gtk.Template.Child("download_status_page")
+    loading_progress = Gtk.Template.Child("loading_progress")
+
     _key_ctrlr = Gtk.Template.Child("key_ctrlr")
     _header_bar = Gtk.Template.Child("header_bar")
     _title_clamp = Gtk.Template.Child("title_clamp")
     _flap_toggle_button = Gtk.Template.Child("flap_toggle_button")
     _search_entry = Gtk.Template.Child("search_entry")
-    search_button = Gtk.Template.Child("search_button")
     _speak_button = Gtk.Template.Child("speak_button")
     _menu_button = Gtk.Template.Child("wordbook_menu_button")
     _flap = Gtk.Template.Child("main_flap")
@@ -35,25 +38,23 @@ class WordbookWindow(Adw.ApplicationWindow):
     _clamp = Gtk.Template.Child("main_clamp")
     _clamped_box = Gtk.Template.Child("clamped_box")
     _stack = Gtk.Template.Child("main_stack")
-    download_status_page = Gtk.Template.Child("download_status_page")
-    loading_progress = Gtk.Template.Child("loading_progress")
-    _retry_button = Gtk.Template.Child("retry_button")
-    _exit_button = Gtk.Template.Child("exit_button")
     _main_scroll = Gtk.Template.Child("main_scroll")
     _def_view = Gtk.Template.Child("def_view")
     _def_ctrlr = Gtk.Template.Child("def_ctrlr")
     _pronunciation_view = Gtk.Template.Child("pronunciation_view")
     _term_view = Gtk.Template.Child("term_view")
+    _network_fail_status_page = Gtk.Template.Child("network_fail_status_page")
+    _retry_button = Gtk.Template.Child("retry_button")
+    _exit_button = Gtk.Template.Child("exit_button")
 
-    style_manager = None
+    _style_manager = None
 
-    _completion_request_count = 0
-    doubled = False
-    _pasted = False
-    searched_term = None
     _wn_downloader = base.WordnetDownloader()
     _wn_future = None
 
+    _doubled = False
+    _completion_request_count = 0
+    _searched_term = None
     _search_history = None
     _search_history_list = []
     _search_queue = []
@@ -100,8 +101,8 @@ class WordbookWindow(Adw.ApplicationWindow):
             GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE,
         )
 
-        self.style_manager = self.get_application().get_style_manager()
-        self.style_manager.connect("notify::dark", self._on_dark_style)
+        self._style_manager = self.get_application().get_style_manager()
+        self._style_manager.connect("notify::dark", self._on_dark_style)
 
         # Loading and setup.
         self.__wn_loader()
@@ -199,8 +200,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         status = None
         while self._search_queue:
             text = self._search_queue.pop(0)
-            orig_term = self.searched_term
-            self.searched_term = text
+            orig_term = self._searched_term
+            self._searched_term = text
             if text and (pass_check or not text == orig_term or text in except_list):
 
                 if not text.strip() == "":
@@ -290,18 +291,18 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_dark_style(self, _object, _param):
         """Refresh definition view."""
-        if self.searched_term is not None:
-            self.on_search_clicked(pass_check=True, text=self.searched_term)
+        if self._searched_term is not None:
+            self.on_search_clicked(pass_check=True, text=self._searched_term)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         if Settings.get().double_click:
-            self.doubled = n_press == 2
+            self._doubled = n_press == 2
         else:
-            self.doubled = False
+            self._doubled = False
 
     def _on_def_stop_event(self, _click):
         """Search on double click."""
-        if self.doubled:
+        if self._doubled:
             clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
             def on_paste(_clipboard, result):
@@ -331,7 +332,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         if Settings.get().live_search:
             GLib.idle_add(self.on_search_clicked)
 
-    def _on_exit_clicked(self, _widget):
+    @staticmethod
+    def _on_exit_clicked(_widget):
         sys.exit()
 
     def _on_link_activated(self, _widget, data):
@@ -386,7 +388,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
         base.read_term(
-            self.searched_term,
+            self._searched_term,
             speed="120",
             accent=Settings.get().pronunciations_accent,
         )
@@ -500,7 +502,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         if not text == "" and not text.isspace():
             return base.reactor(
                 text,
-                self.style_manager.get_dark(),
+                self._style_manager.get_dark(),
                 self._wn_future.result()["instance"],
                 Settings.get().cdef,
                 accent=Settings.get().pronunciations_accent,
@@ -511,7 +513,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                 _("Invalid input"),
                 _("Nothing definable was found in your search input"),
             )
-        self.searched_term = None
+        self._searched_term = None
         return None
 
     def __update_completions(self, text):
@@ -523,10 +525,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                 if len(_complete_list) >= 10:
                     break
                 item = item.replace("_", " ")
-                if (
-                    item.lower().startswith(text.lower())
-                    and item not in _complete_list
-                ):
+                if item.lower().startswith(text.lower()) and item not in _complete_list:
                     _complete_list.append(item)
 
             if Settings.get().cdef:
@@ -552,7 +551,10 @@ class WordbookWindow(Adw.ApplicationWindow):
     def __try_dl(self):
         try:
             self._wn_downloader.download(ProgressUpdater)
-        except Error:
+        except Error as err:
+            self._network_fail_status_page.set_description(
+                f"<small><tt>Error: {err}</tt></small>"
+            )
             self.__page_switch("network_fail_page")
 
     def __set_header_sensitive(self, status):
