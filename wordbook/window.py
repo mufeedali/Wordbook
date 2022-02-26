@@ -517,32 +517,32 @@ class WordbookWindow(Adw.ApplicationWindow):
     def __update_completions(self, text):
         while self._completion_request_count > 0:
             completer_liststore = Gtk.ListStore(str)
-            self._complete_list = []
+            _complete_list = []
 
             for item in self._wn_future.result()["list"]:
-                if len(self._complete_list) >= 10:
+                if len(_complete_list) >= 10:
                     break
                 item = item.replace("_", " ")
                 if (
                     item.lower().startswith(text.lower())
-                    and item not in self._complete_list
+                    and item not in _complete_list
                 ):
-                    self._complete_list.append(item)
+                    _complete_list.append(item)
 
             if Settings.get().cdef:
                 for item in os.listdir(utils.CDEF_DIR):
                     # FIXME: there is no indicator that this is a cdef
-                    if len(self._complete_list) >= 10:
+                    if len(_complete_list) >= 10:
                         break
                     item = escape(item).replace("_", " ")
                     if (
                         item.lower().startswith(text.lower())
-                        and item not in self._complete_list
+                        and item not in _complete_list
                     ):
-                        self._complete_list.append(item)
+                        _complete_list.append(item)
 
-            self._complete_list = sorted(self._complete_list, key=str.casefold)
-            for item in self._complete_list:
+            _complete_list = sorted(_complete_list, key=str.casefold)
+            for item in _complete_list:
                 completer_liststore.append((item,))
 
             self._completion_request_count -= 1
