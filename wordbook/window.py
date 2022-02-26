@@ -2,19 +2,20 @@
 # SPDX-FileCopyrightText: 2016-2021 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-# import os
+import os
 import random
 import sys
 import threading
-
 from gettext import gettext as _
+from html import escape
+
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 from wn import Error
 from wn.util import ProgressHandler
 
 from wordbook import base, utils
-from wordbook.settings_window import SettingsWindow
 from wordbook.settings import Settings
+from wordbook.settings_window import SettingsWindow
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
@@ -46,6 +47,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     style_manager = None
 
+    _completion_request_count = 0
     doubled = False
     _pasted = False
     searched_term = None
@@ -110,16 +112,13 @@ class WordbookWindow(Adw.ApplicationWindow):
             if self.lookup_term:
                 self.trigger_search(self.lookup_term)
 
-        # Completions. This is kept separate because it uses its own weird logic.
-        # This and related code might need refactoring later on.
-        # self.completer = Gtk.EntryCompletion()
-        # self.completer_liststore = Gtk.ListStore(str)
-        # self.completer.set_text_column(0)
-        # self.completer.set_model(self.completer_liststore)
-        # self.completer.set_popup_completion(not Settings.get().live_search)
-        # self.completer.set_popup_set_width(True)
-        # self._search_entry.set_completion(self.completer)
-        # self.completer.connect("action-activated", self._on_entry_completed)
+        # Completions
+        self.completer = Gtk.EntryCompletion()
+        self.completer.set_popup_single_match(False)
+        self.completer.set_text_column(0)
+        self.completer.set_popup_completion(not Settings.get().live_search)
+        self.completer.set_popup_set_width(True)
+        self._search_entry.set_completion(self.completer)
 
         # Load History.
         self._search_history_list = Settings.get().history
@@ -321,29 +320,16 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""
 
-        # self._completion_request_count += 1
-        # if self._completion_request_count == 1:
-        #     threading.Thread(
-        #         target=self.__update_completions,
-        #         args=[self._search_entry.get_text()],
-        #         daemon=True,
-        #     ).start()
+        self._completion_request_count += 1
+        if self._completion_request_count == 1:
+            threading.Thread(
+                target=self.__update_completions,
+                args=[self._search_entry.get_text()],
+                daemon=True,
+            ).start()
 
         if Settings.get().live_search:
             GLib.idle_add(self.on_search_clicked)
-
-    # def _on_entry_completed(self, _entry_completion, index):
-    #     """Enter text into the entry using completions."""
-    #     text = (
-    #         self._complete_list[index]
-    #         .replace("<i>", "")
-    #         .replace("</i>", "")
-    #         .replace("<b>", "")
-    #         .replace("</b>", "")
-    #     )
-    #     self._search_entry.set_text(unescape(text))
-    #     self._search_entry.set_position(-1)
-    #     GLib.idle_add(self.on_search_clicked)
 
     def _on_exit_clicked(self, _widget):
         sys.exit()
@@ -528,41 +514,40 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.searched_term = None
         return None
 
-    # def __update_completions(self, text):
-    #     while self._completion_request_count > 0:
-    #         while len(self._complete_list) > 0:
-    #             GLib.idle_add(self.completer.delete_action, 0)
-    #             self._complete_list.pop(0)
+    def __update_completions(self, text):
+        while self._completion_request_count > 0:
+            completer_liststore = Gtk.ListStore(str)
+            self._complete_list = []
 
-    #         for item in self._wn_future.result()["list"]:
-    #             if len(self._complete_list) >= 10:
-    #                 break
-    #             item = item.replace("_", " ")
-    #             if (
-    #                 item.lower().startswith(text.lower())
-    #                 and item not in self._complete_list
-    #             ):
-    #                 self._complete_list.append(item)
+            for item in self._wn_future.result()["list"]:
+                if len(self._complete_list) >= 10:
+                    break
+                item = item.replace("_", " ")
+                if (
+                    item.lower().startswith(text.lower())
+                    and item not in self._complete_list
+                ):
+                    self._complete_list.append(item)
 
-    #         if Settings.get().cdef:
-    #             for item in os.listdir(utils.CDEF_DIR):
-    #                 if len(self._complete_list) >= 10:
-    #                     break
-    #                 item = escape(item).replace("_", " ")
-    #                 if item in self._complete_list:
-    #                     self._complete_list.remove(item)
-    #                 if item.lower().startswith(text.lower()):
-    #                     self._complete_list.append(f"<i>{item}</i>")
+            if Settings.get().cdef:
+                for item in os.listdir(utils.CDEF_DIR):
+                    # FIXME: there is no indicator that this is a cdef
+                    if len(self._complete_list) >= 10:
+                        break
+                    item = escape(item).replace("_", " ")
+                    if (
+                        item.lower().startswith(text.lower())
+                        and item not in self._complete_list
+                    ):
+                        self._complete_list.append(item)
 
-    #         self._complete_list = sorted(self._complete_list, key=str.casefold)
-    #         for item in self._complete_list:
-    #             GLib.idle_add(
-    #                 self.completer.insert_action_markup,
-    #                 self._complete_list.index(item),
-    #                 item,
-    #             )
+            self._complete_list = sorted(self._complete_list, key=str.casefold)
+            for item in self._complete_list:
+                completer_liststore.append((item,))
 
-    #         self._completion_request_count -= 1
+            self._completion_request_count -= 1
+            GLib.idle_add(self.completer.set_model, completer_liststore)
+            GLib.idle_add(self.completer.complete)
 
     def __try_dl(self):
         try:
