@@ -1,7 +1,7 @@
 project(
     'wordbook',  
     version: '0.3.1',
-    meson_version: '>= 0.50.0',
+    meson_version: '>= 0.59.0',
     default_options: [ 'warning_level=2',
                      ],
 )
@@ -21,8 +21,8 @@ else
 endif
 
 dependency('gobject-introspection-1.0', version: '>= 1.35.0')
-dependency('gtk4', version: '>= 4.0.0')
-dependency('libadwaita-1', version: '>=1.0.0')
+dependency('gtk4', version: '>= 4.6')
+dependency('libadwaita-1', version: '>=1.0')
 dependency('glib-2.0')
 dependency('pygobject-3.0', version: '>= 3.29.1')
 
@@ -64,4 +64,8 @@ subdir('data')
 subdir('wordbook')
 subdir('po')
 
-meson.add_install_script('build-aux/meson/postinstall.py')
+gnome.post_install(
+  gtk_update_icon_cache: true,
+  glib_compile_schemas: true,
+  update_desktop_database: true,
+)
