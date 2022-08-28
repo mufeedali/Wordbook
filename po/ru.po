@@ -1,127 +1,127 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# This file is distributed under the same license as the wordbook package.
+# FIRST AUTHOR <hdsujnb@gmail.com>, 2022.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-27 14:55+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2022-08-27 14:57+0300\n"
+"Last-Translator: Danila Daniilov <hdsujnb@gmail.com>\n"
+"Language-Team: \n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.1\n"
 
 #: data/resources/ui/settings_window.ui:14
 msgid "Appearance"
-msgstr ""
+msgstr "Внешний вид"
 
 #: data/resources/ui/settings_window.ui:17
 msgid "Force Dark Mode"
-msgstr ""
+msgstr "Всегда использовать тёмный режим"
 
 #: data/resources/ui/settings_window.ui:30
 msgid "Behavior"
-msgstr ""
+msgstr "Поведение"
 
 #: data/resources/ui/settings_window.ui:33
 msgid "Live Search"
-msgstr ""
+msgstr "Поиск в реальном времени"
 
 #: data/resources/ui/settings_window.ui:35
 msgid "Show definition as the terms are typed in"
-msgstr ""
+msgstr "Показывать определение при вводе терминов"
 
 #: data/resources/ui/settings_window.ui:45
 msgid "Double Click Search"
-msgstr ""
+msgstr "Поиск по двойному клику"
 
 #: data/resources/ui/settings_window.ui:47
 msgid "Search any word by double clicking on it"
-msgstr ""
+msgstr "Поиск любого слова при двойном нажатии на него"
 
 #: data/resources/ui/settings_window.ui:57
 msgid "Pronunciations Accent"
-msgstr ""
+msgstr "Акцент произношения"
 
 #: data/resources/ui/shortcuts_window.ui:12
 msgctxt "shortcut window"
 msgid "General"
-msgstr ""
+msgstr "Общее"
 
 #: data/resources/ui/shortcuts_window.ui:15
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr ""
+msgstr "Показать комбинации клавиш"
 
 #: data/resources/ui/shortcuts_window.ui:21
 msgctxt "shortcut window"
 msgid "Preferences"
-msgstr ""
+msgstr "Настройки"
 
 #: data/resources/ui/shortcuts_window.ui:27
 msgctxt "shortcut window"
 msgid "Paste and Search"
-msgstr ""
+msgstr "Вставить и искать"
 
 #: data/resources/ui/shortcuts_window.ui:33
 msgctxt "shortcut window"
 msgid "Random Word"
-msgstr ""
+msgstr "Случайное слово"
 
 #: data/resources/ui/shortcuts_window.ui:39
 msgctxt "shortcut window"
 msgid "Search Selected Text"
-msgstr ""
+msgstr "Поиск выделенного текста"
 
 #: data/resources/ui/window.ui:9
 msgid "Paste & Search"
-msgstr ""
+msgstr "Вставить и искать"
 
 #: data/resources/ui/window.ui:13
 msgid "Search Selected Text"
-msgstr ""
+msgstr "Поиск выделенного текста"
 
 #: data/resources/ui/window.ui:17
 msgid "_Random Word"
-msgstr ""
+msgstr "Случайное слово"
 
 #: data/resources/ui/window.ui:24
 msgid "_Preferences"
-msgstr ""
+msgstr "Настройки"
 
 #: data/resources/ui/window.ui:28
 msgid "_Keyboard Shortcuts"
-msgstr ""
+msgstr "Комбинации клавиш"
 
 #: data/resources/ui/window.ui:32
 msgid "_About Wordbook"
-msgstr ""
+msgstr "О Wordbook"
 
 #: data/resources/ui/window.ui:66
 msgid "Search"
-msgstr ""
+msgstr "Поиск"
 
 #: data/resources/ui/window.ui:79
 msgid "Show History"
-msgstr ""
+msgstr "Показать историю"
 
 #: data/resources/ui/window.ui:124
 msgid "History"
-msgstr ""
+msgstr "История"
 
 #: data/resources/ui/window.ui:198
 msgid "Setting things up…"
-msgstr ""
+msgstr "Настройка..."
 
 #: data/resources/ui/window.ui:199 wordbook/window.py:577
 msgid "Downloading WordNet…"
-msgstr ""
+msgstr "Загрузка WordNet..."
 
 #: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
 #: wordbook/main.py:119
@@ -130,39 +130,39 @@ msgstr ""
 
 #: data/resources/ui/window.ui:221
 msgid "Lookup definitions of any English term"
-msgstr ""
+msgstr "Поиск определений любых английских терминов"
 
 #: data/resources/ui/window.ui:255
 msgid "/Pronunciation/"
-msgstr ""
+msgstr "Произношение"
 
 #: data/resources/ui/window.ui:278
 msgid "Listen to Pronunciation"
-msgstr ""
+msgstr "Прослушать Произношение"
 
 #: data/resources/ui/window.ui:318
 msgid "No definition found"
-msgstr ""
+msgstr "Определение не найдено"
 
 #: data/resources/ui/window.ui:329
 msgid "Download failed"
-msgstr ""
+msgstr "Ошибка загрузки"
 
 #: data/resources/ui/window.ui:336
 msgid "Retry"
-msgstr ""
+msgstr "Попробовать снова"
 
 #: data/resources/ui/window.ui:345
 msgid "Exit"
-msgstr ""
+msgstr "Выйти"
 
 #: wordbook/main.py:121
 msgid "Lookup definitions of any English term."
-msgstr ""
+msgstr "Поиск определений любых английских терминов."
 
 #: wordbook/main.py:127
 msgid "translators"
-msgstr ""
+msgstr "hdsujnb"
 
 #: wordbook/main.py:134
 msgid "Copyright © 2016-2022 Mufeed Ali"
@@ -170,28 +170,28 @@ msgstr ""
 
 #: wordbook/window.py:407
 msgid "Ready."
-msgstr ""
+msgstr "Готово."
 
 #: wordbook/window.py:527
 msgid "Invalid input"
-msgstr ""
+msgstr "Неправильный ввод"
 
 #: wordbook/window.py:528
 msgid "Nothing definable was found in your search input"
-msgstr ""
+msgstr "В результате поиска ничего не было найдено"
 
 #: wordbook/window.py:597
 msgid "Re-downloading WordNet database"
-msgstr ""
+msgstr "Повторная загрузка базы данных WordNet"
 
 #: wordbook/window.py:599
 msgid "Just a database upgrade."
-msgstr ""
+msgstr "Только обновление базы данных."
 
 #: wordbook/window.py:601
 msgid "This shouldn't happen too often."
-msgstr ""
+msgstr "Это не должно происходить слишком часто."
 
 #: wordbook/window.py:646
 msgid "Building Database…"
-msgstr ""
+msgstr "Создание базы данных..."

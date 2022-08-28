@@ -124,6 +124,11 @@ class Application(Adw.Application):
                 "Mufeed Ali",
             ]
         )
+        translators = _("translators")
+        if (
+            translators != "translators"
+        ):  # If there are no translators, do not use set_translator_credits
+            about_dialog.set_translator_credits(translators)
         about_dialog.set_license_type(Gtk.License.GPL_3_0)
         about_dialog.set_website("https://www.github.com/fushinari/wordbook")
         about_dialog.set_copyright(_("Copyright © 2016-2022 Mufeed Ali"))
