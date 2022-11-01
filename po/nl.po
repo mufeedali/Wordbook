@@ -1,0 +1,197 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Heimen Stoffels <vistausss@fastmail.com>, 2022.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-27 14:55+0300\n"
+"PO-Revision-Date: 2022-09-19 20:14+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 22.08.1\n"
+
+#: data/resources/ui/settings_window.ui:14
+msgid "Appearance"
+msgstr "Vormgeving"
+
+#: data/resources/ui/settings_window.ui:17
+msgid "Force Dark Mode"
+msgstr "Donker thema gebruiken"
+
+#: data/resources/ui/settings_window.ui:30
+msgid "Behavior"
+msgstr "Gedrag"
+
+#: data/resources/ui/settings_window.ui:33
+msgid "Live Search"
+msgstr "Typen om te zoeken"
+
+#: data/resources/ui/settings_window.ui:35
+msgid "Show definition as the terms are typed in"
+msgstr "Toon resultaten tijdens het typen"
+
+#: data/resources/ui/settings_window.ui:45
+msgid "Double Click Search"
+msgstr "Dubbelklikken om te zoeken"
+
+#: data/resources/ui/settings_window.ui:47
+msgid "Search any word by double clicking on it"
+msgstr "Zoek de betekenis van een woord door er op te dubbelklikken"
+
+#: data/resources/ui/settings_window.ui:57
+msgid "Pronunciations Accent"
+msgstr "Accent"
+
+#: data/resources/ui/shortcuts_window.ui:12
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Algemeen"
+
+#: data/resources/ui/shortcuts_window.ui:15
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Sneltoetsen tonen"
+
+#: data/resources/ui/shortcuts_window.ui:21
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+#: data/resources/ui/shortcuts_window.ui:27
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "Plakken en zoeken"
+
+#: data/resources/ui/shortcuts_window.ui:33
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "Willekeurig woord tonen"
+
+#: data/resources/ui/shortcuts_window.ui:39
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "Selectie zoeken"
+
+#: data/resources/ui/window.ui:9
+msgid "Paste & Search"
+msgstr "Plakken en zoeken"
+
+#: data/resources/ui/window.ui:13
+msgid "Search Selected Text"
+msgstr "Selectie zoeken"
+
+#: data/resources/ui/window.ui:17
+msgid "_Random Word"
+msgstr "Willekeu_rig woord tonen"
+
+#: data/resources/ui/window.ui:24
+msgid "_Preferences"
+msgstr "_Voorkeuren"
+
+#: data/resources/ui/window.ui:28
+msgid "_Keyboard Shortcuts"
+msgstr "_Sneltoetsen"
+
+#: data/resources/ui/window.ui:32
+msgid "_About Wordbook"
+msgstr "_Over Woordenboek"
+
+#: data/resources/ui/window.ui:66
+msgid "Search"
+msgstr "Zoeken"
+
+#: data/resources/ui/window.ui:79
+msgid "Show History"
+msgstr "Geschiedenis tonen"
+
+#: data/resources/ui/window.ui:124
+msgid "History"
+msgstr "Geschiedenis"
+
+#: data/resources/ui/window.ui:198
+msgid "Setting things up…"
+msgstr "Bezig met voorbereiden…"
+
+#: data/resources/ui/window.ui:199 wordbook/window.py:577
+msgid "Downloading WordNet…"
+msgstr "Bezig met ophalen van WordNet…"
+
+#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
+#: wordbook/main.py:119
+msgid "Wordbook"
+msgstr "Woordenboek"
+
+#: data/resources/ui/window.ui:221
+msgid "Lookup definitions of any English term"
+msgstr "Bekijk de betekenis van Engelstalige termen"
+
+#: data/resources/ui/window.ui:255
+msgid "/Pronunciation/"
+msgstr "/Uitspraak/"
+
+#: data/resources/ui/window.ui:278
+msgid "Listen to Pronunciation"
+msgstr "Voorlezen"
+
+#: data/resources/ui/window.ui:318
+msgid "No definition found"
+msgstr "Er is geen betekenis gevonden"
+
+#: data/resources/ui/window.ui:329
+msgid "Download failed"
+msgstr "Het downloaden is mislukt"
+
+#: data/resources/ui/window.ui:336
+msgid "Retry"
+msgstr "Opnieuw"
+
+#: data/resources/ui/window.ui:345
+msgid "Exit"
+msgstr "Afsluiten"
+
+#: wordbook/main.py:121
+msgid "Lookup definitions of any English term."
+msgstr "Bekijk de betekenis van Engelstalige termen."
+
+#: wordbook/main.py:127
+msgid "translators"
+msgstr "Heimen Stoffels <vistausss@fastmail.com>"
+
+#: wordbook/main.py:134
+msgid "Copyright © 2016-2022 Mufeed Ali"
+msgstr "Copyright © 2016-2022 Mufeed Ali"
+
+#: wordbook/window.py:407
+msgid "Ready."
+msgstr "Klaar voor gebruik."
+
+#: wordbook/window.py:527
+msgid "Invalid input"
+msgstr "Ongeldige invoer"
+
+#: wordbook/window.py:528
+msgid "Nothing definable was found in your search input"
+msgstr "Er is geen betekenis aangetroffen van de door u gezochte term"
+
+#: wordbook/window.py:597
+msgid "Re-downloading WordNet database"
+msgstr "Bezig met opnieuw ophalen van WordNet…"
+
+#: wordbook/window.py:599
+msgid "Just a database upgrade."
+msgstr "Gewoon een databankupdate."
+
+#: wordbook/window.py:601
+msgid "This shouldn't happen too often."
+msgstr "Dit zou niet al te vaak moeten gebeuren."
+
+#: wordbook/window.py:646
+msgid "Building Database…"
+msgstr "Bezig met samenstellen van databank…"
