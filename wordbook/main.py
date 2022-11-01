@@ -114,25 +114,23 @@ class Application(Adw.Application):
 
     def on_about(self, _action, _param):
         """Show the about window."""
-        about_dialog = Gtk.AboutDialog(transient_for=self.win, modal=True)
-        about_dialog.set_logo_icon_name(Gio.Application.get_default().app_id)
-        about_dialog.set_program_name(_("Wordbook"))
-        about_dialog.set_version(Gio.Application.get_default().version)
-        about_dialog.set_comments(_("Lookup definitions of any English term."))
-        about_dialog.set_authors(
-            [
-                "Mufeed Ali",
-            ]
-        )
+        about_window = Adw.AboutWindow()
+        about_window.set_application_icon(Gio.Application.get_default().app_id)
+        about_window.set_application_name(_("Wordbook"))
+        about_window.set_version(Gio.Application.get_default().version)
+        about_window.set_comments(_("Lookup definitions of any English term."))
+        about_window.set_developer_name("Mufeed Ali")
         translators = _("translators")
         if (
             translators != "translators"
         ):  # If there are no translators, do not use set_translator_credits
-            about_dialog.set_translator_credits(translators)
-        about_dialog.set_license_type(Gtk.License.GPL_3_0)
-        about_dialog.set_website("https://www.github.com/fushinari/wordbook")
-        about_dialog.set_copyright(_("Copyright © 2016-2022 Mufeed Ali"))
-        about_dialog.present()
+            about_window.set_translator_credits(translators)
+        about_window.set_license_type(Gtk.License.GPL_3_0)
+        about_window.set_website("https://github.com/fushinari/wordbook")
+        about_window.set_issue_url("https://github.com/fushinari/wordbook/issues")
+        about_window.set_copyright(_("Copyright © 2016-2022 Mufeed Ali"))
+        about_window.set_transient_for(self.win)
+        about_window.present()
 
     def setup_actions(self):
         """Setup the Gio actions for the application."""
