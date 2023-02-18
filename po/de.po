@@ -1,0 +1,196 @@
+# German translation for the Wordbook's package.
+# Copyright (C) 2023 THE Wordbook'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Wordbook's package.
+# gregorni <gregorniehl@web.de>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-27 14:55+0300\n"
+"PO-Revision-Date: 2023-02-18 22:39+0100\n"
+"Last-Translator: gregorni <gregorniehl@web.de>\n"
+"Language-Team: German <gnome-de@gnome.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/resources/ui/settings_window.ui:14
+msgid "Appearance"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:17
+msgid "Force Dark Mode"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:30
+msgid "Behavior"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:33
+msgid "Live Search"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:35
+msgid "Show definition as the terms are typed in"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:45
+msgid "Double Click Search"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:47
+msgid "Search any word by double clicking on it"
+msgstr ""
+
+#: data/resources/ui/settings_window.ui:57
+msgid "Pronunciations Accent"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.ui:12
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Allgemein"
+
+#: data/resources/ui/shortcuts_window.ui:15
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Tastenkürzel anzeigen"
+
+#: data/resources/ui/shortcuts_window.ui:21
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: data/resources/ui/shortcuts_window.ui:27
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "Einfügen und Suchen"
+
+#: data/resources/ui/shortcuts_window.ui:33
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "Zufälliges Wort"
+
+#: data/resources/ui/shortcuts_window.ui:39
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "Ausgewählten Text Suchen"
+
+#: data/resources/ui/window.ui:9
+msgid "Paste & Search"
+msgstr "Einfügen & Suchen"
+
+#: data/resources/ui/window.ui:13
+msgid "Search Selected Text"
+msgstr "Ausgewählten Text Suchen"
+
+#: data/resources/ui/window.ui:17
+msgid "_Random Word"
+msgstr "_Zufälliges Wort"
+
+#: data/resources/ui/window.ui:24
+msgid "_Preferences"
+msgstr "_Einstellungen"
+
+#: data/resources/ui/window.ui:28
+msgid "_Keyboard Shortcuts"
+msgstr "_Tastenkürzel"
+
+#: data/resources/ui/window.ui:32
+msgid "_About Wordbook"
+msgstr "_Über Wordbook"
+
+#: data/resources/ui/window.ui:66
+msgid "Search"
+msgstr "Suchen"
+
+#: data/resources/ui/window.ui:79
+msgid "Show History"
+msgstr ""
+
+#: data/resources/ui/window.ui:124
+msgid "History"
+msgstr ""
+
+#: data/resources/ui/window.ui:198
+msgid "Setting things up…"
+msgstr ""
+
+#: data/resources/ui/window.ui:199 wordbook/window.py:577
+msgid "Downloading WordNet…"
+msgstr ""
+
+#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
+#: wordbook/main.py:119
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.ui:221
+msgid "Lookup definitions of any English term"
+msgstr ""
+
+#: data/resources/ui/window.ui:255
+msgid "/Pronunciation/"
+msgstr "/Aussprache/"
+
+#: data/resources/ui/window.ui:278
+msgid "Listen to Pronunciation"
+msgstr "Aussprache anhören"
+
+#: data/resources/ui/window.ui:318
+msgid "No definition found"
+msgstr "Keine Definition gefunden"
+
+#: data/resources/ui/window.ui:329
+msgid "Download failed"
+msgstr ""
+
+#: data/resources/ui/window.ui:336
+msgid "Retry"
+msgstr ""
+
+#: data/resources/ui/window.ui:345
+msgid "Exit"
+msgstr ""
+
+#: wordbook/main.py:121
+msgid "Lookup definitions of any English term."
+msgstr ""
+
+#: wordbook/main.py:127
+msgid "translators"
+msgstr "gregorni\n"
+
+#: wordbook/main.py:134
+msgid "Copyright © 2016-2022 Mufeed Ali"
+msgstr "Copyright © 2016-2022 Mufeed Ali"
+
+#: wordbook/window.py:407
+msgid "Ready."
+msgstr ""
+
+#: wordbook/window.py:527
+msgid "Invalid input"
+msgstr ""
+
+#: wordbook/window.py:528
+msgid "Nothing definable was found in your search input"
+msgstr ""
+
+#: wordbook/window.py:597
+msgid "Re-downloading WordNet database"
+msgstr ""
+
+#: wordbook/window.py:599
+msgid "Just a database upgrade."
+msgstr ""
+
+#: wordbook/window.py:601
+msgid "This shouldn't happen too often."
+msgstr ""
+
+#: wordbook/window.py:646
+msgid "Building Database…"
+msgstr ""
