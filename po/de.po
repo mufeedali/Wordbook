@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-27 14:55+0300\n"
 "PO-Revision-Date: 2023-02-18 22:39+0100\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: data/resources/ui/settings_window.ui:14
 msgid "Appearance"
-msgstr ""
+msgstr "Erscheinungsbild"
 
 #: data/resources/ui/settings_window.ui:17
 msgid "Force Dark Mode"
