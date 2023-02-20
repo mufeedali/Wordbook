@@ -22,31 +22,31 @@ msgstr "Erscheinungsbild"
 
 #: data/resources/ui/settings_window.ui:17
 msgid "Force Dark Mode"
-msgstr ""
+msgstr "Dunkelmodus benutzen"
 
 #: data/resources/ui/settings_window.ui:30
 msgid "Behavior"
-msgstr ""
+msgstr "Verhalten"
 
 #: data/resources/ui/settings_window.ui:33
 msgid "Live Search"
-msgstr ""
+msgstr "Live-Suche"
 
 #: data/resources/ui/settings_window.ui:35
 msgid "Show definition as the terms are typed in"
-msgstr ""
+msgstr "Zeigt Ergebnisse an, während der Suchbegriff eingegeben wird"
 
 #: data/resources/ui/settings_window.ui:45
 msgid "Double Click Search"
-msgstr ""
+msgstr "Doppelklick zum Suchen"
 
 #: data/resources/ui/settings_window.ui:47
 msgid "Search any word by double clicking on it"
-msgstr ""
+msgstr "Doppelklicken Sie Wörter, um sie zu suchen"
 
 #: data/resources/ui/settings_window.ui:57
 msgid "Pronunciations Accent"
-msgstr ""
+msgstr "Akzent der Aussprache"
 
 #: data/resources/ui/shortcuts_window.ui:12
 msgctxt "shortcut window"
@@ -108,19 +108,19 @@ msgstr "Suchen"
 
 #: data/resources/ui/window.ui:79
 msgid "Show History"
-msgstr ""
+msgstr "Verlauf anzeigen"
 
 #: data/resources/ui/window.ui:124
 msgid "History"
-msgstr ""
+msgstr "Verlauf"
 
 #: data/resources/ui/window.ui:198
 msgid "Setting things up…"
-msgstr ""
+msgstr "Die App wird vorbereitet…"
 
 #: data/resources/ui/window.ui:199 wordbook/window.py:577
 msgid "Downloading WordNet…"
-msgstr ""
+msgstr "WordNet wird heruntergeladen…"
 
 #: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
 #: wordbook/main.py:119
@@ -129,7 +129,7 @@ msgstr "Wordbook"
 
 #: data/resources/ui/window.ui:221
 msgid "Lookup definitions of any English term"
-msgstr ""
+msgstr "Schlagen Sie die Definitionen englischer Wörter nach"
 
 #: data/resources/ui/window.ui:255
 msgid "/Pronunciation/"
@@ -145,23 +145,23 @@ msgstr "Keine Definition gefunden"
 
 #: data/resources/ui/window.ui:329
 msgid "Download failed"
-msgstr ""
+msgstr "Download fehlgeschlagen"
 
 #: data/resources/ui/window.ui:336
 msgid "Retry"
-msgstr ""
+msgstr "Erneut versuchen"
 
 #: data/resources/ui/window.ui:345
 msgid "Exit"
-msgstr ""
+msgstr "Beenden"
 
 #: wordbook/main.py:121
 msgid "Lookup definitions of any English term."
-msgstr ""
+msgstr "Schlagen Sie die Definitionen englischer Wörter nach."
 
 #: wordbook/main.py:127
 msgid "translators"
-msgstr "gregorni\n"
+msgstr "gregorni https://gitlab.com/gregorni"
 
 #: wordbook/main.py:134
 msgid "Copyright © 2016-2022 Mufeed Ali"
@@ -169,28 +169,28 @@ msgstr "Copyright © 2016-2022 Mufeed Ali"
 
 #: wordbook/window.py:407
 msgid "Ready."
-msgstr ""
+msgstr "Bereit."
 
 #: wordbook/window.py:527
 msgid "Invalid input"
-msgstr ""
+msgstr "Ungültige Eingabe"
 
 #: wordbook/window.py:528
 msgid "Nothing definable was found in your search input"
-msgstr ""
+msgstr "Es wurde keine Definition für Ihren Suchbegriff gefunden"
 
 #: wordbook/window.py:597
 msgid "Re-downloading WordNet database"
-msgstr ""
+msgstr "Lade die WordNet-Datenbank erneut herunter"
 
 #: wordbook/window.py:599
 msgid "Just a database upgrade."
-msgstr ""
+msgstr "Die Datenbank wird aktualisiert."
 
 #: wordbook/window.py:601
 msgid "This shouldn't happen too often."
-msgstr ""
+msgstr "Dies sollte nicht zu häufig passieren."
 
 #: wordbook/window.py:646
 msgid "Building Database…"
-msgstr ""
+msgstr "Datenbank wird erstellt…"
