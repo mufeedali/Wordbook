@@ -7,6 +7,7 @@
 *.backup
 .idea/
 .flatpak/
+.flatpak-builder/
 deprecated_stuff/
 _build/
 

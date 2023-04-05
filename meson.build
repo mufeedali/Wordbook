@@ -10,7 +10,7 @@ i18n = import('i18n')
 gnome = import('gnome')
 python = import('python')
 
-base_id = 'com.github.fushinari.Wordbook'
+base_id = 'dev.mufeed.Wordbook'
 
 message('Looking for dependencies')
 py_installation = python.find_installation('python3')

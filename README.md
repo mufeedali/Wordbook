@@ -1,5 +1,5 @@
 <h1 align="center">
-<img height="128" src="data/icons/com.github.fushinari.Wordbook.svg" alt="Wordbook"/><br>
+<img height="128" src="data/icons/dev.mufeed.Wordbook.svg" alt="Wordbook"/><br>
 Wordbook
 </h1>
 
@@ -41,7 +41,7 @@ Wordbook
 
 ### Using Flatpak
 
-<a href='https://flathub.org/apps/details/com.github.fushinari.Wordbook'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
+<a href='https://flathub.org/apps/details/dev.mufeed.Wordbook'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
 ### Using distro-specific packages
 

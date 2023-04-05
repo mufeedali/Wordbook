@@ -162,8 +162,8 @@ msgid "Lookup definitions of any English term."
 msgstr "Recherchez les définitions d’un terme anglais"
 
 #: wordbook/main.py:129
-msgid "Copyright © 2016-2022 Mufeed Ali"
-msgstr "Copyright © 2016-2022 Mufeed Ali"
+msgid "Copyright © 2016-2023 Mufeed Ali"
+msgstr "Copyright © 2016-2023 Mufeed Ali"
 
 #: wordbook/window.py:407
 msgid "Ready."

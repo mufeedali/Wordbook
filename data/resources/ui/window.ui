@@ -216,7 +216,7 @@
                                     <property name="name">welcome_page</property>
                                     <property name="child">
                                       <object class="AdwStatusPage" id="before_search_page">
-                                        <property name="icon-name">com.github.fushinari.Wordbook-symbolic</property>
+                                        <property name="icon-name">dev.mufeed.Wordbook-symbolic</property>
                                         <property name="title" translatable="yes">Wordbook</property>
                                         <property name="description" translatable="yes">Lookup definitions of any English term</property>
                                       </object>

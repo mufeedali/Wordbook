@@ -165,8 +165,8 @@ msgid "translators"
 msgstr "Heimen Stoffels <vistausss@fastmail.com>"
 
 #: wordbook/main.py:134
-msgid "Copyright © 2016-2022 Mufeed Ali"
-msgstr "Copyright © 2016-2022 Mufeed Ali"
+msgid "Copyright © 2016-2023 Mufeed Ali"
+msgstr "Copyright © 2016-2023 Mufeed Ali"
 
 #: wordbook/window.py:407
 msgid "Ready."

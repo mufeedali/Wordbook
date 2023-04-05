@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2022 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2023 Mufeed Ali <fushinari@protonmail.com>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
@@ -273,7 +273,7 @@ def get_pronunciation(term, accent="us"):
 def get_version_info(version):
     """Present clear version info."""
     print("Wordbook - " + version)
-    print("Copyright 2016-2022 Mufeed Ali")
+    print("Copyright 2016-2023 Mufeed Ali")
     print()
     try:
         espeak_process = subprocess.Popen(

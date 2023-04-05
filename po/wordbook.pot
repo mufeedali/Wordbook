@@ -165,7 +165,7 @@ msgid "translators"
 msgstr ""
 
 #: wordbook/main.py:134
-msgid "Copyright © 2016-2022 Mufeed Ali"
+msgid "Copyright © 2016-2023 Mufeed Ali"
 msgstr ""
 
 #: wordbook/window.py:407
