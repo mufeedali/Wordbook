@@ -89,9 +89,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._speak_button.connect("clicked", self._on_speak_clicked)
         self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
-        self._main_scroll.get_vadjustment().connect(
-            "value-changed", self._on_scroll_event
-        )
+        self._main_scroll.get_vadjustment().connect("value-changed", self._on_scroll_event)
 
         self._flap.bind_property(
             "reveal-flap",
@@ -203,7 +201,6 @@ class WordbookWindow(Adw.ApplicationWindow):
             orig_term = self._searched_term
             self._searched_term = text
             if text and (pass_check or not text == orig_term or text in except_list):
-
                 if not text.strip() == "":
                     GLib.idle_add(self._def_view.set_markup, "")
 
@@ -226,17 +223,13 @@ class WordbookWindow(Adw.ApplicationWindow):
                     if out["out_string"] is not None:
                         status = validate_result(text, out["out_string"])
                     elif out["result"] is not None:
-                        status = validate_result(
-                            text, self._process_result(out["result"])
-                        )
+                        status = validate_result(text, self._process_result(out["result"]))
                     else:
                         status = SearchStatus.FAILURE
                         self._last_search_fail = True
                         continue
 
-                    term_view_text = (
-                        f'<span size="large" weight="bold">{out["term"].strip()}</span>'
-                    )
+                    term_view_text = f'<span size="large" weight="bold">{out["term"].strip()}</span>'
                     GLib.idle_add(
                         self._term_view.set_markup,
                         term_view_text,
@@ -246,9 +239,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                         term_view_text,
                     )
 
-                    pron = (
-                        "<i>" + out["pronunciation"].strip().replace("\n", "") + "</i>"
-                    )
+                    pron = "<i>" + out["pronunciation"].strip().replace("\n", "") + "</i>"
                     GLib.idle_add(
                         self._pronunciation_view.set_markup,
                         pron,
@@ -382,9 +373,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         if self._active_thread is None:
             # If there is no active thread, create one and start it.
-            self._active_thread = threading.Thread(
-                target=self.threaded_search, args=[pass_check], daemon=True
-            )
+            self._active_thread = threading.Thread(target=self.threaded_search, args=[pass_check], daemon=True)
             self._active_thread.start()
 
     def _on_scroll_event(self, adjustment):
@@ -428,9 +417,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _new_error(self, primary_text, seconday_text):
         """Show an error dialog."""
-        dialog = Gtk.MessageDialog(
-            self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, primary_text
-        )
+        dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, primary_text)
         dialog.format_secondary_text(seconday_text)
         dialog.run()
         dialog.destroy()
@@ -472,9 +459,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                     out_string += f'\n  <b>{i}</b>: {synset["definition"]}'
 
                     for example in synset["examples"]:
-                        out_string += (
-                            f'\n        <span foreground="{sen_col}">{example}</span>'
-                        )
+                        out_string += f'\n        <span foreground="{sen_col}">{example}</span>'
 
                     pretty_syn = self._process_word_links(synset["syn"], word_col)
                     if pretty_syn:
@@ -488,9 +473,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                     if pretty_sims:
                         out_string += f"\n        Similar to:<i> {pretty_sims}</i>"
 
-                    pretty_alsos = self._process_word_links(
-                        synset["also_sees"], word_col
-                    )
+                    pretty_alsos = self._process_word_links(synset["also_sees"], word_col)
                     if pretty_alsos:
                         out_string += f"\n        Also see:<i> {pretty_alsos}</i>"
         return out_string
@@ -500,11 +483,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Process word links like synonyms, antonyms, etc."""
         pretty_list = []
         for word in word_list:
-            pretty_list.append(
-                f'<span foreground="{word_col}">'
-                f'<a href="search;{word}">{word}</a>'
-                "</span>"
-            )
+            pretty_list.append(f'<span foreground="{word_col}">' f'<a href="search;{word}">{word}</a>' "</span>")
         if pretty_list:
             pretty_list = ", ".join(pretty_list)
             return pretty_list
@@ -550,10 +529,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                     if len(_complete_list) >= 10:
                         break
                     item = escape(item).replace("_", " ")
-                    if (
-                        item.lower().startswith(text.lower())
-                        and item not in _complete_list
-                    ):
+                    if item.lower().startswith(text.lower()) and item not in _complete_list:
                         _complete_list.append(item)
 
             _complete_list = sorted(_complete_list, key=str.casefold)
@@ -582,9 +558,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         try:
             self._wn_downloader.download(ProgressUpdater)
         except Error as err:
-            self._network_fail_status_page.set_description(
-                f"<small><tt>Error: {err}</tt></small>"
-            )
+            self._network_fail_status_page.set_description(f"<small><tt>Error: {err}</tt></small>")
             utils.log_warning(err)
             self._page_switch(Page.NETWORK_FAIL)
 

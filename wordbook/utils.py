@@ -17,9 +17,7 @@ DATA_DIR = os.path.join(GLib.get_user_data_dir(), "wordbook")
 CDEF_DIR = os.path.join(DATA_DIR, "cdef")
 WN_DIR = os.path.join(DATA_DIR, "wn")
 
-logging.basicConfig(
-    format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s"
-)
+logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 LOGGER = logging.getLogger()
 
 

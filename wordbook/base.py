@@ -23,7 +23,8 @@ from wn import Wordnet
 
 from wordbook import utils
 
-_POOL = ThreadPoolExecutor()
+POOL = ThreadPoolExecutor()
+WN_DB_VERSION = "oewn:2022"
 wn.config.data_directory = os.path.join(utils.WN_DIR)
 wn.config.allow_multithreading = True
 
@@ -35,7 +36,7 @@ def _threadpool(func):
     """
 
     def wrap(*args, **kwargs):
-        return (_POOL).submit(func, *args, **kwargs)
+        return (POOL).submit(func, *args, **kwargs)
 
     return wrap
 
@@ -291,7 +292,7 @@ def get_wn_file(reloader):
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initializing WordNet.")
     try:
-        wn_instance = Wordnet(lexicon="oewn:2021")
+        wn_instance = Wordnet(lexicon=WN_DB_VERSION)
     except (wn.Error, wn.DatabaseError):
         utils.log_info(
             "The WordNet database is either corrupted or is of an older version."
@@ -356,7 +357,7 @@ class WordnetDownloader:
         """Download the Wordnet database."""
         if os.path.isdir(os.path.join(utils.WN_DIR, "downloads")):
             rmtree(os.path.join(utils.WN_DIR, "downloads"))
-        wn.download("oewn:2021", progress_handler=progress_handler)
+        wn.download(WN_DB_VERSION, progress_handler=progress_handler)
 
     @staticmethod
     def delete_db():
