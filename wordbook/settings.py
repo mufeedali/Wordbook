@@ -9,10 +9,46 @@ import os
 from wordbook import utils
 
 
+class WordbookConfigParser(configparser.ConfigParser):
+    def __init__(self, **kwargs):
+        """Initialize the Wordbook Config Parser."""
+        super().__init__(**kwargs)
+
+    def rename_section(
+        self,
+        old_name,  # the old section name
+        new_name,  # the new section name
+    ):
+        """Rename a section in the config."""
+        items = self.config.items(old_name)
+        self.add_section(new_name)
+        for item in items:
+            self.set(new_name, item[0], item[1])
+        self.remove_section(old_name)
+
+    def move_option(
+        self,
+        option_name,  # the option to move
+        section,  # the section to move from
+        new_section=None,  # the section to move to
+        new_option_name=None,  # the new option name
+        new_value=None,  # the new value
+    ):
+        """Move an option from one section to another."""
+        if new_section is None:
+            new_section = section
+        if new_option_name is None:
+            new_option_name = option_name
+        if new_value is None:
+            new_value = self.get(section, option_name)
+        self.set(new_section, new_option_name, new_value)
+        self.remove_option(section, option_name)
+
+
 class Settings:
     """Manages all the settings of the application."""
 
-    config = configparser.ConfigParser()
+    config = WordbookConfigParser()
     instance = None
 
     def __init__(self):
@@ -95,36 +131,6 @@ class Settings:
     def load_settings(self):
         """Load settings from file."""
 
-        def rename_section(
-            config,  # the config to modify
-            old_name,  # the old section name
-            new_name,  # the new section name
-        ):
-            """Rename a section in the config."""
-            items = config.items(old_name)
-            config.add_section(new_name)
-            for item in items:
-                config.set(new_name, item[0], item[1])
-            config.remove_section(old_name)
-
-        def mv_option(
-            config,  # the config to modify
-            option_name,  # the option to move
-            section,  # the section to move from
-            new_section=None,  # the section to move to
-            new_option_name=None,  # the new option name
-            new_value=None,  # the new value
-        ):
-            """Move an option from one section to another."""
-            if new_section is None:
-                new_section = section
-            if new_option_name is None:
-                new_option_name = option_name
-            if new_value is None:
-                new_value = config.get(section, option_name)
-            config.set(new_section, new_option_name, new_value)
-            config.remove_option(section, option_name)
-
         with open(utils.CONFIG_FILE, "r") as file:
             self.config.read_file(file)
 
@@ -132,7 +138,7 @@ class Settings:
             self.config.get(
                 "Misc",
                 "ConfigVersion",
-                fallback=self.config.get("General", "ConfigVersion", fallback="6")
+                fallback=self.config.get("General", "ConfigVersion", fallback="6"),
             )
         )
 
@@ -150,7 +156,7 @@ class Settings:
                 self.config.remove_option("General", "Debug")  # replaced.
 
                 # Rename existing options.
-                rename_section(self.config, "UI-gtk", "UI")
+                self.config.rename_section(self.config, "UI-gtk", "UI")
 
                 # Add new options.
                 self.config.set("General", "PronunciationsAccent", "us")
@@ -172,16 +178,14 @@ class Settings:
             if config_version == 5:
                 utils.log_info("Updating to ConfigVersion 6")
 
-                mv_option(self.config, "DarkUI", "UI", new_option_name="ForceDarkMode")
+                self.config.move_option(self.config, "DarkUI", "UI", new_option_name="ForceDarkMode")
                 self.config.remove_option("UI", "DarkFont")
 
                 # Rename existing options.
-                rename_section(self.config, "General", "Behavior")
-                rename_section(self.config, "UI", "Appearance")
+                self.config.rename_section(self.config, "General", "Behavior")
+                self.config.rename_section(self.config, "UI", "Appearance")
 
-                mv_option(
-                    self.config, "ConfigVersion", "Behavior", "Misc", new_value="6"
-                )
+                self.config.move_option(self.config, "ConfigVersion", "Behavior", "Misc", new_value="6")
 
             self.save_settings()  # Save before proceeding.
 
