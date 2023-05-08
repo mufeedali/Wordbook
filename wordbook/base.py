@@ -58,7 +58,7 @@ def fold_gen():
         os.makedirs(utils.CDEF_DIR)  # create Custom Definitions folder.
 
 
-def generate_definition(text, wordcol, sencol, wn_instance, cdef=True, accent="us"):
+def fetch_definition(text, wordcol, sencol, wn_instance, cdef=True, accent="us"):
     """Check if custom definition exists."""
     if cdef and os.path.isfile(utils.CDEF_DIR + "/" + text.lower()):
         return get_custom_def(text, wordcol, sencol, wn_instance, accent)
@@ -79,9 +79,7 @@ def get_cowfortune():
             return f"<tt>{html.escape(cst)}</tt>"
         return "<tt>Cowsay fail… Too bad…</tt>"
     except OSError as ex:
-        fortune_out = (
-            "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
-        )
+        fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
         print(f"{fortune_out}\n{str(ex)}")
         return f"<tt>{fortune_out}</tt>"
 
@@ -91,9 +89,7 @@ def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
     with open(utils.CDEF_DIR + "/" + text, "r") as def_file:
         custom_def_dict = json.load(def_file)
     if "linkto" in custom_def_dict:
-        return get_data(
-            custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance, accent
-        )
+        return get_data(custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance, accent)
     definition = custom_def_dict.get(
         "out_string",
         get_definition(text, wordcol, sencol, wn_instance)[0]["out_string"],
@@ -110,10 +106,7 @@ def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
         for i, j in re_list.items():
             definition = definition.replace(i, j)
     term = custom_def_dict.get("term", text)
-    pronunciation = (
-        custom_def_dict.get("pronunciation", get_pronunciation(term, accent))
-        or "Is espeak-ng installed?"
-    )
+    pronunciation = custom_def_dict.get("pronunciation", get_pronunciation(term, accent)) or "Is espeak-ng installed?"
     final_data = {
         "term": term,
         "pronunciation": pronunciation,
@@ -239,9 +232,7 @@ def get_definition(term, word_col, sen_col, wn_instance):
 def get_fortune(mono=True):
     """Present fortune easter egg."""
     try:
-        fortune_process = subprocess.Popen(
-            ["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
+        fortune_process = subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         fortune_process.wait()
         fortune_out = fortune_process.stdout.read().decode()
         fortune_out = html.escape(fortune_out, False)
@@ -277,9 +268,7 @@ def get_version_info(version):
     print("Copyright 2016-2023 Mufeed Ali")
     print()
     try:
-        espeak_process = subprocess.Popen(
-            ["espeak-ng", "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
+        espeak_process = subprocess.Popen(["espeak-ng", "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         espeak_process.wait()
         espeak_out = espeak_process.stdout.read().decode()
         print(espeak_out.strip())
@@ -294,9 +283,7 @@ def get_wn_file(reloader):
     try:
         wn_instance = Wordnet(lexicon=WN_DB_VERSION)
     except (wn.Error, wn.DatabaseError):
-        utils.log_info(
-            "The WordNet database is either corrupted or is of an older version."
-        )
+        utils.log_info("The WordNet database is either corrupted or is of an older version.")
         return reloader()
     utils.log_info("Fetching WordNet, wordlist.")
     wn_file = [w.lemma() for w in wn_instance.words()]
@@ -304,7 +291,7 @@ def get_wn_file(reloader):
     return {"instance": wn_instance, "list": wn_file}
 
 
-def reactor(text, dark_font, wn_instance, cdef, accent="us"):
+def format_output(text, dark_font, wn_instance, cdef, accent="us"):
     """Return appropriate definitions."""
     if dark_font:
         sencol = "cyan"  # Color of sentences in Dark mode
@@ -328,9 +315,7 @@ def reactor(text, dark_font, wn_instance, cdef, accent="us"):
     if text in ("crash now", "close now"):
         return sys.exit()
     if text and not text.isspace():
-        return generate_definition(
-            text, wordcol, sencol, wn_instance, cdef=cdef, accent=accent
-        )
+        return fetch_definition(text, wordcol, sencol, wn_instance, cdef=cdef, accent=accent)
     return None
 
 
@@ -346,7 +331,7 @@ def read_term(text, speed=120, accent="us"):
 
 class WordnetDownloader:
     @staticmethod
-    def check_status():
+    def check_status() -> bool:
         """
         Check if the Wordnet database has already been downloaded.
         """

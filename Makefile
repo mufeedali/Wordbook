@@ -16,7 +16,7 @@ help:  ## Print the help message.
 
 setup:  ## Setup build folder.
 	mkdir -p $(BUILD)
-	meson . $(BUILD)
+	meson setup . $(BUILD)
 
 local:  ## Configure a local build.
 	meson configure $(BUILD) -Dprefix=$$(pwd)/$(BUILD)/testdir

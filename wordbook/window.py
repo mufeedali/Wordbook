@@ -23,29 +23,29 @@ from wordbook.settings_window import SettingsWindow
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
-    search_button = Gtk.Template.Child("search_button")
-    download_status_page = Gtk.Template.Child("download_status_page")
-    loading_progress = Gtk.Template.Child("loading_progress")
+    search_button: Gtk.Button = Gtk.Template.Child("search_button")
+    download_status_page: Adw.StatusPage = Gtk.Template.Child("download_status_page")
+    loading_progress: Gtk.ProgressBar = Gtk.Template.Child("loading_progress")
 
-    _key_ctrlr = Gtk.Template.Child("key_ctrlr")
-    _title_clamp = Gtk.Template.Child("title_clamp")
-    _flap_toggle_button = Gtk.Template.Child("flap_toggle_button")
-    _search_entry = Gtk.Template.Child("search_entry")
-    _speak_button = Gtk.Template.Child("speak_button")
-    _menu_button = Gtk.Template.Child("wordbook_menu_button")
-    _flap = Gtk.Template.Child("main_flap")
-    _history_listbox = Gtk.Template.Child("history_listbox")
-    _stack = Gtk.Template.Child("main_stack")
-    _main_scroll = Gtk.Template.Child("main_scroll")
-    _def_view = Gtk.Template.Child("def_view")
-    _def_ctrlr = Gtk.Template.Child("def_ctrlr")
-    _pronunciation_view = Gtk.Template.Child("pronunciation_view")
-    _term_view = Gtk.Template.Child("term_view")
-    _network_fail_status_page = Gtk.Template.Child("network_fail_status_page")
-    _retry_button = Gtk.Template.Child("retry_button")
-    _exit_button = Gtk.Template.Child("exit_button")
+    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")
+    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")
+    _flap_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("flap_toggle_button")
+    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")
+    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")
+    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")
+    _main_flap: Adw.Flap = Gtk.Template.Child("main_flap")
+    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")
+    _main_stack: Gtk.Stack = Gtk.Template.Child("main_stack")
+    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")
+    _def_view: Gtk.Label = Gtk.Template.Child("def_view")
+    _def_ctrlr: Gtk.GestureClick = Gtk.Template.Child("def_ctrlr")
+    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")
+    _term_view: Gtk.Label = Gtk.Template.Child("term_view")
+    _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")
+    _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")
+    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")
 
-    _style_manager = None
+    _style_manager: Adw.StyleManager | None = None
 
     _wn_downloader = base.WordnetDownloader()
     _wn_future = None
@@ -91,7 +91,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._exit_button.connect("clicked", self._on_exit_clicked)
         self._main_scroll.get_vadjustment().connect("value-changed", self._on_scroll_event)
 
-        self._flap.bind_property(
+        self._main_flap.bind_property(
             "reveal-flap",
             self._flap_toggle_button,
             "active",
@@ -127,6 +127,8 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         # Set search button visibility.
         self.search_button.set_visible(not Settings.get().live_search)
+        if not Settings.get().live_search:
+            self.set_default_widget(self.search_button)
 
     def setup_actions(self):
         """Setup the Gio actions for the application window."""
@@ -426,9 +428,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Switch main stack pages."""
         if page == "content_page":
             GLib.idle_add(self._main_scroll.get_vadjustment().set_value, 0)
-        if self._stack.get_visible_child_name == page:
+        if self._main_stack.get_visible_child_name == page:
             return True
-        GLib.idle_add(self._stack.set_visible_child_name, page)
+        GLib.idle_add(self._main_stack.set_visible_child_name, page)
         return False
 
     def _process_result(self, result: dict):
@@ -490,10 +492,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         return ""
 
     def _search(self, search_text):
-        """Clean input text, give errors and pass data to reactor."""
+        """Clean input text, give errors and pass data to formatter."""
         text = base.cleaner(search_text)
         if not text == "" and not text.isspace():
-            return base.reactor(
+            return base.format_output(
                 text,
                 self._style_manager.get_dark(),
                 self._wn_future.result()["instance"],
