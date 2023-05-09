@@ -156,7 +156,7 @@ class Settings:
                 self.config.remove_option("General", "Debug")  # replaced.
 
                 # Rename existing options.
-                self.config.rename_section(self.config, "UI-gtk", "UI")
+                self.config.rename_section("UI-gtk", "UI")
 
                 # Add new options.
                 self.config.set("General", "PronunciationsAccent", "us")
@@ -178,14 +178,14 @@ class Settings:
             if config_version == 5:
                 utils.log_info("Updating to ConfigVersion 6")
 
-                self.config.move_option(self.config, "DarkUI", "UI", new_option_name="ForceDarkMode")
+                self.config.move_option("DarkUI", "UI", new_option_name="ForceDarkMode")
                 self.config.remove_option("UI", "DarkFont")
 
                 # Rename existing options.
-                self.config.rename_section(self.config, "General", "Behavior")
-                self.config.rename_section(self.config, "UI", "Appearance")
+                self.config.rename_section("General", "Behavior")
+                self.config.rename_section("UI", "Appearance")
 
-                self.config.move_option(self.config, "ConfigVersion", "Behavior", "Misc", new_value="6")
+                self.config.move_option("ConfigVersion", "Behavior", "Misc", new_value="6")
 
             self.save_settings()  # Save before proceeding.
 
