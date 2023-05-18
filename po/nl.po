@@ -161,7 +161,7 @@ msgid "Lookup definitions of any English term."
 msgstr "Bekijk de betekenis van Engelstalige termen."
 
 #: wordbook/main.py:127
-msgid "translators"
+msgid "translator-credits"
 msgstr "Heimen Stoffels <vistausss@fastmail.com>"
 
 #: wordbook/main.py:134

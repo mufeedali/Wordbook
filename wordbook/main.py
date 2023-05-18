@@ -120,11 +120,7 @@ class Application(Adw.Application):
         about_window.set_version(Gio.Application.get_default().version)
         about_window.set_comments(_("Lookup definitions of any English term."))
         about_window.set_developer_name("Mufeed Ali")
-        translators = _("translators")
-        if (
-            translators != "translators"
-        ):  # If there are no translators, do not use set_translator_credits
-            about_window.set_translator_credits(translators)
+        about_window.set_translator_credits(_("translator-credits"))
         about_window.set_license_type(Gtk.License.GPL_3_0)
         about_window.set_website("https://github.com/fushinari/wordbook")
         about_window.set_issue_url("https://github.com/fushinari/wordbook/issues")

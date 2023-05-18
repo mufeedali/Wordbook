@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-26 15:21+0530\n"
+"POT-Creation-Date: 2023-05-19 00:00+0530\n"
 "PO-Revision-Date: 2022-07-03 00:53+0200\n"
 "Last-Translator: Irénée Thirion <irenee.thirion@e.email>\n"
 "Language-Team: \n"
@@ -120,7 +120,7 @@ msgstr "Historique"
 msgid "Setting things up…"
 msgstr "Préparation…"
 
-#: data/resources/ui/window.ui:199 wordbook/window.py:577
+#: data/resources/ui/window.ui:199 wordbook/window.py:555
 msgid "Downloading WordNet…"
 msgstr "Téléchargement de WordNet…"
 
@@ -161,34 +161,38 @@ msgstr "Quitter"
 msgid "Lookup definitions of any English term."
 msgstr "Recherchez les définitions d’un terme anglais"
 
-#: wordbook/main.py:129
+#: wordbook/main.py:123
+msgid "translator-credits"
+msgstr ""
+
+#: wordbook/main.py:127
 msgid "Copyright © 2016-2023 Mufeed Ali"
 msgstr "Copyright © 2016-2023 Mufeed Ali"
 
-#: wordbook/window.py:407
+#: wordbook/window.py:398
 msgid "Ready."
 msgstr "Prêt."
 
-#: wordbook/window.py:527
+#: wordbook/window.py:508
 msgid "Invalid input"
 msgstr "Entrée invalide"
 
-#: wordbook/window.py:528
+#: wordbook/window.py:509
 msgid "Nothing definable was found in your search input"
 msgstr "Rien de définissable n’a été trouvé dans votre entrée de recherche"
 
-#: wordbook/window.py:597
+#: wordbook/window.py:573
 msgid "Re-downloading WordNet database"
 msgstr "Re-téléchargement de la base de données WordNet"
 
-#: wordbook/window.py:599
+#: wordbook/window.py:575
 msgid "Just a database upgrade."
 msgstr "Simplement une mise à jour de la base de données"
 
-#: wordbook/window.py:601
+#: wordbook/window.py:577
 msgid "This shouldn't happen too often."
 msgstr "Cela ne devrait pas se produire trop souvent."
 
-#: wordbook/window.py:646
+#: wordbook/window.py:622
 msgid "Building Database…"
 msgstr "Construction de la base de données…"
