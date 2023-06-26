@@ -1,0 +1,199 @@
+# Turkish translation of com.github.fushinari.Wordbook.
+# Copyright (C) 2023 com.github.fushinari.Wordbook's COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.fushinari.Wordbook package.
+#
+# Sabri Ünal <libreajans@gmail.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: com.github.fushinari.Wordbook\n"
+"Report-Msgid-Bugs-To: https://github.com/mufeedali/Wordbook/issues\n"
+"POT-Creation-Date: 2023-05-19 00:00+0530\n"
+"PO-Revision-Date: 2023-05-25 17:42+0300\n"
+"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
+"Language-Team: Turkish <takim@gnome.org.tr>\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: data/resources/ui/settings_window.ui:14
+msgid "Appearance"
+msgstr "Görünüm"
+
+#: data/resources/ui/settings_window.ui:17
+msgid "Force Dark Mode"
+msgstr "Karanlık Kipi Zorla"
+
+#: data/resources/ui/settings_window.ui:30
+msgid "Behavior"
+msgstr "Davranış"
+
+#: data/resources/ui/settings_window.ui:33
+msgid "Live Search"
+msgstr "Canlı Arama"
+
+#: data/resources/ui/settings_window.ui:35
+msgid "Show definition as the terms are typed in"
+msgstr "Terimler yazılırken tanımı göster"
+
+#: data/resources/ui/settings_window.ui:45
+msgid "Double Click Search"
+msgstr "Çift Tık Arama"
+
+#: data/resources/ui/settings_window.ui:47
+msgid "Search any word by double clicking on it"
+msgstr "Üzerine çift tıklayarak herhangi bir kelimeyi ara"
+
+#: data/resources/ui/settings_window.ui:57
+msgid "Pronunciations Accent"
+msgstr "Telaffuz Aksanı"
+
+#: data/resources/ui/shortcuts_window.ui:12
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Genel"
+
+#: data/resources/ui/shortcuts_window.ui:15
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Kısayolları Göster"
+
+#: data/resources/ui/shortcuts_window.ui:21
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Tercihler"
+
+#: data/resources/ui/shortcuts_window.ui:27
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "Yapıştır ve Ara"
+
+#: data/resources/ui/shortcuts_window.ui:33
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "Rastgele Sözcük"
+
+#: data/resources/ui/shortcuts_window.ui:39
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "Seçilen Metni Ara"
+
+#: data/resources/ui/window.ui:9
+msgid "Paste & Search"
+msgstr "Yapıştır ve Ara"
+
+#: data/resources/ui/window.ui:13
+msgid "Search Selected Text"
+msgstr "Seçilen Metni Ara"
+
+#: data/resources/ui/window.ui:17
+msgid "_Random Word"
+msgstr "_Rastgele Sözcük"
+
+#: data/resources/ui/window.ui:24
+msgid "_Preferences"
+msgstr "Te_rcihler"
+
+#: data/resources/ui/window.ui:28
+msgid "_Keyboard Shortcuts"
+msgstr "_Klavye Kısayolları"
+
+#: data/resources/ui/window.ui:32
+msgid "_About Wordbook"
+msgstr "Wordbook _Hakkında"
+
+#: data/resources/ui/window.ui:66
+msgid "Search"
+msgstr "Ara"
+
+#: data/resources/ui/window.ui:79
+msgid "Show History"
+msgstr "Geçmişi Göster"
+
+#: data/resources/ui/window.ui:124
+msgid "History"
+msgstr "Geçmiş"
+
+#: data/resources/ui/window.ui:198
+msgid "Setting things up…"
+msgstr "Wordbook ayarlanıyor…"
+
+#: data/resources/ui/window.ui:199 wordbook/window.py:555
+msgid "Downloading WordNet…"
+msgstr "WordNet İndiriliyor…"
+
+#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
+#: wordbook/main.py:119
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.ui:221
+msgid "Lookup definitions of any English term"
+msgstr "Herhangi bir İngilizce terimin tanımını ara"
+
+#: data/resources/ui/window.ui:255
+msgid "/Pronunciation/"
+msgstr "/Telaffuz/"
+
+#: data/resources/ui/window.ui:278
+msgid "Listen to Pronunciation"
+msgstr "Telaffuzu Dinle"
+
+#: data/resources/ui/window.ui:318
+msgid "No definition found"
+msgstr "Tanım bulunamadı"
+
+#: data/resources/ui/window.ui:329
+msgid "Download failed"
+msgstr "İndirilemedi"
+
+#: data/resources/ui/window.ui:336
+msgid "Retry"
+msgstr "Yeniden Dene"
+
+#: data/resources/ui/window.ui:345
+msgid "Exit"
+msgstr "Çıkış"
+
+#: wordbook/main.py:121
+msgid "Lookup definitions of any English term."
+msgstr "Herhangi bir İngilizce terimin tanımını ara."
+
+#: wordbook/main.py:123
+msgid "translator-credits"
+msgstr "Sabri Ünal <libreajans@gmail.com>"
+
+#: wordbook/main.py:127
+msgid "Copyright © 2016-2023 Mufeed Ali"
+msgstr "Telif Hakkı © 2016-2023 Mufeed Ali"
+
+#: wordbook/window.py:398
+msgid "Ready."
+msgstr "Hazır."
+
+#: wordbook/window.py:508
+msgid "Invalid input"
+msgstr "Geçersiz girdi"
+
+#: wordbook/window.py:509
+msgid "Nothing definable was found in your search input"
+msgstr "Arama girdinizde tanımlanabilir hiçbir şey bulunamadı"
+
+#: wordbook/window.py:573
+msgid "Re-downloading WordNet database"
+msgstr "WordNet veri tabanı yeniden indiriliyor"
+
+#: wordbook/window.py:575
+msgid "Just a database upgrade."
+msgstr "Sadece veri tabanı güncellemesi."
+
+#: wordbook/window.py:577
+msgid "This shouldn't happen too often."
+msgstr "Bu çok sık olmamalı."
+
+#: wordbook/window.py:622
+msgid "Building Database…"
+msgstr "Veritabanı inşa ediliyor…"
