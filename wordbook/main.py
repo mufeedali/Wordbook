@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2023 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2023 Mufeed Ali <mufeed.dev@pm.me>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import gi
@@ -122,8 +122,8 @@ class Application(Adw.Application):
         about_window.set_developer_name("Mufeed Ali")
         about_window.set_translator_credits(_("translator-credits"))
         about_window.set_license_type(Gtk.License.GPL_3_0)
-        about_window.set_website("https://github.com/fushinari/wordbook")
-        about_window.set_issue_url("https://github.com/fushinari/wordbook/issues")
+        about_window.set_website("https://github.com/mufeedali/Wordbook")
+        about_window.set_issue_url("https://github.com/mufeedali/Wordbook/issues")
         about_window.set_copyright(_("Copyright © 2016-2023 Mufeed Ali"))
         about_window.set_transient_for(self.win)
         about_window.present()

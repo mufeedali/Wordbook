@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2023 Mufeed Ali <fushinari@protonmail.com>
+# SPDX-FileCopyrightText: 2016-2023 Mufeed Ali <mufeed.dev@pm.me>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """utils contains a few global variables and essential functions."""
@@ -9,7 +9,7 @@ import traceback
 
 from gi.repository import GLib
 
-RES_PATH = "/com/github/fushinari/Wordbook"
+RES_PATH = "/dev/mufeed/Wordbook"
 
 CONFIG_DIR = os.path.join(GLib.get_user_config_dir(), "wordbook")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "wordbook.conf")

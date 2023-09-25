@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/github/fushinari/Wordbook/">
+  <gresource prefix="/dev/mufeed/Wordbook/">
     <file compressed="true">style.css</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="gtk/help-overlay.ui">ui/shortcuts_window.ui</file>
 

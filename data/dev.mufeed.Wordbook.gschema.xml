@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="wordbook">
-	<schema id="dev.mufeed.Wordbook" path="/com/github/fushinari/Wordbook/">
+	<schema id="dev.mufeed.Wordbook" path="/dev/mufeed/Wordbook/">
 	</schema>
 </schemalist>
 

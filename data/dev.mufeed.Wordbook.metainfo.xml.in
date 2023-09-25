@@ -20,26 +20,26 @@
     </description>
 
     <developer_name>Mufeed Ali</developer_name>
-    <update_contact>fushinari@protonmail.com</update_contact>
+    <update_contact>mufeed.dev@pm.me</update_contact>
 
-    <url type="homepage">https://github.com/fushinari/Wordbook</url>
-    <url type="bugtracker">https://github.com/fushinari/Wordbook/issues</url>
-    <url type="donation">https://liberapay.com/fushinari/donate</url>
+    <url type="homepage">https://github.com/mufeedali/Wordbook</url>
+    <url type="bugtracker">https://github.com/mufeedali/Wordbook/issues</url>
+    <url type="donation">https://liberapay.com/mufeedali/donate</url>
     <content_rating type="oars-1.1" />
     <launchable type="desktop-id">dev.mufeed.Wordbook.desktop</launchable>
 
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss.png</image>
+            <image>https://raw.githubusercontent.com/mufeedali/Wordbook/main/images/ss.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss1.png</image>
+            <image>https://raw.githubusercontent.com/mufeedali/Wordbook/main/images/ss1.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss2.png</image>
+            <image>https://raw.githubusercontent.com/mufeedali/Wordbook/main/images/ss2.png</image>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/fushinari/Wordbook/main/images/ss3.png</image>
+            <image>https://raw.githubusercontent.com/mufeedali/Wordbook/main/images/ss3.png</image>
         </screenshot>
     </screenshots>
 

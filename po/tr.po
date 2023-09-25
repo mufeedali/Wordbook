@@ -1,12 +1,12 @@
-# Turkish translation of com.github.fushinari.Wordbook.
-# Copyright (C) 2023 com.github.fushinari.Wordbook's COPYRIGHT HOLDER
-# This file is distributed under the same license as the com.github.fushinari.Wordbook package.
+# Turkish translation of dev.mufeed.Wordbook.
+# Copyright (C) 2023 dev.mufeed.Wordbook's COPYRIGHT HOLDER
+# This file is distributed under the same license as the dev.mufeed.Wordbook package.
 #
 # Sabri Ünal <libreajans@gmail.com>, 2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: com.github.fushinari.Wordbook\n"
+"Project-Id-Version: dev.mufeed.Wordbook\n"
 "Report-Msgid-Bugs-To: https://github.com/mufeedali/Wordbook/issues\n"
 "POT-Creation-Date: 2023-05-19 00:00+0530\n"
 "PO-Revision-Date: 2023-05-25 17:42+0300\n"
