@@ -44,6 +44,16 @@
     </screenshots>
 
     <releases>
+        <release version="0.4.0" date="2023-09-25">
+            <description>
+                <ul>
+                    <li>GTK4 + libadwaita Port</li>
+                    <li>Persistent history storage</li>
+                    <li>Default to live search</li>
+                    <li>Update WordNet library and database</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.3.1" date="2021-06-06">
             <description>
                 <ul>
