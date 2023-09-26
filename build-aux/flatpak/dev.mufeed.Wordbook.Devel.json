@@ -12,6 +12,12 @@
     "--socket=fallback-x11",
     "--socket=wayland"
   ],
+  "cleanup": [
+    "*.a",
+    "*.la",
+    "/lib/pkgconfig",
+    "/include"
+  ],
   "modules": [
     {
       "name": "pcaudiolib",
@@ -25,9 +31,6 @@
     },
     {
       "name": "espeak-ng",
-      "cleanup": [
-        "*.la"
-      ],
       "no-parallel-make": true,
       "sources": [
         {
