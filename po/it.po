@@ -1,0 +1,196 @@
+# ITALIAN TRANSLATION.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the wordbook package.
+# ALBANO BATTISTELLA <ALBANOBATTISTELLA@GMAIL.COM>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wordbook\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-19 00:00+0530\n"
+"PO-Revision-Date: 2023-09-29 21:26+0100\n"
+"Last-Translator: Albano Battistella <albanobattistella@gmail.com>\n"
+"Language-Team: italian <LL@li.org>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/resources/ui/settings_window.ui:14
+msgid "Appearance"
+msgstr "Aspetto"
+
+#: data/resources/ui/settings_window.ui:17
+msgid "Force Dark Mode"
+msgstr "Forza la modalità scura"
+
+#: data/resources/ui/settings_window.ui:30
+msgid "Behavior"
+msgstr "Comportamento"
+
+#: data/resources/ui/settings_window.ui:33
+msgid "Live Search"
+msgstr "Ricerca in tempo reale"
+
+#: data/resources/ui/settings_window.ui:35
+msgid "Show definition as the terms are typed in"
+msgstr ""Mostra la definizione mentre i termini vengono digitati"
+
+#: data/resources/ui/settings_window.ui:45
+msgid "Double Click Search"
+msgstr ""Ricerca con doppio clic"
+
+#: data/resources/ui/settings_window.ui:47
+msgid "Search any word by double clicking on it"
+msgstr "Cerca qualsiasi parola facendo doppio clic su di essa"
+
+#: data/resources/ui/settings_window.ui:57
+msgid "Pronunciations Accent"
+msgstr "Accento delle pronunce"
+
+#: data/resources/ui/shortcuts_window.ui:12
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Generale"
+
+#: data/resources/ui/shortcuts_window.ui:15
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Mostra scorciatoie"
+
+#: data/resources/ui/shortcuts_window.ui:21
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Preferenze"
+
+#: data/resources/ui/shortcuts_window.ui:27
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "Incolla e cerca"
+
+#: data/resources/ui/shortcuts_window.ui:33
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "Parola Casuale"
+
+#: data/resources/ui/shortcuts_window.ui:39
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "Cerca testo selezionato"
+
+#: data/resources/ui/window.ui:9
+msgid "Paste & Search"
+msgstr "Incolla & Cerca"
+
+#: data/resources/ui/window.ui:13
+msgid "Search Selected Text"
+msgstr "Cerca testo selezionato"
+
+#: data/resources/ui/window.ui:17
+msgid "_Random Word"
+msgstr "_Parola casuale"
+
+#: data/resources/ui/window.ui:24
+msgid "_Preferences"
+msgstr "_Preferenze"
+
+#: data/resources/ui/window.ui:28
+msgid "_Keyboard Shortcuts"
+msgstr "_Scorciatoie da tastiera"
+
+#: data/resources/ui/window.ui:32
+msgid "_About Wordbook"
+msgstr "_Informazioni su Wordbook"
+
+#: data/resources/ui/window.ui:66
+msgid "Search"
+msgstr "Cerca"
+
+#: data/resources/ui/window.ui:79
+msgid "Show History"
+msgstr "Mostra Cronologia"
+
+#: data/resources/ui/window.ui:124
+msgid "History"
+msgstr "Cronologia"
+
+#: data/resources/ui/window.ui:198
+msgid "Setting things up…"
+msgstr "Impostazione delle cose…"
+
+#: data/resources/ui/window.ui:199 wordbook/window.py:555
+msgid "Downloading WordNet…"
+msgstr "Download di WordNet…"
+
+#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
+#: wordbook/main.py:119
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.ui:221
+msgid "Lookup definitions of any English term"
+msgstr "Cerca le definizioni di qualsiasi termine inglese"
+
+#: data/resources/ui/window.ui:255
+msgid "/Pronunciation/"
+msgstr "/Pronuncia/"
+
+#: data/resources/ui/window.ui:278
+msgid "Listen to Pronunciation"
+msgstr "Ascolta la pronuncia"
+
+#: data/resources/ui/window.ui:318
+msgid "No definition found"
+msgstr ""Nessuna definizione trovata"
+
+#: data/resources/ui/window.ui:329
+msgid "Download failed"
+msgstr "Download non riuscito"
+
+#: data/resources/ui/window.ui:336
+msgid "Retry"
+msgstr "Riprova"
+
+#: data/resources/ui/window.ui:345
+msgid "Exit"
+msgstr "Uscita"
+
+#: wordbook/main.py:121
+msgid "Lookup definitions of any English term."
+msgstr "Cerca le definizioni di qualsiasi termine inglese."
+
+#: wordbook/main.py:123
+msgid "translator-credits"
+msgstr "Albano Battistella"
+
+#: wordbook/main.py:127
+msgid "Copyright © 2016-2023 Mufeed Ali"
+msgstr "Copyright © 2016-2023 Mufeed Ali"
+
+#: wordbook/window.py:398
+msgid "Ready."
+msgstr "Pronto."
+
+#: wordbook/window.py:508
+msgid "Invalid input"
+msgstr "Inserimento non valido"
+
+#: wordbook/window.py:509
+msgid "Nothing definable was found in your search input"
+msgstr ""
+
+#: wordbook/window.py:573
+msgid "Re-downloading WordNet database"
+msgstr "Nuovo download del database WordNet"
+
+#: wordbook/window.py:575
+msgid "Just a database upgrade."
+msgstr "Solo un aggiornamento del database."
+
+#: wordbook/window.py:577
+msgid "This shouldn't happen too often."
+msgstr "Questo non dovrebbe accadere troppo spesso."
+
+#: wordbook/window.py:622
+msgid "Building Database…"
+msgstr "Creazione del database…"
