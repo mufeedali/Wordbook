@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-19 00:00+0530\n"
+"POT-Creation-Date: 2023-09-30 14:36+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,27 +25,27 @@ msgstr ""
 msgid "Force Dark Mode"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:30
+#: data/resources/ui/settings_window.ui:24
 msgid "Behavior"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.ui:27
 msgid "Live Search"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:35
+#: data/resources/ui/settings_window.ui:28
 msgid "Show definition as the terms are typed in"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:45
+#: data/resources/ui/settings_window.ui:33
 msgid "Double Click Search"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:47
+#: data/resources/ui/settings_window.ui:34
 msgid "Search any word by double clicking on it"
 msgstr ""
 
-#: data/resources/ui/settings_window.ui:57
+#: data/resources/ui/settings_window.ui:39
 msgid "Pronunciations Accent"
 msgstr ""
 

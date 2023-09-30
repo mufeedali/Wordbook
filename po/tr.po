@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dev.mufeed.Wordbook\n"
-"Report-Msgid-Bugs-To: https://github.com/mufeedali/Wordbook/issues\n"
-"POT-Creation-Date: 2023-05-19 00:00+0530\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-30 14:36+0530\n"
 "PO-Revision-Date: 2023-05-25 17:42+0300\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
@@ -27,27 +27,27 @@ msgstr "Görünüm"
 msgid "Force Dark Mode"
 msgstr "Karanlık Kipi Zorla"
 
-#: data/resources/ui/settings_window.ui:30
+#: data/resources/ui/settings_window.ui:24
 msgid "Behavior"
 msgstr "Davranış"
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.ui:27
 msgid "Live Search"
 msgstr "Canlı Arama"
 
-#: data/resources/ui/settings_window.ui:35
+#: data/resources/ui/settings_window.ui:28
 msgid "Show definition as the terms are typed in"
 msgstr "Terimler yazılırken tanımı göster"
 
-#: data/resources/ui/settings_window.ui:45
+#: data/resources/ui/settings_window.ui:33
 msgid "Double Click Search"
 msgstr "Çift Tık Arama"
 
-#: data/resources/ui/settings_window.ui:47
+#: data/resources/ui/settings_window.ui:34
 msgid "Search any word by double clicking on it"
 msgstr "Üzerine çift tıklayarak herhangi bir kelimeyi ara"
 
-#: data/resources/ui/settings_window.ui:57
+#: data/resources/ui/settings_window.ui:39
 msgid "Pronunciations Accent"
 msgstr "Telaffuz Aksanı"
 

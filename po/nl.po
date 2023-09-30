@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-27 14:55+0300\n"
+"POT-Creation-Date: 2023-09-30 14:36+0530\n"
 "PO-Revision-Date: 2022-09-19 20:14+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch\n"
@@ -25,27 +25,27 @@ msgstr "Vormgeving"
 msgid "Force Dark Mode"
 msgstr "Donker thema gebruiken"
 
-#: data/resources/ui/settings_window.ui:30
+#: data/resources/ui/settings_window.ui:24
 msgid "Behavior"
 msgstr "Gedrag"
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.ui:27
 msgid "Live Search"
 msgstr "Typen om te zoeken"
 
-#: data/resources/ui/settings_window.ui:35
+#: data/resources/ui/settings_window.ui:28
 msgid "Show definition as the terms are typed in"
 msgstr "Toon resultaten tijdens het typen"
 
-#: data/resources/ui/settings_window.ui:45
+#: data/resources/ui/settings_window.ui:33
 msgid "Double Click Search"
 msgstr "Dubbelklikken om te zoeken"
 
-#: data/resources/ui/settings_window.ui:47
+#: data/resources/ui/settings_window.ui:34
 msgid "Search any word by double clicking on it"
 msgstr "Zoek de betekenis van een woord door er op te dubbelklikken"
 
-#: data/resources/ui/settings_window.ui:57
+#: data/resources/ui/settings_window.ui:39
 msgid "Pronunciations Accent"
 msgstr "Accent"
 
@@ -119,7 +119,7 @@ msgstr "Geschiedenis"
 msgid "Setting things up…"
 msgstr "Bezig met voorbereiden…"
 
-#: data/resources/ui/window.ui:199 wordbook/window.py:577
+#: data/resources/ui/window.ui:199 wordbook/window.py:555
 msgid "Downloading WordNet…"
 msgstr "Bezig met ophalen van WordNet…"
 
@@ -160,38 +160,38 @@ msgstr "Afsluiten"
 msgid "Lookup definitions of any English term."
 msgstr "Bekijk de betekenis van Engelstalige termen."
 
-#: wordbook/main.py:127
+#: wordbook/main.py:123
 msgid "translator-credits"
 msgstr "Heimen Stoffels <vistausss@fastmail.com>"
 
-#: wordbook/main.py:134
+#: wordbook/main.py:127
 msgid "Copyright © 2016-2023 Mufeed Ali"
 msgstr "Copyright © 2016-2023 Mufeed Ali"
 
-#: wordbook/window.py:407
+#: wordbook/window.py:398
 msgid "Ready."
 msgstr "Klaar voor gebruik."
 
-#: wordbook/window.py:527
+#: wordbook/window.py:508
 msgid "Invalid input"
 msgstr "Ongeldige invoer"
 
-#: wordbook/window.py:528
+#: wordbook/window.py:509
 msgid "Nothing definable was found in your search input"
 msgstr "Er is geen betekenis aangetroffen van de door u gezochte term"
 
-#: wordbook/window.py:597
+#: wordbook/window.py:573
 msgid "Re-downloading WordNet database"
 msgstr "Bezig met opnieuw ophalen van WordNet…"
 
-#: wordbook/window.py:599
+#: wordbook/window.py:575
 msgid "Just a database upgrade."
 msgstr "Gewoon een databankupdate."
 
-#: wordbook/window.py:601
+#: wordbook/window.py:577
 msgid "This shouldn't happen too often."
 msgstr "Dit zou niet al te vaak moeten gebeuren."
 
-#: wordbook/window.py:646
+#: wordbook/window.py:622
 msgid "Building Database…"
 msgstr "Bezig met samenstellen van databank…"

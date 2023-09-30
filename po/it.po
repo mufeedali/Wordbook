@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-19 00:00+0530\n"
+"POT-Creation-Date: 2023-09-30 14:36+0530\n"
 "PO-Revision-Date: 2023-09-29 21:26+0100\n"
 "Last-Translator: Albano Battistella <albanobattistella@gmail.com>\n"
 "Language-Team: italian <LL@li.org>\n"
@@ -24,27 +24,27 @@ msgstr "Aspetto"
 msgid "Force Dark Mode"
 msgstr "Forza la modalità scura"
 
-#: data/resources/ui/settings_window.ui:30
+#: data/resources/ui/settings_window.ui:24
 msgid "Behavior"
 msgstr "Comportamento"
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.ui:27
 msgid "Live Search"
 msgstr "Ricerca in tempo reale"
 
-#: data/resources/ui/settings_window.ui:35
+#: data/resources/ui/settings_window.ui:28
 msgid "Show definition as the terms are typed in"
-msgstr ""Mostra la definizione mentre i termini vengono digitati"
+msgstr "Mostra la definizione mentre i termini vengono digitati"
 
-#: data/resources/ui/settings_window.ui:45
+#: data/resources/ui/settings_window.ui:33
 msgid "Double Click Search"
-msgstr ""Ricerca con doppio clic"
+msgstr "Ricerca con doppio clic"
 
-#: data/resources/ui/settings_window.ui:47
+#: data/resources/ui/settings_window.ui:34
 msgid "Search any word by double clicking on it"
 msgstr "Cerca qualsiasi parola facendo doppio clic su di essa"
 
-#: data/resources/ui/settings_window.ui:57
+#: data/resources/ui/settings_window.ui:39
 msgid "Pronunciations Accent"
 msgstr "Accento delle pronunce"
 
@@ -141,7 +141,7 @@ msgstr "Ascolta la pronuncia"
 
 #: data/resources/ui/window.ui:318
 msgid "No definition found"
-msgstr ""Nessuna definizione trovata"
+msgstr "Nessuna definizione trovata"
 
 #: data/resources/ui/window.ui:329
 msgid "Download failed"
