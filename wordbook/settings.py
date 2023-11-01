@@ -61,7 +61,7 @@ class Settings:
                 "PronunciationsAccent": "us",
             }
             self.config["Appearance"] = {
-                "ForceDarkMode": "yes",
+                "ForceDarkMode": "no",
             }
             self.config["Misc"] = {
                 "ConfigVersion": "6",
