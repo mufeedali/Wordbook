@@ -131,7 +131,7 @@ msgid "Wordbook"
 msgstr "Wordbook"
 
 #: data/resources/ui/window.ui:221
-msgid "Lookup definitions of any English term"
+msgid "Look up definitions of any English term"
 msgstr "Herhangi bir İngilizce terimin tanımını ara"
 
 #: data/resources/ui/window.ui:255
@@ -159,7 +159,7 @@ msgid "Exit"
 msgstr "Çıkış"
 
 #: wordbook/main.py:121
-msgid "Lookup definitions of any English term."
+msgid "Look up definitions of any English term."
 msgstr "Herhangi bir İngilizce terimin tanımını ara."
 
 #: wordbook/main.py:123

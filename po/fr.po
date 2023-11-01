@@ -130,7 +130,7 @@ msgid "Wordbook"
 msgstr "Wordbook"
 
 #: data/resources/ui/window.ui:221
-msgid "Lookup definitions of any English term"
+msgid "Look up definitions of any English term"
 msgstr "Recherchez les définitions d’un terme anglais"
 
 #: data/resources/ui/window.ui:255
@@ -158,7 +158,7 @@ msgid "Exit"
 msgstr "Quitter"
 
 #: wordbook/main.py:121
-msgid "Lookup definitions of any English term."
+msgid "Look up definitions of any English term."
 msgstr "Recherchez les définitions d’un terme anglais"
 
 #: wordbook/main.py:123

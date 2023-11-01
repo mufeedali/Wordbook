@@ -5,7 +5,7 @@
     <project_license>GPL-3.0-or-later</project_license>
 
     <name>Wordbook</name>
-    <summary>Lookup definitions for any English term</summary>
+    <summary>Look up definitions for any English term</summary>
     <description>
         <p>Wordbook is an offline English-English dictionary application powered by WordNet and eSpeak.</p>
         <p>Features:</p>
