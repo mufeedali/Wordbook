@@ -315,7 +315,7 @@
                                       <object class="AdwStatusPage" id="search_fail_status_page">
                                         <property name="vexpand">True</property>
                                         <property name="icon-name">edit-find-symbolic</property>
-                                        <property name="description" translatable="yes">No definition found</property>
+                                        <property name="title" translatable="yes">No definition found</property>
                                       </object>
                                     </property>
                                   </object>
