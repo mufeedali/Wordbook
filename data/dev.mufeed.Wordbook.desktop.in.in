@@ -7,7 +7,7 @@ Comment=Look up definitions for any English term
 Terminal=false
 Type=Application
 Icon=@icon@
-Categories=Education;GTK;
+Categories=Dictionary;Education;GTK;
 # Translators: These are search terms to find this application. Do NOT translate or localize the semicolons. The list MUST also end with a semicolon.
 Keywords=dictionary;
 # Translators: Do NOT translate or transliterate this text (these are enum types)!
