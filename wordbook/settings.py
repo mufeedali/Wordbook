@@ -20,7 +20,7 @@ class WordbookConfigParser(configparser.ConfigParser):
         new_name,  # the new section name
     ):
         """Rename a section in the config."""
-        items = self.config.items(old_name)
+        items = self.items(old_name)
         self.add_section(new_name)
         for item in items:
             self.set(new_name, item[0], item[1])
