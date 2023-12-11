@@ -60,7 +60,7 @@ def fold_gen():
 
 def fetch_definition(text, wordcol, sencol, wn_instance, cdef=True, accent="us"):
     """Check if custom definition exists."""
-    if cdef and os.path.isfile(utils.CDEF_DIR + "/" + text.lower()):
+    if cdef and os.path.isfile(f"{utils.CDEF_DIR}/{text.lower()}"):
         return get_custom_def(text, wordcol, sencol, wn_instance, accent)
     return get_data(text, wordcol, sencol, wn_instance, accent)
 
@@ -86,7 +86,7 @@ def get_cowfortune():
 
 def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
     """Present custom definition when available."""
-    with open(utils.CDEF_DIR + "/" + text, "r") as def_file:
+    with open(f"{utils.CDEF_DIR}/{text}", "r") as def_file:
         custom_def_dict = json.load(def_file)
     if "linkto" in custom_def_dict:
         return get_data(custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance, accent)
@@ -254,7 +254,7 @@ def get_pronunciation(term, accent="us"):
             stderr=subprocess.PIPE,
         )
     except OSError as ex:
-        utils.log_warning("Didn't Work! Error: " + str(ex))
+        utils.log_warning(f"Didn't Work! Error: {str(ex)}")
         return None
     process_pron.wait()
     output = process_pron.stdout.read().decode()
@@ -264,7 +264,7 @@ def get_pronunciation(term, accent="us"):
 
 def get_version_info(version):
     """Present clear version info."""
-    print("Wordbook - " + version)
+    print(f"Wordbook - {version}")
     print("Copyright 2016-2023 Mufeed Ali")
     print()
     try:
@@ -273,7 +273,7 @@ def get_version_info(version):
         espeak_out = espeak_process.stdout.read().decode()
         print(espeak_out.strip())
     except OSError as ex:
-        print("You're missing a few dependencies. (espeak-ng)\n" + str(ex))
+        print(f"You're missing a few dependencies. (espeak-ng)\n{str(ex)}")
 
 
 @_threadpool

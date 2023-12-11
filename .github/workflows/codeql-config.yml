@@ -1,0 +1,5 @@
+name: "Wordbook CodeQL Config"
+
+paths-ignore:
+  # File from flatpak/flatpak-builder-tools for convenience
+  - build-aux/flatpak/flatpak-pip-generator
