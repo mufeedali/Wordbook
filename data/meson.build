@@ -22,7 +22,7 @@ desktop_file = i18n.merge_file(
 desktop_utils = find_program('desktop-file-validate', required: false)
 if desktop_utils.found()
   test('Validate desktop file', desktop_utils,
-    args: [desktop_file]
+    args: [desktop_file.full_path()]
   )
 endif
 
@@ -34,10 +34,10 @@ appstream_file = i18n.merge_file(
   install_dir: join_paths(get_option('datadir'), 'appdata')
 )
 
-appstream_util = find_program('appstream-util', required: false)
-if appstream_util.found()
-  test('Validate appstream file', appstream_util,
-    args: ['validate-relax', appstream_file]
+appstreamcli = find_program('appstreamcli', required: false)
+if appstreamcli.found()
+  test('Validate appstream file', appstreamcli,
+    args: ['validate', '--no-net', appstream_file.full_path()]
   )
 endif
 

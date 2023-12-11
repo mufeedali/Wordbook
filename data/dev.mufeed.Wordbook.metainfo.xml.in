@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-    <id>dev.mufeed.Wordbook</id>
+    <id>@APP_ID@</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
 
     <name>Wordbook</name>
     <summary>Look up definitions for any English term</summary>
     <description>
-        <p>Wordbook is an offline English-English dictionary application powered by WordNet and eSpeak.</p>
+        <p>Wordbook is an offline English-English dictionary application powered by WordNet and
+            eSpeak.</p>
         <p>Features:</p>
         <ul>
             <li>Fully offline after initial data download</li>
@@ -26,7 +27,7 @@
     <url type="bugtracker">https://github.com/mufeedali/Wordbook/issues</url>
     <url type="donation">https://liberapay.com/mufeedali/donate</url>
     <content_rating type="oars-1.1" />
-    <launchable type="desktop-id">dev.mufeed.Wordbook.desktop</launchable>
+    <launchable type="desktop-id">@APP_ID@.desktop</launchable>
 
     <screenshots>
         <screenshot type="default">
@@ -45,40 +46,50 @@
 
     <releases>
         <release version="0.4.0" date="2023-09-25">
-            <ul>
-                <li>GTK4 + libadwaita Port</li>
-                <li>Persistent history storage</li>
-                <li>Default to live search</li>
-                <li>Update WordNet library and database</li>
-            </ul>
+            <description translatable="no">
+                <ul>
+                    <li>GTK4 + libadwaita Port</li>
+                    <li>Persistent history storage</li>
+                    <li>Default to live search</li>
+                    <li>Update WordNet library and database</li>
+                </ul>
+            </description>
         </release>
         <release version="0.3.1" date="2021-06-06">
-            <ul>
-                <li>Made some minor tweaks to the UI</li>
-                <li>Fixed search entry focus on launch</li>
-            </ul>
+            <description translatable="no">
+                <ul>
+                    <li>Made some minor tweaks to the UI</li>
+                    <li>Fixed search entry focus on launch</li>
+                </ul>
+            </description>
         </release>
         <release version="0.3.0" date="2021-04-30">
-            <ul>
-                <li>Switched to a brand new icon</li>
-                <li>Moved history from completions to a new sidebar</li>
-                <li>Added "--look-up" CLI argument</li>
-                <li>Made some UI improvements to adapt better to different display sizes</li>
-                <li>Made some other minor improvements</li>
-            </ul>
+            <description translatable="no">
+                <ul>
+                    <li>Switched to a brand new icon</li>
+                    <li>Moved history from completions to a new sidebar</li>
+                    <li>Added "--look-up" CLI argument</li>
+                    <li>Made some UI improvements to adapt better to different display sizes</li>
+                    <li>Made some other minor improvements</li>
+                </ul>
+            </description>
         </release>
         <release version="0.2.0" date="2021-03-08">
-            <ul>
-                <li>Updated WordNet dependency, will need a redownload of the database</li>
-                <li>Fixed symbolic icon issues</li>
-                <li>Improved responsiveness</li>
-                <li>Removed a feature called "Hide window buttons when maximized"</li>
-                <li>Fixed some issues with the Flatpak</li>
-                <li>Fixed several minor bugs</li>
-            </ul>
+            <description translatable="no">
+                <ul>
+                    <li>Updated WordNet dependency, will need a redownload of the database</li>
+                    <li>Fixed symbolic icon issues</li>
+                    <li>Improved responsiveness</li>
+                    <li>Removed a feature called "Hide window buttons when maximized"</li>
+                    <li>Fixed some issues with the Flatpak</li>
+                    <li>Fixed several minor bugs</li>
+                </ul>
+            </description>
         </release>
         <release version="0.1.0" date="2021-02-02">
-            <p>Initial release</p>
+            <description translatable="no">
+                <p>Initial release</p>
+            </description>
         </release>
     </releases>
     <recommends>
@@ -91,7 +102,6 @@
         <kudo>HiDpiIcon</kudo>
     </kudos>
     <custom>
-        <value key="Purism::form_factor">workstation</value>
         <value key="Purism::form_factor">mobile</value>
     </custom>
 </component>
