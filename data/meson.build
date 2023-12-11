@@ -26,8 +26,14 @@ if desktop_utils.found()
   )
 endif
 
+appdata_conf = configuration_data()
+appdata_conf.set('app-id', application_id)
 appstream_file = i18n.merge_file(
-  input: base_id + '.metainfo.xml.in',
+  configure_file(
+    input: '@0@.metainfo.xml.in.in'.format(base_id),
+    output: '@BASENAME@',
+    configuration: appdata_conf
+  ),
   output: base_id + '.metainfo.xml',
   po_dir: '../po',
   install: true,
