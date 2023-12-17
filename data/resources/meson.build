@@ -1,3 +1,6 @@
+pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
+gnome = import('gnome')
+
 blueprints = custom_target('blueprints',
   input: files(
     'ui/shortcuts_window.blp',

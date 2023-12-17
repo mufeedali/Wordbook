@@ -1,11 +1,9 @@
-pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
-gnome = import('gnome')
-
 subdir('icons')
 subdir('resources')
 
+# Desktop file
 desktop_conf = configuration_data()
-desktop_conf.set('icon', application_id)
+desktop_conf.set('app-id', application_id)
 desktop_file = i18n.merge_file(
   input: configure_file(
     input: '@0@.desktop.in.in'.format(base_id),
@@ -26,6 +24,7 @@ if desktop_utils.found()
   )
 endif
 
+# Metainfo file
 appdata_conf = configuration_data()
 appdata_conf.set('app-id', application_id)
 appstream_file = i18n.merge_file(
@@ -34,10 +33,10 @@ appstream_file = i18n.merge_file(
     output: '@BASENAME@',
     configuration: appdata_conf
   ),
-  output: base_id + '.metainfo.xml',
+  output: '@0@.metainfo.xml'.format(application_id),
   po_dir: '../po',
   install: true,
-  install_dir: join_paths(get_option('datadir'), 'appdata')
+  install_dir: join_paths(get_option('datadir'), 'metainfo')
 )
 
 appstreamcli = find_program('appstreamcli', required: false)
@@ -47,7 +46,14 @@ if appstreamcli.found()
   )
 endif
 
-install_data(base_id + '.gschema.xml',
+# GSettings schema
+gschema_conf = configuration_data()
+gschema_conf.set('app-id', application_id)
+configure_file(
+  input: '@0@.gschema.xml.in'.format(base_id),
+  output: '@0@.gschema.xml'.format(application_id),
+  configuration: gschema_conf,
+  install: true,
   install_dir: join_paths(get_option('datadir'), 'glib-2.0/schemas')
 )
 
