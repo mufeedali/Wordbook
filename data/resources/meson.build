@@ -9,7 +9,7 @@ blueprints = custom_target('blueprints',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
-resources = gnome.compile_resources(
+gnome.compile_resources(
   'resources',
   'resources.gresource.xml',
   dependencies: blueprints,
