@@ -281,9 +281,6 @@
                                                 </style>
                                               </object>
                                             </child>
-                                            <style>
-                                              <class name="pron-card"/>
-                                            </style>
                                           </object>
                                         </child>
                                         <child>
@@ -370,10 +367,6 @@
                                 </child>
                               </object>
                             </child>
-                            <style>
-                              <class name="card"/>
-                              <class name="clamped-box"/>
-                            </style>
                           </object>
                         </child>
                       </object>

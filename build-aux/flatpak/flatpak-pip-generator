@@ -14,7 +14,6 @@ import tempfile
 import urllib.request
 
 from collections import OrderedDict
-from typing import Dict
 
 try:
     import requirements
