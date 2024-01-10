@@ -25,9 +25,12 @@
 
     <url type="homepage">https://github.com/mufeedali/Wordbook</url>
     <url type="bugtracker">https://github.com/mufeedali/Wordbook/issues</url>
+    <url type="vcs-browser">https://github.com/mufeedali/Wordbook</url>
+    <url type="translate">https://github.com/mufeedali/Wordbook/tree/main/po</url>
     <url type="donation">https://liberapay.com/mufeedali/donate</url>
     <content_rating type="oars-1.1" />
     <launchable type="desktop-id">@app-id@.desktop</launchable>
+    <translation type="gettext">wordbook</translation>
 
     <screenshots>
         <screenshot type="default">
