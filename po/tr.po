@@ -1,5 +1,5 @@
 # Turkish translation of dev.mufeed.Wordbook.
-# Copyright (C) 2023 dev.mufeed.Wordbook's COPYRIGHT HOLDER
+# Copyright (C) 2024 dev.mufeed.Wordbook's COPYRIGHT HOLDER
 # This file is distributed under the same license as the dev.mufeed.Wordbook package.
 #
 # Sabri Ünal <libreajans@gmail.com>, 2023.
@@ -167,8 +167,8 @@ msgid "translator-credits"
 msgstr "Sabri Ünal <libreajans@gmail.com>"
 
 #: wordbook/main.py:127
-msgid "Copyright © 2016-2023 Mufeed Ali"
-msgstr "Telif Hakkı © 2016-2023 Mufeed Ali"
+msgid "Copyright © 2016-2024 Mufeed Ali"
+msgstr "Telif Hakkı © 2016-2024 Mufeed Ali"
 
 #: wordbook/window.py:398
 msgid "Ready."
