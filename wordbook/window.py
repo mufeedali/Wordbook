@@ -23,36 +23,36 @@ from wordbook.settings_window import SettingsWindow
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
-    search_button: Gtk.Button = Gtk.Template.Child("search_button")
-    download_status_page: Adw.StatusPage = Gtk.Template.Child("download_status_page")
-    loading_progress: Gtk.ProgressBar = Gtk.Template.Child("loading_progress")
+    search_button: Gtk.Button = Gtk.Template.Child("search_button")  # type: ignore
+    download_status_page: Adw.StatusPage = Gtk.Template.Child("download_status_page")  # type: ignore
+    loading_progress: Gtk.ProgressBar = Gtk.Template.Child("loading_progress")  # type: ignore
 
-    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")
-    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")
-    _flap_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("flap_toggle_button")
-    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")
-    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")
-    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")
-    _main_flap: Adw.Flap = Gtk.Template.Child("main_flap")
-    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")
-    _main_stack: Gtk.Stack = Gtk.Template.Child("main_stack")
-    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")
-    _def_view: Gtk.Label = Gtk.Template.Child("def_view")
-    _def_ctrlr: Gtk.GestureClick = Gtk.Template.Child("def_ctrlr")
-    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")
-    _term_view: Gtk.Label = Gtk.Template.Child("term_view")
-    _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")
-    _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")
-    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")
+    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")  # type: ignore
+    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")  # type: ignore
+    _flap_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("flap_toggle_button")  # type: ignore
+    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")  # type: ignore
+    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")  # type: ignore
+    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")  # type: ignore
+    _main_flap: Adw.Flap = Gtk.Template.Child("main_flap")  # type: ignore
+    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
+    _main_stack: Gtk.Stack = Gtk.Template.Child("main_stack")  # type: ignore
+    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
+    _def_view: Gtk.Label = Gtk.Template.Child("def_view")  # type: ignore
+    _def_ctrlr: Gtk.GestureClick = Gtk.Template.Child("def_ctrlr")  # type: ignore
+    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
+    _term_view: Gtk.Label = Gtk.Template.Child("term_view")  # type: ignore
+    _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")  # type: ignore
+    _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")  # type: ignore
+    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
 
     _style_manager: Adw.StyleManager | None = None
 
     _wn_downloader: base.WordnetDownloader = base.WordnetDownloader()
     _wn_future = None
 
-    _doubled = False
-    _completion_request_count = 0
-    _searched_term = None
+    _doubled: bool = False
+    _completion_request_count: int = 0
+    _searched_term: str | None = None
     _search_history = None
     _search_history_list = []
     _search_queue = []
@@ -148,6 +148,13 @@ class WordbookWindow(Adw.ApplicationWindow):
         search_selected_action = Gio.SimpleAction.new("search-selected", None)
         search_selected_action.connect("activate", self.on_search_selected)
         self.add_action(search_selected_action)
+
+        def_extra_menu_model = Gio.Menu.new()
+        item = Gio.MenuItem.new("Search Selected Text", "win.search-selected")
+        def_extra_menu_model.append_item(item)
+
+        # Set the extra menu model for the label
+        self._def_view.set_extra_menu(def_extra_menu_model)
 
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
