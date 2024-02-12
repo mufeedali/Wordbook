@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed.dev@pm.me>
+# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
@@ -47,7 +47,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     _style_manager: Adw.StyleManager | None = None
 
-    _wn_downloader = base.WordnetDownloader()
+    _wn_downloader: base.WordnetDownloader = base.WordnetDownloader()
     _wn_future = None
 
     _doubled = False
@@ -84,6 +84,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._def_ctrlr.connect("pressed", self._on_def_press_event)
         self._def_ctrlr.connect("stopped", self._on_def_stop_event)
         self._def_view.connect("activate-link", self._on_link_activated)
+
         self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
         self._speak_button.connect("clicked", self._on_speak_clicked)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed.dev@pm.me>
+# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
@@ -244,7 +244,7 @@ def get_fortune(mono=True):
     return fortune_out
 
 
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=128)
 def get_pronunciation(term, accent="us"):
     """Get the pronunciation from espeak and process it."""
     try:

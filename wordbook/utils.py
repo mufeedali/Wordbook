@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed.dev@pm.me>
+# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """utils contains a few global variables and essential functions."""
