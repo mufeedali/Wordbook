@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the wordbook package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Scrambled777 <weblate.scrambled777@simplelogin.com>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wordbook\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-30 14:36+0530\n"
+"PO-Revision-Date: 2024-03-31 17:51+0530\n"
+"Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
+"Language-Team: Hindi\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 46.0\n"
+
+#: data/resources/ui/settings_window.ui:14
+msgid "Appearance"
+msgstr "दिखावट"
+
+#: data/resources/ui/settings_window.ui:17
+msgid "Force Dark Mode"
+msgstr "बलपूर्वक गहरा मोड"
+
+#: data/resources/ui/settings_window.ui:24
+msgid "Behavior"
+msgstr "व्यवहार"
+
+#: data/resources/ui/settings_window.ui:27
+msgid "Live Search"
+msgstr "लाइव खोज"
+
+#: data/resources/ui/settings_window.ui:28
+msgid "Show definition as the terms are typed in"
+msgstr "जैसे ही शब्द टाइप किए जाएं, परिभाषा दिखाएं"
+
+#: data/resources/ui/settings_window.ui:33
+msgid "Double Click Search"
+msgstr "डबल क्लिक पर खोजें"
+
+#: data/resources/ui/settings_window.ui:34
+msgid "Search any word by double clicking on it"
+msgstr "किसी भी शब्द पर डबल क्लिक करके उसे खोजें"
+
+#: data/resources/ui/settings_window.ui:39
+msgid "Pronunciations Accent"
+msgstr "उच्चारण लहजा"
+
+#: data/resources/ui/shortcuts_window.ui:12
+msgctxt "shortcut window"
+msgid "General"
+msgstr "जनरल"
+
+#: data/resources/ui/shortcuts_window.ui:15
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "शॉर्टकट दिखाएँ"
+
+#: data/resources/ui/shortcuts_window.ui:21
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "प्राथमिकताएँ"
+
+#: data/resources/ui/shortcuts_window.ui:27
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "पेस्ट करें और खोजें"
+
+#: data/resources/ui/shortcuts_window.ui:33
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "यादृच्छिक शब्द"
+
+#: data/resources/ui/shortcuts_window.ui:39
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "चयनित पाठ खोजें"
+
+#: data/resources/ui/window.ui:9
+msgid "Paste & Search"
+msgstr "पेस्ट करें और खोजें"
+
+#: data/resources/ui/window.ui:13
+msgid "Search Selected Text"
+msgstr "चयनित पाठ खोजें"
+
+#: data/resources/ui/window.ui:17
+msgid "_Random Word"
+msgstr "यादृच्छिक शब्द (_R)"
+
+#: data/resources/ui/window.ui:24
+msgid "_Preferences"
+msgstr "प्राथमिकताएँ (_P)"
+
+#: data/resources/ui/window.ui:28
+msgid "_Keyboard Shortcuts"
+msgstr "कीबोर्ड शॉर्टकट (_K)"
+
+#: data/resources/ui/window.ui:32
+msgid "_About Wordbook"
+msgstr "Wordbook के बारे में (_A)"
+
+#: data/resources/ui/window.ui:66
+msgid "Search"
+msgstr "खोजें"
+
+#: data/resources/ui/window.ui:79
+msgid "Show History"
+msgstr "इतिहास दिखाएँ"
+
+#: data/resources/ui/window.ui:124
+msgid "History"
+msgstr "इतिहास"
+
+#: data/resources/ui/window.ui:198
+msgid "Setting things up…"
+msgstr "चीज़ें निर्धारित की जा रही हैं…"
+
+#: data/resources/ui/window.ui:199 wordbook/window.py:555
+msgid "Downloading WordNet…"
+msgstr "WordNet डाउनलोड हो रहा है…"
+
+#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
+#: wordbook/main.py:119
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.ui:221
+msgid "Look up definitions of any English term"
+msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें"
+
+#: data/resources/ui/window.ui:255
+msgid "/Pronunciation/"
+msgstr "/उच्चारण/"
+
+#: data/resources/ui/window.ui:278
+msgid "Listen to Pronunciation"
+msgstr "उच्चारण सुनें"
+
+#: data/resources/ui/window.ui:318
+msgid "No definition found"
+msgstr "कोई परिभाषा नहीं मिली"
+
+#: data/resources/ui/window.ui:329
+msgid "Download failed"
+msgstr "डाउनलोड विफल"
+
+#: data/resources/ui/window.ui:336
+msgid "Retry"
+msgstr "पुन: प्रयास"
+
+#: data/resources/ui/window.ui:345
+msgid "Exit"
+msgstr "बाहर निकलें"
+
+#: wordbook/main.py:121
+msgid "Look up definitions of any English term."
+msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें।"
+
+#: wordbook/main.py:123
+msgid "translator-credits"
+msgstr "Scrambled777 <weblate.scrambled777@simplelogin.com>"
+
+#: wordbook/main.py:127
+msgid "Copyright © 2016-2024 Mufeed Ali"
+msgstr "कॉपीराइट © 2016-2024 मुफ़ीद अली"
+
+#: wordbook/window.py:398
+msgid "Ready."
+msgstr "तैयार।"
+
+#: wordbook/window.py:508
+msgid "Invalid input"
+msgstr "अमान्य निवेश"
+
+#: wordbook/window.py:509
+msgid "Nothing definable was found in your search input"
+msgstr "आपके खोज इनपुट में कुछ भी निश्चित नहीं मिला"
+
+#: wordbook/window.py:573
+msgid "Re-downloading WordNet database"
+msgstr "WordNet डेटाबेस को पुनः डाउनलोड किया जा रहा है"
+
+#: wordbook/window.py:575
+msgid "Just a database upgrade."
+msgstr "बस एक डेटाबेस अपग्रेड।"
+
+#: wordbook/window.py:577
+msgid "This shouldn't happen too often."
+msgstr "ऐसा अक्सर नहीं होना चाहिए।"
+
+#: wordbook/window.py:622
+msgid "Building Database…"
+msgstr "डेटाबेस का निर्माण…"
