@@ -49,7 +49,7 @@
 
     <releases>
         <release version="0.4.0" date="2023-09-25">
-            <description translatable="no">
+            <description translate="no">
                 <ul>
                     <li>GTK4 + libadwaita Port</li>
                     <li>Persistent history storage</li>
@@ -59,7 +59,7 @@
             </description>
         </release>
         <release version="0.3.1" date="2021-06-06">
-            <description translatable="no">
+            <description translate="no">
                 <ul>
                     <li>Made some minor tweaks to the UI</li>
                     <li>Fixed search entry focus on launch</li>
@@ -67,7 +67,7 @@
             </description>
         </release>
         <release version="0.3.0" date="2021-04-30">
-            <description translatable="no">
+            <description translate="no">
                 <ul>
                     <li>Switched to a brand new icon</li>
                     <li>Moved history from completions to a new sidebar</li>
@@ -78,7 +78,7 @@
             </description>
         </release>
         <release version="0.2.0" date="2021-03-08">
-            <description translatable="no">
+            <description translate="no">
                 <ul>
                     <li>Updated WordNet dependency, will need a redownload of the database</li>
                     <li>Fixed symbolic icon issues</li>
@@ -90,7 +90,7 @@
             </description>
         </release>
         <release version="0.1.0" date="2021-02-02">
-            <description translatable="no">
+            <description translate="no">
                 <p>Initial release</p>
             </description>
         </release>
