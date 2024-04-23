@@ -58,6 +58,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _search_queue = []
     _last_search_fail = False
     _active_thread = None
+    _primary_clipboard_text = None
 
     def __init__(self, term="", **kwargs):
         """Initialize the window."""
@@ -131,24 +132,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         if not Settings.get().live_search:
             self.set_default_widget(self.search_button)
 
-    def setup_actions(self):
-        """Setup the Gio actions for the application window."""
-        paste_search_action = Gio.SimpleAction.new("paste-search", None)
-        paste_search_action.connect("activate", self.on_paste_search)
-        self.add_action(paste_search_action)
-
-        preferences_action = Gio.SimpleAction.new("preferences", None)
-        preferences_action.connect("activate", self.on_preferences)
-        self.add_action(preferences_action)
-
-        random_word_action = Gio.SimpleAction.new("random-word", None)
-        random_word_action.connect("activate", self.on_random_word)
-        self.add_action(random_word_action)
-
-        search_selected_action = Gio.SimpleAction.new("search-selected", None)
-        search_selected_action.connect("activate", self.on_search_selected)
-        self.add_action(search_selected_action)
-
         def_extra_menu_model = Gio.Menu.new()
         item = Gio.MenuItem.new("Search Selected Text", "win.search-selected")
         def_extra_menu_model.append_item(item)
@@ -156,16 +139,64 @@ class WordbookWindow(Adw.ApplicationWindow):
         # Set the extra menu model for the label
         self._def_view.set_extra_menu(def_extra_menu_model)
 
+    def setup_actions(self):
+        """Setup the Gio actions for the application window."""
+        paste_search_action: Gio.SimpleAction = Gio.SimpleAction.new("paste-search", None)
+        paste_search_action.connect("activate", self.on_paste_search)
+        self.add_action(paste_search_action)
+
+        preferences_action: Gio.SimpleAction = Gio.SimpleAction.new("preferences", None)
+        preferences_action.connect("activate", self.on_preferences)
+        self.add_action(preferences_action)
+
+        random_word_action: Gio.SimpleAction = Gio.SimpleAction.new("random-word", None)
+        random_word_action.connect("activate", self.on_random_word)
+        self.add_action(random_word_action)
+
+        search_selected_action: Gio.SimpleAction = Gio.SimpleAction.new("search-selected", None)
+        search_selected_action.connect("activate", self.on_search_selected)
+        search_selected_action.set_enabled(False)
+        self.add_action(search_selected_action)
+
+        clipboard: Gdk.Clipboard = self.get_primary_clipboard()
+        clipboard.connect("changed", self.on_clipboard_changed)
+
+    def on_clipboard_changed(self, clipboard: Gdk.Clipboard | None):
+        clipboard = Gdk.Display.get_default().get_primary_clipboard()
+
+        def on_selection(_clipboard, result):
+            """Callback for the text selection."""
+            try:
+                text = clipboard.read_text_finish(result)
+                if text is not None and not text.strip() == "" and not text.isspace():
+                    text = text.replace("         ", "").replace("\n", "")
+                    self._primary_clipboard_text = text
+                    self.lookup_action("search-selected").props.enabled = True
+                else:
+                    self._primary_clipboard_text = None
+                    self.lookup_action("search-selected").props.enabled = False
+            except GLib.GError:
+                # Usually happens when clipboard is empty or unsupported data type
+                self._primary_clipboard_text = None
+                self.lookup_action("search-selected").props.enabled = False
+
+        cancellable = Gio.Cancellable()
+        clipboard.read_text_async(cancellable, on_selection)
+
     def on_paste_search(self, _action, _param):
         """Search text in clipboard."""
         clipboard = Gdk.Display.get_default().get_clipboard()
 
         def on_paste(_clipboard, result):
             """Callback for the clipboard paste."""
-            text = clipboard.read_text_finish(result)
-            text = base.cleaner(text)
-            if text is not None and not text.strip() == "" and not text.isspace():
-                self.trigger_search(text)
+            try:
+                text = clipboard.read_text_finish(result)
+                text = base.clean_search_terms(text)
+                if text is not None and not text.strip() == "" and not text.isspace():
+                    self.trigger_search(text)
+            except GLib.GError:
+                # Usually happens when clipboard is empty or unsupported data type
+                pass
 
         cancellable = Gio.Cancellable()
         clipboard.read_text_async(cancellable, on_paste)
@@ -183,17 +214,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def on_search_selected(self, _action, _param):
         """Search selected text from inside or outside the window."""
-        clipboard = Gdk.Display.get_default().get_primary_clipboard()
-
-        def on_selection(_clipboard, result):
-            """Callback for the text selection."""
-            text = clipboard.read_text_finish(result)
-            if text is not None and not text.strip() == "" and not text.isspace():
-                text = text.replace("         ", "").replace("\n", "")
-                self.trigger_search(text)
-
-        cancellable = Gio.Cancellable()
-        clipboard.read_text_async(cancellable, on_selection)
+        self.trigger_search(self._primary_clipboard_text)
 
     def on_search_clicked(self, _button=None, pass_check=False, text=None):
         """Pass data to search function and set TextView data."""
@@ -311,7 +332,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
             def on_paste(_clipboard, result):
                 text = clipboard.read_text_finish(result)
-                text = base.cleaner(text)
+                text = base.clean_search_terms(text)
                 if text is not None and not text.strip() == "" and not text.isspace():
                     self.trigger_search(text)
 
@@ -501,7 +522,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _search(self, search_text):
         """Clean input text, give errors and pass data to formatter."""
-        text = base.cleaner(search_text)
+        text = base.clean_search_terms(search_text)
         if not text == "" and not text.isspace():
             return base.format_output(
                 text,

@@ -17,9 +17,10 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from shutil import rmtree
+from typing import Callable, Dict, List
 
 import wn
-from wn import Wordnet
+from wn import Form, Wordnet
 
 from wordbook import utils
 
@@ -41,7 +42,7 @@ def _threadpool(func):
     return wrap
 
 
-def cleaner(search_term):
+def clean_search_terms(search_term):
     """Clean up search terms."""
     text = search_term.strip().strip('<>"-?`![](){}/:;,*')
     cleaner_list = ["(", ")", "<", ">", "[", "]", "&", "\\", "\n"]
@@ -50,12 +51,10 @@ def cleaner(search_term):
     return text
 
 
-def fold_gen():
+def create_required_dirs():
     """Make required directories if they don't already exist."""
-    if not os.path.exists(utils.CONFIG_DIR):  # check for Wordbook folder
-        os.makedirs(utils.CONFIG_DIR)  # create Wordbook folder
-    if not os.path.exists(utils.CDEF_DIR):  # check Custom Definitions folder.
-        os.makedirs(utils.CDEF_DIR)  # create Custom Definitions folder.
+    os.makedirs(utils.CONFIG_DIR, exist_ok=True)  # create Wordbook folder
+    os.makedirs(utils.CDEF_DIR, exist_ok=True)  # create Custom Definitions folder.
 
 
 def fetch_definition(text, wordcol, sencol, wn_instance, cdef=True, accent="us"):
@@ -68,15 +67,17 @@ def fetch_definition(text, wordcol, sencol, wn_instance, cdef=True, accent="us")
 def get_cowfortune():
     """Present cowsay version of fortune easter egg."""
     try:
-        cowsay = subprocess.Popen(
-            ["cowsay", get_fortune(mono=False)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+        cowsaid: str = (
+            subprocess.Popen(
+                ["cowsay", get_fortune(mono=False)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
+            .communicate()[0]
+            .decode()
         )
-        cowsay.wait()
-        if cowsay:
-            cst = cowsay.stdout.read().decode()
-            return f"<tt>{html.escape(cst)}</tt>"
+        if cowsaid:
+            return f"<tt>{html.escape(cowsaid)}</tt>"
         return "<tt>Cowsay fail… Too bad…</tt>"
     except OSError as ex:
         fortune_out = "Easter Egg Fail!!! Install 'fortune' or 'fortunemod' and also 'cowsay'."
@@ -84,27 +85,17 @@ def get_cowfortune():
         return f"<tt>{fortune_out}</tt>"
 
 
-def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
+def get_custom_def(text: str, wordcol: str, sencol: str, wn_instance, accent="us"):
     """Present custom definition when available."""
     with open(f"{utils.CDEF_DIR}/{text}", "r") as def_file:
-        custom_def_dict = json.load(def_file)
+        custom_def_dict: dict = json.load(def_file)
     if "linkto" in custom_def_dict:
         return get_data(custom_def_dict.get("linkto", text), wordcol, sencol, wn_instance, accent)
     definition = custom_def_dict.get(
         "out_string",
         get_definition(text, wordcol, sencol, wn_instance)[0]["out_string"],
     )
-    re_list = {
-        "<i>($WORDCOL)</i>": wordcol,
-        "<i>($SENCOL)</i>": sencol,
-        "($WORDCOL)": wordcol,
-        "($SENCOL)": sencol,
-        "$WORDCOL": wordcol,
-        "$SENCOL": sencol,
-    }
-    if definition is not None:
-        for i, j in re_list.items():
-            definition = definition.replace(i, j)
+    definition = definition.format(WORDCOL=wordcol, SENCOL=sencol)
     term = custom_def_dict.get("term", text)
     pronunciation = custom_def_dict.get("pronunciation", get_pronunciation(term, accent)) or "Is espeak-ng installed?"
     final_data = {
@@ -117,23 +108,27 @@ def get_custom_def(text, wordcol, sencol, wn_instance, accent="us"):
 
 def get_data(term, word_col, sen_col, wn_instance, accent="us"):
     """Obtain the data to be processed and presented."""
+
+    # Obtain definition from given parameters
     definition = get_definition(term, word_col, sen_col, wn_instance)
     clean_def = definition[0]
+
+    # Get pronunciation of the term or default to the original term if no pronunciation available.
     pron = get_pronunciation(clean_def["term"] or term, accent)
-    if not pron or pron == "" or pron.isspace():
-        final_pron = "Is espeak-ng installed?"
-    else:
-        final_pron = pron
+    final_pron = pron if pron and not pron.isspace() else "Is espeak-ng installed?"
+
+    # Create the dictionary to be returned.
     final_data = {
         "term": clean_def["term"],
         "pronunciation": final_pron,
         "result": clean_def["result"],
         "out_string": clean_def["out_string"],
     }
+
     return final_data
 
 
-def get_definition(term, word_col, sen_col, wn_instance):
+def get_definition(term: str, word_col: str, sen_col: str, wn_instance):
     """Get the definition from python-wn and process it."""
     result_dict = None
     synsets = wn_instance.synsets(term)  # Get relevant synsets.
@@ -232,33 +227,34 @@ def get_definition(term, word_col, sen_col, wn_instance):
 def get_fortune(mono=True):
     """Present fortune easter egg."""
     try:
-        fortune_process = subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        fortune_process.wait()
-        fortune_out = fortune_process.stdout.read().decode()
-        fortune_out = html.escape(fortune_out, False)
+        fortune_output = (
+            subprocess.Popen(["fortune", "-a"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            .communicate()[0]
+            .decode()
+        )
+        if fortune_output:
+            fortune_output = html.escape(fortune_output, False)
     except OSError as ex:
-        fortune_out = "Easter egg fail! Install 'fortune' or 'fortune-mod'."
-        utils.log_error(f"{fortune_out}\n{str(ex)}")
+        fortune_output = "Easter egg fail! Install 'fortune' or 'fortune-mod'."
+        utils.log_error(f"{fortune_output}\n{str(ex)}")
     if mono:
-        return f"<tt>{fortune_out}</tt>"
-    return fortune_out
+        return f"<tt>{fortune_output}</tt>"
+    return fortune_output
 
 
 @lru_cache(maxsize=128)
 def get_pronunciation(term, accent="us"):
     """Get the pronunciation from espeak and process it."""
-    try:
-        process_pron = subprocess.Popen(
+    pron_output = (
+        subprocess.Popen(
             ["espeak-ng", "-v", f"en-{accent}", "--ipa", "-q", term],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-    except OSError as ex:
-        utils.log_warning(f"Didn't Work! Error: {str(ex)}")
-        return None
-    process_pron.wait()
-    output = process_pron.stdout.read().decode()
-    clean_output = " /{0}/".format(output.strip().replace("\n ", " "))
+        .communicate()[0]
+        .decode()
+    )
+    clean_output = " /{0}/".format(pron_output.strip().replace("\n ", " "))
     return clean_output
 
 
@@ -268,20 +264,22 @@ def get_version_info(version):
     print("Copyright 2016-2024 Mufeed Ali")
     print()
     try:
-        espeak_process = subprocess.Popen(["espeak-ng", "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        espeak_process.wait()
-        espeak_out = espeak_process.stdout.read().decode()
+        espeak_out = (
+            subprocess.Popen(["espeak-ng", "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            .communicate()[0]
+            .decode()
+        )
         print(espeak_out.strip())
     except OSError as ex:
         print(f"You're missing a few dependencies. (espeak-ng)\n{str(ex)}")
 
 
 @_threadpool
-def get_wn_file(reloader):
+def get_wn_file(reloader: Callable) -> Dict[str, Wordnet | List[Form]]:
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initializing WordNet.")
     try:
-        wn_instance = Wordnet(lexicon=WN_DB_VERSION)
+        wn_instance: Wordnet = Wordnet(lexicon=WN_DB_VERSION)
     except (wn.Error, wn.DatabaseError):
         utils.log_info("The WordNet database is either corrupted or is of an older version.")
         return reloader()
@@ -295,8 +293,7 @@ def format_output(text, dark_font, wn_instance, cdef, accent="us"):
     """Return appropriate definitions."""
     if dark_font:
         sencol = "cyan"  # Color of sentences in Dark mode
-        wordcol = "lightgreen"  # Color of: Similar words,
-        #                                   Synonyms and Antonyms.
+        wordcol = "lightgreen"  # Color of: Similar words, Synonyms and Antonyms.
     else:
         sencol = "blue"  # Color of sentences in regular
         wordcol = "green"  # Color of: Similar words, Synonyms, Antonyms.

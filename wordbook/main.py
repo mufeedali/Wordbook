@@ -2,9 +2,9 @@
 # SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import gi
-
 from gettext import gettext as _
+
+import gi
 
 gi.require_version("Gdk", "4.0")
 gi.require_version("Gtk", "4.0")
@@ -65,12 +65,10 @@ class Application(Adw.Application):
         )
 
         Adw.StyleManager.get_default().set_color_scheme(
-            Adw.ColorScheme.FORCE_DARK
-            if Settings.get().gtk_dark_ui
-            else Adw.ColorScheme.PREFER_LIGHT
+            Adw.ColorScheme.FORCE_DARK if Settings.get().gtk_dark_ui else Adw.ColorScheme.PREFER_LIGHT
         )
 
-        base.fold_gen()
+        base.create_required_dirs()
 
     def do_startup(self):
         """Manage startup of the application."""
