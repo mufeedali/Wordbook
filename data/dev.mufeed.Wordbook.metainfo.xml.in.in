@@ -21,7 +21,7 @@
     </description>
 
     <developer_name>Mufeed Ali</developer_name>
-    <developer id="io.github.mufeedali">
+    <developer id="dev.mufeed">
         <name translate="no">Mufeed Ali</name>
     </developer>
     <update_contact>mufeed@kumo.foo</update_contact>
