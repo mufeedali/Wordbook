@@ -9,15 +9,15 @@ msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-30 14:36+0530\n"
-"PO-Revision-Date: 2024-03-31 17:51+0530\n"
+"PO-Revision-Date: 2024-05-11 15:18+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
-"Language-Team: Hindi\n"
+"Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 46.0\n"
+"X-Generator: Gtranslator 46.1\n"
 
 #: data/resources/ui/settings_window.ui:14
 msgid "Appearance"
@@ -54,17 +54,17 @@ msgstr "उच्चारण लहजा"
 #: data/resources/ui/shortcuts_window.ui:12
 msgctxt "shortcut window"
 msgid "General"
-msgstr "जनरल"
+msgstr "सामान्य"
 
 #: data/resources/ui/shortcuts_window.ui:15
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
-msgstr "शॉर्टकट दिखाएँ"
+msgstr "शॉर्टकट दिखाएं"
 
 #: data/resources/ui/shortcuts_window.ui:21
 msgctxt "shortcut window"
 msgid "Preferences"
-msgstr "प्राथमिकताएँ"
+msgstr "प्राथमिकताएं"
 
 #: data/resources/ui/shortcuts_window.ui:27
 msgctxt "shortcut window"
@@ -95,7 +95,7 @@ msgstr "यादृच्छिक शब्द (_R)"
 
 #: data/resources/ui/window.ui:24
 msgid "_Preferences"
-msgstr "प्राथमिकताएँ (_P)"
+msgstr "प्राथमिकताएं (_P)"
 
 #: data/resources/ui/window.ui:28
 msgid "_Keyboard Shortcuts"
@@ -111,7 +111,7 @@ msgstr "खोजें"
 
 #: data/resources/ui/window.ui:79
 msgid "Show History"
-msgstr "इतिहास दिखाएँ"
+msgstr "इतिहास दिखाएं"
 
 #: data/resources/ui/window.ui:124
 msgid "History"
@@ -152,7 +152,7 @@ msgstr "डाउनलोड विफल"
 
 #: data/resources/ui/window.ui:336
 msgid "Retry"
-msgstr "पुन: प्रयास"
+msgstr "पुन: प्रयास करें"
 
 #: data/resources/ui/window.ui:345
 msgid "Exit"
@@ -176,11 +176,11 @@ msgstr "तैयार।"
 
 #: wordbook/window.py:508
 msgid "Invalid input"
-msgstr "अमान्य निवेश"
+msgstr "अमान्य आगत"
 
 #: wordbook/window.py:509
 msgid "Nothing definable was found in your search input"
-msgstr "आपके खोज इनपुट में कुछ भी निश्चित नहीं मिला"
+msgstr "आपके खोज आगत में कुछ भी निश्चित नहीं मिला"
 
 #: wordbook/window.py:573
 msgid "Re-downloading WordNet database"
@@ -188,7 +188,7 @@ msgstr "WordNet डेटाबेस को पुनः डाउनलोड 
 
 #: wordbook/window.py:575
 msgid "Just a database upgrade."
-msgstr "बस एक डेटाबेस अपग्रेड।"
+msgstr "बस एक डेटाबेस उन्नयन।"
 
 #: wordbook/window.py:577
 msgid "This shouldn't happen too often."
