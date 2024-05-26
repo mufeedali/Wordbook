@@ -43,23 +43,23 @@ Wordbook
 
 <a href='https://flathub.org/apps/details/dev.mufeed.Wordbook'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
-### TODO Using Nix
+### Using Nix
 
-Can be done anywhere the Nix package manager is used
+[![](https://raw.githubusercontent.com/dch82/Nixpkgs-Badges/main/nixpkgs-badge-light.svg)](https://search.nixos.org/packages?size=1&show=wordbook)
 
-- [ ] Old CLI
-    - [ ] temporary
-    - [ ] permanent
-- [ ] New CLI / flakes
-    - [ ] temporary
-    - [ ] permanent
-- [ ] home-manager
+This method can be used anywhere the Nix package manager is installed.
 
 ### Using distro-specific packages
 
 Right now, Wordbook is only packaged for Arch through the AUR as [`wordbook`](https://aur.archlinux.org/packages/wordbook).
 
-TODO nixos-rebuild configuration.nix
+On NixOS, Wordbook can be installed using the Nix package manager as shown above. Additionally, the following cod can be added to your NixOS configuration file, usually located in `/etc/nixos/configuration.nix`.
+
+```
+  environment.systemPackages = [
+    pkgs.wordbook
+  ];
+```
 
 ### From Source
 
