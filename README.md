@@ -43,9 +43,21 @@ Wordbook
 
 <a href='https://flathub.org/apps/details/dev.mufeed.Wordbook'><img width='240' alt='Download on Flathub' src='https://flathub.org/assets/badges/flathub-badge-en.png'/></a>
 
+### TODO Using Nix
+
+- [ ] Old CLI
+      - [ ] temporary
+      - [ ] permanent
+- [ ] New CLI / flakes
+      - [ ] temporary
+      - [ ] permanent
+- [ ] home-manager
+
 ### Using distro-specific packages
 
 Right now, Wordbook is only packaged for Arch through the AUR as [`wordbook`](https://aur.archlinux.org/packages/wordbook).
+
+TODO nixos-rebuild configuration.nix
 
 ### From Source
 
