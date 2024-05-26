@@ -53,7 +53,7 @@ This method can be used anywhere the Nix package manager is installed.
 
 Right now, Wordbook is only packaged for Arch through the AUR as [`wordbook`](https://aur.archlinux.org/packages/wordbook).
 
-On NixOS, Wordbook can be installed using the Nix package manager as shown above. Additionally, the following cod can be added to your NixOS configuration file, usually located in `/etc/nixos/configuration.nix`.
+On NixOS, Wordbook can be installed using the Nix package manager as shown above. Additionally, the following code can be added to your NixOS configuration file, usually located in `/etc/nixos/configuration.nix`.
 
 ```
   environment.systemPackages = [
