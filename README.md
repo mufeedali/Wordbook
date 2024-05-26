@@ -45,12 +45,14 @@ Wordbook
 
 ### TODO Using Nix
 
+Can be done anywhere the Nix package manager is used
+
 - [ ] Old CLI
-      - [ ] temporary
-      - [ ] permanent
+    - [ ] temporary
+    - [ ] permanent
 - [ ] New CLI / flakes
-      - [ ] temporary
-      - [ ] permanent
+    - [ ] temporary
+    - [ ] permanent
 - [ ] home-manager
 
 ### Using distro-specific packages
