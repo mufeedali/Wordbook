@@ -63,17 +63,26 @@ On NixOS, Wordbook can be installed using the Nix package manager as shown above
 
 ### From Source
 
-To install, first make sure of the dependencies as listed above.
+To install, first make sure of the dependencies as listed above. You can use `just` to make the process easy.
 
 ```bash
-make setup
-make install
+just setup
+just install
+```
+
+Without `just`:
+```bash
+mkdir -p _build
+meson setup . _build
+ninja -C _build install
 ```
 
 For a local build with debugging enabled:
 
 ```bash
-make setup
-make develop
-make run
+just run
+# OR
+just setup
+just develop-configure
+just local-run
 ```
