@@ -114,6 +114,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             self._search_entry.grab_focus_without_selecting()
 
         # Completions
+        # FIXME: Remove use of EntryCompletion
         self.completer = Gtk.EntryCompletion()
         self.completer.set_popup_single_match(False)
         self.completer.set_text_column(0)
