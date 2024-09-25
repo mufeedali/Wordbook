@@ -16,7 +16,7 @@ from wn.util import ProgressHandler
 
 from wordbook import base, utils
 from wordbook.settings import Settings
-from wordbook.settings_window import SettingsWindow
+from wordbook.settings_window import SettingsDialog
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
@@ -203,8 +203,8 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def on_preferences(self, _action, _param):
         """Show settings window."""
-        window = SettingsWindow(parent=self, transient_for=self)
-        window.present()
+        window = SettingsDialog(self)
+        window.present(self)
 
     def on_random_word(self, _action, _param):
         """Search a random word from the wordlist."""
@@ -446,12 +446,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         box.append(label)
         return box
 
-    def _new_error(self, primary_text, seconday_text):
+    def _new_error(self, primary_text, secondary_text) -> Adw.AlertDialog:
         """Show an error dialog."""
-        dialog = Gtk.MessageDialog(self, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, primary_text)
-        dialog.format_secondary_text(seconday_text)
-        dialog.run()
-        dialog.destroy()
+        dialog = Adw.AlertDialog.new(primary_text, secondary_text)
+        dialog.add_response("dismiss", _("Dismiss"))
+        dialog.choose(self)
 
     def _page_switch(self, page):
         """Switch main stack pages."""

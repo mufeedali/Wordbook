@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
-base contains the shared code between the GTK+ 3 UI and other possible frontends.
-
-base is a part of Wordbook.
+base is a part of Wordbook and has code independent from the UI.
 """
 
 import difflib

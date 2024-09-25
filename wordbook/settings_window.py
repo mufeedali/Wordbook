@@ -13,10 +13,10 @@ PATH = os.path.dirname(__file__)
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings_window.ui")
-class SettingsWindow(Adw.PreferencesWindow):
+class SettingsDialog(Adw.PreferencesDialog):
     """Allows the user to customize Wordbook to some extent."""
 
-    __gtype_name__ = "SettingsWindow"
+    __gtype_name__ = "SettingsDialog"
 
     _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
 

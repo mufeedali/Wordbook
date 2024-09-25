@@ -2,11 +2,9 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="SettingsWindow" parent="AdwPreferencesWindow">
-    <property name="modal">True</property>
-    <property name="default-width">450</property>
-    <property name="default-height">350</property>
-    <property name="destroy-with-parent">True</property>
+  <template class="SettingsDialog" parent="AdwPreferencesDialog">
+    <property name="content-width">450</property>
+    <property name="content-height">350</property>
     <child>
       <object class="AdwPreferencesPage">
         <child>
