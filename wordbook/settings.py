@@ -226,5 +226,5 @@ class Settings:
 
     def set_boolean_key(self, section, key, value):
         """Set a boolean value in the configuration file."""
-        self.config[section][key] = utils.boot_to_str(value)
+        self.config[section][key] = utils.bool_to_str(value)
         self.save_settings()

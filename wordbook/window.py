@@ -35,7 +35,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")  # type: ignore
     _main_flap: Adw.Flap = Gtk.Template.Child("main_flap")  # type: ignore
     _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
-    _main_stack: Gtk.Stack = Gtk.Template.Child("main_stack")  # type: ignore
+    _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")  # type: ignore
     _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
     _def_view: Gtk.Label = Gtk.Template.Child("def_view")  # type: ignore
     _def_ctrlr: Gtk.GestureClick = Gtk.Template.Child("def_ctrlr")  # type: ignore

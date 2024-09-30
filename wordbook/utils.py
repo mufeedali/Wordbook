@@ -21,7 +21,7 @@ logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(mo
 LOGGER = logging.getLogger()
 
 
-def boot_to_str(boolean):
+def bool_to_str(boolean):
     """Convert boolean to string for configuration parser."""
     if boolean is True:
         return "yes"

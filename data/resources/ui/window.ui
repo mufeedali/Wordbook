@@ -134,10 +134,10 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkStack" id="history_stack">
+                  <object class="AdwViewStack" id="history_stack">
                     <property name="vexpand">True</property>
                     <child>
-                      <object class="GtkStackPage">
+                      <object class="AdwViewStackPage">
                         <property name="name">list</property>
                         <property name="child">
                           <object class="GtkScrolledWindow">
@@ -157,7 +157,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkStackPage">
+                      <object class="AdwViewStackPage">
                         <property name="name">empty</property>
                         <property name="child">
                           <object class="AdwStatusPage">
@@ -188,10 +188,9 @@
                           <object class="GtkBox" id="clamped_box">
                             <property name="orientation">vertical</property>
                             <child>
-                              <object class="GtkStack" id="main_stack">
-                                <property name="transition-type">crossfade</property>
+                              <object class="AdwViewStack" id="main_stack">
                                 <child>
-                                  <object class="GtkStackPage">
+                                  <object class="AdwViewStackPage">
                                     <property name="name">download_page</property>
                                     <property name="child">
                                       <object class="AdwStatusPage" id="download_status_page">
@@ -212,7 +211,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkStackPage">
+                                  <object class="AdwViewStackPage">
                                     <property name="name">welcome_page</property>
                                     <property name="child">
                                       <object class="AdwStatusPage" id="before_search_page">
@@ -224,7 +223,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkStackPage">
+                                  <object class="AdwViewStackPage">
                                     <property name="name">content_page</property>
                                     <property name="child">
                                       <object class="GtkBox" id="content_box">
@@ -306,7 +305,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkStackPage">
+                                  <object class="AdwViewStackPage">
                                     <property name="name">search_fail_page</property>
                                     <property name="child">
                                       <object class="AdwStatusPage" id="search_fail_status_page">
@@ -318,7 +317,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkStackPage">
+                                  <object class="AdwViewStackPage">
                                     <property name="name">network_fail_page</property>
                                     <property name="child">
                                       <object class="AdwStatusPage" id="network_fail_status_page">
@@ -352,7 +351,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkStackPage">
+                                  <object class="AdwViewStackPage">
                                     <property name="name">spinner_page</property>
                                     <property name="child">
                                       <object class="AdwSpinner">
