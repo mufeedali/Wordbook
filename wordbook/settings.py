@@ -149,6 +149,7 @@ class Settings:
                 # Add new option.
                 self.set_boolean_key("General", "DoubleClick", False)
                 self.config.set("General", "ConfigVersion", "2")
+                config_version = 2
 
             if config_version == 2:
                 # Remove old options.
@@ -162,18 +163,21 @@ class Settings:
                 self.config.set("General", "PronunciationsAccent", "us")
 
                 self.config.set("General", "ConfigVersion", "3")  # Set version.
+                config_version = 3
 
             # Remove ability to hide window buttons when maximized.
             if config_version == 3:
                 utils.log_info("Updating to ConfigVersion 4")
                 self.config.remove_option("UI", "HideWindowButtonsMaximized")
                 self.config.set("General", "ConfigVersion", "4")
+                config_version = 4
 
             if config_version == 4:
                 utils.log_info("Updating to ConfigVersion 5")
                 self.config.add_section("Misc")
                 self.config.set("Misc", "History", "[]")
                 self.config.set("General", "ConfigVersion", "5")
+                config_version = 5
 
             if config_version == 5:
                 utils.log_info("Updating to ConfigVersion 6")
@@ -186,6 +190,7 @@ class Settings:
                 self.config.rename_section("UI", "Appearance")
 
                 self.config.move_option("ConfigVersion", "Behavior", "Misc", new_value="6")
+                config_version = 6
 
             self.save_settings()  # Save before proceeding.
 

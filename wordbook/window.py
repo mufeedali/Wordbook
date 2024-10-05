@@ -29,11 +29,11 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")  # type: ignore
     _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")  # type: ignore
-    _flap_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("flap_toggle_button")  # type: ignore
+    _split_view_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("split_view_toggle_button")  # type: ignore
     _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")  # type: ignore
     _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")  # type: ignore
     _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")  # type: ignore
-    _main_flap: Adw.Flap = Gtk.Template.Child("main_flap")  # type: ignore
+    _main_split_view: Adw.OverlaySplitView = Gtk.Template.Child("main_split_view")  # type: ignore
     _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
     _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")  # type: ignore
     _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
@@ -93,9 +93,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._exit_button.connect("clicked", self._on_exit_clicked)
         self._main_scroll.get_vadjustment().connect("value-changed", self._on_scroll_event)
 
-        self._main_flap.bind_property(
-            "reveal-flap",
-            self._flap_toggle_button,
+        self._main_split_view.bind_property(
+            "show-sidebar",
+            self._split_view_toggle_button,
             "active",
             GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE,
         )
@@ -574,7 +574,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _set_header_sensitive(self, status):
         """Disable/enable header buttons."""
         self._title_clamp.set_sensitive(status)
-        self._flap_toggle_button.set_sensitive(status)
+        self._split_view_toggle_button.set_sensitive(status)
         self._menu_button.set_sensitive(status)
 
     def _dl_wn(self):

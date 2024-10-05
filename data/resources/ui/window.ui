@@ -41,140 +41,111 @@
     <property name="default-widget">search_button</property>
     <property name="icon-name">accesories-dictionary</property>
     <child>
-      <object class="GtkBox">
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="AdwHeaderBar" id="header_bar">
-            <property name="centering-policy">strict</property>
-            <child type="title">
-              <object class="AdwClamp" id="title_clamp">
-                <property name="tightening-threshold">300</property>
-                <child>
-                  <object class="GtkBox">
-                    <property name="hexpand">True</property>
-                    <property name="spacing">4</property>
-                    <child>
-                      <object class="GtkEntry" id="search_entry">
-                        <property name="hexpand">True</property>
-                        <property name="primary-icon-name">edit-find-symbolic</property>
-                        <property name="activates-default">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="search_button">
-                        <property name="icon-name">edit-find-symbolic</property>
-                        <property name="tooltip-text" translatable="yes">Search</property>
-                        <style>
-                          <class name="suggested-action"/>
-                        </style>
-                      </object>
-                    </child>
+      <object class="AdwBreakpoint">
+        <condition>max-width: 400sp</condition>
+        <setter object="main_split_view" property="collapsed">True</setter>
+      </object>
+    </child>
+    <property name="content">
+      <object class="AdwOverlaySplitView" id="main_split_view">
+        <property name="show-sidebar">False</property>
+        <property name="sidebar">
+          <object class="AdwToolbarView">
+            <child type="top">
+              <object class="AdwHeaderBar">
+                <child type="title">
+                  <object class="AdwWindowTitle">
+                    <property name="title" translatable="yes">History</property>
                   </object>
                 </child>
               </object>
             </child>
-            <child>
-              <object class="GtkToggleButton" id="flap_toggle_button">
-                <property name="icon-name">sidebar-show-symbolic</property>
-                <property name="tooltip-text" translatable="yes">Show History</property>
-              </object>
-            </child>
-            <child type="end">
-              <object class="GtkMenuButton" id="wordbook_menu_button">
-                <property name="menu-model">app-menu</property>
-                <property name="receives-default">True</property>
-                <property name="direction">none</property>
-              </object>
-            </child>
-            <style>
-              <class name="flat"/>
-            </style>
-          </object>
-        </child>
-        <child>
-          <object class="AdwFlap" id="main_flap">
-            <property name="reveal-flap">False</property>
-            <property name="fold-policy">always</property>
-            <child type="separator">
-              <object class="GtkSeparator">
-                <style>
-                  <class name="sidebar"/>
-                </style>
-              </object>
-            </child>
-            <child type="flap">
-              <object class="GtkBox">
-                <property name="width-request">200</property>
-                <property name="orientation">vertical</property>
+            <property name="content">
+              <object class="AdwViewStack" id="history_stack">
+                <property name="vexpand">True</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="margin-start">12</property>
-                    <property name="margin-end">12</property>
-                    <property name="margin-top">12</property>
-                    <property name="margin-bottom">12</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="GtkImage" id="history_image">
-                        <property name="icon-name">document-open-recent-symbolic</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">History</property>
-                        <attributes>
-                          <attribute name="weight" value="bold"></attribute>
-                        </attributes>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkSeparator">
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwViewStack" id="history_stack">
-                    <property name="vexpand">True</property>
-                    <child>
-                      <object class="AdwViewStackPage">
-                        <property name="name">list</property>
+                  <object class="AdwViewStackPage">
+                    <property name="name">list</property>
+                    <property name="child">
+                      <object class="GtkScrolledWindow">
+                        <property name="hscrollbar-policy">never</property>
+                        <property name="has-frame">False</property>
                         <property name="child">
-                          <object class="GtkScrolledWindow">
-                            <property name="hscrollbar-policy">never</property>
-                            <property name="has-frame">False</property>
+                          <object class="GtkViewport">
                             <property name="child">
-                              <object class="GtkViewport">
-                                <property name="child">
-                                  <object class="GtkListBox" id="history_listbox">
-                                    <property name="selection-mode">none</property>
-                                  </object>
-                                </property>
+                              <object class="GtkListBox" id="history_listbox">
+                                <property name="selection-mode">none</property>
                               </object>
                             </property>
                           </object>
                         </property>
                       </object>
-                    </child>
+                    </property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwViewStackPage">
+                    <property name="name">empty</property>
+                    <property name="child">
+                      <object class="AdwStatusPage">
+                        <property name="icon-name">document-open-recent-symbolic</property>
+                        <property name="title">No recent searches</property>
+                      </object>
+                    </property>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </property>
+        <property name="content">
+          <object class="AdwToolbarView">
+            <child type="top">
+              <object class="AdwHeaderBar" id="header_bar">
+                <property name="centering-policy">strict</property>
+                <child type="title">
+                  <object class="AdwClamp" id="title_clamp">
+                    <property name="tightening-threshold">300</property>
                     <child>
-                      <object class="AdwViewStackPage">
-                        <property name="name">empty</property>
-                        <property name="child">
-                          <object class="AdwStatusPage">
-                            <property name="icon-name">document-open-recent-symbolic</property>
-                            <property name="title">No recent searches</property>
+                      <object class="GtkBox">
+                        <property name="hexpand">True</property>
+                        <property name="spacing">4</property>
+                        <child>
+                          <object class="GtkEntry" id="search_entry">
+                            <property name="hexpand">True</property>
+                            <property name="primary-icon-name">edit-find-symbolic</property>
+                            <property name="activates-default">True</property>
                           </object>
-                        </property>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="search_button">
+                            <property name="icon-name">edit-find-symbolic</property>
+                            <property name="tooltip-text" translatable="yes">Search</property>
+                            <style>
+                              <class name="suggested-action"/>
+                            </style>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
                 </child>
-                <style>
-                  <class name="background"/>
-                </style>
+                <child>
+                  <object class="GtkToggleButton" id="split_view_toggle_button">
+                    <property name="icon-name">sidebar-show-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Show History</property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkMenuButton" id="wordbook_menu_button">
+                    <property name="menu-model">app-menu</property>
+                    <property name="receives-default">True</property>
+                    <property name="direction">none</property>
+                  </object>
+                </child>
               </object>
             </child>
-            <child>
+            <property name="content">
               <object class="GtkScrolledWindow" id="main_scroll">
                 <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
@@ -368,11 +339,11 @@
                   </object>
                 </property>
               </object>
-            </child>
+            </property>
           </object>
-        </child>
+        </property>
       </object>
-    </child>
+    </property>
     <child>
       <object class="GtkEventControllerKey" id="key_ctrlr"/>
     </child>
