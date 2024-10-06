@@ -91,7 +91,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._speak_button.connect("clicked", self._on_speak_clicked)
         self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
-        self._main_scroll.get_vadjustment().connect("value-changed", self._on_scroll_event)
 
         self._main_split_view.bind_property(
             "show-sidebar",
@@ -407,13 +406,6 @@ class WordbookWindow(Adw.ApplicationWindow):
             # If there is no active thread, create one and start it.
             self._active_thread = threading.Thread(target=self.threaded_search, args=[pass_check], daemon=True)
             self._active_thread.start()
-
-    def _on_scroll_event(self, adjustment):
-        """Add or remove top border in window depending on scroll position."""
-        if adjustment.get_value() != 0.0:
-            self._main_scroll.get_style_context().add_class("top-border")
-        else:
-            self._main_scroll.get_style_context().remove_class("top-border")
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
