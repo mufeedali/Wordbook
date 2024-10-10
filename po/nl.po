@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-30 14:36+0530\n"
+"POT-Creation-Date: 2024-10-10 18:31+0530\n"
 "PO-Revision-Date: 2022-09-19 20:14+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch\n"
@@ -17,181 +17,185 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 22.08.1\n"
 
-#: data/resources/ui/settings_window.ui:14
+#: data/resources/ui/settings_window.blp:10
 msgid "Appearance"
 msgstr "Vormgeving"
 
-#: data/resources/ui/settings_window.ui:17
+#: data/resources/ui/settings_window.blp:13
 msgid "Force Dark Mode"
 msgstr "Donker thema gebruiken"
 
-#: data/resources/ui/settings_window.ui:24
+#: data/resources/ui/settings_window.blp:18
 msgid "Behavior"
 msgstr "Gedrag"
 
-#: data/resources/ui/settings_window.ui:27
+#: data/resources/ui/settings_window.blp:21
 msgid "Live Search"
 msgstr "Typen om te zoeken"
 
-#: data/resources/ui/settings_window.ui:28
+#: data/resources/ui/settings_window.blp:22
 msgid "Show definition as the terms are typed in"
 msgstr "Toon resultaten tijdens het typen"
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.blp:26
 msgid "Double Click Search"
 msgstr "Dubbelklikken om te zoeken"
 
-#: data/resources/ui/settings_window.ui:34
+#: data/resources/ui/settings_window.blp:27
 msgid "Search any word by double clicking on it"
 msgstr "Zoek de betekenis van een woord door er op te dubbelklikken"
 
-#: data/resources/ui/settings_window.ui:39
+#: data/resources/ui/settings_window.blp:31
 msgid "Pronunciations Accent"
 msgstr "Accent"
 
-#: data/resources/ui/shortcuts_window.ui:12
+#: data/resources/ui/shortcuts_window.blp:11
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Algemeen"
 
-#: data/resources/ui/shortcuts_window.ui:15
+#: data/resources/ui/shortcuts_window.blp:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Sneltoetsen tonen"
 
-#: data/resources/ui/shortcuts_window.ui:21
+#: data/resources/ui/shortcuts_window.blp:19
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "Voorkeuren"
 
-#: data/resources/ui/shortcuts_window.ui:27
+#: data/resources/ui/shortcuts_window.blp:24
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr "Plakken en zoeken"
 
-#: data/resources/ui/shortcuts_window.ui:33
+#: data/resources/ui/shortcuts_window.blp:29
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr "Willekeurig woord tonen"
 
-#: data/resources/ui/shortcuts_window.ui:39
+#: data/resources/ui/shortcuts_window.blp:34
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Selectie zoeken"
 
-#: data/resources/ui/window.ui:9
+#: data/resources/ui/window.blp:9
 msgid "Paste & Search"
 msgstr "Plakken en zoeken"
 
-#: data/resources/ui/window.ui:13
+#: data/resources/ui/window.blp:14
 msgid "Search Selected Text"
 msgstr "Selectie zoeken"
 
-#: data/resources/ui/window.ui:17
+#: data/resources/ui/window.blp:19
 msgid "_Random Word"
 msgstr "Willekeu_rig woord tonen"
 
-#: data/resources/ui/window.ui:24
+#: data/resources/ui/window.blp:28
 msgid "_Preferences"
 msgstr "_Voorkeuren"
 
-#: data/resources/ui/window.ui:28
+#: data/resources/ui/window.blp:33
 msgid "_Keyboard Shortcuts"
 msgstr "_Sneltoetsen"
 
-#: data/resources/ui/window.ui:32
+#: data/resources/ui/window.blp:38
 msgid "_About Wordbook"
 msgstr "_Over Woordenboek"
 
-#: data/resources/ui/window.ui:66
-msgid "Search"
-msgstr "Zoeken"
-
-#: data/resources/ui/window.ui:79
-msgid "Show History"
-msgstr "Geschiedenis tonen"
-
-#: data/resources/ui/window.ui:124
+#: data/resources/ui/window.blp:67
 msgid "History"
 msgstr "Geschiedenis"
 
-#: data/resources/ui/window.ui:198
+#: data/resources/ui/window.blp:125
+msgid "Search"
+msgstr "Zoeken"
+
+#: data/resources/ui/window.blp:136
+msgid "Show History"
+msgstr "Geschiedenis tonen"
+
+#: data/resources/ui/window.blp:164
 msgid "Setting things up…"
 msgstr "Bezig met voorbereiden…"
 
-#: data/resources/ui/window.ui:199 wordbook/window.py:555
+#: data/resources/ui/window.blp:165 wordbook/window.py:576
 msgid "Downloading WordNet…"
 msgstr "Bezig met ophalen van WordNet…"
 
-#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
-#: wordbook/main.py:119
+#: data/resources/ui/window.blp:182 wordbook/main.py:35 wordbook/main.py:84
+#: wordbook/main.py:117
 msgid "Wordbook"
 msgstr "Woordenboek"
 
-#: data/resources/ui/window.ui:221
+#: data/resources/ui/window.blp:183
 msgid "Look up definitions of any English term"
 msgstr "Bekijk de betekenis van Engelstalige termen"
 
-#: data/resources/ui/window.ui:255
+#: data/resources/ui/window.blp:214
 msgid "/Pronunciation/"
 msgstr "/Uitspraak/"
 
-#: data/resources/ui/window.ui:278
+#: data/resources/ui/window.blp:235
 msgid "Listen to Pronunciation"
 msgstr "Voorlezen"
 
-#: data/resources/ui/window.ui:318
+#: data/resources/ui/window.blp:264
 msgid "No definition found"
 msgstr "Er is geen betekenis gevonden"
 
-#: data/resources/ui/window.ui:329
+#: data/resources/ui/window.blp:273
 msgid "Download failed"
 msgstr "Het downloaden is mislukt"
 
-#: data/resources/ui/window.ui:336
+#: data/resources/ui/window.blp:280
 msgid "Retry"
 msgstr "Opnieuw"
 
-#: data/resources/ui/window.ui:345
+#: data/resources/ui/window.blp:289
 msgid "Exit"
 msgstr "Afsluiten"
 
-#: wordbook/main.py:121
+#: wordbook/main.py:119
 msgid "Look up definitions of any English term."
 msgstr "Bekijk de betekenis van Engelstalige termen."
 
-#: wordbook/main.py:123
+#: wordbook/main.py:121
 msgid "translator-credits"
 msgstr "Heimen Stoffels <vistausss@fastmail.com>"
 
-#: wordbook/main.py:127
+#: wordbook/main.py:125
 msgid "Copyright © 2016-2024 Mufeed Ali"
 msgstr "Copyright © 2016-2024 Mufeed Ali"
 
-#: wordbook/window.py:398
+#: wordbook/window.py:420
 msgid "Ready."
 msgstr "Klaar voor gebruik."
 
-#: wordbook/window.py:508
+#: wordbook/window.py:445
+msgid "Dismiss"
+msgstr ""
+
+#: wordbook/window.py:529
 msgid "Invalid input"
 msgstr "Ongeldige invoer"
 
-#: wordbook/window.py:509
+#: wordbook/window.py:530
 msgid "Nothing definable was found in your search input"
 msgstr "Er is geen betekenis aangetroffen van de door u gezochte term"
 
-#: wordbook/window.py:573
+#: wordbook/window.py:594
 msgid "Re-downloading WordNet database"
 msgstr "Bezig met opnieuw ophalen van WordNet…"
 
-#: wordbook/window.py:575
+#: wordbook/window.py:596
 msgid "Just a database upgrade."
 msgstr "Gewoon een databankupdate."
 
-#: wordbook/window.py:577
+#: wordbook/window.py:598
 msgid "This shouldn't happen too often."
 msgstr "Dit zou niet al te vaak moeten gebeuren."
 
-#: wordbook/window.py:622
+#: wordbook/window.py:643
 msgid "Building Database…"
 msgstr "Bezig met samenstellen van databank…"

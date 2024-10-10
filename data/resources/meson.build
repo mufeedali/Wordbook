@@ -4,6 +4,8 @@ gnome = import('gnome')
 blueprints = custom_target('blueprints',
   input: files(
     'ui/shortcuts_window.blp',
+    'ui/settings_window.blp',
+    'ui/window.blp',
   ),
   output: '.',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dev.mufeed.Wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-30 14:36+0530\n"
+"POT-Creation-Date: 2024-10-10 18:31+0530\n"
 "PO-Revision-Date: 2023-05-25 17:42+0300\n"
 "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: Turkish <takim@gnome.org.tr>\n"
@@ -19,181 +19,185 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: data/resources/ui/settings_window.ui:14
+#: data/resources/ui/settings_window.blp:10
 msgid "Appearance"
 msgstr "Görünüm"
 
-#: data/resources/ui/settings_window.ui:17
+#: data/resources/ui/settings_window.blp:13
 msgid "Force Dark Mode"
 msgstr "Karanlık Kipi Zorla"
 
-#: data/resources/ui/settings_window.ui:24
+#: data/resources/ui/settings_window.blp:18
 msgid "Behavior"
 msgstr "Davranış"
 
-#: data/resources/ui/settings_window.ui:27
+#: data/resources/ui/settings_window.blp:21
 msgid "Live Search"
 msgstr "Canlı Arama"
 
-#: data/resources/ui/settings_window.ui:28
+#: data/resources/ui/settings_window.blp:22
 msgid "Show definition as the terms are typed in"
 msgstr "Terimler yazılırken tanımı göster"
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.blp:26
 msgid "Double Click Search"
 msgstr "Çift Tık Arama"
 
-#: data/resources/ui/settings_window.ui:34
+#: data/resources/ui/settings_window.blp:27
 msgid "Search any word by double clicking on it"
 msgstr "Üzerine çift tıklayarak herhangi bir kelimeyi ara"
 
-#: data/resources/ui/settings_window.ui:39
+#: data/resources/ui/settings_window.blp:31
 msgid "Pronunciations Accent"
 msgstr "Telaffuz Aksanı"
 
-#: data/resources/ui/shortcuts_window.ui:12
+#: data/resources/ui/shortcuts_window.blp:11
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Genel"
 
-#: data/resources/ui/shortcuts_window.ui:15
+#: data/resources/ui/shortcuts_window.blp:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Kısayolları Göster"
 
-#: data/resources/ui/shortcuts_window.ui:21
+#: data/resources/ui/shortcuts_window.blp:19
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "Tercihler"
 
-#: data/resources/ui/shortcuts_window.ui:27
+#: data/resources/ui/shortcuts_window.blp:24
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr "Yapıştır ve Ara"
 
-#: data/resources/ui/shortcuts_window.ui:33
+#: data/resources/ui/shortcuts_window.blp:29
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr "Rastgele Sözcük"
 
-#: data/resources/ui/shortcuts_window.ui:39
+#: data/resources/ui/shortcuts_window.blp:34
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Seçilen Metni Ara"
 
-#: data/resources/ui/window.ui:9
+#: data/resources/ui/window.blp:9
 msgid "Paste & Search"
 msgstr "Yapıştır ve Ara"
 
-#: data/resources/ui/window.ui:13
+#: data/resources/ui/window.blp:14
 msgid "Search Selected Text"
 msgstr "Seçilen Metni Ara"
 
-#: data/resources/ui/window.ui:17
+#: data/resources/ui/window.blp:19
 msgid "_Random Word"
 msgstr "_Rastgele Sözcük"
 
-#: data/resources/ui/window.ui:24
+#: data/resources/ui/window.blp:28
 msgid "_Preferences"
 msgstr "Te_rcihler"
 
-#: data/resources/ui/window.ui:28
+#: data/resources/ui/window.blp:33
 msgid "_Keyboard Shortcuts"
 msgstr "_Klavye Kısayolları"
 
-#: data/resources/ui/window.ui:32
+#: data/resources/ui/window.blp:38
 msgid "_About Wordbook"
 msgstr "Wordbook _Hakkında"
 
-#: data/resources/ui/window.ui:66
-msgid "Search"
-msgstr "Ara"
-
-#: data/resources/ui/window.ui:79
-msgid "Show History"
-msgstr "Geçmişi Göster"
-
-#: data/resources/ui/window.ui:124
+#: data/resources/ui/window.blp:67
 msgid "History"
 msgstr "Geçmiş"
 
-#: data/resources/ui/window.ui:198
+#: data/resources/ui/window.blp:125
+msgid "Search"
+msgstr "Ara"
+
+#: data/resources/ui/window.blp:136
+msgid "Show History"
+msgstr "Geçmişi Göster"
+
+#: data/resources/ui/window.blp:164
 msgid "Setting things up…"
 msgstr "Wordbook ayarlanıyor…"
 
-#: data/resources/ui/window.ui:199 wordbook/window.py:555
+#: data/resources/ui/window.blp:165 wordbook/window.py:576
 msgid "Downloading WordNet…"
 msgstr "WordNet İndiriliyor…"
 
-#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
-#: wordbook/main.py:119
+#: data/resources/ui/window.blp:182 wordbook/main.py:35 wordbook/main.py:84
+#: wordbook/main.py:117
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.ui:221
+#: data/resources/ui/window.blp:183
 msgid "Look up definitions of any English term"
 msgstr "Herhangi bir İngilizce terimin tanımını ara"
 
-#: data/resources/ui/window.ui:255
+#: data/resources/ui/window.blp:214
 msgid "/Pronunciation/"
 msgstr "/Telaffuz/"
 
-#: data/resources/ui/window.ui:278
+#: data/resources/ui/window.blp:235
 msgid "Listen to Pronunciation"
 msgstr "Telaffuzu Dinle"
 
-#: data/resources/ui/window.ui:318
+#: data/resources/ui/window.blp:264
 msgid "No definition found"
 msgstr "Tanım bulunamadı"
 
-#: data/resources/ui/window.ui:329
+#: data/resources/ui/window.blp:273
 msgid "Download failed"
 msgstr "İndirilemedi"
 
-#: data/resources/ui/window.ui:336
+#: data/resources/ui/window.blp:280
 msgid "Retry"
 msgstr "Yeniden Dene"
 
-#: data/resources/ui/window.ui:345
+#: data/resources/ui/window.blp:289
 msgid "Exit"
 msgstr "Çıkış"
 
-#: wordbook/main.py:121
+#: wordbook/main.py:119
 msgid "Look up definitions of any English term."
 msgstr "Herhangi bir İngilizce terimin tanımını ara."
 
-#: wordbook/main.py:123
+#: wordbook/main.py:121
 msgid "translator-credits"
 msgstr "Sabri Ünal <libreajans@gmail.com>"
 
-#: wordbook/main.py:127
+#: wordbook/main.py:125
 msgid "Copyright © 2016-2024 Mufeed Ali"
 msgstr "Telif Hakkı © 2016-2024 Mufeed Ali"
 
-#: wordbook/window.py:398
+#: wordbook/window.py:420
 msgid "Ready."
 msgstr "Hazır."
 
-#: wordbook/window.py:508
+#: wordbook/window.py:445
+msgid "Dismiss"
+msgstr ""
+
+#: wordbook/window.py:529
 msgid "Invalid input"
 msgstr "Geçersiz girdi"
 
-#: wordbook/window.py:509
+#: wordbook/window.py:530
 msgid "Nothing definable was found in your search input"
 msgstr "Arama girdinizde tanımlanabilir hiçbir şey bulunamadı"
 
-#: wordbook/window.py:573
+#: wordbook/window.py:594
 msgid "Re-downloading WordNet database"
 msgstr "WordNet veri tabanı yeniden indiriliyor"
 
-#: wordbook/window.py:575
+#: wordbook/window.py:596
 msgid "Just a database upgrade."
 msgstr "Sadece veri tabanı güncellemesi."
 
-#: wordbook/window.py:577
+#: wordbook/window.py:598
 msgid "This shouldn't happen too often."
 msgstr "Bu çok sık olmamalı."
 
-#: wordbook/window.py:622
+#: wordbook/window.py:643
 msgid "Building Database…"
 msgstr "Veritabanı inşa ediliyor…"

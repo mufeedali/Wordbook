@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-30 14:36+0530\n"
+"POT-Creation-Date: 2024-10-10 18:31+0530\n"
 "PO-Revision-Date: 2024-05-11 15:18+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
 "Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
@@ -19,181 +19,185 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Gtranslator 46.1\n"
 
-#: data/resources/ui/settings_window.ui:14
+#: data/resources/ui/settings_window.blp:10
 msgid "Appearance"
 msgstr "दिखावट"
 
-#: data/resources/ui/settings_window.ui:17
+#: data/resources/ui/settings_window.blp:13
 msgid "Force Dark Mode"
 msgstr "बलपूर्वक गहरा मोड"
 
-#: data/resources/ui/settings_window.ui:24
+#: data/resources/ui/settings_window.blp:18
 msgid "Behavior"
 msgstr "व्यवहार"
 
-#: data/resources/ui/settings_window.ui:27
+#: data/resources/ui/settings_window.blp:21
 msgid "Live Search"
 msgstr "लाइव खोज"
 
-#: data/resources/ui/settings_window.ui:28
+#: data/resources/ui/settings_window.blp:22
 msgid "Show definition as the terms are typed in"
 msgstr "जैसे ही शब्द टाइप किए जाएं, परिभाषा दिखाएं"
 
-#: data/resources/ui/settings_window.ui:33
+#: data/resources/ui/settings_window.blp:26
 msgid "Double Click Search"
 msgstr "डबल क्लिक पर खोजें"
 
-#: data/resources/ui/settings_window.ui:34
+#: data/resources/ui/settings_window.blp:27
 msgid "Search any word by double clicking on it"
 msgstr "किसी भी शब्द पर डबल क्लिक करके उसे खोजें"
 
-#: data/resources/ui/settings_window.ui:39
+#: data/resources/ui/settings_window.blp:31
 msgid "Pronunciations Accent"
 msgstr "उच्चारण लहजा"
 
-#: data/resources/ui/shortcuts_window.ui:12
+#: data/resources/ui/shortcuts_window.blp:11
 msgctxt "shortcut window"
 msgid "General"
 msgstr "सामान्य"
 
-#: data/resources/ui/shortcuts_window.ui:15
+#: data/resources/ui/shortcuts_window.blp:14
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "शॉर्टकट दिखाएं"
 
-#: data/resources/ui/shortcuts_window.ui:21
+#: data/resources/ui/shortcuts_window.blp:19
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "प्राथमिकताएं"
 
-#: data/resources/ui/shortcuts_window.ui:27
+#: data/resources/ui/shortcuts_window.blp:24
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr "पेस्ट करें और खोजें"
 
-#: data/resources/ui/shortcuts_window.ui:33
+#: data/resources/ui/shortcuts_window.blp:29
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr "यादृच्छिक शब्द"
 
-#: data/resources/ui/shortcuts_window.ui:39
+#: data/resources/ui/shortcuts_window.blp:34
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "चयनित पाठ खोजें"
 
-#: data/resources/ui/window.ui:9
+#: data/resources/ui/window.blp:9
 msgid "Paste & Search"
 msgstr "पेस्ट करें और खोजें"
 
-#: data/resources/ui/window.ui:13
+#: data/resources/ui/window.blp:14
 msgid "Search Selected Text"
 msgstr "चयनित पाठ खोजें"
 
-#: data/resources/ui/window.ui:17
+#: data/resources/ui/window.blp:19
 msgid "_Random Word"
 msgstr "यादृच्छिक शब्द (_R)"
 
-#: data/resources/ui/window.ui:24
+#: data/resources/ui/window.blp:28
 msgid "_Preferences"
 msgstr "प्राथमिकताएं (_P)"
 
-#: data/resources/ui/window.ui:28
+#: data/resources/ui/window.blp:33
 msgid "_Keyboard Shortcuts"
 msgstr "कीबोर्ड शॉर्टकट (_K)"
 
-#: data/resources/ui/window.ui:32
+#: data/resources/ui/window.blp:38
 msgid "_About Wordbook"
 msgstr "Wordbook के बारे में (_A)"
 
-#: data/resources/ui/window.ui:66
-msgid "Search"
-msgstr "खोजें"
-
-#: data/resources/ui/window.ui:79
-msgid "Show History"
-msgstr "इतिहास दिखाएं"
-
-#: data/resources/ui/window.ui:124
+#: data/resources/ui/window.blp:67
 msgid "History"
 msgstr "इतिहास"
 
-#: data/resources/ui/window.ui:198
+#: data/resources/ui/window.blp:125
+msgid "Search"
+msgstr "खोजें"
+
+#: data/resources/ui/window.blp:136
+msgid "Show History"
+msgstr "इतिहास दिखाएं"
+
+#: data/resources/ui/window.blp:164
 msgid "Setting things up…"
 msgstr "चीज़ें निर्धारित की जा रही हैं…"
 
-#: data/resources/ui/window.ui:199 wordbook/window.py:555
+#: data/resources/ui/window.blp:165 wordbook/window.py:576
 msgid "Downloading WordNet…"
 msgstr "WordNet डाउनलोड हो रहा है…"
 
-#: data/resources/ui/window.ui:220 wordbook/main.py:35 wordbook/main.py:86
-#: wordbook/main.py:119
+#: data/resources/ui/window.blp:182 wordbook/main.py:35 wordbook/main.py:84
+#: wordbook/main.py:117
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.ui:221
+#: data/resources/ui/window.blp:183
 msgid "Look up definitions of any English term"
 msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें"
 
-#: data/resources/ui/window.ui:255
+#: data/resources/ui/window.blp:214
 msgid "/Pronunciation/"
 msgstr "/उच्चारण/"
 
-#: data/resources/ui/window.ui:278
+#: data/resources/ui/window.blp:235
 msgid "Listen to Pronunciation"
 msgstr "उच्चारण सुनें"
 
-#: data/resources/ui/window.ui:318
+#: data/resources/ui/window.blp:264
 msgid "No definition found"
 msgstr "कोई परिभाषा नहीं मिली"
 
-#: data/resources/ui/window.ui:329
+#: data/resources/ui/window.blp:273
 msgid "Download failed"
 msgstr "डाउनलोड विफल"
 
-#: data/resources/ui/window.ui:336
+#: data/resources/ui/window.blp:280
 msgid "Retry"
 msgstr "पुन: प्रयास करें"
 
-#: data/resources/ui/window.ui:345
+#: data/resources/ui/window.blp:289
 msgid "Exit"
 msgstr "बाहर निकलें"
 
-#: wordbook/main.py:121
+#: wordbook/main.py:119
 msgid "Look up definitions of any English term."
 msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें।"
 
-#: wordbook/main.py:123
+#: wordbook/main.py:121
 msgid "translator-credits"
 msgstr "Scrambled777 <weblate.scrambled777@simplelogin.com>"
 
-#: wordbook/main.py:127
+#: wordbook/main.py:125
 msgid "Copyright © 2016-2024 Mufeed Ali"
 msgstr "कॉपीराइट © 2016-2024 मुफ़ीद अली"
 
-#: wordbook/window.py:398
+#: wordbook/window.py:420
 msgid "Ready."
 msgstr "तैयार।"
 
-#: wordbook/window.py:508
+#: wordbook/window.py:445
+msgid "Dismiss"
+msgstr ""
+
+#: wordbook/window.py:529
 msgid "Invalid input"
 msgstr "अमान्य आगत"
 
-#: wordbook/window.py:509
+#: wordbook/window.py:530
 msgid "Nothing definable was found in your search input"
 msgstr "आपके खोज आगत में कुछ भी निश्चित नहीं मिला"
 
-#: wordbook/window.py:573
+#: wordbook/window.py:594
 msgid "Re-downloading WordNet database"
 msgstr "WordNet डेटाबेस को पुनः डाउनलोड किया जा रहा है"
 
-#: wordbook/window.py:575
+#: wordbook/window.py:596
 msgid "Just a database upgrade."
 msgstr "बस एक डेटाबेस उन्नयन।"
 
-#: wordbook/window.py:577
+#: wordbook/window.py:598
 msgid "This shouldn't happen too often."
 msgstr "ऐसा अक्सर नहीं होना चाहिए।"
 
-#: wordbook/window.py:622
+#: wordbook/window.py:643
 msgid "Building Database…"
 msgstr "डेटाबेस का निर्माण…"

@@ -1,6 +1,6 @@
-data/resources/ui/settings_window.ui
+data/resources/ui/settings_window.blp
 data/resources/ui/shortcuts_window.blp
-data/resources/ui/window.ui
+data/resources/ui/window.blp
 wordbook/main.py
 wordbook/settings_window.py
 wordbook/window.py
