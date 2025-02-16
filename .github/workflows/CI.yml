@@ -4,8 +4,13 @@ on:
   pull_request:
 name: CI
 jobs:
+  codespell:
+    name: Check for spelling errors
+    runs-on: ubuntu-latest
+    steps:
+    - uses: codespell-project/actions-codespell@master
   flatpak-builder:
-    name: "Flatpak Builder"
+    name: "Flatpak"
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-nightly

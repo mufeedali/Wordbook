@@ -128,6 +128,7 @@ def get_data(term, word_col, sen_col, wn_instance, accent="us"):
 
 def get_definition(term: str, word_col: str, sen_col: str, wn_instance):
     """Get the definition from python-wn and process it."""
+    first_match = None
     result_dict = None
     synsets = wn_instance.synsets(term)  # Get relevant synsets.
 
@@ -161,7 +162,6 @@ def get_definition(term: str, word_col: str, sen_col: str, wn_instance):
             "word_col": word_col,
             "sen_col": sen_col,
         }
-        first_match = None
         for synset in synsets:
             # Try to organize based on parts of speech.
             pos = actual_pos[synset.pos]  # If this fails, nothing beyond it is useful.
@@ -214,6 +214,7 @@ def get_definition(term: str, word_col: str, sen_col: str, wn_instance):
             "out_string": None,
         }
         return (clean_def, True)
+
     clean_def = {
         "term": first_match,
         "result": result_dict,
@@ -235,6 +236,7 @@ def get_fortune(mono=True):
     except OSError as ex:
         fortune_output = "Easter egg fail! Install 'fortune' or 'fortune-mod'."
         utils.log_error(f"{fortune_output}\n{str(ex)}")
+
     if mono:
         return f"<tt>{fortune_output}</tt>"
     return fortune_output
@@ -295,6 +297,7 @@ def format_output(text, dark_font, wn_instance, cdef, accent="us"):
     else:
         sencol = "blue"  # Color of sentences in regular
         wordcol = "green"  # Color of: Similar words, Synonyms, Antonyms.
+
     if text == "fortune -a":
         return {
             "term": "<tt>Some random adage</tt>",
@@ -318,7 +321,7 @@ def read_term(text, speed=120, accent="us"):
     """Say text loudly."""
     with open(os.devnull, "w") as null_maker:
         subprocess.Popen(
-            ["espeak-ng", "-s", speed, "-v", f"en-{accent}", text],
+            ["espeak-ng", "-s", str(speed), "-v", f"en-{accent}", text],
             stdout=null_maker,
             stderr=subprocess.STDOUT,
         )
