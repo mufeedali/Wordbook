@@ -23,9 +23,13 @@ configure_file(
   install_dir: get_option('bindir')
 )
 
-myprogram = join_paths(meson.project_build_root(), meson.project_name(), meson.project_name())
+program_executable = join_paths(
+  meson.project_build_root(),
+  meson.project_name(),
+  meson.project_name()
+)
 run_target('run',
-  command: [myprogram]
+  command: [program_executable]
 )
 
 wordbook_sources = [

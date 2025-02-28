@@ -51,8 +51,8 @@
         {
           "type": "git",
           "url": "https://github.com/espeak-ng/espeak-ng.git",
-          "tag": "1.51",
-          "commit": "2e9a5fccbb0095e87b2769e9249ea1f821918ecd"
+          "tag": "1.52.0",
+          "commit": "4870adfa25b1a32b4361592f1be8a40337c58d6c"
         }
       ]
     },

@@ -15,7 +15,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from shutil import rmtree
-from typing import Callable, Dict, List
+from typing import Callable
 
 import wn
 from wn import Form, Wordnet
@@ -23,7 +23,7 @@ from wn import Form, Wordnet
 from wordbook import utils
 
 POOL = ThreadPoolExecutor()
-WN_DB_VERSION = "oewn:2022"
+WN_DB_VERSION = "oewn:2023"
 wn.config.data_directory = os.path.join(utils.WN_DIR)
 wn.config.allow_multithreading = True
 
@@ -275,7 +275,7 @@ def get_version_info(version):
 
 
 @_threadpool
-def get_wn_file(reloader: Callable) -> Dict[str, Wordnet | List[Form]]:
+def get_wn_file(reloader: Callable) -> dict[str, Wordnet | list[Form]]:
     """Get the WordNet wordlist according to WordNet version."""
     utils.log_info("Initializing WordNet.")
     try:

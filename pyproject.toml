@@ -1,3 +1,17 @@
+[project]
+name = "Wordbook"
+dynamic = ["version"]
+requires-python = ">=3.12"
+dependencies = [
+    "wn>=0.11.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.setuptools]
+packages = ["wordbook"]
+
 [tool.isort]
 profile = "black"
 line_length = 120
@@ -10,3 +24,8 @@ line-length = 120
 
 [tool.ruff]
 line-length = 120
+
+[dependency-groups]
+dev = [
+    "pygobject-stubs>=2.12.0",
+]
