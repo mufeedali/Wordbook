@@ -167,8 +167,8 @@ msgid "translator-credits"
 msgstr "Sabri Ünal <libreajans@gmail.com>"
 
 #: wordbook/main.py:125
-msgid "Copyright © 2016-2024 Mufeed Ali"
-msgstr "Telif Hakkı © 2016-2024 Mufeed Ali"
+msgid "Copyright © 2016-2025 Mufeed Ali"
+msgstr "Telif Hakkı © 2016-2025 Mufeed Ali"
 
 #: wordbook/window.py:420
 msgid "Ready."

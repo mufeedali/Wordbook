@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
+# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
@@ -9,7 +8,7 @@ from gi.repository import Adw, Gtk
 from wordbook import utils
 from wordbook.settings import Settings
 
-PATH = os.path.dirname(__file__)
+PATH: str = os.path.dirname(__file__)
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings_window.ui")

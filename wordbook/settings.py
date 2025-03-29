@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
+# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import configparser
@@ -131,7 +130,7 @@ class Settings:
     def load_settings(self):
         """Load settings from file."""
 
-        with open(utils.CONFIG_FILE, "r") as file:
+        with open(utils.CONFIG_FILE) as file:
             self.config.read_file(file)
 
         config_version = int(

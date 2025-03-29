@@ -24,7 +24,7 @@
     <developer id="dev.mufeed">
         <name translate="no">Mufeed Ali</name>
     </developer>
-    <update_contact>mufeed@kumo.foo</update_contact>
+    <update_contact>me@mufeed.dev</update_contact>
 
     <url type="homepage">https://github.com/mufeedali/Wordbook</url>
     <url type="bugtracker">https://github.com/mufeedali/Wordbook/issues</url>

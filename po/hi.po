@@ -167,8 +167,8 @@ msgid "translator-credits"
 msgstr "Scrambled777 <weblate.scrambled777@simplelogin.com>"
 
 #: wordbook/main.py:125
-msgid "Copyright © 2016-2024 Mufeed Ali"
-msgstr "कॉपीराइट © 2016-2024 मुफ़ीद अली"
+msgid "Copyright © 2016-2025 Mufeed Ali"
+msgstr "कॉपीराइट © 2016-2025 मुफ़ीद अली"
 
 #: wordbook/window.py:420
 msgid "Ready."

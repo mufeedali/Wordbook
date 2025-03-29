@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
+# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gettext import gettext as _
@@ -122,7 +121,7 @@ class Application(Adw.Application):
         about_window.set_license_type(Gtk.License.GPL_3_0)
         about_window.set_website("https://github.com/mufeedali/Wordbook")
         about_window.set_issue_url("https://github.com/mufeedali/Wordbook/issues")
-        about_window.set_copyright(_("Copyright © 2016-2024 Mufeed Ali"))
+        about_window.set_copyright(_("Copyright © 2016-2025 Mufeed Ali"))
         about_window.set_transient_for(self.win)
         about_window.present()
 

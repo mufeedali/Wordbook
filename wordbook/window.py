@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2024 Mufeed Ali <mufeed@kumo.foo>
+# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
+
+from __future__ import annotations
 
 import os
 import random
@@ -9,6 +10,7 @@ import threading
 from enum import Enum
 from gettext import gettext as _
 from html import escape
+from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 from wn import Error
@@ -17,6 +19,9 @@ from wn.util import ProgressHandler
 from wordbook import base, utils
 from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
+
+if TYPE_CHECKING:
+    from typing import Any, Literal
 
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
@@ -241,7 +246,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                         status = SearchStatus.RESET
                         continue
 
-                    def validate_result(text, out_string):
+                    def validate_result(text, out_string) -> Literal[SearchStatus.SUCCESS]:
                         # Add to history
                         history_object = HistoryObject(text)
                         if text not in self._search_history_list:
@@ -311,7 +316,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     def trigger_search(self, text):
         """Trigger search action."""
         GLib.idle_add(self._search_entry.set_text, text)
-        GLib.idle_add(self.on_search_clicked, text=text)
+        GLib.idle_add(self.on_search_clicked, None, False, text)
 
     def _on_dark_style(self, _object, _param):
         """Refresh definition view when switching dark theme."""
@@ -457,13 +462,13 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _process_result(self, result: dict):
         """Process results from wn."""
         out_string = ""
-        word_col = result["word_col"]
-        sen_col = result["sen_col"]
+        word_color = result["word_color"]
+        sentence_color = result["sentence_color"]
         first = True
         for pos in result.keys():
             i = 0
             orig_synset = None
-            if pos not in ("word_col", "sen_col") and result[pos]:
+            if pos not in ("word_color", "sentence_color") and result[pos]:
                 for synset in sorted(result[pos], key=lambda k: k["name"]):
                     synset_name = synset["name"]
                     if orig_synset is None:
@@ -479,40 +484,40 @@ class WordbookWindow(Adw.ApplicationWindow):
                         orig_synset = synset_name
                     else:
                         i += 1
-                    out_string += f'\n  <b>{i}</b>: {synset["definition"]}'
+                    out_string += f"\n  <b>{i}</b>: {synset['definition']}"
 
                     for example in synset["examples"]:
-                        out_string += f'\n        <span foreground="{sen_col}">{example}</span>'
+                        out_string += f'\n        <span foreground="{sentence_color}">{example}</span>'
 
-                    pretty_syn = self._process_word_links(synset["syn"], word_col)
+                    pretty_syn = self._process_word_links(synset["syn"], word_color)
                     if pretty_syn:
                         out_string += f"\n        Synonyms:<i> {pretty_syn}</i>"
 
-                    pretty_ant = self._process_word_links(synset["ant"], word_col)
+                    pretty_ant = self._process_word_links(synset["ant"], word_color)
                     if pretty_ant:
                         out_string += f"\n        Antonyms:<i> {pretty_ant}</i>"
 
-                    pretty_sims = self._process_word_links(synset["sim"], word_col)
+                    pretty_sims = self._process_word_links(synset["sim"], word_color)
                     if pretty_sims:
                         out_string += f"\n        Similar to:<i> {pretty_sims}</i>"
 
-                    pretty_alsos = self._process_word_links(synset["also_sees"], word_col)
+                    pretty_alsos = self._process_word_links(synset["also_sees"], word_color)
                     if pretty_alsos:
                         out_string += f"\n        Also see:<i> {pretty_alsos}</i>"
         return out_string
 
     @staticmethod
-    def _process_word_links(word_list, word_col):
+    def _process_word_links(word_list, word_color):
         """Process word links like synonyms, antonyms, etc."""
         pretty_list = []
         for word in word_list:
-            pretty_list.append(f'<span foreground="{word_col}">' f'<a href="search;{word}">{word}</a>' "</span>")
+            pretty_list.append(f'<span foreground="{word_color}"><a href="search;{word}">{word}</a></span>')
         if pretty_list:
             pretty_list = ", ".join(pretty_list)
             return pretty_list
         return ""
 
-    def _search(self, search_text):
+    def _search(self, search_text: str) -> dict[str, Any] | None:
         """Clean input text, give errors and pass data to formatter."""
         text = base.clean_search_terms(search_text)
         if not text == "" and not text.isspace():
