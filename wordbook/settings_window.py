@@ -17,11 +17,11 @@ class SettingsDialog(Adw.PreferencesDialog):
 
     __gtype_name__ = "SettingsDialog"
 
-    _dark_ui_switch = Gtk.Template.Child("dark_ui_switch")
+    _dark_ui_switch: Adw.SwitchRow = Gtk.Template.Child("dark_ui_switch")
 
-    _double_click_switch = Gtk.Template.Child("double_click_switch")
-    _live_search_switch = Gtk.Template.Child("live_search_switch")
-    _pronunciations_accent_row = Gtk.Template.Child("pronunciations_accent_row")
+    _double_click_switch: Adw.SwitchRow = Gtk.Template.Child("double_click_switch")
+    _live_search_switch: Adw.SwitchRow = Gtk.Template.Child("live_search_switch")
+    _pronunciations_accent_row: Adw.ComboRow = Gtk.Template.Child("pronunciations_accent_row")
 
     def __init__(self, parent: Adw.ApplicationWindow, **kwargs):
         """Initialize the Settings window."""

@@ -25,7 +25,13 @@ line-length = 120
 [tool.ruff]
 line-length = 120
 
+[tool.pyright]
+reportMissingModuleSource = "none"
+
 [dependency-groups]
 dev = [
+    "basedpyright>=1.28.4",
+    "pip>=25.0.1",
     "pygobject-stubs>=2.12.0",
+    "requirements-parser>=0.11.0",
 ]

@@ -22,7 +22,7 @@ import wn
 from wordbook import utils
 
 POOL = ThreadPoolExecutor()
-WN_DB_VERSION: str = "oewn:2023"
+WN_DB_VERSION: str = "oewn:2024"
 
 # Configure wn library
 wn.config.data_directory = os.path.join(utils.WN_DIR)
@@ -470,12 +470,6 @@ def get_wn_file(reloader: Callable[[], None]) -> dict[str, Any]:
     """
     utils.log_info("Initializing WordNet...")
     try:
-        # Check if db file exists before initializing
-        db_path = os.path.join(wn.config.data_directory, "wn.db")
-        if not os.path.exists(db_path):
-            utils.log_error(f"WordNet database file not found at {db_path}. Triggering reloader.")
-            return reloader()
-
         wn_instance: wn.Wordnet = wn.Wordnet(lexicon=WN_DB_VERSION)
         utils.log_info(f"WordNet instance ({WN_DB_VERSION}) created.")
 
