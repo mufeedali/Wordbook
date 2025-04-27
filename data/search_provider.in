@@ -1,0 +1,146 @@
+#!@PYTHON@
+
+# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+
+import os
+import sys
+import uuid
+from gi.repository import GLib, Gio
+
+pkgdatadir = '@pkgdatadir@'
+localedir = '@localedir@'
+
+from wordbook import base, utils
+import wn
+
+wn.config.data_directory = os.path.join(utils.WN_DIR)
+wn.config.allow_multithreading = True
+
+dbus_interface_description = '''
+<!DOCTYPE node PUBLIC
+'-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
+'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+  <interface name="org.gnome.Shell.SearchProvider2">
+    <method name="GetInitialResultSet">
+      <arg type="as" name="terms" direction="in" />
+      <arg type="as" name="results" direction="out" />
+    </method>
+    <method name="GetSubsearchResultSet">
+      <arg type="as" name="previous_results" direction="in" />
+      <arg type="as" name="terms" direction="in" />
+      <arg type="as" name="results" direction="out" />
+    </method>
+    <method name="GetResultMetas">
+      <arg type="as" name="identifiers" direction="in" />
+      <arg type="aa{sv}" name="metas" direction="out" />
+    </method>
+    <method name="ActivateResult">
+      <arg type="s" name="identifier" direction="in" />
+      <arg type="as" name="terms" direction="in" />
+      <arg type="u" name="timestamp" direction="in" />
+    </method>
+    <method name="LaunchSearch">
+      <arg type="as" name="terms" direction="in" />
+      <arg type="u" name="timestamp" direction="in" />
+    </method>
+  </interface>
+</node>
+'''
+
+
+# Search provider service for integration with GNOME Shell search
+class WordbookSearchService:
+
+    _results = {}
+
+    # Get results for first search
+    def GetInitialResultSet(self, terms):
+        self._results = {}
+        for term in terms:
+            try:
+                definitionResult = base.get_definition(
+                    term,
+                    "", "",
+                    wn.Wordnet(base.WN_DB_VERSION)
+                )["result"]
+                if definitionResult:
+                    for resultArray in definitionResult.values():
+                        if resultArray:
+                            result = resultArray[0]
+                            self._results[str(uuid.uuid4())] = {"name": result["name"], "definition": result["definition"]}
+            except:
+                print("Error while searching, WordNet is probably not downloaded yet.")
+
+        return self._results.keys()
+
+
+    # Get results for next searches
+    def GetSubsearchResultSet(self, previous_results, new_terms):
+        return self.GetInitialResultSet(new_terms)
+
+  # Get detailed information for results
+    def GetResultMetas(self, ids):
+        metas = []
+        for item in ids:
+            if item in self._results:
+                meta = dict(id=GLib.Variant('s', self._results[item]["name"]), name=GLib.Variant('s', self._results[item]["name"]), description=GLib.Variant('s', self._results[item]["definition"]),)
+                metas.append(meta)
+
+        return metas
+
+    # Open clicked result in app
+    def ActivateResult(self, id, terms, timestamp):
+        GLib.spawn_async_with_pipes( None, ['@BIN@', '--look-up', id], None, GLib.SpawnFlags.SEARCH_PATH, None )
+
+    # Open app on its current page
+    def LaunchSearch(self, terms, timestamp):
+        GLib.spawn_async_with_pipes( None, ['@BIN@'], None, GLib.SpawnFlags.SEARCH_PATH, None )
+
+# GIO application for search provider
+class WordbookSearchServiceApplication(Gio.Application):
+
+    def __init__(self):
+        Gio.Application.__init__(self,
+            application_id='@APP_ID@.SearchProvider',
+            flags=Gio.ApplicationFlags.IS_SERVICE,
+            inactivity_timeout=10000)
+        self.service_object = WordbookSearchService()
+        self.search_interface = Gio.DBusNodeInfo.new_for_xml(dbus_interface_description).interfaces[0]
+
+    # Register DBUS search provider object
+    def do_dbus_register(self, connection, object_path):
+        try:
+            connection.register_object(object_path=object_path,
+                interface_info=self.search_interface,
+                method_call_closure=self.on_dbus_method_call)
+        except:
+            self.quit()
+            return False
+        finally:
+            return True
+
+    # Handle incoming method calls
+    def on_dbus_method_call(self, connection, sender, object_path, interface_name, method_name, parameters, invocation):
+        self.hold()
+
+        method = getattr(self.service_object, method_name)
+        arguments = list(parameters.unpack())
+
+        results = method(*arguments),
+        if results == (None,):
+            results = ()
+        results_type = '(' + ''.join(map(lambda argument_info: argument_info.signature, self.search_interface.lookup_method(method_name).out_args)) + ')'
+        wrapped_results = GLib.Variant(results_type, results)
+
+        invocation.return_value(wrapped_results)
+
+        self.release()
+
+# Run search provider application
+if __name__ == '__main__':
+    app = WordbookSearchServiceApplication()
+    sys.exit(app.run())
