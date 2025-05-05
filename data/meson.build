@@ -63,3 +63,43 @@ if compile_schemas.found()
     args: ['--strict', '--dry-run', meson.current_source_dir()]
   )
 endif
+
+conf = configuration_data()
+
+conf.set('APP_ID', application_id)
+conf.set('PYTHON', python.find_installation('python3').full_path())
+conf.set('localedir', join_paths(get_option('prefix'), get_option('localedir')))
+conf.set('pkgdatadir', pkgdatadir)
+conf.set('BIN', join_paths(get_option('prefix'), get_option('bindir'), meson.project_name()))
+
+if get_option('profile') == 'development'
+  object_path = '/dev/mufeed/Wordbook/Devel/SearchProvider'
+else
+  object_path = '/dev/mufeed/Wordbook/SearchProvider'
+endif
+object_path
+conf.set('object_path', object_path)
+
+search_provider_dir = join_paths(get_option('prefix'), get_option('datadir'), 'gnome-shell', 'search-providers')
+service_dir = join_paths(get_option('prefix'), get_option('datadir'), 'dbus-1', 'services')
+
+configure_file(
+  input: '@0@.SearchProvider.ini'.format(base_id),
+  output: '@0@.SearchProvider.ini'.format(application_id),
+  configuration: conf,
+  install_dir: search_provider_dir,
+)
+
+configure_file(
+  input: '@0@.SearchProvider.service.in'.format(base_id),
+  output: '@0@.SearchProvider.service'.format(application_id),
+  configuration: conf,
+  install_dir: service_dir,
+)
+
+configure_file(
+  input: 'search_provider.in',
+  output: 'search_provider',
+  configuration: conf,
+  install_dir: pkgdatadir,
+)
