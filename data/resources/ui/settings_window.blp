@@ -2,41 +2,46 @@ using Gtk 4.0;
 using Adw 1;
 
 template $SettingsDialog: Adw.PreferencesDialog {
-  content-width: 450;
-  content-height: 350;
+    content-width: 450;
+    content-height: 350;
 
-  Adw.PreferencesPage {
-    Adw.PreferencesGroup appearance {
-      title: _("Appearance");
+    Adw.PreferencesPage {
+        Adw.PreferencesGroup appearance {
+            title: _("Appearance");
 
-      Adw.SwitchRow dark_ui_switch {
-        title: _("Force Dark Mode");
-      }
+            Adw.SwitchRow dark_ui_switch {
+                title: _("Force Dark Mode");
+            }
+        }
+
+        Adw.PreferencesGroup {
+            title: _("Behavior");
+
+            Adw.SwitchRow live_search_switch {
+                title: _("Live Search");
+                subtitle: _("Show definition as the terms are typed in");
+            }
+
+            Adw.SwitchRow double_click_switch {
+                title: _("Double Click Search");
+                subtitle: _("Search any word by double clicking on it");
+            }
+
+            Adw.SwitchRow auto_paste_switch {
+                title: _("Auto Paste on Launch");
+                subtitle: _("Automatically paste and search clipboard content on launch");
+            }
+
+            Adw.ComboRow pronunciations_accent_row {
+                title: _("Pronunciations Accent");
+
+                model: StringList {
+                    strings [
+                        "American English",
+                        "British English",
+                    ]
+                };
+            }
+        }
     }
-
-    Adw.PreferencesGroup {
-      title: _("Behavior");
-
-      Adw.SwitchRow live_search_switch {
-        title: _("Live Search");
-        subtitle: _("Show definition as the terms are typed in");
-      }
-
-      Adw.SwitchRow double_click_switch {
-        title: _("Double Click Search");
-        subtitle: _("Search any word by double clicking on it");
-      }
-
-      Adw.ComboRow pronunciations_accent_row {
-        title: _("Pronunciations Accent");
-
-        model: StringList {
-          strings [
-            "American English",
-            "British English",
-          ]
-        };
-      }
-    }
-  }
 }

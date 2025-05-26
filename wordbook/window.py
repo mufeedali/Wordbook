@@ -7,7 +7,7 @@ import os
 import random
 import sys
 import threading
-from enum import Enum
+from enum import auto, Enum
 from gettext import gettext as _
 from html import escape
 from typing import TYPE_CHECKING
@@ -59,22 +59,26 @@ class WordbookWindow(Adw.ApplicationWindow):
     _doubled: bool = False
     _completion_request_count: int = 0
     _searched_term: str | None = None
-    _search_history = None
-    _search_history_list = []
-    _search_queue = []
-    _last_search_fail = False
-    _active_thread = None
-    _primary_clipboard_text = None
+    _search_history: Gio.ListStore | None = None
+    _search_history_list: list[str] = []
+    _search_queue: list[str] = []
+    _last_search_fail: bool = False
+    _active_thread: threading.Thread | None = None
+    _primary_clipboard_text: str | None = None
 
     # Initialize history delay timer for live search
     _history_delay_timer = None
     _pending_history_text = None
 
-    def __init__(self, term="", **kwargs):
+    # Auto-paste queuing
+    _auto_paste_queued: bool = False
+
+    def __init__(self, term="", auto_paste_requested=False, **kwargs):
         """Initialize the window."""
         super().__init__(**kwargs)
 
         self.lookup_term = term
+        self.auto_paste_requested = auto_paste_requested
 
         if Gio.Application.get_default().development_mode is True:
             self.get_style_context().add_class("devel")
@@ -88,6 +92,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._history_listbox.bind_model(self._search_history, self._create_label)
 
+        self.connect("notify::is-active", self._on_is_active_changed)
         self.connect("unrealize", self._on_destroy)
         self._key_ctrlr.connect("key-pressed", self._on_key_pressed)
         self._history_listbox.connect("row-activated", self._on_history_item_activated)
@@ -121,6 +126,8 @@ class WordbookWindow(Adw.ApplicationWindow):
             self._page_switch(Page.WELCOME)
             if self.lookup_term:
                 self.trigger_search(self.lookup_term)
+            elif Settings.get().auto_paste_on_launch or self.auto_paste_requested:
+                self.queue_auto_paste()
             self._search_entry.grab_focus_without_selecting()
 
         # Completions
@@ -197,16 +204,17 @@ class WordbookWindow(Adw.ApplicationWindow):
         cancellable = Gio.Cancellable()
         clipboard.read_text_async(cancellable, on_selection)
 
-    def on_paste_search(self, _action, _param):
+    def on_paste_search(self, _action=None, _param=None):
         """Search text in clipboard."""
         clipboard = Gdk.Display.get_default().get_clipboard()
 
-        def on_paste(_clipboard, result):
+        def on_paste(_clipboard: Gdk.Clipboard, result: Gio.AsyncResult):
             """Callback for the clipboard paste."""
             try:
                 text = clipboard.read_text_finish(result)
-                text = base.clean_search_terms(text)
-                if text is not None and not text.strip() == "" and not text.isspace():
+                if text is not None:
+                    text = base.clean_search_terms(text)
+                if text and text.strip() and not text.isspace():
                     self.trigger_search(text)
             except GLib.GError:
                 # Usually happens when clipboard is empty or unsupported data type
@@ -353,7 +361,20 @@ class WordbookWindow(Adw.ApplicationWindow):
             cancellable = Gio.Cancellable()
             clipboard.read_text_async(cancellable, on_paste)
 
-    def _on_destroy(self, _window):
+    def queue_auto_paste(self):
+        """Queue auto-paste or execute it immediately if window is active."""
+        if self.props.is_active:
+            GLib.idle_add(self.on_paste_search)
+        else:
+            self._auto_paste_queued = True
+
+    def _on_is_active_changed(self, *_args):
+        """Handle window becoming active and execute queued auto-paste if needed."""
+        if self._auto_paste_queued and self.props.is_active:
+            self._auto_paste_queued = False
+            GLib.idle_add(self.on_paste_search)
+
+    def _on_destroy(self, _window: Gtk.Window):
         """Detect closing of the window."""
         # Cancel any pending history delay timer
         if self._history_delay_timer is not None:
@@ -427,7 +448,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._page_switch(Page.DOWNLOAD)
         self._dl_wn()
 
-    def _add_to_queue(self, text, pass_check=False):
+    def _add_to_queue(self, text: str, pass_check: bool = False):
         """Add search term to queue."""
         if self._search_queue:
             self._search_queue.pop(0)
@@ -500,22 +521,22 @@ class WordbookWindow(Adw.ApplicationWindow):
         box.append(label)
         return box
 
-    def _new_error(self, primary_text, secondary_text) -> Adw.AlertDialog:
+    def _new_error(self, primary_text, secondary_text) -> None:
         """Show an error dialog."""
         dialog = Adw.AlertDialog.new(primary_text, secondary_text)
         dialog.add_response("dismiss", _("Dismiss"))
         dialog.choose(self)
 
-    def _page_switch(self, page):
+    def _page_switch(self, page: str) -> bool:
         """Switch main stack pages."""
         if page == "content_page":
             GLib.idle_add(self._main_scroll.get_vadjustment().set_value, 0)
-        if self._main_stack.get_visible_child_name == page:
+        if self._main_stack.get_visible_child_name() == page:
             return True
         GLib.idle_add(self._main_stack.set_visible_child_name, page)
         return False
 
-    def _process_result(self, result: dict):
+    def _process_result(self, result: dict[str, Any]):
         """Process results from wn."""
         out_string = ""
         word_color = result["word_color"]
@@ -661,10 +682,10 @@ class WordbookWindow(Adw.ApplicationWindow):
 
 
 class SearchStatus(Enum):
-    NONE = 0
-    SUCCESS = 1
-    FAILURE = 2
-    RESET = 3
+    NONE = auto()
+    SUCCESS = auto()
+    FAILURE = auto()
+    RESET = auto()
 
 
 class Page(str, Enum):

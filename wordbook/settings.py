@@ -58,6 +58,7 @@ class Settings:
                 "LiveSearch": "yes",
                 "DoubleClick": "no",
                 "PronunciationsAccent": "us",
+                "AutoPasteOnLaunch": "no",
             }
             self.config["Appearance"] = {
                 "ForceDarkMode": "no",
@@ -88,6 +89,16 @@ class Settings:
     def double_click(self, value):
         """Set whether to search on double click."""
         self.set_boolean_key("Behavior", "DoubleClick", value)
+
+    @property
+    def auto_paste_on_launch(self):
+        """Get whether to automatically paste from clipboard on launch."""
+        return self.config.getboolean("Behavior", "AutoPasteOnLaunch", fallback=False)
+
+    @auto_paste_on_launch.setter
+    def auto_paste_on_launch(self, value):
+        """Set whether to automatically paste from clipboard on launch."""
+        self.set_boolean_key("Behavior", "AutoPasteOnLaunch", value)
 
     @staticmethod
     def get():

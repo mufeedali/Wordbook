@@ -18,14 +18,15 @@ from wordbook.settings import Settings  # noqa
 class Application(Adw.Application):
     """Manages the windows, properties, etc of Wordbook."""
 
-    app_id = ""
-    development_mode = False
-    version = "0.0.0"
+    app_id: str = ""
+    development_mode: bool = False
+    version: str = "0.0.0"
 
-    lookup_term = ""
-    win = None
+    lookup_term: str | None = None
+    auto_paste_requested: bool = False
+    win: WordbookWindow | None = None
 
-    def __init__(self, app_id, version):
+    def __init__(self, app_id: str, version: str):
         """Initialize the application."""
         super().__init__(
             application_id=app_id,
@@ -62,6 +63,14 @@ class Application(Adw.Application):
             "Make it scream louder",
             None,
         )
+        self.add_main_option(
+            "auto-paste",
+            b"p",
+            GLib.OptionFlags.NONE,
+            GLib.OptionArg.NONE,
+            "Automatically paste and search clipboard content",
+            None,
+        )
 
         Adw.StyleManager.get_default().set_color_scheme(
             Adw.ColorScheme.FORCE_DARK if Settings.get().gtk_dark_ui else Adw.ColorScheme.PREFER_LIGHT
@@ -82,6 +91,7 @@ class Application(Adw.Application):
                 application=self,
                 title=_("Wordbook"),
                 term=self.lookup_term,
+                auto_paste_requested=self.auto_paste_requested,
             )
             self.setup_actions()
 
@@ -98,11 +108,17 @@ class Application(Adw.Application):
 
         if "look-up" in options:
             term = options["look-up"]
+        
+        if "auto-paste" in options:
+            self.auto_paste_requested = True
 
         utils.log_init(self.development_mode or "verbose" in options or False)
 
         if self.win is not None:
-            self.win.trigger_search(term)
+            if term:
+                self.win.trigger_search(term)
+            elif self.auto_paste_requested:
+                self.win.queue_auto_paste()
         else:
             self.lookup_term = term
 
