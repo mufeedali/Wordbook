@@ -66,6 +66,10 @@ class WordbookWindow(Adw.ApplicationWindow):
     _active_thread = None
     _primary_clipboard_text = None
 
+    # Initialize history delay timer for live search
+    _history_delay_timer = None
+    _pending_history_text = None
+
     def __init__(self, term="", **kwargs):
         """Initialize the window."""
         super().__init__(**kwargs)
@@ -252,12 +256,11 @@ class WordbookWindow(Adw.ApplicationWindow):
                         continue
 
                     def validate_result(text, out_string) -> Literal[SearchStatus.SUCCESS]:
-                        # Add to history
-                        history_object = HistoryObject(text)
-                        if text not in self._search_history_list:
-                            self._search_history_list.append(text)
-                            self._search_history.insert(0, history_object)
-                            self._update_clear_button_sensitivity()
+                        # Add to history (with delay for live search)
+                        if Settings.get().live_search:
+                            self._add_to_history_delayed(text)
+                        else:
+                            self._add_to_history(text)
 
                         GLib.idle_add(self._def_view.set_markup, out_string)
                         return SearchStatus.SUCCESS
@@ -352,6 +355,11 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_destroy(self, _window):
         """Detect closing of the window."""
+        # Cancel any pending history delay timer
+        if self._history_delay_timer is not None:
+            GLib.source_remove(self._history_delay_timer)
+            self._history_delay_timer = None
+
         Settings.get().history = self._search_history_list[-10:]
 
     def _on_entry_changed(self, _entry):
@@ -429,6 +437,36 @@ class WordbookWindow(Adw.ApplicationWindow):
             # If there is no active thread, create one and start it.
             self._active_thread = threading.Thread(target=self.threaded_search, args=[pass_check], daemon=True)
             self._active_thread.start()
+
+    def _add_to_history(self, text):
+        """Add text to history immediately."""
+        history_object = HistoryObject(text)
+        if text not in self._search_history_list:
+            self._search_history_list.append(text)
+            self._search_history.insert(0, history_object)
+            self._update_clear_button_sensitivity()
+
+    def _add_to_history_delayed(self, text):
+        """Add text to history after a 1-second delay, cancelling any previous delay."""
+        # Cancel any existing timer
+        if self._history_delay_timer is not None:
+            GLib.source_remove(self._history_delay_timer)
+            self._history_delay_timer = None
+
+        # Store the text to be added
+        self._pending_history_text = text
+
+        # Set up a new timer to add to history after 1 second (1000ms)
+        self._history_delay_timer = GLib.timeout_add(1000, self._execute_delayed_history_add)
+
+    def _execute_delayed_history_add(self):
+        """Execute the delayed history addition."""
+        if self._pending_history_text is not None:
+            self._add_to_history(self._pending_history_text)
+            self._pending_history_text = None
+
+        self._history_delay_timer = None
+        return False  # Don't repeat the timer
 
     def _on_speak_clicked(self, _button):
         """Say the search entry out loud with espeak speech synthesis."""
