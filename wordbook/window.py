@@ -49,6 +49,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")  # type: ignore
     _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")  # type: ignore
     _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
+    _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")  # type: ignore
 
     _style_manager: Adw.StyleManager | None = None
 
@@ -96,6 +97,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._speak_button.connect("clicked", self._on_speak_clicked)
         self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
+        self._clear_history_button.connect("clicked", self._on_clear_history)
 
         self._main_split_view.bind_property(
             "show-sidebar",
@@ -131,6 +133,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         for text in self._search_history_list:
             history_object = HistoryObject(text)
             self._search_history.insert(0, history_object)
+
+        # Update clear button sensitivity
+        self._update_clear_button_sensitivity()
 
         # Set search button visibility.
         self.search_button.set_visible(not Settings.get().live_search)
@@ -252,6 +257,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                         if text not in self._search_history_list:
                             self._search_history_list.append(text)
                             self._search_history.insert(0, history_object)
+                            self._update_clear_button_sensitivity()
 
                         GLib.idle_add(self._def_view.set_markup, out_string)
                         return SearchStatus.SUCCESS
@@ -361,6 +367,18 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         if Settings.get().live_search:
             GLib.idle_add(self.on_search_clicked)
+
+    def _on_clear_history(self, _widget):
+        """Clear the search history."""
+        self._search_history.remove_all()
+        self._search_history_list = []
+        Settings.get().history = []
+        self._update_clear_button_sensitivity()
+
+    def _update_clear_button_sensitivity(self):
+        """Update the sensitivity of the clear history button."""
+        has_history = len(self._search_history_list) > 0
+        self._clear_history_button.set_sensitive(has_history)
 
     @staticmethod
     def _on_exit_clicked(_widget):

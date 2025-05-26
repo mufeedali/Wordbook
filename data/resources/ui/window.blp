@@ -66,6 +66,17 @@ template $WordbookWindow: Adw.ApplicationWindow {
                 Adw.WindowTitle {
                     title: _("History");
                 }
+
+                [end]
+                Button clear_history_button {
+                    icon-name: "user-trash-symbolic";
+                    tooltip-text: _("Clear History");
+                    sensitive: false;
+
+                    styles [
+                        "flat",
+                    ]
+                }
             }
 
             content: Adw.ViewStack history_stack {
