@@ -21,6 +21,7 @@ class SettingsDialog(Adw.PreferencesDialog):
 
     _double_click_switch: Adw.SwitchRow = Gtk.Template.Child("double_click_switch")
     _live_search_switch: Adw.SwitchRow = Gtk.Template.Child("live_search_switch")
+    _auto_paste_switch: Adw.SwitchRow = Gtk.Template.Child("auto_paste_switch")
     _pronunciations_accent_row: Adw.ComboRow = Gtk.Template.Child("pronunciations_accent_row")
 
     def __init__(self, parent: Adw.ApplicationWindow, **kwargs):
@@ -33,6 +34,7 @@ class SettingsDialog(Adw.PreferencesDialog):
 
         self._double_click_switch.connect("notify::active", self._double_click_switch_activate)
         self._live_search_switch.connect("notify::active", self._on_live_search_activate)
+        self._auto_paste_switch.connect("notify::active", self._on_auto_paste_switch_activate)
         self._dark_ui_switch.connect("notify::active", self._on_dark_ui_switch_activate)
         self._pronunciations_accent_row.connect("notify::selected", self._on_pronunciations_accent_activate)
 
@@ -40,6 +42,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         """Load settings from the Settings instance."""
         self._double_click_switch.set_active(Settings.get().double_click)
         self._live_search_switch.set_active(Settings.get().live_search)
+        self._auto_paste_switch.set_active(Settings.get().auto_paste_on_launch)
         self._pronunciations_accent_row.set_selected(Settings.get().pronunciations_accent_value)
 
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
@@ -56,6 +59,11 @@ class SettingsDialog(Adw.PreferencesDialog):
         if not switch.get_active():
             self.parent.set_default_widget(self.parent.search_button)
         Settings.get().live_search = switch.get_active()
+
+    @staticmethod
+    def _on_auto_paste_switch_activate(switch, _gparam):
+        """Change auto paste on launch state."""
+        Settings.get().auto_paste_on_launch = switch.get_active()
 
     @staticmethod
     def _on_pronunciations_accent_activate(row, _gparam):
