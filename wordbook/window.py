@@ -501,7 +501,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         base.read_term(
             self._searched_term,
             speed="120",
-            accent=Settings.get().pronunciations_accent,
+            accent=Settings.get().pronunciations_accent.code,
         )
 
     def progress_complete(self):
@@ -609,7 +609,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                 text,
                 self._wn_future.result()["instance"],
                 Settings.get().cdef,
-                accent=Settings.get().pronunciations_accent,
+                accent=Settings.get().pronunciations_accent.code,
             )
         if not Settings.get().live_search:
             GLib.idle_add(

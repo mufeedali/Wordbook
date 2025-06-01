@@ -145,9 +145,7 @@ def get_cowfortune() -> str:
         return f"<tt>{error_msg}</tt>"
 
 
-def get_custom_def(
-    text: str, wn_instance: wn.Wordnet, accent: str = "us"
-) -> dict[str, str]:
+def get_custom_def(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, str]:
     """
     Loads and presents a custom definition from a local file.
 
@@ -204,9 +202,7 @@ def get_custom_def(
     return final_data
 
 
-def get_data(
-    term: str, wn_instance: wn.Wordnet, accent: str = "us"
-) -> dict[str, Any]:
+def get_data(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any]:
     """
     Obtains the definition and pronunciation data for a term from WordNet.
 
@@ -504,9 +500,7 @@ def format_output(
     if text and not text.isspace():
         cleaned_text = clean_search_terms(text)
         if cleaned_text:  # Ensure text isn't empty after cleaning
-            definition_data = fetch_definition(
-                cleaned_text, wn_instance, use_custom_def=use_custom_def, accent=accent
-            )
+            definition_data = fetch_definition(cleaned_text, wn_instance, use_custom_def=use_custom_def, accent=accent)
             return definition_data
         else:
             utils.log_info(f"Input '{text}' became empty after cleaning.")

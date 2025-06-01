@@ -6,7 +6,7 @@ import os
 from gi.repository import Adw, Gtk
 
 from wordbook import utils
-from wordbook.settings import Settings
+from wordbook.settings import PronunciationAccent, Settings
 
 PATH: str = os.path.dirname(__file__)
 
@@ -43,7 +43,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         self._double_click_switch.set_active(Settings.get().double_click)
         self._live_search_switch.set_active(Settings.get().live_search)
         self._auto_paste_switch.set_active(Settings.get().auto_paste_on_launch)
-        self._pronunciations_accent_row.set_selected(Settings.get().pronunciations_accent_value)
+        self._pronunciations_accent_row.set_selected(Settings.get().pronunciations_accent.index)
 
         self._dark_ui_switch.set_active(Settings.get().gtk_dark_ui)
 
@@ -68,7 +68,7 @@ class SettingsDialog(Adw.PreferencesDialog):
     @staticmethod
     def _on_pronunciations_accent_activate(row, _gparam):
         """Change pronunciations' accent."""
-        Settings.get().pronunciations_accent_value = row.get_selected()
+        Settings.get().pronunciations_accent = PronunciationAccent.from_index(row.get_selected())
 
     @staticmethod
     def _on_dark_ui_switch_activate(switch, _gparam):

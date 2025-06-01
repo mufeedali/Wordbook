@@ -12,20 +12,12 @@
     "--socket=fallback-x11",
     "--socket=wayland"
   ],
-  "cleanup": [
-    "*blueprint*",
-    "*.a",
-    "*.la",
-    "/lib/pkgconfig",
-    "/include"
-  ],
+  "cleanup": ["*blueprint*", "*.a", "*.la", "/lib/pkgconfig", "/include"],
   "modules": [
     {
       "name": "blueprint-compiler",
       "buildsystem": "meson",
-      "cleanup": [
-        "*"
-      ],
+      "cleanup": ["*"],
       "sources": [
         {
           "type": "git",
@@ -57,12 +49,17 @@
       ]
     },
     {
-      "name": "python3-wn",
+      "name": "python3-modules",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" --no-build-isolation"
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" \"pydantic\" --no-build-isolation"
       ],
       "sources": [
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl",
+          "sha256": "1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53"
+        },
         {
           "type": "file",
           "url": "https://files.pythonhosted.org/packages/a1/ee/48ca1a7c89ffec8b6a0c5d02b89c305671d5ffd8d3c94acf8b8c408575bb/anyio-4.9.0-py3-none-any.whl",
@@ -100,8 +97,30 @@
         },
         {
           "type": "file",
+          "url": "https://files.pythonhosted.org/packages/e7/12/46b65f3534d099349e38ef6ec98b1a5a81f42536d17e0ba382c28c67ba67/pydantic-2.11.4-py3-none-any.whl",
+          "sha256": "d9615eaa9ac5a063471da949c8fc16376a84afb5024688b3ff885693506764eb"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/d6/46/6dcdf084a523dbe0a0be59d054734b86a981726f221f4562aed313dbcb49/pydantic_core-2.33.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "4e61206137cbc65e6d5256e1166f88331d3b6238e082d9f74613b9b765fb9025",
+          "only-arches": ["aarch64"]
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/f9/41/4b043778cf9c4285d59742281a769eac371b9e47e35f98ad321349cc5d61/pydantic_core-2.33.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "8f57a69461af2a5fa6e6bbd7a5f60d3b7e6cebb687f55106933188e79ad155c1",
+          "only-arches": ["x86_64"]
+        },
+        {
+          "type": "file",
           "url": "https://files.pythonhosted.org/packages/6e/c2/61d3e0f47e2b74ef40a68b9e6ad5984f6241a942f7cd3bbfbdbd03861ea9/tomli-2.2.1-py3-none-any.whl",
           "sha256": "cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/31/08/aa4fdfb71f7de5176385bd9e90852eaf6b5d622735020ad600f2bab54385/typing_inspection-0.4.0-py3-none-any.whl",
+          "sha256": "50e72559fcd2a6367a19f7a7e610e6afcb9fac940c650290eed893d61386832f"
         },
         {
           "type": "file",
@@ -118,9 +137,7 @@
     {
       "name": "wordbook",
       "buildsystem": "meson",
-      "config-opts": [
-        "-Dprofile=development"
-      ],
+      "config-opts": ["-Dprofile=development"],
       "sources": [
         {
           "type": "dir",

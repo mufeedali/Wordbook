@@ -108,7 +108,7 @@ class Application(Adw.Application):
 
         if "look-up" in options:
             term = options["look-up"]
-        
+
         if "auto-paste" in options:
             self.auto_paste_requested = True
 

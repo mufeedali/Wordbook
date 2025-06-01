@@ -1,245 +1,247 @@
 # SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import configparser
+from __future__ import annotations
+
 import json
 import os
+from enum import Enum
+from pathlib import Path
+from typing import Any
+
+from pydantic import BaseModel, Field, field_validator
 
 from wordbook import utils
 
 
-class WordbookConfigParser(configparser.ConfigParser):
-    def __init__(self, **kwargs):
-        """Initialize the Wordbook Config Parser."""
-        super().__init__(**kwargs)
+class PronunciationAccent(Enum):
+    """Enumeration of supported pronunciation accents."""
 
-    def rename_section(
-        self,
-        old_name,  # the old section name
-        new_name,  # the new section name
-    ):
-        """Rename a section in the config."""
-        items = self.items(old_name)
-        self.add_section(new_name)
-        for item in items:
-            self.set(new_name, item[0], item[1])
-        self.remove_section(old_name)
+    US = ("us", "American English")
+    GB = ("gb", "British English")
 
-    def move_option(
-        self,
-        option_name,  # the option to move
-        section,  # the section to move from
-        new_section=None,  # the section to move to
-        new_option_name=None,  # the new option name
-        new_value=None,  # the new value
-    ):
-        """Move an option from one section to another."""
-        if new_section is None:
-            new_section = section
-        if new_option_name is None:
-            new_option_name = option_name
-        if new_value is None:
-            new_value = self.get(section, option_name)
-        self.set(new_section, new_option_name, new_value)
-        self.remove_option(section, option_name)
+    def __init__(self, code: str, display_name: str):
+        self.code = code
+        self.display_name = display_name
+
+    @classmethod
+    def from_code(cls, code: str) -> "PronunciationAccent":
+        """Get accent enum from code string."""
+        for accent in cls:
+            if accent.code == code:
+                return accent
+        return cls.US  # Default fallback
+
+    @classmethod
+    def from_index(cls, index: int) -> "PronunciationAccent":
+        """Get accent enum from index."""
+        accents = list(cls)
+        if 0 <= index < len(accents):
+            return accents[index]
+        return cls.US  # Default fallback
+
+    @property
+    def index(self) -> int:
+        """Get the index of this accent in the enum."""
+        return list(PronunciationAccent).index(self)
+
+
+class BehaviorSettings(BaseModel):
+    """Settings related to application behavior."""
+
+    custom_definitions: bool = Field(default=True, description="Enable custom definitions")
+    live_search: bool = Field(default=True, description="Enable live search")
+    double_click: bool = Field(default=False, description="Search on double click")
+    pronunciations_accent: str = Field(default="us", description="Pronunciation accent")
+    auto_paste_on_launch: bool = Field(default=False, description="Auto paste from clipboard on launch")
+
+    @field_validator("pronunciations_accent")
+    @classmethod
+    def validate_accent(cls, accent: str) -> str:
+        """Validate pronunciation accent."""
+        if accent not in [a.code for a in PronunciationAccent]:
+            return PronunciationAccent.US.code  # Default fallback
+        return accent
+
+
+class AppearanceSettings(BaseModel):
+    """Settings related to application appearance."""
+
+    force_dark_mode: bool = Field(default=False, description="Force dark mode")
+
+
+class StateSettings(BaseModel):
+    """State settings."""
+
+    history: list[str] = Field(default_factory=list, description="Search history")
+
+    @field_validator("history")
+    @classmethod
+    def validate_history(cls, v: list[str]) -> list[str]:
+        """Validate and limit history size."""
+        # Keep only last 10 items
+        return v[-10:] if len(v) > 10 else v
+
+
+class WordbookSettings(BaseModel):
+    """Main settings model for Wordbook application."""
+
+    behavior: BehaviorSettings = Field(default_factory=BehaviorSettings)
+    appearance: AppearanceSettings = Field(default_factory=AppearanceSettings)
+    state: StateSettings = Field(default_factory=StateSettings)
 
 
 class Settings:
-    """Manages all the settings of the application."""
+    """Manages all the settings of the application using Pydantic models."""
 
-    config = WordbookConfigParser()
-    instance = None
+    _initializing: bool = True
+    _instance: Settings | None = None
+    _settings: WordbookSettings
 
     def __init__(self):
-        """Initialize configuration."""
-        if not os.path.exists(utils.CONFIG_FILE):
-            self.config["Behavior"] = {
-                "CustomDefinitions": "yes",
-                "LiveSearch": "yes",
-                "DoubleClick": "no",
-                "PronunciationsAccent": "us",
-                "AutoPasteOnLaunch": "no",
-            }
-            self.config["Appearance"] = {
-                "ForceDarkMode": "no",
-            }
-            self.config["Misc"] = {
-                "ConfigVersion": "6",
-                "History": "[]",
-            }
-        else:
-            self.load_settings()
+        """Initialize settings."""
+        self._config_file: Path = Path(utils.CONFIG_DIR) / "wordbook.json"
 
+        # Ensure config directory exists
+        os.makedirs(utils.CONFIG_DIR, exist_ok=True)
+
+        self._load_settings()
+        self._initializing = False
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Override setattr to automatically save settings when properties are changed."""
+        super().__setattr__(name, value)
+        # Auto-save after setting any property
+        # Avoid during initialization or for private attributes
+        if not self._initializing and not name.startswith("_"):
+            self._save_settings()
+
+    @classmethod
+    def get(cls) -> Settings:
+        """Get singleton instance of Settings."""
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def _load_settings(self) -> None:
+        """Load settings from file."""
+        if self._config_file.exists():
+            self._load_from_json()
+        else:
+            # Create default settings
+            self._settings = WordbookSettings()
+            self._save_settings()
+
+    def _load_from_json(self) -> None:
+        """Load settings from JSON file."""
+        try:
+            with open(self._config_file, "r") as f:
+                data = json.load(f)
+
+            self._settings = WordbookSettings.model_validate(data)
+            utils.log_info("Loaded settings from JSON configuration")
+
+        except Exception as e:
+            utils.log_error(f"Failed to load JSON settings: {e}")
+            utils.log_info("Creating default settings")
+            self._settings = WordbookSettings()
+            self._save_settings()
+
+    def _save_settings(self) -> None:
+        """Save settings to JSON file."""
+        try:
+            with open(self._config_file, "w") as f:
+                json.dump(self._settings.model_dump(), f, indent=4)
+            utils.log_debug("Settings saved successfully")
+        except Exception as e:
+            utils.log_error(f"Failed to save settings: {e}")
+
+    # Behavior settings properties
     @property
-    def cdef(self):
+    def cdef(self) -> bool:
         """Get custom definition status."""
-        return self.config.getboolean("Behavior", "CustomDefinitions")
+        return self._settings.behavior.custom_definitions
 
     @cdef.setter
-    def cdef(self, value):
+    def cdef(self, value: bool) -> None:
         """Set custom definition status."""
-        self.set_boolean_key("Behavior", "CustomDefinitions", value)
+        self._settings.behavior.custom_definitions = value
 
     @property
-    def double_click(self):
-        """Get whether to search on double click."""
-        return self.config.getboolean("Behavior", "DoubleClick")
-
-    @double_click.setter
-    def double_click(self, value):
-        """Set whether to search on double click."""
-        self.set_boolean_key("Behavior", "DoubleClick", value)
-
-    @property
-    def auto_paste_on_launch(self):
-        """Get whether to automatically paste from clipboard on launch."""
-        return self.config.getboolean("Behavior", "AutoPasteOnLaunch", fallback=False)
-
-    @auto_paste_on_launch.setter
-    def auto_paste_on_launch(self, value):
-        """Set whether to automatically paste from clipboard on launch."""
-        self.set_boolean_key("Behavior", "AutoPasteOnLaunch", value)
-
-    @staticmethod
-    def get():
-        """Return an instance of Settings"""
-        if Settings.instance is None:
-            Settings.instance = Settings()
-        return Settings.instance
-
-    @property
-    def gtk_dark_ui(self):
-        """Get GTK theme setting."""
-        return self.config.getboolean("Appearance", "ForceDarkMode")
-
-    @gtk_dark_ui.setter
-    def gtk_dark_ui(self, value):
-        """Set GTK theme setting."""
-        self.set_boolean_key("Appearance", "ForceDarkMode", value)
-
-    @property
-    def history(self):
-        """Get search history."""
-        return json.loads(self.config.get("Misc", "History"))
-
-    @history.setter
-    def history(self, value):
-        """Set search history."""
-        self.config.set("Misc", "History", json.dumps(value))
-        self.save_settings()  # Manually save because set_boolean_key is not called.
-
-    @property
-    def live_search(self):
-        """Get whether to enable Live Search."""
-        return self.config.getboolean("Behavior", "LiveSearch")
+    def live_search(self) -> bool:
+        """Get live search status."""
+        return self._settings.behavior.live_search
 
     @live_search.setter
-    def live_search(self, value):
-        """Set whether to enable Live Search."""
-        self.set_boolean_key("Behavior", "LiveSearch", value)
-
-    def load_settings(self):
-        """Load settings from file."""
-
-        with open(utils.CONFIG_FILE) as file:
-            self.config.read_file(file)
-
-        config_version = int(
-            self.config.get(
-                "Misc",
-                "ConfigVersion",
-                fallback=self.config.get("General", "ConfigVersion", fallback="6"),
-            )
-        )
-
-        utils.log_info(f"Version Code: {config_version}")
-        # Migrating older config files.
-        if config_version != 6:
-            if config_version == 1:
-                # Add new option.
-                self.set_boolean_key("General", "DoubleClick", False)
-                self.config.set("General", "ConfigVersion", "2")
-                config_version = 2
-
-            if config_version == 2:
-                # Remove old options.
-                self.config.remove_section("UI-qt")  # Qt UI removed.
-                self.config.remove_option("General", "Debug")  # replaced.
-
-                # Rename existing options.
-                self.config.rename_section("UI-gtk", "UI")
-
-                # Add new options.
-                self.config.set("General", "PronunciationsAccent", "us")
-
-                self.config.set("General", "ConfigVersion", "3")  # Set version.
-                config_version = 3
-
-            # Remove ability to hide window buttons when maximized.
-            if config_version == 3:
-                utils.log_info("Updating to ConfigVersion 4")
-                self.config.remove_option("UI", "HideWindowButtonsMaximized")
-                self.config.set("General", "ConfigVersion", "4")
-                config_version = 4
-
-            if config_version == 4:
-                utils.log_info("Updating to ConfigVersion 5")
-                self.config.add_section("Misc")
-                self.config.set("Misc", "History", "[]")
-                self.config.set("General", "ConfigVersion", "5")
-                config_version = 5
-
-            if config_version == 5:
-                utils.log_info("Updating to ConfigVersion 6")
-
-                self.config.move_option("DarkUI", "UI", new_option_name="ForceDarkMode")
-                self.config.remove_option("UI", "DarkFont")
-
-                # Rename existing options.
-                self.config.rename_section("General", "Behavior")
-                self.config.rename_section("UI", "Appearance")
-
-                self.config.move_option("ConfigVersion", "Behavior", "Misc", new_value="6")
-                config_version = 6
-
-            self.save_settings()  # Save before proceeding.
+    def live_search(self, value: bool) -> None:
+        """Set live search status."""
+        self._settings.behavior.live_search = value
 
     @property
-    def pronunciations_accent(self):
-        """Get pronunciations accent."""
-        return self.config.get("Behavior", "PronunciationsAccent")
+    def double_click(self) -> bool:
+        """Get double click search status."""
+        return self._settings.behavior.double_click
+
+    @double_click.setter
+    def double_click(self, value: bool) -> None:
+        """Set double click search status."""
+        self._settings.behavior.double_click = value
+
+    @property
+    def auto_paste_on_launch(self) -> bool:
+        """Get auto paste on launch status."""
+        return self._settings.behavior.auto_paste_on_launch
+
+    @auto_paste_on_launch.setter
+    def auto_paste_on_launch(self, value: bool) -> None:
+        """Set auto paste on launch status."""
+        self._settings.behavior.auto_paste_on_launch = value
+
+    @property
+    def pronunciations_accent(self) -> PronunciationAccent:
+        """Get pronunciations accent as enum."""
+        return PronunciationAccent.from_code(self._settings.behavior.pronunciations_accent)
 
     @pronunciations_accent.setter
-    def pronunciations_accent(self, value):
-        """Set pronunciations accent."""
-        self.config.set("Behavior", "PronunciationsAccent", value)
-        self.save_settings()  # Manually save because set_boolean_key is not called.
+    def pronunciations_accent(self, value: PronunciationAccent) -> None:
+        """Set pronunciations accent by enum value."""
+        self._settings.behavior.pronunciations_accent = value.code
 
     @property
-    def pronunciations_accent_value(self):
-        """Get pronunciations accent index."""
-        if self.pronunciations_accent == "us":
-            return 0
+    def pronunciations_accent_enum(self) -> PronunciationAccent:
+        """Get pronunciations accent as enum."""
+        return PronunciationAccent.from_code(self._settings.behavior.pronunciations_accent)
 
-        if self.pronunciations_accent == "gb":
-            return 1
+    # Appearance settings properties
+    @property
+    def gtk_dark_ui(self) -> bool:
+        """Get GTK dark theme setting."""
+        return self._settings.appearance.force_dark_mode
 
-        return 0
+    @gtk_dark_ui.setter
+    def gtk_dark_ui(self, value: bool) -> None:
+        """Set GTK dark theme setting."""
+        self._settings.appearance.force_dark_mode = value
 
-    @pronunciations_accent_value.setter
-    def pronunciations_accent_value(self, value):
-        """Set pronunciations accent index."""
-        if value == 0:
-            self.pronunciations_accent = "us"
-        elif value == 1:
-            self.pronunciations_accent = "gb"
+    # State settings properties
+    @property
+    def history(self) -> list[str]:
+        """Get search history."""
+        return self._settings.state.history.copy()
 
-    def save_settings(self):
-        """Save settings."""
-        with open(utils.CONFIG_FILE, "w") as file:
-            self.config.write(file)
+    @history.setter
+    def history(self, value: list[str]) -> None:
+        """Set search history."""
+        # Validate and limit history
+        self._settings.state.history = value[-10:] if len(value) > 10 else value
 
-    def set_boolean_key(self, section, key, value):
-        """Set a boolean value in the configuration file."""
-        self.config[section][key] = utils.bool_to_str(value)
-        self.save_settings()
+    def clear_history(self) -> None:
+        """Clear search history."""
+        self._settings.state.history = []
+
+    # Utility methods
+    def reset_to_defaults(self) -> None:
+        """Reset all settings to defaults."""
+        utils.log_info("Resetting settings to defaults")
+        self._settings = WordbookSettings()
+        self._save_settings()
