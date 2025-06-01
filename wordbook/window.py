@@ -182,6 +182,13 @@ class WordbookWindow(Adw.ApplicationWindow):
         clipboard: Gdk.Clipboard = self.get_primary_clipboard()
         clipboard.connect("changed", self.on_clipboard_changed)
 
+    def _get_theme_colors(self) -> tuple[str, str]:
+        """Get word and sentence colors based on current theme."""
+        if self._style_manager.get_dark():
+            return base.DARK_MODE_WORD_COLOR, base.DARK_MODE_SENTENCE_COLOR
+        else:
+            return base.LIGHT_MODE_WORD_COLOR, base.LIGHT_MODE_SENTENCE_COLOR
+
     def on_clipboard_changed(self, clipboard: Gdk.Clipboard | None):
         clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
@@ -539,48 +546,48 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _process_result(self, result: dict[str, Any]):
         """Process results from wn."""
         out_string = ""
-        word_color = result["word_color"]
-        sentence_color = result["sentence_color"]
+        word_color, sentence_color = self._get_theme_colors()
         first = True
         for pos in result.keys():
             i = 0
             orig_synset = None
-            if pos not in ("word_color", "sentence_color") and result[pos]:
-                for synset in sorted(result[pos], key=lambda k: k["name"]):
-                    synset_name = synset["name"]
-                    if orig_synset is None:
-                        i = 1
-                        if not first:
-                            out_string += "\n\n"
-                        out_string += f"{synset_name} ~ <b>{pos}</b>"
-                        orig_synset = synset_name
-                        first = False
-                    elif synset_name != orig_synset:
-                        i = 1
-                        out_string += f"\n\n{synset_name} ~ <b>{pos}</b>"
-                        orig_synset = synset_name
-                    else:
-                        i += 1
-                    out_string += f"\n  <b>{i}</b>: {synset['definition']}"
+            if not result[pos]:
+                continue
+            for synset in sorted(result[pos], key=lambda k: k["name"]):
+                synset_name = synset["name"]
+                if orig_synset is None:
+                    i = 1
+                    if not first:
+                        out_string += "\n\n"
+                    out_string += f"{synset_name} ~ <b>{pos}</b>"
+                    orig_synset = synset_name
+                    first = False
+                elif synset_name != orig_synset:
+                    i = 1
+                    out_string += f"\n\n{synset_name} ~ <b>{pos}</b>"
+                    orig_synset = synset_name
+                else:
+                    i += 1
+                out_string += f"\n  <b>{i}</b>: {synset['definition']}"
 
-                    for example in synset["examples"]:
-                        out_string += f'\n        <span foreground="{sentence_color}">{example}</span>'
+                for example in synset["examples"]:
+                    out_string += f'\n        <span foreground="{sentence_color}">{example}</span>'
 
-                    pretty_syn = self._process_word_links(synset["syn"], word_color)
-                    if pretty_syn:
-                        out_string += f"\n        Synonyms:<i> {pretty_syn}</i>"
+                pretty_syn = self._process_word_links(synset["syn"], word_color)
+                if pretty_syn:
+                    out_string += f"\n        Synonyms:<i> {pretty_syn}</i>"
 
-                    pretty_ant = self._process_word_links(synset["ant"], word_color)
-                    if pretty_ant:
-                        out_string += f"\n        Antonyms:<i> {pretty_ant}</i>"
+                pretty_ant = self._process_word_links(synset["ant"], word_color)
+                if pretty_ant:
+                    out_string += f"\n        Antonyms:<i> {pretty_ant}</i>"
 
-                    pretty_sims = self._process_word_links(synset["sim"], word_color)
-                    if pretty_sims:
-                        out_string += f"\n        Similar to:<i> {pretty_sims}</i>"
+                pretty_sims = self._process_word_links(synset["sim"], word_color)
+                if pretty_sims:
+                    out_string += f"\n        Similar to:<i> {pretty_sims}</i>"
 
-                    pretty_alsos = self._process_word_links(synset["also_sees"], word_color)
-                    if pretty_alsos:
-                        out_string += f"\n        Also see:<i> {pretty_alsos}</i>"
+                pretty_alsos = self._process_word_links(synset["also_sees"], word_color)
+                if pretty_alsos:
+                    out_string += f"\n        Also see:<i> {pretty_alsos}</i>"
         return out_string
 
     @staticmethod
@@ -600,7 +607,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         if not text == "" and not text.isspace():
             return base.format_output(
                 text,
-                self._style_manager.get_dark(),
                 self._wn_future.result()["instance"],
                 Settings.get().cdef,
                 accent=Settings.get().pronunciations_accent,
