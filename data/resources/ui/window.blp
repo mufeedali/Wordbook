@@ -269,10 +269,16 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                 Adw.ViewStackPage {
                                     name: "search_fail_page";
 
-                                    child: Adw.StatusPage search_fail_status_page {
+                                    child: Adw.StatusPage search_fail_page {
                                         vexpand: true;
                                         icon-name: "edit-find-symbolic";
                                         title: _("No definition found");
+
+                                        child: Label search_fail_description_label {
+                                            use-markup: true;
+                                            wrap: true;
+                                            selectable: true;
+                                        };
                                     };
                                 }
 

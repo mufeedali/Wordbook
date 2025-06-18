@@ -13,6 +13,7 @@ from html import escape
 from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
+from rapidfuzz import fuzz, process
 from wn import Error
 from wn.util import ProgressHandler
 
@@ -47,6 +48,8 @@ class WordbookWindow(Adw.ApplicationWindow):
     _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
     _term_view: Gtk.Label = Gtk.Template.Child("term_view")  # type: ignore
     _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")  # type: ignore
+    _search_fail_page: Adw.StatusPage = Gtk.Template.Child("search_fail_page")  # type: ignore
+    _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")  # type: ignore
     _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")  # type: ignore
     _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
     _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")  # type: ignore
@@ -103,6 +106,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._def_ctrlr.connect("pressed", self._on_def_press_event)
         self._def_ctrlr.connect("stopped", self._on_def_stop_event)
         self._def_view.connect("activate-link", self._on_link_activated)
+        self._search_fail_description_label.connect("activate-link", self._on_link_activated)
 
         self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
@@ -334,6 +338,27 @@ class WordbookWindow(Adw.ApplicationWindow):
         if status == SearchStatus.SUCCESS:
             self._page_switch(Page.CONTENT)
         elif status == SearchStatus.FAILURE:
+            suggestions = process.extract(
+                self._searched_term,
+                self._wn_future.result()["list"],
+                limit=5,
+                scorer=fuzz.QRatio,
+            )
+
+            suggestion_links = [
+                f'<a href="search;{suggestion.replace("_", " ")}">{suggestion.replace("_", " ")}</a>'
+                for suggestion, score, _ in suggestions
+                if score > 70
+            ]
+
+            if suggestion_links:
+                suggestions_markup = f"Did you mean: {', '.join(suggestion_links)}?"
+                GLib.idle_add(self._search_fail_description_label.set_markup, suggestions_markup)
+                GLib.idle_add(self._search_fail_description_label.show)
+            else:
+                GLib.idle_add(self._search_fail_description_label.set_markup, "")
+                GLib.idle_add(self._search_fail_description_label.hide)
+
             self._page_switch(Page.SEARCH_FAIL)
         elif status == SearchStatus.RESET:
             self._page_switch(Page.WELCOME)
