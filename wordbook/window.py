@@ -136,7 +136,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         # Completions
         # FIXME: Remove use of EntryCompletion
         self.completer = Gtk.EntryCompletion()
-        self.completer.set_popup_single_match(False)
+        self.completer.set_popup_single_match(True)
         self.completer.set_text_column(0)
         self.completer.set_popup_completion(not Settings.get().live_search)
         self.completer.set_popup_set_width(True)
