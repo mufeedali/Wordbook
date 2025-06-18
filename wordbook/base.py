@@ -11,11 +11,11 @@ import json
 import os
 import subprocess
 import sys
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from shutil import rmtree
 from typing import Any
-from collections.abc import Callable
 
 import wn
 

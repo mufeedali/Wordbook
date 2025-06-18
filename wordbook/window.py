@@ -7,7 +7,7 @@ import os
 import random
 import sys
 import threading
-from enum import auto, Enum
+from enum import Enum, auto
 from gettext import gettext as _
 from html import escape
 from typing import TYPE_CHECKING
@@ -77,12 +77,15 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Initialize the window."""
         super().__init__(**kwargs)
 
+        self.set_default_size(Settings.get().window_width, Settings.get().window_height)
+
         self.lookup_term = term
         self.auto_paste_requested = auto_paste_requested
 
-        if Gio.Application.get_default().development_mode is True:
+        app = self.get_application()
+        if app.development_mode is True:
             self.get_style_context().add_class("devel")
-        self.set_default_icon_name(Gio.Application.get_default().app_id)
+        self.set_default_icon_name(app.app_id)
 
         self.setup_widgets()
         self.setup_actions()
@@ -388,7 +391,13 @@ class WordbookWindow(Adw.ApplicationWindow):
             GLib.source_remove(self._history_delay_timer)
             self._history_delay_timer = None
 
-        Settings.get().history = self._search_history_list[-10:]
+        width, height = self.get_default_size()
+        settings_to_update = {
+            "history": self._search_history_list[-10:],
+            "window_width": width,
+            "window_height": height,
+        }
+        Settings.get().batch_update(settings_to_update)
 
     def _on_entry_changed(self, _entry):
         """Detect changes to text and do live search if enabled."""

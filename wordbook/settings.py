@@ -74,6 +74,8 @@ class StateSettings(BaseModel):
     """State settings."""
 
     history: list[str] = Field(default_factory=list, description="Search history")
+    window_width: int = Field(default=400, description="Window width")
+    window_height: int = Field(default=600, description="Window height")
 
     @field_validator("history")
     @classmethod
@@ -94,26 +96,27 @@ class WordbookSettings(BaseModel):
 class Settings:
     """Manages all the settings of the application using Pydantic models."""
 
-    _initializing: bool = True
+    _autosave_disabled: bool = False
     _instance: Settings | None = None
     _settings: WordbookSettings
 
     def __init__(self):
         """Initialize settings."""
+        self._autosave_disabled = True
         self._config_file: Path = Path(utils.CONFIG_DIR) / "wordbook.json"
 
         # Ensure config directory exists
         os.makedirs(utils.CONFIG_DIR, exist_ok=True)
 
         self._load_settings()
-        self._initializing = False
+        self._autosave_disabled = False
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Override setattr to automatically save settings when properties are changed."""
         super().__setattr__(name, value)
         # Auto-save after setting any property
         # Avoid during initialization or for private attributes
-        if not self._initializing and not name.startswith("_"):
+        if not self._autosave_disabled and not name.startswith("_"):
             self._save_settings()
 
     @classmethod
@@ -238,6 +241,39 @@ class Settings:
     def clear_history(self) -> None:
         """Clear search history."""
         self._settings.state.history = []
+
+    @property
+    def window_width(self) -> int:
+        """Get window width."""
+        return self._settings.state.window_width
+
+    @window_width.setter
+    def window_width(self, value: int) -> None:
+        """Set window width."""
+        self._settings.state.window_width = value
+
+    @property
+    def window_height(self) -> int:
+        """Get window height."""
+        return self._settings.state.window_height
+
+    @window_height.setter
+    def window_height(self, value: int) -> None:
+        """Set window height."""
+        self._settings.state.window_height = value
+
+    def batch_update(self, settings_dict: dict[str, Any]) -> None:
+        """Update multiple settings at once and save only once."""
+        self._autosave_disabled = True
+        try:
+            for key, value in settings_dict.items():
+                if hasattr(self, key):
+                    setattr(self, key, value)
+                else:
+                    utils.log_warning(f"Attempted to set unknown setting: {key}")
+        finally:
+            self._autosave_disabled = False
+        self._save_settings()
 
     # Utility methods
     def reset_to_defaults(self) -> None:
