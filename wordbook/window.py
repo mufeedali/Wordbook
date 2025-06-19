@@ -48,7 +48,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
     _term_view: Gtk.Label = Gtk.Template.Child("term_view")  # type: ignore
     _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")  # type: ignore
-    _search_fail_page: Adw.StatusPage = Gtk.Template.Child("search_fail_page")  # type: ignore
+    _search_fail_status_page: Adw.StatusPage = Gtk.Template.Child("search_fail_status_page")  # type: ignore
     _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")  # type: ignore
     _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")  # type: ignore
     _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
