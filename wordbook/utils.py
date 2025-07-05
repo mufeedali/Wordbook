@@ -14,25 +14,16 @@ from gi.repository import GLib
 
 if TYPE_CHECKING:
     from logging import Logger
-    from typing import Literal
 
 RES_PATH = "/dev/mufeed/Wordbook"
 
 CONFIG_DIR: str = os.path.join(GLib.get_user_config_dir(), "wordbook")
 CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.conf")
 DATA_DIR: str = os.path.join(GLib.get_user_data_dir(), "wordbook")
-CDEF_DIR: str = os.path.join(DATA_DIR, "cdef")
 WN_DIR: str = os.path.join(DATA_DIR, "wn")
 
 logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 LOGGER: Logger = logging.getLogger()
-
-
-def bool_to_str(boolean: bool) -> Literal["yes", "no"]:
-    """Convert boolean to string for configuration parser."""
-    if boolean is True:
-        return "yes"
-    return "no"
 
 
 def log_init(debug: bool) -> None:

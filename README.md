@@ -19,7 +19,6 @@ Wordbook
 * Random Word
 * Live Search
 * Double click to search
-* Custom Definitions feature using Pango Markup or an HTML subset for formatting
 * Support for GNOME Dark Mode and launching app in dark mode.
 
 ## Screenshots

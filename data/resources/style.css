@@ -1,0 +1,32 @@
+/* Favorite items styling */
+.favorite-item {
+    background-color: alpha(@accent_color, 0.1);
+    border-left: 3px solid @accent_color;
+}
+
+.favorite-item:hover {
+    background-color: alpha(@accent_color, 0.15);
+}
+
+/* History list row styling for favorites */
+listbox row.favorite-item {
+    background-color: alpha(@accent_color, 0.08);
+}
+
+listbox row.favorite-item:hover {
+    background-color: alpha(@accent_color, 0.12);
+}
+
+listbox row.favorite-item:selected {
+    background-color: alpha(@accent_color, 0.2);
+}
+
+/* WordNet lemma button styling (eg: synonym buttons) */
+
+.lemma-button {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: @purple_5;
+}

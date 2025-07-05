@@ -6,11 +6,9 @@ Base module for Wordbook, containing UI-independent logic.
 """
 
 import difflib
-import html
-import json
 import os
 import subprocess
-import sys
+import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
@@ -23,6 +21,12 @@ from wordbook import utils
 
 POOL = ThreadPoolExecutor()
 WN_DB_VERSION: str = "oewn:2024"
+
+# Global lock for WordNet database operations to prevent concurrent access
+# The main reason for using a lock is to ensure that the wordlist loading
+# and search operations do not interfere with each other, especially when
+# the wordlist is being built or accessed.
+WN_DATABASE_LOCK = threading.Lock()
 
 # Configure wn library
 wn.config.data_directory = os.path.join(utils.WN_DIR)
@@ -44,9 +48,7 @@ POS_MAP: dict[str, str] = {
 
 # Color Constants for Output Formatting
 DARK_MODE_SENTENCE_COLOR = "cyan"
-DARK_MODE_WORD_COLOR = "lightgreen"
 LIGHT_MODE_SENTENCE_COLOR = "blue"
-LIGHT_MODE_WORD_COLOR = "green"
 
 # Characters to remove during search term cleaning
 SEARCH_TERM_CLEANUP_CHARS = '<>"-?`![](){}/:;,'
@@ -79,130 +81,11 @@ def clean_search_terms(search_term: str) -> str:
 def create_required_dirs() -> None:
     """Make required directories if they don't already exist."""
     os.makedirs(utils.CONFIG_DIR, exist_ok=True)  # create Wordbook folder
-    os.makedirs(utils.CDEF_DIR, exist_ok=True)  # create Custom Definitions folder.
+    os.makedirs(utils.DATA_DIR, exist_ok=True)
+    os.makedirs(utils.WN_DIR, exist_ok=True)
 
 
-def fetch_definition(
-    text: str,
-    wn_instance: wn.Wordnet,
-    use_custom_def: bool = True,
-    accent: str = "us",
-) -> dict[str, Any]:
-    """
-    Fetches the definition for a term, checking for a custom definition first if requested.
-
-    Args:
-        text: The term to define.
-        wn_instance: The initialized Wordnet instance.
-        use_custom_def: Whether to check for a custom definition first.
-        accent: The espeak-ng accent code (e.g., "us", "gb").
-
-    Returns:
-        A dictionary with the definition data.
-    """
-    custom_def_path = os.path.join(utils.CDEF_DIR, text.lower())
-    if use_custom_def and os.path.isfile(custom_def_path):
-        return get_custom_def(text, wn_instance, accent)
-    return get_data(text, wn_instance, accent)
-
-
-def get_cowfortune() -> str:
-    """
-    Presents a cowsay version of a fortune easter egg.
-
-    Requires 'cowsay' and 'fortune'/'fortune-mod' to be installed.
-
-    Returns:
-        An HTML formatted string with the cowsay output, or an error message.
-    """
-    try:
-        # Ensure get_fortune runs first and potentially raises its own error if fortune isn't found
-        fortune_text = get_fortune(mono=False)
-        if "Easter egg fail!" in fortune_text:  # Check if get_fortune failed
-            return f"<tt>{fortune_text}</tt>"  # Return fortune's error message
-
-        process = subprocess.Popen(
-            ["cowsay", fortune_text],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,  # Capture stderr separately
-            text=True,  # Decode output automatically
-        )
-        stdout, stderr = process.communicate()
-
-        if process.returncode == 0 and stdout:
-            return f"<tt>{html.escape(stdout)}</tt>"
-        else:
-            error_msg = f"Cowsay command failed. Return code: {process.returncode}. Stderr: {stderr.strip()}"
-            utils.log_error(error_msg)
-            return "<tt>Cowsay fail… Too bad…</tt>"
-    except FileNotFoundError:
-        error_msg = "Easter Egg Fail! 'cowsay' command not found. Please install it."
-        utils.log_error(error_msg)
-        return f"<tt>{error_msg}</tt>"
-    except OSError as ex:
-        error_msg = f"Easter Egg Fail! OS error during cowsay execution: {ex}"
-        utils.log_error(error_msg)
-        return f"<tt>{error_msg}</tt>"
-
-
-def get_custom_def(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, str]:
-    """
-    Loads and presents a custom definition from a local file.
-
-    Args:
-        text: The term whose custom definition file should be read.
-        wn_instance: The initialized Wordnet instance.
-        accent: The espeak-ng accent code.
-
-    Returns:
-        A dictionary with the custom definition and related data.
-    """
-    custom_def_path = os.path.join(utils.CDEF_DIR, text.lower())
-    try:
-        with open(custom_def_path, encoding="utf-8") as def_file:
-            custom_def_dict: dict[str, str] = json.load(def_file)
-    except FileNotFoundError:
-        # This is not an error, just means no custom definition exists. Fallback silently.
-        return get_data(text, wn_instance, accent)
-    except json.JSONDecodeError as e:
-        utils.log_error(f"Error decoding custom definition file '{custom_def_path}': {e}")
-        # Fallback to standard definition if custom file is corrupt
-        return get_data(text, wn_instance, accent)
-    except OSError as e:
-        utils.log_error(f"OS error reading custom definition file '{custom_def_path}': {e}")
-        # Fallback on other OS errors during file read
-        return get_data(text, wn_instance, accent)
-
-    # Handle 'linkto' redirection
-    linked_term = custom_def_dict.get("linkto")
-    if linked_term:
-        return get_data(linked_term, wn_instance, accent)
-
-    # Get definition string, falling back to WordNet if not provided
-    definition = custom_def_dict.get("out_string", "")
-
-    formatted_definition = definition or ""
-
-    term = custom_def_dict.get("term", text)
-    # Get pronunciation, falling back to espeak-ng
-    pronunciation = custom_def_dict.get("pronunciation")
-    if not pronunciation:
-        pronunciation = get_pronunciation(term, accent)
-        pronunciation = (
-            pronunciation
-            if pronunciation and not pronunciation.isspace()
-            else "Pronunciation unavailable (is espeak-ng installed?)"
-        )
-
-    final_data: dict[str, str] = {
-        "term": term,
-        "pronunciation": pronunciation,
-        "out_string": formatted_definition,
-    }
-    return final_data
-
-
-def get_data(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any]:
+def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any]:
     """
     Obtains the definition and pronunciation data for a term from WordNet.
 
@@ -227,41 +110,57 @@ def get_data(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str
     final_data: dict[str, Any] = {
         "term": definition_data.get("term", term),  # Use original term if lookup failed
         "pronunciation": final_pron,
-        "result": definition_data.get("result"),  # This holds the structured data
-        "out_string": definition_data.get("out_string"),
+        "result": definition_data.get("result"),
     }
 
     return final_data
 
 
+def _normalize_lemma(lemma: str) -> str:
+    """Normalize a lemma by replacing underscores with spaces and stripping whitespace."""
+    return lemma.replace("_", " ").strip()
+
+
 def _find_best_lemma_match(term: str, lemmas: list[str]) -> str:
-    """Finds the best matching lemma for the search term."""
+    """Finds the best matching lemma for the search term, prioritizing exact matches."""
+    normalized_term = term.lower().strip()
+
+    # First, look for exact case-insensitive match
+    for lemma in lemmas:
+        if _normalize_lemma(lemma).lower() == normalized_term:
+            return _normalize_lemma(lemma)
+
+    # If no exact match, use fuzzy matching as fallback
     diff_match = difflib.get_close_matches(term, lemmas, n=1, cutoff=0.8)
-    return diff_match[0].strip() if diff_match else lemmas[0].strip()
+    if diff_match:
+        return _normalize_lemma(diff_match[0])
+
+    return _normalize_lemma(lemmas[0]) if lemmas else ""
 
 
-def _extract_related_lemmas(synset: wn.Synset) -> dict[str, list[str]]:
+def _extract_related_lemmas(synset: wn.Synset, matched_lemma: str) -> dict[str, list[str]]:
     """Extracts synonyms, antonyms, similar terms, and 'also sees'."""
     related: dict[str, list[str]] = {"syn": [], "ant": [], "sim": [], "also_sees": []}
-    base_lemma = synset.lemmas()[0]  # Use first lemma as reference if needed
 
-    # Synonyms (other lemmas in the same synset)
-    related["syn"] = [lemma.replace("_", " ").strip() for lemma in synset.lemmas() if lemma != base_lemma]
+    # Synonyms (other lemmas in the same synset, excluding the matched lemma)
+    related["syn"] = [
+        _normalize_lemma(lemma) for lemma in synset.lemmas() if _normalize_lemma(lemma).lower() != matched_lemma.lower()
+    ]
 
     # Antonyms
     for sense in synset.senses():
         for ant_sense in sense.get_related("antonym"):
-            ant_name = ant_sense.word().lemma().replace("_", " ").strip()
+            ant_name = _normalize_lemma(ant_sense.word().lemma())
             if ant_name not in related["ant"]:  # Avoid duplicates
                 related["ant"].append(ant_name)
 
     # Similar To
     for sim_synset in synset.get_related("similar"):
-        related["sim"].extend(lemma.replace("_", " ").strip() for lemma in sim_synset.lemmas())
+        related["sim"].extend(_normalize_lemma(lemma) for lemma in sim_synset.lemmas())
 
     # Also See
     for also_synset in synset.get_related("also"):
-        related["also_sees"].extend(lemma.replace("_", " ").strip() for lemma in also_synset.lemmas())
+        related["also_sees"].extend(_normalize_lemma(lemma) for lemma in also_synset.lemmas())
 
     return related
 
@@ -275,9 +174,10 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
         wn_instance: The initialized Wordnet instance.
 
     Returns:
-        A dictionary with the processed definition data ('term', 'result', 'out_string').
+        A dictionary with the processed definition data ('term', 'result').
     """
     first_match: str | None = None
+    exact_match_found: bool = False
     # Initialize result_dict with all possible POS keys from POS_MAP
     result_dict: dict[str, Any] = {pos: [] for pos in POS_MAP.values()}
 
@@ -285,7 +185,7 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
 
     if not synsets:
         # Term not found in WordNet
-        clean_def = {"term": term, "result": None, "out_string": None}
+        clean_def = {"term": term, "result": None}
         return clean_def
 
     for synset in synsets:
@@ -299,13 +199,20 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
         if not lemmas:
             continue  # Skip synsets with no lemmas
 
-        # Find the best lemma match and store the first good one found
+        # Find the best lemma match
         matched_lemma = _find_best_lemma_match(term, lemmas)
-        if first_match is None:
+
+        # Check if this synset contains an exact match for our search term
+        has_exact_match = any(lemma.lower().replace("_", " ").strip() == term.lower().strip() for lemma in lemmas)
+
+        # Prioritize exact matches for the overall term name
+        if first_match is None or (has_exact_match and not exact_match_found):
             first_match = matched_lemma
+            if has_exact_match:
+                exact_match_found = True
 
         # Extract related lemmas (synonyms, antonyms, etc.)
-        related_lemmas = _extract_related_lemmas(synset)
+        related_lemmas = _extract_related_lemmas(synset, matched_lemma)
 
         synset_data: dict[str, Any] = {
             "name": matched_lemma,
@@ -317,49 +224,11 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
         result_dict[pos_name].append(synset_data)
 
     # Prepare the final output structure
-    # Note: 'out_string' is usually generated later by the UI/formatter based on 'result'
     clean_def = {
         "term": first_match or term,  # Fallback to original term if no match found
         "result": result_dict,
-        "out_string": None,  # Formatted string is generated elsewhere
     }
     return clean_def
-
-
-def get_fortune(mono: bool = True) -> str:
-    """
-    Presents a fortune easter egg. Requires 'fortune' or 'fortune-mod'.
-
-    Args:
-        mono: If True, wraps the output in <tt> tags for monospace display.
-
-    Returns:
-        The fortune text, HTML escaped, optionally in <tt> tags, or an error message.
-    """
-    try:
-        process = subprocess.Popen(
-            ["fortune", "-a"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        stdout, stderr = process.communicate()
-
-        if process.returncode == 0 and stdout:
-            fortune_output = html.escape(stdout.strip(), False)
-        else:
-            error_msg = f"Fortune command failed. Return code: {process.returncode}. Stderr: {stderr.strip()}"
-            utils.log_error(error_msg)
-            fortune_output = "Easter egg fail! Could not get fortune."
-
-    except FileNotFoundError:
-        fortune_output = "Easter egg fail! 'fortune' command not found. Install 'fortune' or 'fortune-mod'."
-        utils.log_error(fortune_output)
-    except OSError as ex:
-        fortune_output = f"Easter egg fail! OS error during fortune execution: {ex}"
-        utils.log_error(fortune_output)
-
-    return f"<tt>{fortune_output}</tt>" if mono else fortune_output
 
 
 @lru_cache(maxsize=128)
@@ -430,9 +299,9 @@ def get_version_info(app_version: str) -> None:
 
 
 @_threadpool
-def get_wn_file(reloader: Callable[[], None]) -> dict[str, Any]:
+def get_wn_instance(reloader: Callable[[], None]) -> wn.Wordnet:
     """
-    Initializes the WordNet instance and fetches the word list in a thread.
+    Initializes the WordNet instance in a thread.
 
     Handles potential WordNet database errors and triggers the reloader function.
 
@@ -440,68 +309,83 @@ def get_wn_file(reloader: Callable[[], None]) -> dict[str, Any]:
         reloader: A function to call if WordNet initialization fails (e.g., to trigger download).
 
     Returns:
-        A dictionary containing the WordNet instance ('instance') and the word list ('list'),
-        or the result of the reloader function if initialization fails.
+        The initialized WordNet instance.
     """
     utils.log_info("Initializing WordNet...")
     try:
         wn_instance: wn.Wordnet = wn.Wordnet(lexicon=WN_DB_VERSION)
-        utils.log_info(f"WordNet instance ({WN_DB_VERSION}) created.")
-
-        utils.log_info("Fetching WordNet wordlist...")
-
-        wn_lemmas = [w.lemma() for w in wn_instance.words()]
-        utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas). WordNet is ready.")
-        return {"instance": wn_instance, "list": wn_lemmas}
+        utils.log_info(f"WordNet instance ({WN_DB_VERSION}) created and ready.")
+        return wn_instance
 
     except (wn.Error, wn.DatabaseError) as e:
         utils.log_error(f"WordNet initialization failed: {e}. Triggering reloader.")
-        return reloader()
+        reloader()
+        raise e
     except Exception as e:
         # Catch unexpected errors during initialization
         utils.log_error(f"Unexpected error during WordNet initialization: {e}. Retrying.")
-        return reloader()
+        reloader()
+        raise e
 
 
-def format_output(
-    text: str, wn_instance: wn.Wordnet, use_custom_def: bool, accent: str = "us"
-) -> dict[str, Any] | None:
+@_threadpool
+def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
+    """
+    Fetches the word list from an initialized WordNet instance.
+    Uses _threadpool decorator to run in a separate thread.
+    Uses WN_DATABASE_LOCK for each individual lemma access to allow search operations to interrupt.
+
+    Args:
+        wn_instance: The initialized WordNet instance.
+
+    Returns:
+        A list of lemmas from the WordNet database.
+    """
+    utils.log_info("Fetching WordNet wordlist...")
+    try:
+        # Get all words first
+        with WN_DATABASE_LOCK:
+            words = list(wn_instance.words())
+        
+        # Process lemmas one by one, allowing searches to interrupt
+        wn_lemmas = []
+        for word in words:
+            try:
+                with WN_DATABASE_LOCK:
+                    lemma = word.lemma()
+                wn_lemmas.append(lemma)
+            except Exception as e:
+                utils.log_warning(f"Error getting lemma for word {e}")
+                continue
+        
+        utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas).")
+        return wn_lemmas
+    except Exception as e:
+        utils.log_error(f"Error fetching WordNet wordlist: {e}")
+        return []
+
+
+def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any] | None:
     """
     Determines colors, handles special commands (fortune, exit), and fetches definitions.
+    Uses WN_DATABASE_LOCK to prevent concurrent access with wordlist loading.
 
     Args:
         text: The input text (search term or command).
         wn_instance: The initialized Wordnet instance.
-        use_custom_def: Whether to check for custom definitions.
         accent: The espeak-ng accent code.
 
     Returns:
         A dictionary containing definition data, or None if input is invalid/empty.
         Exits the program for specific commands.
     """
-    # Easter Eggs and Special Commands
-    if text == "fortune -a":
-        return {
-            "term": "<tt>Some random adage</tt>",
-            "pronunciation": "<tt>Courtesy of fortune</tt>",
-            "out_string": get_fortune(),
-        }
-    if text == "cowfortune":
-        return {
-            "term": "<tt>Some random adage from a cow</tt>",
-            "pronunciation": "<tt>Courtesy of fortune and cowsay</tt>",
-            "out_string": get_cowfortune(),
-        }
-    if text in ("crash now", "close now"):
-        utils.log_info(f"Exiting due to command: '{text}'")
-        sys.exit(0)  # Intentional exit
-
-    # Fetch definition for valid, non-empty text
+    # Fetch definition only for valid, non-empty text
     if text and not text.isspace():
         cleaned_text = clean_search_terms(text)
         if cleaned_text:  # Ensure text isn't empty after cleaning
-            definition_data = fetch_definition(cleaned_text, wn_instance, use_custom_def=use_custom_def, accent=accent)
-            return definition_data
+            with WN_DATABASE_LOCK:
+                definition_data = fetch_definition(cleaned_text, wn_instance, accent=accent)
+                return definition_data
         else:
             utils.log_info(f"Input '{text}' became empty after cleaning.")
             return None  # Return None if text becomes empty after cleaning
@@ -577,16 +461,12 @@ class WordnetDownloader:
             raise
 
     @staticmethod
-    def delete_db() -> None:
+    def delete_wn() -> None:
         """
-        Deletes the primary WordNet database file.
+        Deletes the WordNet data directory.
         """
-        db_path = os.path.join(utils.WN_DIR, "wn.db")
-        if os.path.isfile(db_path):
-            try:
-                utils.log_info(f"Deleting WordNet database file: {db_path}")
-                os.remove(db_path)
-            except OSError as e:
-                utils.log_error(f"Failed to delete WordNet database file '{db_path}': {e}")
-        else:
-            utils.log_warning(f"Attempted to delete WordNet database, but file not found: {db_path}")
+        try:
+            utils.log_info(f"Deleting WordNet data directory: {utils.WN_DIR}")
+            rmtree(utils.WN_DIR)
+        except OSError as e:
+            utils.log_error(f"Failed to delete WordNet data directory '{utils.WN_DIR}': {e}")

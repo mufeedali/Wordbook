@@ -49,7 +49,6 @@ class PronunciationAccent(Enum):
 class BehaviorSettings(BaseModel):
     """Settings related to application behavior."""
 
-    custom_definitions: bool = Field(default=True, description="Enable custom definitions")
     live_search: bool = Field(default=True, description="Enable live search")
     double_click: bool = Field(default=False, description="Search on double click")
     pronunciations_accent: str = Field(default="us", description="Pronunciation accent")
@@ -74,6 +73,7 @@ class StateSettings(BaseModel):
     """State settings."""
 
     history: list[str] = Field(default_factory=list, description="Search history")
+    favorites: list[str] = Field(default_factory=list, description="Favorite search terms")
     window_width: int = Field(default=400, description="Window width")
     window_height: int = Field(default=600, description="Window height")
 
@@ -161,16 +161,6 @@ class Settings:
 
     # Behavior settings properties
     @property
-    def cdef(self) -> bool:
-        """Get custom definition status."""
-        return self._settings.behavior.custom_definitions
-
-    @cdef.setter
-    def cdef(self, value: bool) -> None:
-        """Set custom definition status."""
-        self._settings.behavior.custom_definitions = value
-
-    @property
     def live_search(self) -> bool:
         """Get live search status."""
         return self._settings.behavior.live_search
@@ -241,6 +231,30 @@ class Settings:
     def clear_history(self) -> None:
         """Clear search history."""
         self._settings.state.history = []
+
+    @property
+    def favorites(self) -> list[str]:
+        """Get favorites."""
+        return self._settings.state.favorites.copy()
+
+    @favorites.setter
+    def favorites(self, value: list[str]) -> None:
+        """Set favorites."""
+        self._settings.state.favorites = value
+
+    def add_favorite(self, term: str) -> None:
+        """Add a term to favorites."""
+        if term not in self._settings.state.favorites:
+            self._settings.state.favorites.append(term)
+
+    def remove_favorite(self, term: str) -> None:
+        """Remove a term from favorites."""
+        if term in self._settings.state.favorites:
+            self._settings.state.favorites.remove(term)
+
+    def is_favorite(self, term: str) -> bool:
+        """Check if a term is favorited."""
+        return term in self._settings.state.favorites
 
     @property
     def window_width(self) -> int:

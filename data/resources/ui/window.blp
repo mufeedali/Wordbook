@@ -67,6 +67,17 @@ template $WordbookWindow: Adw.ApplicationWindow {
                     title: _("History");
                 }
 
+                [start]
+                ToggleButton favorites_filter_button {
+                    icon-name: "non-starred-symbolic";
+                    tooltip-text: _("Show Favorites Only");
+                    action-name: "win.toggle-favorites";
+
+                    styles [
+                        "flat",
+                    ]
+                }
+
                 [end]
                 Button clear_history_button {
                     icon-name: "user-trash-symbolic";
@@ -251,17 +262,25 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                             }
                                         }
 
-                                        Label def_view {
+                                        ScrolledWindow definitions_scroll {
                                             margin-start: 18;
                                             margin-end: 18;
                                             margin-top: 12;
                                             margin-bottom: 12;
-                                            wrap: true;
-                                            selectable: true;
-                                            xalign: 0;
-                                            yalign: 0;
+                                            hscrollbar-policy: never;
+                                            has-frame: false;
+                                            vexpand: true;
 
-                                            GestureClick def_ctrlr {}
+                                            child: Viewport {
+                                                child: ListBox definitions_listbox {
+                                                    selection-mode: none;
+                                                    show-separators: false;
+
+                                                    styles [
+                                                        "boxed-list",
+                                                    ]
+                                                };
+                                            };
                                         }
                                     };
                                 }
