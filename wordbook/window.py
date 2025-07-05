@@ -994,6 +994,8 @@ class WordbookWindow(Adw.ApplicationWindow):
                     content_box.append(example_label)
 
                 # Related words (synonyms, antonyms, etc.) as buttons
+                relation_type_widgets = []
+                relation_action_widgets = []
                 for relation_type, relation_key in [
                     ("Synonyms", "syn"),
                     ("Antonyms", "ant"),
@@ -1002,9 +1004,31 @@ class WordbookWindow(Adw.ApplicationWindow):
                 ]:
                     words = synset.get(relation_key, [])
                     if words:
-                        relation_box = self._create_relation_widget(relation_type, words)
-                        if relation_box:
-                            content_box.append(relation_box)
+                        built_relation_action_widgets = self._create_relation_widget(words)
+                        if built_relation_action_widgets:
+                            type_label = Gtk.Label(
+                                label=f"<span weight='bold'>{relation_type}:</span>",
+                                use_markup=True,
+                                xalign=0.0,
+                                valign=Gtk.Align.CENTER,
+                            )
+                            relation_type_widgets.append(type_label)
+                            relation_action_widgets.append(built_relation_action_widgets)
+
+                if relation_type_widgets and relation_action_widgets:
+                    relations_grid = Gtk.Grid(
+                        column_spacing=6,
+                        row_spacing=6,
+                    )
+
+                    # Add widgets to the grid in a 2-column layout
+                    for row, (type_widget, action_widget) in enumerate(
+                        zip(relation_type_widgets, relation_action_widgets)
+                    ):
+                        relations_grid.attach(type_widget, 0, row, 1, 1)
+                        relations_grid.attach(action_widget, 1, row, 1, 1)
+
+                    content_box.append(relations_grid)
 
                 def_main_box.append(content_box)
                 pos_box.append(def_main_box)
@@ -1022,7 +1046,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         return pos_box
 
-    def _create_relation_widget(self, relation_type: str, words: list[str]) -> Gtk.Widget | None:
+    def _create_relation_widget(self, words: list[str]) -> Gtk.Widget | None:
         """Create a widget for related words (synonyms, antonyms, etc.) with buttons."""
         if not words:
             return None
@@ -1033,13 +1057,6 @@ class WordbookWindow(Adw.ApplicationWindow):
             line_spacing=6,
             child_spacing=6,
         )
-
-        # Add the relation type label as the first item
-        type_label = Gtk.Label()
-        type_label.set_markup(f"<span weight='bold'>{relation_type}:</span>")
-        type_label.set_xalign(0.0)
-        type_label.set_valign(Gtk.Align.CENTER)
-        wrap_box.append(type_label)
 
         for word in words:
             button = Gtk.Button(label=word, css_classes=["lemma-button"])
