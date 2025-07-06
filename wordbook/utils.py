@@ -1,7 +1,11 @@
 # SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""utils contains a few global variables and essential functions."""
+"""
+This module provides project-wide utilities, including:
+- Global constants for important file paths (CONFIG_DIR, DATA_DIR, etc.).
+- A centralized logging setup with helper functions.
+"""
 
 from __future__ import annotations
 
@@ -27,8 +31,8 @@ LOGGER: Logger = logging.getLogger()
 
 
 def log_init(debug: bool) -> None:
-    """Initialize logging."""
-    if debug is True:
+    """Initialize logging level based on debug flag."""
+    if debug:
         level = logging.DEBUG
     else:
         level = logging.WARNING
@@ -36,40 +40,40 @@ def log_init(debug: bool) -> None:
 
 
 def log_critical(message: str) -> None:
-    """Log a critical error and if possible, its traceback."""
+    """Log a critical error. If called inside an except block, logs the traceback."""
     LOGGER.critical(message)
     trace = traceback.format_exc()
-    if trace.strip() != "NoneType: None":
-        LOGGER.critical(traceback.format_exc())
+    if "NoneType: None" not in trace:
+        LOGGER.critical(trace)
 
 
 def log_debug(message: str) -> None:
-    """Log a debug message and if possible, its traceback."""
+    """Log a debug message. If called inside an except block, logs the traceback."""
     LOGGER.debug(message)
     trace = traceback.format_exc()
-    if trace.strip() != "NoneType: None":
-        LOGGER.debug(traceback.format_exc())
+    if "NoneType: None" not in trace:
+        LOGGER.debug(trace)
 
 
 def log_error(message: str) -> None:
-    """Log an error and if possible, its traceback."""
+    """Log an error. If called inside an except block, logs the traceback."""
     LOGGER.error(message)
     trace = traceback.format_exc()
-    if trace.strip() != "NoneType: None":
-        LOGGER.error(traceback.format_exc())
+    if "NoneType: None" not in trace:
+        LOGGER.error(trace)
 
 
 def log_info(message: str) -> None:
-    """Log a message and if possible, its traceback."""
+    """Log an info message. If called inside an except block, logs the traceback."""
     LOGGER.info(message)
     trace = traceback.format_exc()
-    if trace.strip() != "NoneType: None":
+    if "NoneType: None" not in trace:
         LOGGER.info(trace)
 
 
 def log_warning(message: str) -> None:
-    """Log a warning and if possible, its traceback."""
+    """Log a warning. If called inside an except block, logs the traceback."""
     LOGGER.warning(message)
     trace = traceback.format_exc()
-    if trace.strip() != "NoneType: None":
-        LOGGER.warning(traceback.format_exc())
+    if "NoneType: None" not in trace:
+        LOGGER.warning(trace)

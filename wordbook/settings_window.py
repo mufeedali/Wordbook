@@ -13,7 +13,7 @@ PATH: str = os.path.dirname(__file__)
 
 @Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings_window.ui")
 class SettingsDialog(Adw.PreferencesDialog):
-    """Allows the user to customize Wordbook to some extent."""
+    """A dialog window that allows the user to customize Wordbook."""
 
     __gtype_name__ = "SettingsDialog"
 
@@ -25,7 +25,7 @@ class SettingsDialog(Adw.PreferencesDialog):
     _pronunciations_accent_row: Adw.ComboRow = Gtk.Template.Child("pronunciations_accent_row")
 
     def __init__(self, parent: Adw.ApplicationWindow, **kwargs):
-        """Initialize the Settings window."""
+        """Initializes the Settings window, loads current settings, and connects signals."""
         super().__init__(**kwargs)
 
         self.parent = parent
@@ -39,7 +39,7 @@ class SettingsDialog(Adw.PreferencesDialog):
         self._pronunciations_accent_row.connect("notify::selected", self._on_pronunciations_accent_activate)
 
     def load_settings(self):
-        """Load settings from the Settings instance."""
+        """Loads settings from the Settings singleton and applies them to the UI widgets."""
         self._double_click_switch.set_active(Settings.get().double_click)
         self._live_search_switch.set_active(Settings.get().live_search)
         self._auto_paste_switch.set_active(Settings.get().auto_paste_on_launch)
@@ -49,11 +49,11 @@ class SettingsDialog(Adw.PreferencesDialog):
 
     @staticmethod
     def _double_click_switch_activate(switch, _gparam):
-        """Change 'double click to search' state."""
+        """Callback for the 'double-click to search' switch. Saves the new state."""
         Settings.get().double_click = switch.get_active()
 
     def _on_live_search_activate(self, switch, _gparam):
-        """Change live search state."""
+        """Callback for the 'live search' switch. Toggles UI elements and saves the new state."""
         self.parent.completer.set_popup_completion(not switch.get_active())
         self.parent.search_button.set_visible(not switch.get_active())
         if not switch.get_active():
@@ -62,17 +62,17 @@ class SettingsDialog(Adw.PreferencesDialog):
 
     @staticmethod
     def _on_auto_paste_switch_activate(switch, _gparam):
-        """Change auto paste on launch state."""
+        """Callback for the 'auto-paste on launch' switch. Saves the new state."""
         Settings.get().auto_paste_on_launch = switch.get_active()
 
     @staticmethod
     def _on_pronunciations_accent_activate(row, _gparam):
-        """Change pronunciations' accent."""
+        """Callback for the pronunciation accent dropdown. Saves the new selection."""
         Settings.get().pronunciations_accent = PronunciationAccent.from_index(row.get_selected())
 
     @staticmethod
     def _on_dark_ui_switch_activate(switch, _gparam):
-        """Change UI theme."""
+        """Callback for the 'force dark mode' switch. Applies the theme and saves the setting."""
         Settings.get().gtk_dark_ui = switch.get_active()
         Adw.StyleManager.get_default().set_color_scheme(
             Adw.ColorScheme.FORCE_DARK if switch.get_active() else Adw.ColorScheme.PREFER_LIGHT

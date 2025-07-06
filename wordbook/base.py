@@ -22,17 +22,14 @@ from wordbook import utils
 POOL = ThreadPoolExecutor()
 WN_DB_VERSION: str = "oewn:2024"
 
-# Global lock for WordNet database operations to prevent concurrent access
-# The main reason for using a lock is to ensure that the wordlist loading
-# and search operations do not interfere with each other, especially when
-# the wordlist is being built or accessed.
+# Global lock for WordNet database operations to prevent concurrent access.
+# This is critical for ensuring that wordlist loading and search operations
+# do not interfere with each other.
 WN_DATABASE_LOCK = threading.Lock()
 
-# Configure wn library
 wn.config.data_directory = os.path.join(utils.WN_DIR)
 wn.config.allow_multithreading = True
 
-# Parts of Speech Mapping (from wn tagset to human-readable)
 POS_MAP: dict[str, str] = {
     "s": "adjective",
     "n": "noun",
@@ -46,11 +43,9 @@ POS_MAP: dict[str, str] = {
     "u": "unknown",
 }
 
-# Color Constants for Output Formatting
 DARK_MODE_SENTENCE_COLOR = "cyan"
 LIGHT_MODE_SENTENCE_COLOR = "blue"
 
-# Characters to remove during search term cleaning
 SEARCH_TERM_CLEANUP_CHARS = '<>"-?`![](){}/:;,'
 SEARCH_TERM_REPLACE_CHARS = ["(", ")", "<", ">", "[", "]", "&", "\\", "\n"]
 
@@ -80,7 +75,7 @@ def clean_search_terms(search_term: str) -> str:
 
 def create_required_dirs() -> None:
     """Make required directories if they don't already exist."""
-    os.makedirs(utils.CONFIG_DIR, exist_ok=True)  # create Wordbook folder
+    os.makedirs(utils.CONFIG_DIR, exist_ok=True)
     os.makedirs(utils.DATA_DIR, exist_ok=True)
     os.makedirs(utils.WN_DIR, exist_ok=True)
 
@@ -97,18 +92,13 @@ def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> 
     Returns:
         A dictionary containing the definition data with pronunciation information.
     """
-    # Obtain definition from WordNet
     definition_data = get_definition(term, wn_instance)
-
-    # Determine the term to use for pronunciation (found lemma or original)
     pronunciation_term = definition_data.get("term") or term
-
-    # Get pronunciation
     pron = get_pronunciation(pronunciation_term, accent)
     final_pron = pron if pron and not pron.isspace() else "Pronunciation unavailable (is espeak-ng installed?)"
-    # Create the dictionary to be returned.
+
     final_data: dict[str, Any] = {
-        "term": definition_data.get("term", term),  # Use original term if lookup failed
+        "term": definition_data.get("term", term),
         "pronunciation": final_pron,
         "result": definition_data.get("result"),
     }
@@ -125,12 +115,10 @@ def _find_best_lemma_match(term: str, lemmas: list[str]) -> str:
     """Finds the best matching lemma for the search term, prioritizing exact matches."""
     normalized_term = term.lower().strip()
 
-    # First, look for exact case-insensitive match
     for lemma in lemmas:
         if _normalize_lemma(lemma).lower() == normalized_term:
             return _normalize_lemma(lemma)
 
-    # If no exact match, use fuzzy matching as fallback
     diff_match = difflib.get_close_matches(term, lemmas, n=1, cutoff=0.8)
     if diff_match:
         return _normalize_lemma(diff_match[0])
@@ -142,23 +130,19 @@ def _extract_related_lemmas(synset: wn.Synset, matched_lemma: str) -> dict[str, 
     """Extracts synonyms, antonyms, similar terms, and 'also sees'."""
     related: dict[str, list[str]] = {"syn": [], "ant": [], "sim": [], "also_sees": []}
 
-    # Synonyms (other lemmas in the same synset, excluding the matched lemma)
     related["syn"] = [
         _normalize_lemma(lemma) for lemma in synset.lemmas() if _normalize_lemma(lemma).lower() != matched_lemma.lower()
     ]
 
-    # Antonyms
     for sense in synset.senses():
         for ant_sense in sense.get_related("antonym"):
             ant_name = _normalize_lemma(ant_sense.word().lemma())
-            if ant_name not in related["ant"]:  # Avoid duplicates
+            if ant_name not in related["ant"]:
                 related["ant"].append(ant_name)
 
-    # Similar To
     for sim_synset in synset.get_related("similar"):
         related["sim"].extend(_normalize_lemma(lemma) for lemma in sim_synset.lemmas())
 
-    # Also See
     for also_synset in synset.get_related("also"):
         related["also_sees"].extend(_normalize_lemma(lemma) for lemma in also_synset.lemmas())
 
@@ -178,13 +162,11 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
     """
     first_match: str | None = None
     exact_match_found: bool = False
-    # Initialize result_dict with all possible POS keys from POS_MAP
     result_dict: dict[str, Any] = {pos: [] for pos in POS_MAP.values()}
 
     synsets = wn_instance.synsets(term)
 
     if not synsets:
-        # Term not found in WordNet
         clean_def = {"term": term, "result": None}
         return clean_def
 
@@ -199,33 +181,26 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
         if not lemmas:
             continue  # Skip synsets with no lemmas
 
-        # Find the best lemma match
         matched_lemma = _find_best_lemma_match(term, lemmas)
-
-        # Check if this synset contains an exact match for our search term
         has_exact_match = any(lemma.lower().replace("_", " ").strip() == term.lower().strip() for lemma in lemmas)
-
-        # Prioritize exact matches for the overall term name
         if first_match is None or (has_exact_match and not exact_match_found):
             first_match = matched_lemma
             if has_exact_match:
                 exact_match_found = True
 
-        # Extract related lemmas (synonyms, antonyms, etc.)
         related_lemmas = _extract_related_lemmas(synset, matched_lemma)
 
         synset_data: dict[str, Any] = {
             "name": matched_lemma,
             "definition": synset.definition() or "No definition available.",
             "examples": synset.examples() or [],
-            **related_lemmas,  # Merge related lemmas dict
+            **related_lemmas,
         }
 
         result_dict[pos_name].append(synset_data)
 
-    # Prepare the final output structure
     clean_def = {
-        "term": first_match or term,  # Fallback to original term if no match found
+        "term": first_match or term,
         "result": result_dict,
     }
     return clean_def
@@ -234,7 +209,7 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
 @lru_cache(maxsize=128)
 def get_pronunciation(term: str, accent: str = "us") -> str | None:
     """
-    Gets the pronunciation of a term using espeak-ng.
+    Gets the pronunciation of a term using the 'espeak-ng' command-line tool.
 
     Args:
         term: The word or phrase to pronounce.
@@ -245,15 +220,21 @@ def get_pronunciation(term: str, accent: str = "us") -> str | None:
     """
     try:
         process = subprocess.Popen(
-            ["espeak-ng", "-v", f"en-{accent}", "--ipa=3", "-q", term],  # Use IPA level 3 for more detail
+            [
+                "espeak-ng",
+                "-v",
+                f"en-{accent}",
+                "--ipa=3",
+                "-q",
+                term,
+            ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
         )
-        stdout, stderr = process.communicate(timeout=5)  # Add timeout
+        stdout, stderr = process.communicate(timeout=5)
 
         if process.returncode == 0 and stdout:
-            # Clean up potential extra whitespace and format
             ipa_pronunciation = stdout.strip().replace("\n", " ").replace("  ", " ")
             return f"/{ipa_pronunciation.strip('/')}/"
 
@@ -322,7 +303,6 @@ def get_wn_instance(reloader: Callable[[], None]) -> wn.Wordnet:
         reloader()
         raise e
     except Exception as e:
-        # Catch unexpected errors during initialization
         utils.log_error(f"Unexpected error during WordNet initialization: {e}. Retrying.")
         reloader()
         raise e
@@ -346,8 +326,9 @@ def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
         # Get all words first
         with WN_DATABASE_LOCK:
             words = list(wn_instance.words())
-        
-        # Process lemmas one by one, allowing searches to interrupt
+
+        # Process lemmas one by one
+        # This allows other WordNet actions to interrupt
         wn_lemmas = []
         for word in words:
             try:
@@ -357,7 +338,7 @@ def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
             except Exception as e:
                 utils.log_warning(f"Error getting lemma for word {e}")
                 continue
-        
+
         utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas).")
         return wn_lemmas
     except Exception as e:
@@ -379,19 +360,18 @@ def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dic
         A dictionary containing definition data, or None if input is invalid/empty.
         Exits the program for specific commands.
     """
-    # Fetch definition only for valid, non-empty text
     if text and not text.isspace():
         cleaned_text = clean_search_terms(text)
-        if cleaned_text:  # Ensure text isn't empty after cleaning
+        if cleaned_text:
             with WN_DATABASE_LOCK:
                 definition_data = fetch_definition(cleaned_text, wn_instance, accent=accent)
                 return definition_data
         else:
             utils.log_info(f"Input '{text}' became empty after cleaning.")
-            return None  # Return None if text becomes empty after cleaning
+            return None
     else:
         utils.log_info(f"Input text is empty or whitespace: '{text}'")
-        return None  # Return None for empty or whitespace input
+        return None
 
 
 def read_term(text: str, speed: int = 120, accent: str = "us") -> None:
@@ -406,17 +386,12 @@ def read_term(text: str, speed: int = 120, accent: str = "us") -> None:
     try:
         subprocess.run(
             ["espeak-ng", "-s", str(speed), "-v", f"en-{accent}", text],
-            stdout=subprocess.DEVNULL,  # Discard standard output
-            stderr=subprocess.PIPE,  # Capture standard error
-            check=False,  # Don't raise exception on non-zero exit, handle manually
-            timeout=10,  # Add timeout
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            check=False,
+            timeout=10,
             text=True,
         )
-        # Note: We don't check result.check_returncode() here as espeak might return non-zero
-        # even on successful speech in some cases. Logging stderr might be useful if debugging.
-        # if result.stderr:
-        #    utils.log_warning(f"espeak-ng stderr while reading term '{text}': {result.stderr.strip()}")
-
     except FileNotFoundError:
         utils.log_error("'espeak-ng' command not found. Cannot read term aloud.")
     except subprocess.TimeoutExpired:
@@ -452,11 +427,9 @@ class WordnetDownloader:
 
         utils.log_info(f"Starting download of WordNet version: {WN_DB_VERSION}")
         try:
-            # Let wn handle the download, but pass a callback to track progress
             _ = wn.download(WN_DB_VERSION, progress_handler=progress_handler)
             utils.log_info(f"WordNet download completed for {WN_DB_VERSION}.")
         except Exception as e:
-            # Catch potential errors during download (network issues, wn errors)
             utils.log_error(f"WordNet download failed for {WN_DB_VERSION}: {e}")
             raise
 

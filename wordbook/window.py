@@ -55,13 +55,12 @@ class ProgressUpdater(ProgressHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._last_update_time = 0
-        self._update_interval = 0.1
+        self._update_interval = 0.1  # 100ms
 
     def update(self, n: int = 1, force: bool = False):
-        """Update the progress bar with throttling."""
+        """Update the progress bar, but throttle UI updates to avoid performance issues."""
         self.kwargs["count"] += n
 
-        # Throttle UI updates
         current_time = time.time()
         if not force and (current_time - self._last_update_time) < self._update_interval:
             return
@@ -77,7 +76,7 @@ class ProgressUpdater(ProgressHandler):
 
     @staticmethod
     def flash(message):
-        """Update the progress label."""
+        """Update the progress label on the download page."""
         if message == "Database":
             GLib.idle_add(
                 Gio.Application.get_default().win.download_status_page.set_description,
@@ -135,15 +134,16 @@ class WordbookWindow(Adw.ApplicationWindow):
     _primary_clipboard_text: str | None = None
     _show_favorites_only: bool = False
 
-    # Initialize history delay timer for live search
+    # A timer is used to delay adding terms to history during live search,
+    # preventing every keystroke from being saved.
     _history_delay_timer = None
     _pending_history_text = None
 
-    # Auto-paste queuing
+    # A flag to queue auto-pasting until the window is active.
     _auto_paste_queued: bool = False
 
     def __init__(self, term="", auto_paste_requested=False, **kwargs):
-        """Initialize the window."""
+        """Initializes the main application window."""
         super().__init__(**kwargs)
 
         self.set_default_size(Settings.get().window_width, Settings.get().window_height)
@@ -152,7 +152,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.auto_paste_requested = auto_paste_requested
 
         app = self.get_application()
-        if app.development_mode is True:
+        if app.development_mode:
             self.get_style_context().add_class("devel")
         self.set_default_icon_name(app.app_id)
 
@@ -160,13 +160,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.setup_actions()
 
     def setup_widgets(self):
-        """Setup the widgets in the window."""
+        """Sets up widgets, binds models, and connects signal handlers."""
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._history_listbox.bind_model(self._search_history, self._create_label)
-        self._search_history.connect("items-changed", self._on_history_items_changed)
-
-        # Connect signal to apply CSS classes when rows are created
         self._history_listbox.connect("row-activated", self._on_history_item_activated)
+        self._search_history.connect("items-changed", self._on_history_items_changed)
 
         self.connect("notify::is-active", self._on_is_active_changed)
         self.connect("unrealize", self._on_destroy)
@@ -190,10 +188,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._style_manager = self.get_application().get_style_manager()
         self._style_manager.connect("notify::dark", self._on_dark_style)
 
-        # Loading and setup.
         self._dl_wn()
 
-        # Completions
         # FIXME: Remove use of EntryCompletion
         self.completer = Gtk.EntryCompletion()
         self.completer.set_popup_single_match(True)
@@ -202,14 +198,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.completer.set_popup_set_width(True)
         self._search_entry.set_completion(self.completer)
 
-        # Load History.
         history_items = [HistoryObject(term, Settings.get().is_favorite(term)) for term in Settings.get().history]
         self._search_history.splice(0, 0, history_items)
 
-        # Update clear button sensitivity
         self._update_clear_button_sensitivity()
 
-        # Set search button visibility.
         self.search_button.set_visible(not Settings.get().live_search)
         if not Settings.get().live_search:
             self.set_default_widget(self.search_button)
@@ -220,54 +213,49 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._def_extra_menu_model = def_extra_menu_model
 
     def setup_actions(self):
-        """Setup the Gio actions for the application window."""
-        paste_search_action: Gio.SimpleAction = Gio.SimpleAction.new("paste-search", None)
+        """Sets up the Gio actions and accelerators for the application window."""
+        paste_search_action = Gio.SimpleAction.new("paste-search", None)
         paste_search_action.connect("activate", self.on_paste_search)
         self.add_action(paste_search_action)
 
-        preferences_action: Gio.SimpleAction = Gio.SimpleAction.new("preferences", None)
+        preferences_action = Gio.SimpleAction.new("preferences", None)
         preferences_action.connect("activate", self.on_preferences)
         self.add_action(preferences_action)
 
-        random_word_action: Gio.SimpleAction = Gio.SimpleAction.new("random-word", None)
+        random_word_action = Gio.SimpleAction.new("random-word", None)
         random_word_action.connect("activate", self.on_random_word)
         self.add_action(random_word_action)
 
-        search_selected_action: Gio.SimpleAction = Gio.SimpleAction.new("search-selected", None)
+        search_selected_action = Gio.SimpleAction.new("search-selected", None)
         search_selected_action.connect("activate", self.on_search_selected)
         search_selected_action.set_enabled(False)
         self.add_action(search_selected_action)
 
-        toggle_favorites_action: Gio.SimpleAction = Gio.SimpleAction.new("toggle-favorites", None)
+        toggle_favorites_action = Gio.SimpleAction.new("toggle-favorites", None)
         toggle_favorites_action.connect("activate", self.on_toggle_favorites)
         self.add_action(toggle_favorites_action)
 
-        clipboard: Gdk.Clipboard = self.get_primary_clipboard()
+        clipboard = self.get_primary_clipboard()
         clipboard.connect("changed", self.on_clipboard_changed)
 
     def _get_theme_colors(self) -> str:
-        """Get word and sentence colors based on current theme."""
-        if self._style_manager.get_dark():
-            return base.DARK_MODE_SENTENCE_COLOR
-        else:
-            return base.LIGHT_MODE_SENTENCE_COLOR
+        """Gets the appropriate sentence color based on the current theme (light/dark)."""
+        return base.DARK_MODE_SENTENCE_COLOR if self._style_manager.get_dark() else base.LIGHT_MODE_SENTENCE_COLOR
 
     def on_clipboard_changed(self, clipboard: Gdk.Clipboard | None):
+        """Callback for when the primary clipboard (text selection) changes."""
         clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
         def on_selection(_clipboard, result):
-            """Callback for the text selection."""
             try:
                 text = clipboard.read_text_finish(result)
-                if text is not None and not text.strip() == "" and not text.isspace():
-                    text = text.replace("         ", "").replace("\n", "")
-                    self._primary_clipboard_text = text
+                if text and text.strip():
+                    self._primary_clipboard_text = text.replace("         ", "").replace("\n", "")
                     self.lookup_action("search-selected").props.enabled = True
                 else:
                     self._primary_clipboard_text = None
                     self.lookup_action("search-selected").props.enabled = False
             except GLib.GError:
-                # Usually happens when clipboard is empty or unsupported data type
                 self._primary_clipboard_text = None
                 self.lookup_action("search-selected").props.enabled = False
 
@@ -275,56 +263,55 @@ class WordbookWindow(Adw.ApplicationWindow):
         clipboard.read_text_async(cancellable, on_selection)
 
     def on_paste_search(self, _action=None, _param=None):
-        """Search text in clipboard."""
+        """Callback for the 'paste-search' action. Pastes and searches clipboard content."""
         clipboard = Gdk.Display.get_default().get_clipboard()
 
         def on_paste(_clipboard: Gdk.Clipboard, result: Gio.AsyncResult):
-            """Callback for the clipboard paste."""
             try:
                 text = clipboard.read_text_finish(result)
-                if text is not None:
+                if text:
                     text = base.clean_search_terms(text)
-                if text and text.strip() and not text.isspace():
+                if text and text.strip():
                     self.trigger_search(text)
             except GLib.GError:
-                # Usually happens when clipboard is empty or unsupported data type
-                pass
+                pass  # Ignore errors from empty or non-text clipboard
 
         cancellable = Gio.Cancellable()
         clipboard.read_text_async(cancellable, on_paste)
 
     def on_preferences(self, _action, _param):
-        """Show settings window."""
+        """Callback for the 'preferences' action. Shows the settings window."""
         window = SettingsDialog(self)
         window.present(self)
 
     def on_random_word(self, _action, _param):
-        """Search a random word from the wordlist."""
+        """Callback for the 'random-word' action. Searches for a random word."""
         if self._wn_wordlist:
-            random_word = random.choice(self._wn_wordlist)
-            random_word = random_word.replace("_", " ")
+            random_word = random.choice(self._wn_wordlist).replace("_", " ")
             self.trigger_search(random_word)
         else:
-            # Fallback - show a message that wordlist is still loading
             self._new_error(_("Wordlist Loading"), _("The word list is still loading. Please try again in a moment."))
 
     def on_search_selected(self, _action, _param):
-        """Search selected text from inside or outside the window."""
+        """Callback for the 'search-selected' action. Searches for the currently selected text."""
         self.trigger_search(self._primary_clipboard_text)
 
     def on_toggle_favorites(self, _action, _param):
-        """Toggle between showing all history and favorites only."""
+        """Callback for the 'toggle-favorites' action. Toggles the history filter."""
         self._toggle_favorites_filter()
 
     def on_search_clicked(self, _button=None, pass_check=False, text=None):
-        """Pass data to search function and set TextView data."""
+        """Initiates a search, adding the term to the processing queue."""
         if text is None:
             text = self._search_entry.get_text().strip()
         self._page_switch(Page.SPINNER)
         self._add_to_queue(text, pass_check)
 
     def threaded_search(self, pass_check=False):
-        """Manage a single thread to search for each term."""
+        """
+        Manages a single thread to search for terms from the queue.
+        This prevents the UI from freezing during network or intensive search operations.
+        """
         except_list = ("fortune -a", "cowfortune")
         status = SearchStatus.NONE
         while self._search_queue:
@@ -332,7 +319,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             orig_term = self._searched_term
             self._searched_term = text
             if text and (pass_check or not text == orig_term or text in except_list):
-                if not text.strip() == "":
+                if text.strip():
                     GLib.idle_add(self._clear_definitions)
 
                     out = self._search(text)
@@ -342,7 +329,6 @@ class WordbookWindow(Adw.ApplicationWindow):
                         continue
 
                     def validate_result(text, result_data) -> Literal[SearchStatus.SUCCESS]:
-                        # Add to history (with delay for live search)
                         if Settings.get().live_search:
                             self._add_to_history_delayed(text)
                         else:
@@ -359,24 +345,12 @@ class WordbookWindow(Adw.ApplicationWindow):
                         continue
 
                     term_view_text = f'<span size="large" weight="bold">{out["term"].strip()}</span>'
-                    GLib.idle_add(
-                        self._term_view.set_markup,
-                        term_view_text,
-                    )
-                    GLib.idle_add(
-                        self._term_view.set_tooltip_markup,
-                        term_view_text,
-                    )
+                    GLib.idle_add(self._term_view.set_markup, term_view_text)
+                    GLib.idle_add(self._term_view.set_tooltip_markup, term_view_text)
 
-                    pron = "<i>" + out["pronunciation"].strip().replace("\n", "") + "</i>"
-                    GLib.idle_add(
-                        self._pronunciation_view.set_markup,
-                        pron,
-                    )
-                    GLib.idle_add(
-                        self._pronunciation_view.set_tooltip_markup,
-                        pron,
-                    )
+                    pron = f"<i>{out['pronunciation'].strip().replace('\n', '')}</i>"
+                    GLib.idle_add(self._pronunciation_view.set_markup, pron)
+                    GLib.idle_add(self._pronunciation_view.set_tooltip_markup, pron)
 
                     if text not in except_list:
                         GLib.idle_add(self._speak_button.set_visible, True)
@@ -428,57 +402,55 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._active_thread = None
 
     def trigger_search(self, text):
-        """Trigger search action."""
+        """A convenience method to trigger a search from other parts of the app."""
         GLib.idle_add(self._search_entry.set_text, text)
         GLib.idle_add(self.on_search_clicked, None, False, text)
 
     def _on_dark_style(self, _object, _param):
-        """Refresh definition view when switching dark theme."""
+        """Refreshes the definition view to apply new theme colors."""
         if self._searched_term is not None:
             self.on_search_clicked(pass_check=True, text=self._searched_term)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
-        """Handle double click on definition view."""
+        """Handles the first part of a double-click event on the definition view."""
         if Settings.get().double_click:
             self._doubled = n_press == 2
         else:
             self._doubled = False
 
     def _on_def_stop_event(self, _click):
-        """Search on double click."""
+        """Handles the second part of a double-click, triggering a search if detected."""
         if self._doubled:
             clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
             def on_paste(_clipboard, result):
                 text = clipboard.read_text_finish(result)
                 text = base.clean_search_terms(text)
-                if text is not None and not text.strip() == "" and not text.isspace():
+                if text and text.strip():
                     self.trigger_search(text)
 
             cancellable = Gio.Cancellable()
             clipboard.read_text_async(cancellable, on_paste)
 
     def queue_auto_paste(self):
-        """Queue auto-paste or execute it immediately if window is active."""
+        """Queues an auto-paste action, to be executed once the window is active."""
         if self.props.is_active:
             GLib.idle_add(self.on_paste_search)
         else:
             self._auto_paste_queued = True
 
     def _on_is_active_changed(self, *_args):
-        """Handle window becoming active and execute queued auto-paste if needed."""
+        """Executes a queued auto-paste action when the window becomes active."""
         if self._auto_paste_queued and self.props.is_active:
             self._auto_paste_queued = False
             GLib.idle_add(self.on_paste_search)
 
     def _on_destroy(self, _window: Gtk.Window):
-        """Detect closing of the window."""
-        # Cancel any pending history delay timer
+        """Saves window state and history upon closing the window."""
         if self._history_delay_timer is not None:
             GLib.source_remove(self._history_delay_timer)
             self._history_delay_timer = None
 
-        # Extract history from the search history store
         history_list = []
         if self._search_history:
             for i in range(self._search_history.get_n_items()):
@@ -495,8 +467,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         Settings.get().batch_update(settings_to_update)
 
     def _on_entry_changed(self, _entry):
-        """Detect changes to text and do live search if enabled."""
-
+        """Handles text changes in the search entry, triggering live search and completions."""
         self._completion_request_count += 1
         if self._completion_request_count == 1:
             threading.Thread(
@@ -509,8 +480,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             GLib.idle_add(self.on_search_clicked)
 
     def _on_clear_history(self, _widget):
-        """Clear non-favorited items from the search history."""
-        # Remove non-favorited items from the UI store
+        """Clears non-favorited items from the search history."""
         for i in reversed(range(self._search_history.get_n_items())):
             item = self._search_history.get_item(i)
             if not item.is_favorite:
@@ -519,24 +489,24 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._update_clear_button_sensitivity()
 
     def _update_clear_button_sensitivity(self):
-        """Update the sensitivity of the clear history button."""
+        """Updates the sensitivity of the clear history button based on whether there is history."""
         has_history = self._search_history.get_n_items() > 0 if self._search_history else False
         self._clear_history_button.set_sensitive(has_history)
 
     @staticmethod
     def _on_exit_clicked(_widget):
-        """Handle exit button click in network failure page."""
+        """Callback for the exit button on the network failure page."""
         sys.exit()
 
     def _on_link_activated(self, _widget, data):
-        """Search for terms that are marked as hyperlinks."""
+        """Handles clicks on hyperlinks in the UI, such as 'Did you mean' suggestions."""
         if data.startswith("search;"):
             GLib.idle_add(self._search_entry.set_text, data[7:])
             self.on_search_clicked(text=data[7:])
         return Gdk.EVENT_STOP
 
     def _on_key_pressed(self, _button, keyval, _keycode, state):
-        """Handle key press events for quick search."""
+        """Handles key presses for quick search functionality when the search entry is not focused."""
         modifiers = state & Gtk.accelerator_get_default_mod_mask()
         shift_mask = Gdk.ModifierType.SHIFT_MASK
         unicode_key_val = Gdk.keyval_to_unicode(keyval)
@@ -553,53 +523,49 @@ class WordbookWindow(Adw.ApplicationWindow):
         return Gdk.EVENT_PROPAGATE
 
     def _on_history_item_activated(self, _widget, row: Gtk.ListBoxRow):
-        """Handle history item clicks."""
+        """Handles clicks on history items, triggering a search for that term."""
         index = row.get_index()
         history_object: HistoryObject = self._search_history.get_item(index)
         if history_object:
             self.trigger_search(history_object.term)
 
     def _on_history_items_changed(self, store, position, removed, added):
-        """Apply styling to newly added rows."""
-        # Only run for additions
+        """Applies styling to newly added history rows."""
         if added > 0:
             GLib.idle_add(self._apply_styling_to_new_rows, store, position, added)
 
     def _apply_styling_to_new_rows(self, store, position, added):
-        """Wait for rows to be created, then apply styling."""
+        """Waits for rows to be created, then applies styling."""
         for i in range(position, position + added):
             item = store.get_item(i)
             row = self._history_listbox.get_row_at_index(i)
             if row:
                 self._update_row_visuals(row, item)
-        return False  # Do not repeat
+        return False
 
     def _on_retry_clicked(self, _widget):
-        """Handle retry button click in network failure page."""
+        """Handles the retry button click on the network failure page."""
         self._wn_downloader.delete_wn()
         self._start_download()
 
     def _add_to_queue(self, text: str, pass_check: bool = False):
-        """Add search term to queue."""
+        """Adds a search term to the queue and starts the search thread if not running."""
         if self._search_queue:
             self._search_queue.pop(0)
         self._search_queue.append(text)
 
         if self._active_thread is None:
-            # If there is no active thread, create one and start it.
             self._active_thread = threading.Thread(target=self.threaded_search, args=[pass_check], daemon=True)
             self._active_thread.start()
 
     def _add_to_history(self, text):
-        """Add text to history, moving it to the top if it already exists."""
-        # Remove if it exists to avoid duplicates
+        """Adds a term to the history, moving it to the top if it already exists."""
         for i in range(self._search_history.get_n_items()):
             item = self._search_history.get_item(i)
             if item.term == text:
                 self._search_history.remove(i)
                 break
 
-        # Add to the top
         is_favorite = Settings.get().is_favorite(text)
         history_object = HistoryObject(text, is_favorite)
         self._search_history.insert(0, history_object)
@@ -607,29 +573,24 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._update_clear_button_sensitivity()
 
     def _add_to_history_delayed(self, text):
-        """Add text to history after a 2-seconds delay, cancelling any previous delay."""
-        # Cancel any existing timer
+        """Adds a term to history after a delay, cancelling any previously pending additions."""
         if self._history_delay_timer is not None:
             GLib.source_remove(self._history_delay_timer)
-            self._history_delay_timer = None
 
-        # Store the text to be added
         self._pending_history_text = text
-
-        # Set up a new timer to add to history after 2 seconds (2000ms)
         self._history_delay_timer = GLib.timeout_add(2000, self._execute_delayed_history_add)
 
     def _execute_delayed_history_add(self):
-        """Execute the delayed history addition."""
+        """Executes the delayed history addition."""
         if self._pending_history_text is not None:
             self._add_to_history(self._pending_history_text)
             self._pending_history_text = None
 
         self._history_delay_timer = None
-        return False  # Don't repeat the timer
+        return False
 
     def _on_speak_clicked(self, _button):
-        """Say the search entry out loud with espeak speech synthesis."""
+        """Callback for the speak button. Reads the current term aloud."""
         base.read_term(
             self._searched_term,
             speed="120",
@@ -637,10 +598,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
 
     def _create_label(self, element):
-        """Create labels for history list."""
+        """Factory method to create a history row widget."""
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, visible=True, spacing=8)
 
-        # Main content box for the term
         content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, visible=True)
         content_box.set_hexpand(True)
 
@@ -654,7 +614,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
         content_box.append(label)
 
-        # Favorite button
         favorite_button = Gtk.Button(
             icon_name="starred-symbolic" if element.is_favorite else "non-starred-symbolic",
             margin_top=4,
@@ -664,8 +623,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
         favorite_button.add_css_class("flat")
         favorite_button.add_css_class("circular")
-
-        # Connect the favorite button click
         favorite_button.connect("clicked", self._on_favorite_toggled, element)
 
         box.append(content_box)
@@ -674,10 +631,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         return box
 
     def _on_favorite_toggled(self, button: Gtk.Button, item: HistoryObject):
-        """Toggle favorite status for a term and update the UI dynamically."""
+        """Toggles the favorite status of a history item and updates the UI."""
         settings = Settings.get()
-
-        # The new state is the opposite of the current state
         is_now_favorite = not item.is_favorite
         item.is_favorite = is_now_favorite
 
@@ -686,29 +641,25 @@ class WordbookWindow(Adw.ApplicationWindow):
         else:
             settings.remove_favorite(item.term)
 
-        # Get the row and update its visuals
         row = button.get_ancestor(Gtk.ListBoxRow)
         if row:
             self._update_row_visuals(row, item)
 
     def _update_row_visuals(self, row: Gtk.ListBoxRow, item: HistoryObject):
-        """Update the icon and visibility of a history row."""
-        # Update favorite button icon
+        """Updates the icon, CSS class, and visibility of a history row."""
         box = row.get_child()
         favorite_button: Gtk.ToggleButton = box.get_last_child()
         favorite_button.set_icon_name("starred-symbolic" if item.is_favorite else "non-starred-symbolic")
 
-        # Update CSS class
         if item.is_favorite:
             row.add_css_class("favorite-item")
         else:
             row.remove_css_class("favorite-item")
 
-        # Handle visibility when the favorites filter is active
         row.set_visible(not self._show_favorites_only or item.is_favorite)
 
     def _toggle_favorites_filter(self):
-        """Toggle between showing all history and favorites only."""
+        """Toggles the visibility of history items based on their favorite status."""
         self._show_favorites_only = not self._show_favorites_only
         self._favorites_filter_button.set_active(self._show_favorites_only)
         self._favorites_filter_button.set_icon_name(
@@ -722,13 +673,13 @@ class WordbookWindow(Adw.ApplicationWindow):
                 row.set_visible(not self._show_favorites_only or item.is_favorite)
 
     def _new_error(self, primary_text, secondary_text) -> None:
-        """Show an error dialog."""
+        """Shows an error dialog."""
         dialog = Adw.AlertDialog.new(primary_text, secondary_text)
         dialog.add_response("dismiss", _("Dismiss"))
         dialog.choose(self)
 
     def _page_switch(self, page: str) -> bool:
-        """Switch main stack pages."""
+        """Switches the visible page in the main stack."""
         utils.log_info(f"Switching to page: {page}")
         if page == "content_page":
             GLib.idle_add(self._main_scroll.get_vadjustment().set_value, 0)
@@ -736,9 +687,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         return False
 
     def _search(self, search_text: str) -> dict[str, Any] | None:
-        """Clean input text, give errors and pass data to formatter."""
+        """Cleans input text, passes it to the backend for definition, and handles errors."""
         text = base.clean_search_terms(search_text)
-        if not text == "" and not text.isspace():
+        if text and text.strip():
             if self._wn_instance:
                 return base.format_output(
                     text,
@@ -746,8 +697,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                     accent=Settings.get().pronunciations_accent.code,
                 )
             else:
-                # WordNet instance not ready yet
-                return None
+                return None  # WordNet instance not ready yet
         if not Settings.get().live_search:
             GLib.idle_add(
                 self._new_error,
@@ -758,12 +708,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         return None
 
     def _update_completions(self, text):
-        """Update completions from wordlist."""
+        """Updates the search entry's completion model based on the current text."""
         while self._completion_request_count > 0:
             completer_liststore = Gtk.ListStore(str)
             _complete_list = []
 
-            # Only provide completions if wordlist is loaded
             if self._wn_wordlist:
                 for item in self._wn_wordlist:
                     if len(_complete_list) >= 10:
@@ -781,49 +730,48 @@ class WordbookWindow(Adw.ApplicationWindow):
             GLib.idle_add(self.completer.complete)
 
     def _set_header_sensitive(self, status):
-        """Disable/enable header buttons."""
+        """Disables or enables header buttons during long-running operations."""
         self._title_clamp.set_sensitive(status)
         self._split_view_toggle_button.set_sensitive(status)
         self._menu_button.set_sensitive(status)
 
     def _dl_wn(self):
-        """Download and initialize WordNet data."""
+        """
+        Manages the WordNet data download and initialization process.
+        This is the main entry point for the application's data setup.
+        """
         self._set_header_sensitive(False)
 
-        # Step 1 & 2: Check if database exists
         if self._wn_downloader.check_status():
-            # Step 3: Database exists, try to init wordnet and load word list
             self._init_wordnet()
         else:
-            # Step 4: Database not present, download it
             self._start_download()
 
     def _start_download(self):
-        """Start the WordNet download process."""
+        """Starts the WordNet download process in a background thread."""
         self._page_switch(Page.DOWNLOAD)
         self.download_status_page.set_description(_("Downloading WordNet…"))
         threading.Thread(target=self._download_wordnet_thread, daemon=True).start()
 
     def _init_wordnet(self):
-        """Initialize WordNet instance."""
+        """Initializes the WordNet instance, handling potential failures."""
 
         def handle_init_failure():
-            """Called if WordNet init fails - trigger download."""
+            """Callback passed to the backend to handle initialization failures."""
             GLib.idle_add(self._handle_init_failure)
 
         wn_future = base.get_wn_instance(handle_init_failure)
         wn_future.add_done_callback(self._on_wordnet_init_complete)
 
     def _handle_init_failure(self):
-        """Handle WordNet initialization failure by deleting and re-downloading."""
+        """Handles WordNet initialization failure by deleting the data and re-downloading."""
         self._wn_downloader.delete_wn()
         self._start_download()
 
     def _on_wordnet_init_complete(self, future):
-        """Handle completion of WordNet initialization."""
+        """Callback for when WordNet initialization is complete."""
         if future.exception():
-            # Exception already handled by the reloader callback
-            return
+            return  # Exception is handled by the reloader callback
 
         try:
             self._wn_instance = future.result()
@@ -832,10 +780,8 @@ class WordbookWindow(Adw.ApplicationWindow):
                 self._handle_init_failure()
                 return
 
-            # WordNet instance is ready - proceed to welcome screen
             self._complete_initialization()
 
-            # Start loading wordlist in background using _threadpool
             wordlist_future = base.get_wn_wordlist(self._wn_instance)
             wordlist_future.add_done_callback(self._on_wordlist_loaded)
 
@@ -844,7 +790,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             self._handle_init_failure()
 
     def _on_wordlist_loaded(self, future):
-        """Handle completion of wordlist loading."""
+        """Callback for when the wordlist has been loaded."""
         if future.exception():
             utils.log_error(f"Error loading wordlist: {future.exception()}")
             return
@@ -856,16 +802,15 @@ class WordbookWindow(Adw.ApplicationWindow):
             utils.log_error(f"Error getting wordlist result: {e}")
 
     def _on_wordlist_loaded_success(self, wordlist):
-        """Handle successful wordlist loading."""
+        """Handles successful wordlist loading."""
         self._wn_wordlist = wordlist
         utils.log_info(f"Wordlist loaded with {len(self._wn_wordlist)} words. Completions now available.")
 
     def _complete_initialization(self):
-        """Complete the initialization process and show the welcome screen."""
+        """Finalizes the initialization process and shows the main welcome screen."""
         self._set_header_sensitive(True)
         self._page_switch(Page.WELCOME)
 
-        # Handle initial actions
         if self.lookup_term:
             self.trigger_search(self.lookup_term)
         elif Settings.get().auto_paste_on_launch or self.auto_paste_requested:
@@ -873,7 +818,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_entry.grab_focus_without_selecting()
 
     def _download_wordnet_thread(self):
-        """Download WordNet in a background thread."""
+        """Downloads WordNet data in a background thread."""
         try:
             self._wn_downloader.download(ProgressUpdater)
             GLib.idle_add(self._on_download_complete)
@@ -881,25 +826,23 @@ class WordbookWindow(Adw.ApplicationWindow):
             GLib.idle_add(self._on_download_failed, err)
 
     def _on_download_complete(self):
-        """Handle successful WordNet download."""
-        # Step 5: Download complete, go to Welcome screen and load word list
+        """Callback for successful WordNet download."""
         self.download_status_page.set_title(_("Ready."))
         self._init_wordnet()
 
     def _on_download_failed(self, error):
-        """Handle failed WordNet download."""
+        """Callback for failed WordNet download."""
         self._network_fail_status_page.set_description(f"<small><tt>Error: {error}</tt></small>")
         utils.log_warning(error)
         self._page_switch(Page.NETWORK_FAIL)
 
     def _clear_definitions(self) -> None:
-        """Clear all definitions from the listbox."""
+        """Clears all definitions from the listbox."""
         while (child := self._definitions_listbox.get_first_child()) is not None:
             self._definitions_listbox.remove(child)
 
     def _create_definition_widget(self, pos: str, synsets: list[dict[str, Any]]) -> Gtk.Widget:
-        """Create a widget for a part of speech with its definitions."""
-        # Main container for this part of speech
+        """Creates a widget to display definitions for a specific part of speech."""
         pos_box = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
             spacing=12,
@@ -909,13 +852,11 @@ class WordbookWindow(Adw.ApplicationWindow):
             margin_end=12,
         )
 
-        # Create the part of speech header
         pos_header = Gtk.Label()
         pos_header.set_markup(f"<span size='large' weight='bold'>{pos}</span>")
         pos_header.set_xalign(0.0)
         pos_box.append(pos_header)
 
-        # Group synsets by name
         synset_groups: dict[str, list[dict[str, Any]]] = {}
         for synset in sorted(synsets, key=lambda k: k["name"]):
             name = synset["name"]
@@ -923,17 +864,13 @@ class WordbookWindow(Adw.ApplicationWindow):
                 synset_groups[name] = []
             synset_groups[name].append(synset)
 
-        # Create definition entries
         sentence_color = self._get_theme_colors()
-
-        # Track the overall definition number across all synset groups
         overall_definition_number = 1
         total_synsets = len([s for group in synset_groups.values() for s in group])
 
         for synset_name, group_synsets in synset_groups.items():
-            definition_number = 1  # Reset definition number for display
+            definition_number = 1
 
-            # Add synset name header if different from the main term
             if len(synset_groups) > 1:
                 synset_header = Gtk.Label()
                 synset_header.set_markup(f"<span weight='bold'>{synset_name}</span>")
@@ -942,23 +879,19 @@ class WordbookWindow(Adw.ApplicationWindow):
                 pos_box.append(synset_header)
 
             for synset in group_synsets:
-                # Definition container with horizontal layout for number and content
                 def_main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
                 def_main_box.set_margin_start(12)
 
-                # Definition number as a separate widget
                 number_label = Gtk.Label()
                 number_label.set_markup(f"<b>{definition_number}</b>")
                 number_label.set_valign(Gtk.Align.START)
                 number_label.set_margin_top(2)
-                number_label.set_size_request(20, -1)  # Fixed width for alignment
+                number_label.set_size_request(20, -1)
                 def_main_box.append(number_label)
 
-                # Content container (definition, examples, related words)
                 content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
                 content_box.set_hexpand(True)
 
-                # Definition text
                 def_label = Gtk.Label()
                 def_label.set_markup(f'<span size="large">{escape(synset["definition"])}</span>')
                 def_label.set_wrap(True)
@@ -966,7 +899,6 @@ class WordbookWindow(Adw.ApplicationWindow):
                 def_label.set_selectable(True)
                 def_label.set_extra_menu(self._def_extra_menu_model)
 
-                # Double-click to search support
                 click = Gtk.GestureClick.new()
                 click.connect("pressed", self._on_def_press_event)
                 click.connect("stopped", self._on_def_stop_event)
@@ -974,7 +906,6 @@ class WordbookWindow(Adw.ApplicationWindow):
 
                 content_box.append(def_label)
 
-                # Examples
                 for example in synset.get("examples", []):
                     example_label = Gtk.Label(
                         label=f'<span foreground="{sentence_color}" style="italic">{example}</span>',
@@ -985,7 +916,6 @@ class WordbookWindow(Adw.ApplicationWindow):
                     )
                     example_label.set_extra_menu(self._def_extra_menu_model)
 
-                    # Double-click to search support
                     click = Gtk.GestureClick.new()
                     click.connect("pressed", self._on_def_press_event)
                     click.connect("stopped", self._on_def_stop_event)
@@ -993,7 +923,6 @@ class WordbookWindow(Adw.ApplicationWindow):
 
                     content_box.append(example_label)
 
-                # Related words (synonyms, antonyms, etc.) as buttons
                 for relation_type, relation_key in [
                     ("Synonyms", "syn"),
                     ("Antonyms", "ant"),
@@ -1009,12 +938,8 @@ class WordbookWindow(Adw.ApplicationWindow):
                 def_main_box.append(content_box)
                 pos_box.append(def_main_box)
 
-                # Add spacing between definitions
                 if overall_definition_number < total_synsets:
-                    spacer = Gtk.Separator(
-                        margin_top=4,
-                        margin_bottom=4,
-                    )
+                    spacer = Gtk.Separator(margin_top=4, margin_bottom=4)
                     pos_box.append(spacer)
 
                 definition_number += 1
@@ -1023,18 +948,16 @@ class WordbookWindow(Adw.ApplicationWindow):
         return pos_box
 
     def _create_relation_widget(self, relation_type: str, words: list[str]) -> Gtk.Widget | None:
-        """Create a widget for related words (synonyms, antonyms, etc.) with buttons."""
+        """Creates a widget to display related words (e.g., synonyms) as clickable buttons."""
         if not words:
             return None
 
-        # Wrap box for inline label and word buttons
         wrap_box = Adw.WrapBox(
             valign=Gtk.Align.START,
             line_spacing=6,
             child_spacing=6,
         )
 
-        # Add the relation type label as the first item
         type_label = Gtk.Label()
         type_label.set_markup(f"<span weight='bold'>{relation_type}:</span>")
         type_label.set_xalign(0.0)
@@ -1049,15 +972,15 @@ class WordbookWindow(Adw.ApplicationWindow):
         return wrap_box
 
     def _on_word_button_clicked(self, _button: Gtk.Button, word: str) -> None:
-        """Handle clicking on a word button to search for that word."""
+        """Handles clicks on related word buttons, triggering a new search."""
         self._search_entry.set_text(word)
         self._search_entry.emit("activate")
 
     def _populate_definitions(self, result: dict[str, Any]) -> None:
-        """Populate the definitions listbox."""
+        """Populates the definitions listbox with the search results."""
         self._clear_definitions()
 
         for pos, synsets in result.items():
-            if synsets:  # Only add if there are definitions for this POS
+            if synsets:
                 pos_widget = self._create_definition_widget(pos, synsets)
                 self._definitions_listbox.append(pos_widget)

@@ -16,7 +16,7 @@ from wordbook.settings import Settings  # noqa
 
 
 class Application(Adw.Application):
-    """Manages the windows, properties, etc of Wordbook."""
+    """Manages the windows, properties, and application lifecycle for Wordbook."""
 
     app_id: str = ""
     development_mode: bool = False
@@ -27,7 +27,7 @@ class Application(Adw.Application):
     win: WordbookWindow | None = None
 
     def __init__(self, app_id: str, version: str):
-        """Initialize the application."""
+        """Initializes the application, command-line options, and theme."""
         super().__init__(
             application_id=app_id,
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE,
@@ -38,7 +38,6 @@ class Application(Adw.Application):
         self.app_id = app_id
         self.version = version
 
-        # Add command line options
         self.add_main_option(
             "look-up",
             b"l",
@@ -79,12 +78,16 @@ class Application(Adw.Application):
         base.create_required_dirs()
 
     def do_startup(self):
-        """Manage startup of the application."""
+        """GApplication lifecycle method for one-time setup, like setting resource paths."""
         self.set_resource_base_path(utils.RES_PATH)
         Adw.Application.do_startup(self)
 
     def do_activate(self):
-        """Activate the application."""
+        """
+        The main entry point for when the application is launched.
+
+        It ensures a window is created (if it doesn't exist) and presented.
+        """
         self.win = self.get_active_window()
         if not self.win:
             self.win = WordbookWindow(
@@ -98,7 +101,15 @@ class Application(Adw.Application):
         self.win.present()
 
     def do_command_line(self, command_line):
-        """Parse commandline arguments."""
+        """
+        Handles command-line argument parsing. This can be called before do_activate().
+
+        It processes options like --look-up, --info, and --auto-paste, and can
+        trigger actions in an existing window or set state for a new window.
+
+        Returns:
+            0 on success.
+        """
         options = command_line.get_options_dict().end().unpack()
         term = ""
 
@@ -126,7 +137,7 @@ class Application(Adw.Application):
         return 0
 
     def on_about(self, _action, _param):
-        """Show the about window."""
+        """Callback for the 'about' action to display the application's about window."""
         about_window = Adw.AboutWindow()
         about_window.set_application_icon(Gio.Application.get_default().app_id)
         about_window.set_application_name(_("Wordbook"))
@@ -142,11 +153,16 @@ class Application(Adw.Application):
         about_window.present()
 
     def on_quit(self, _action, _param):
-        """Quit the application."""
+        """Callback for the 'quit' action."""
         self.quit()
 
     def setup_actions(self):
-        """Setup the Gio actions for the application."""
+        """
+        Creates and connects global application actions and keyboard shortcuts.
+
+        These are actions that are not specific to a single window, such as 'About'
+        and 'Quit'. It also defines the application-wide keyboard accelerators.
+        """
         about_action = Gio.SimpleAction.new("about", None)
         about_action.connect("activate", self.on_about)
         self.add_action(about_action)
