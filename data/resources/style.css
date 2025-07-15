@@ -24,9 +24,9 @@ listbox row.favorite-item:selected {
 /* WordNet lemma button styling (eg: synonym buttons) */
 
 .lemma-button {
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 1px;
+  padding-bottom: 1px;
   background-color: @purple_5;
 }

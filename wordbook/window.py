@@ -852,9 +852,11 @@ class WordbookWindow(Adw.ApplicationWindow):
             margin_end=12,
         )
 
-        pos_header = Gtk.Label()
-        pos_header.set_markup(f"<span size='large' weight='bold'>{pos}</span>")
-        pos_header.set_xalign(0.0)
+        pos_header = Gtk.Label(
+            label=f"<span size='large' weight='bold'>{pos}</span>",
+            xalign=0.0,
+            use_markup=True,
+        )
         pos_box.append(pos_header)
 
         synset_groups: dict[str, list[dict[str, Any]]] = {}
@@ -872,32 +874,44 @@ class WordbookWindow(Adw.ApplicationWindow):
             definition_number = 1
 
             if len(synset_groups) > 1:
-                synset_header = Gtk.Label()
-                synset_header.set_markup(f"<span weight='bold'>{synset_name}</span>")
-                synset_header.set_xalign(0.0)
-                synset_header.set_margin_top(8)
+                synset_header = Gtk.Label(
+                    f"<span weight='bold'>{synset_name}</span>",
+                    use_markup=True,
+                    xalign=0.0,
+                    margin_top=8,
+                )
                 pos_box.append(synset_header)
 
             for synset in group_synsets:
-                def_main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-                def_main_box.set_margin_start(12)
+                def_main_box = Gtk.Box(
+                    orientation=Gtk.Orientation.HORIZONTAL,
+                    spacing=12,
+                    margin_start=8,
+                )
 
-                number_label = Gtk.Label()
-                number_label.set_markup(f"<b>{definition_number}</b>")
-                number_label.set_valign(Gtk.Align.START)
-                number_label.set_margin_top(2)
+                number_label = Gtk.Label(
+                    label=f"<b>{definition_number}</b>",
+                    use_markup=True,
+                    valign=Gtk.Align.START,
+                    margin_top=2,
+                )
                 number_label.set_size_request(20, -1)
                 def_main_box.append(number_label)
 
-                content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-                content_box.set_hexpand(True)
+                content_box = Gtk.Box(
+                    orientation=Gtk.Orientation.VERTICAL,
+                    spacing=6,
+                    hexpand=True,
+                )
 
-                def_label = Gtk.Label()
-                def_label.set_markup(f'<span size="large">{escape(synset["definition"])}</span>')
-                def_label.set_wrap(True)
-                def_label.set_xalign(0.0)
-                def_label.set_selectable(True)
-                def_label.set_extra_menu(self._def_extra_menu_model)
+                def_label = Gtk.Label(
+                    label=f'<span size="large">{escape(synset["definition"])}</span>',
+                    use_markup=True,
+                    wrap=True,
+                    xalign=0.0,
+                    selectable=True,
+                    extra_menu=self._def_extra_menu_model,
+                )
 
                 click = Gtk.GestureClick.new()
                 click.connect("pressed", self._on_def_press_event)
@@ -954,7 +968,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         wrap_box = Adw.WrapBox(
             valign=Gtk.Align.START,
-            line_spacing=6,
+            line_spacing=4,
             child_spacing=6,
         )
 
