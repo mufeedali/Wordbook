@@ -875,7 +875,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
             if len(synset_groups) > 1:
                 synset_header = Gtk.Label(
-                    f"<span weight='bold'>{synset_name}</span>",
+                    label=f"<span weight='bold'>{synset_name}</span>",
                     use_markup=True,
                     xalign=0.0,
                     margin_top=8,
