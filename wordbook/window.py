@@ -886,7 +886,6 @@ class WordbookWindow(Adw.ApplicationWindow):
                 def_main_box = Gtk.Box(
                     orientation=Gtk.Orientation.HORIZONTAL,
                     spacing=12,
-                    margin_start=8,
                 )
 
                 number_label = Gtk.Label(
@@ -997,4 +996,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         for pos, synsets in result.items():
             if synsets:
                 pos_widget = self._create_definition_widget(pos, synsets)
-                self._definitions_listbox.append(pos_widget)
+                row = Gtk.ListBoxRow()
+                row.set_child(pos_widget)
+                self._definitions_listbox.append(row)
+
+                # NOTE Apparently `append` is what adds the `activatable` class.
+                # So, now that the row has been added, we can remove the class.
+                row.remove_css_class("activatable")
