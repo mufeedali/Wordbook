@@ -117,7 +117,7 @@ template $WordbookWindow: Adw.ApplicationWindow {
 
                     child: Adw.StatusPage {
                         icon-name: "document-open-recent-symbolic";
-                        title: "No recent searches";
+                        title: _("No recent searches or favorites");
                     };
                 }
             };
@@ -163,6 +163,7 @@ template $WordbookWindow: Adw.ApplicationWindow {
                     menu-model: app-menu;
                     receives-default: true;
                     direction: none;
+                    tooltip-text: _("Main Menu");
                 }
             }
 
@@ -263,10 +264,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                         }
 
                                         ScrolledWindow definitions_scroll {
-                                            margin-start: 12;
-                                            margin-end: 12;
+                                            margin-start: 4;
+                                            margin-end: 4;
                                             margin-top: 0;
-                                            margin-bottom: 12;
+                                            margin-bottom: 4;
                                             hscrollbar-policy: never;
                                             has-frame: false;
                                             vexpand: true;

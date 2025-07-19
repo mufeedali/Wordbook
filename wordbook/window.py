@@ -104,6 +104,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")  # type: ignore
     _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")  # type: ignore
     _main_split_view: Adw.OverlaySplitView = Gtk.Template.Child("main_split_view")  # type: ignore
+    _history_stack: Gtk.ListBox = Gtk.Template.Child("history_stack")  # type: ignore
     _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
     _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")  # type: ignore
     _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
@@ -162,7 +163,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     def setup_widgets(self):
         """Sets up widgets, binds models, and connects signal handlers."""
         self._search_history = Gio.ListStore.new(HistoryObject)
-        self._history_listbox.bind_model(self._search_history, self._create_label)
+        self._history_listbox.bind_model(self._search_history, self._create_history_label)
         self._history_listbox.connect("row-activated", self._on_history_item_activated)
         self._search_history.connect("items-changed", self._on_history_items_changed)
 
@@ -489,9 +490,19 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._update_clear_button_sensitivity()
 
     def _update_clear_button_sensitivity(self):
-        """Updates the sensitivity of the clear history button based on whether there is history."""
+        """
+        Updates the sensitivity of the clear history button based on whether
+        there is history, and switches the history stack page if needed.
+        """
         has_history = self._search_history.get_n_items() > 0 if self._search_history else False
         self._clear_history_button.set_sensitive(has_history)
+
+        # Switch the stack page to 'empty' if no history
+        self._history_stack.set_visible_child_name(
+            "list"
+            if has_history else
+            "empty"
+        )
 
     @staticmethod
     def _on_exit_clicked(_widget):
@@ -597,7 +608,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             accent=Settings.get().pronunciations_accent.code,
         )
 
-    def _create_label(self, element):
+    def _create_history_label(self, element):
         """Factory method to create a history row widget."""
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, visible=True, spacing=8)
 
@@ -618,8 +629,8 @@ class WordbookWindow(Adw.ApplicationWindow):
             icon_name="starred-symbolic" if element.is_favorite else "non-starred-symbolic",
             margin_top=4,
             margin_bottom=4,
-            margin_end=4,
             valign=Gtk.Align.CENTER,
+            tooltip_text=_("Toggle Favorite"),
         )
         favorite_button.add_css_class("flat")
         favorite_button.add_css_class("circular")
@@ -971,10 +982,12 @@ class WordbookWindow(Adw.ApplicationWindow):
             child_spacing=6,
         )
 
-        type_label = Gtk.Label()
-        type_label.set_markup(f"<span weight='bold'>{relation_type}:</span>")
-        type_label.set_xalign(0.0)
-        type_label.set_valign(Gtk.Align.CENTER)
+        type_label = Gtk.Label(
+            label=f"<span weight='bold'>{relation_type}:</span>",
+            use_markup=True,
+            xalign=0.0,
+            valign=Gtk.Align.CENTER,
+        )
         wrap_box.append(type_label)
 
         for word in words:
@@ -996,7 +1009,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         for pos, synsets in result.items():
             if synsets:
                 pos_widget = self._create_definition_widget(pos, synsets)
-                row = Gtk.ListBoxRow()
+                row = Gtk.ListBoxRow(
+                    margin_top=4,
+                    margin_bottom=4,
+                    margin_start=4,
+                    margin_end=4,
+                )
                 row.set_child(pos_widget)
                 self._definitions_listbox.append(row)
 

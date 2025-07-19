@@ -1,7 +1,6 @@
 /* Favorite items styling */
 .favorite-item {
     background-color: alpha(@accent_color, 0.1);
-    border-left: 3px solid @accent_color;
 }
 
 .favorite-item:hover {
@@ -24,9 +23,10 @@ listbox row.favorite-item:selected {
 /* WordNet lemma button styling (eg: synonym buttons) */
 
 .lemma-button {
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-left: 6px;
+  padding-right: 6px;
   padding-top: 1px;
   padding-bottom: 1px;
-  background-color: @purple_5;
+  color: @accent_fg_color;
+  background-color: @accent_bg_color;
 }
