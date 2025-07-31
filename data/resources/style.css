@@ -23,10 +23,14 @@ listbox row.favorite-item:selected {
 /* WordNet lemma button styling (eg: synonym buttons) */
 
 .lemma-button {
-  padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  color: @accent_fg_color;
-  background-color: @accent_bg_color;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    color: @light_2;
+    background-color: @blue_3;
+}
+
+.lemma-button:hover {
+    background-color: @blue_5;
 }

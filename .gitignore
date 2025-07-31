@@ -6,11 +6,13 @@
 *.pyc
 *.backup
 .idea/
+deprecated_stuff/
+
+# Flatpak/Meson build artifacts
+_build/
 .flatpak/
 .flatpak-builder/
-deprecated_stuff/
-_build/
-
+.flatplay/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
