@@ -1,6 +1,8 @@
 /* Favorite items styling */
 .favorite-item {
     background-color: alpha(@accent_color, 0.1);
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 .favorite-item:hover {
@@ -27,10 +29,10 @@ listbox row.favorite-item:selected {
     padding-right: 6px;
     padding-top: 1px;
     padding-bottom: 1px;
-    color: @light_2;
-    background-color: @blue_3;
+    color: @accent_fg_color;
+    background-color: alpha(@accent_color, 0.8);
 }
 
 .lemma-button:hover {
-    background-color: @blue_5;
+    background-color: alpha(@accent_color, 0.6);
 }
