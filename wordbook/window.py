@@ -341,13 +341,13 @@ class WordbookWindow(Adw.ApplicationWindow):
                         self._last_search_fail = True
                         continue
 
-                    term_view_text = f'<span size="large" weight="bold">{out["term"].strip()}</span>'
-                    GLib.idle_add(self._term_view.set_markup, term_view_text)
-                    GLib.idle_add(self._term_view.set_tooltip_markup, term_view_text)
+                    term_view_text = out["term"].strip()
+                    GLib.idle_add(self._term_view.set_text, term_view_text)
+                    GLib.idle_add(self._term_view.set_tooltip_text, term_view_text)
 
-                    pron = f"<i>{out['pronunciation'].strip().replace('\n', '')}</i>"
-                    GLib.idle_add(self._pronunciation_view.set_markup, pron)
-                    GLib.idle_add(self._pronunciation_view.set_tooltip_markup, pron)
+                    pron = out["pronunciation"].strip().replace("\n", "")
+                    GLib.idle_add(self._pronunciation_view.set_text, pron)
+                    GLib.idle_add(self._pronunciation_view.set_tooltip_text, pron)
 
                     if text not in except_list:
                         GLib.idle_add(self._speak_button.set_visible, True)
@@ -877,9 +877,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
 
         pos_header = Gtk.Label(
-            label=f"<span size='large' weight='bold'>{pos}</span>",
+            label=pos,
             xalign=0.0,
             use_markup=True,
+            css_classes=["pos-header",],
         )
         pos_box.append(pos_header)
 
@@ -898,10 +899,11 @@ class WordbookWindow(Adw.ApplicationWindow):
 
             if len(synset_groups) > 1:
                 synset_header = Gtk.Label(
-                    label=f"<span weight='bold'>{synset_name}</span>",
+                    label=synset_name,
                     use_markup=True,
                     xalign=0.0,
                     margin_top=8,
+                    css_classes=["synset-header",],
                 )
                 pos_box.append(synset_header)
 
@@ -912,10 +914,11 @@ class WordbookWindow(Adw.ApplicationWindow):
                 )
 
                 number_label = Gtk.Label(
-                    label=f"<b>{definition_number}</b>",
+                    label=str(definition_number),
                     use_markup=True,
                     valign=Gtk.Align.START,
                     margin_top=2,
+                    css_classes=["definition-number",],
                 )
                 number_label.set_size_request(20, -1)
                 def_main_box.append(number_label)
@@ -927,12 +930,12 @@ class WordbookWindow(Adw.ApplicationWindow):
                 )
 
                 def_label = Gtk.Label(
-                    label=f'<span size="large">{escape(synset["definition"])}</span>',
-                    use_markup=True,
+                    label=escape(synset["definition"]),
                     wrap=True,
                     xalign=0.0,
                     selectable=True,
                     extra_menu=self._def_extra_menu_model,
+                    css_classes=["definition",],
                 )
 
                 click = Gtk.GestureClick.new()
@@ -995,10 +998,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
 
         type_label = Gtk.Label(
-            label=f"<span weight='bold'>{relation_type}:</span>",
-            use_markup=True,
+            label=f"{relation_type}:",
             xalign=0.0,
             valign=Gtk.Align.CENTER,
+            css_classes=["relation-type",],
         )
         wrap_box.append(type_label)
 

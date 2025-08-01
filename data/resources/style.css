@@ -26,7 +26,32 @@ listbox row.favorite-item:selected {
     background-color: alpha(@accent_color, 0.2);
 }
 
-/* WordNet lemma button styling (eg: synonym buttons) */
+.example-text {
+    font-style: italic;
+    color: @accent_color;
+}
+
+.term-view,
+.pos-header {
+    font-size: large;
+    font-weight: bold;
+}
+
+.pronunciation-view {
+    font-style: italic;
+}
+
+.relation-type,
+.definition-number,
+.synset-header {
+    font-weight: bold;
+}
+
+.definition {
+    font-size: large;
+}
+
+/* Lemma buttons (eg: synonym buttons) */
 .lemma-button {
     padding-left: 6px;
     padding-right: 6px;
@@ -38,10 +63,4 @@ listbox row.favorite-item:selected {
 
 .lemma-button:hover {
     background-color: alpha(@accent_bg_color, 0.7);
-}
-
-/* Example text styling */
-.example-text {
-    font-style: italic;
-    color: @accent_color;
 }

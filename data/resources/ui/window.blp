@@ -227,22 +227,30 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                             hexpand: false;
 
                                             Label term_view {
-                                                label: "Term>";
+                                                label: "Term";
                                                 use-markup: true;
                                                 single-line-mode: true;
                                                 ellipsize: end;
                                                 xalign: 0;
                                                 hexpand: false;
+
+                                                styles [
+                                                    "term-view",
+                                                ]
                                             }
 
                                             Label pronunciation_view {
-                                                label: _("/Pronunciation/");
+                                                label: "/Pronunciation/";
                                                 use-markup: true;
                                                 selectable: true;
                                                 ellipsize: end;
                                                 single-line-mode: true;
                                                 xalign: 0;
                                                 hexpand: false;
+
+                                                styles [
+                                                    "pronunciation-view",
+                                                ]
                                             }
                                         }
 
