@@ -188,7 +188,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         )
 
         self._style_manager = self.get_application().get_style_manager()
-        self._style_manager.connect("notify::dark", self._on_dark_style)
 
         self._dl_wn()
 
@@ -239,10 +238,6 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         clipboard = self.get_primary_clipboard()
         clipboard.connect("changed", self.on_clipboard_changed)
-
-    def _get_theme_colors(self) -> str:
-        """Gets the appropriate sentence color based on the current theme (light/dark)."""
-        return base.DARK_MODE_SENTENCE_COLOR if self._style_manager.get_dark() else base.LIGHT_MODE_SENTENCE_COLOR
 
     def on_clipboard_changed(self, clipboard: Gdk.Clipboard | None):
         """Callback for when the primary clipboard (text selection) changes."""
@@ -407,11 +402,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         """A convenience method to trigger a search from other parts of the app."""
         GLib.idle_add(self._search_entry.set_text, text)
         GLib.idle_add(self.on_search_clicked, None, False, text)
-
-    def _on_dark_style(self, _object, _param):
-        """Refreshes the definition view to apply new theme colors."""
-        if self._searched_term is not None:
-            self.on_search_clicked(pass_check=True, text=self._searched_term)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         """Handles the first part of a double-click event on the definition view."""
@@ -900,7 +890,6 @@ class WordbookWindow(Adw.ApplicationWindow):
                 synset_groups[name] = []
             synset_groups[name].append(synset)
 
-        sentence_color = self._get_theme_colors()
         overall_definition_number = 1
         total_synsets = len([s for group in synset_groups.values() for s in group])
 
@@ -955,13 +944,13 @@ class WordbookWindow(Adw.ApplicationWindow):
 
                 for example in synset.get("examples", []):
                     example_label = Gtk.Label(
-                        label=f'<span foreground="{sentence_color}" style="italic">{example}</span>',
-                        use_markup=True,
+                        label=example,
                         wrap=True,
                         xalign=0.0,
                         selectable=True,
+                        extra_menu=self._def_extra_menu_model,
                     )
-                    example_label.set_extra_menu(self._def_extra_menu_model)
+                    example_label.add_css_class("example-text")
 
                     click = Gtk.GestureClick.new()
                     click.connect("pressed", self._on_def_press_event)

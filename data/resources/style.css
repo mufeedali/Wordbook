@@ -1,3 +1,4 @@
+/* History items styling */
 .history-item {
     padding-left: 4px;
     padding-right: 4px;
@@ -26,7 +27,6 @@ listbox row.favorite-item:selected {
 }
 
 /* WordNet lemma button styling (eg: synonym buttons) */
-
 .lemma-button {
     padding-left: 6px;
     padding-right: 6px;
@@ -38,4 +38,10 @@ listbox row.favorite-item:selected {
 
 .lemma-button:hover {
     background-color: alpha(@accent_bg_color, 0.7);
+}
+
+/* Example text styling */
+.example-text {
+    font-style: italic;
+    color: @accent_color;
 }
