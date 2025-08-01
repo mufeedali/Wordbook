@@ -107,6 +107,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _history_stack: Gtk.ListBox = Gtk.Template.Child("history_stack")  # type: ignore
     _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
     _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")  # type: ignore
+    _toast_overlay: Adw.ToastOverlay = Gtk.Template.Child("toast_overlay")  # type: ignore
     _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
     _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")  # type: ignore
     _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
@@ -482,10 +483,31 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_clear_history(self, _widget):
         """Clears non-favorited items from the search history."""
-        for i in reversed(range(self._search_history.get_n_items())):
+        items_to_remove = []
+        for i in range(self._search_history.get_n_items()):
             item = self._search_history.get_item(i)
             if not item.is_favorite:
-                self._search_history.remove(i)
+                items_to_remove.append((i, item))
+
+        if not items_to_remove:
+            return
+
+        # Remove items from the history, iterating backwards through the indices
+        # to ensure that the indices of items yet to be removed are not affected.
+        for i, _item in reversed(items_to_remove):
+            self._search_history.remove(i)
+
+        self._update_clear_button_sensitivity()
+
+        toast = Adw.Toast.new(_("History cleared"))
+        toast.set_button_label(_("Undo"))
+        toast.connect("button-clicked", self._on_undo_clear_history, items_to_remove)
+        self._toast_overlay.add_toast(toast)
+
+    def _on_undo_clear_history(self, _toast, items_to_restore):
+        """Restores the history that was just cleared."""
+        for i, item in items_to_restore:
+            self._search_history.insert(i, item)
 
         self._update_clear_button_sensitivity()
 

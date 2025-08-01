@@ -56,282 +56,284 @@ template $WordbookWindow: Adw.ApplicationWindow {
         }
     }
 
-    content: Adw.OverlaySplitView main_split_view {
-        min-sidebar-width: 200;
-        max-sidebar-width: 200;
+    content: Adw.ToastOverlay toast_overlay {
+        child: Adw.OverlaySplitView main_split_view {
+            min-sidebar-width: 200;
+            max-sidebar-width: 200;
 
-        sidebar: Adw.ToolbarView {
-            [top]
-            Adw.HeaderBar {
-                [title]
-                Adw.WindowTitle {
-                    title: _("History");
-                }
+            sidebar: Adw.ToolbarView {
+                [top]
+                Adw.HeaderBar {
+                    [title]
+                    Adw.WindowTitle {
+                        title: _("History");
+                    }
 
-                [start]
-                ToggleButton favorites_filter_button {
-                    icon-name: "non-starred-symbolic";
-                    tooltip-text: _("Show Favorites Only");
-                    action-name: "win.toggle-favorites";
-
-                    styles [
-                        "flat",
-                    ]
-                }
-
-                [end]
-                Button clear_history_button {
-                    icon-name: "user-trash-symbolic";
-                    tooltip-text: _("Clear History");
-                    sensitive: false;
-
-                    styles [
-                        "flat",
-                    ]
-                }
-            }
-
-            content: Adw.ViewStack history_stack {
-                vexpand: true;
-
-                Adw.ViewStackPage {
-                    name: "list";
-
-                    child: ScrolledWindow {
-                        hscrollbar-policy: never;
-                        has-frame: false;
-
-                        child: Viewport {
-                            child: ListBox history_listbox {
-                                selection-mode: none;
-
-                                styles [
-                                    "navigation-sidebar",
-                                ]
-                            };
-                        };
-                    };
-                }
-
-                Adw.ViewStackPage {
-                    name: "empty";
-
-                    child: Adw.StatusPage {
-                        icon-name: "document-open-recent-symbolic";
-                        title: _("No recent searches or favorites");
+                    [start]
+                    ToggleButton favorites_filter_button {
+                        icon-name: "non-starred-symbolic";
+                        tooltip-text: _("Show Favorites Only");
+                        action-name: "win.toggle-favorites";
 
                         styles [
-                            "compact",
+                            "flat",
                         ]
-                    };
-                }
-            };
-        };
+                    }
 
-        content: Adw.ToolbarView {
-            [top]
-            Adw.HeaderBar header_bar {
-                centering-policy: strict;
+                    [end]
+                    Button clear_history_button {
+                        icon-name: "user-trash-symbolic";
+                        tooltip-text: _("Clear History");
+                        sensitive: false;
 
-                [title]
-                Adw.Clamp title_clamp {
-                    tightening-threshold: 300;
-
-                    Box {
-                        hexpand: true;
-                        spacing: 4;
-
-                        Entry search_entry {
-                            hexpand: true;
-                            primary-icon-name: "edit-find-symbolic";
-                            activates-default: true;
-                        }
-
-                        Button search_button {
-                            icon-name: "edit-find-symbolic";
-                            tooltip-text: _("Search");
-
-                            styles [
-                                "suggested-action",
-                            ]
-                        }
+                        styles [
+                            "flat",
+                        ]
                     }
                 }
 
-                ToggleButton split_view_toggle_button {
-                    icon-name: "sidebar-show-symbolic";
-                    tooltip-text: _("Show History");
-                }
+                content: Adw.ViewStack history_stack {
+                    vexpand: true;
 
-                [end]
-                MenuButton wordbook_menu_button {
-                    menu-model: app-menu;
-                    receives-default: true;
-                    direction: none;
-                    tooltip-text: _("Main Menu");
-                }
-            }
+                    Adw.ViewStackPage {
+                        name: "list";
 
-            content: ScrolledWindow main_scroll {
-                hexpand: true;
-                vexpand: true;
-                hscrollbar-policy: never;
+                        child: ScrolledWindow {
+                            hscrollbar-policy: never;
+                            has-frame: false;
 
-                child: Adw.Clamp main_clamp {
-                    tightening-threshold: 500;
-
-                    Adw.ViewStack main_stack {
-                        Adw.ViewStackPage {
-                            name: "download_page";
-
-                            child: Adw.StatusPage download_status_page {
-                                title: _("Setting things up…");
-                                description: _("Downloading WordNet…");
-
-                                child: Adw.Clamp {
-                                    tightening-threshold: 200;
-
-                                    ProgressBar loading_progress {
-                                        ellipsize: end;
-                                    }
-                                };
-                            };
-                        }
-
-                        Adw.ViewStackPage {
-                            name: "welcome_page";
-
-                            child: Adw.StatusPage before_search_page {
-                                icon-name: "dev.mufeed.Wordbook-symbolic";
-                                title: _("Wordbook");
-                                description: _("Look up definitions of any English term");
-                            };
-                        }
-
-                        Adw.ViewStackPage {
-                            name: "content_page";
-
-                            child: Box {
-                                orientation: vertical;
-
-                                Box {
-                                    hexpand: false;
-
-                                    Box {
-                                        margin-start: 18;
-                                        margin-end: 18;
-                                        margin-top: 12;
-                                        margin-bottom: 16;
-                                        orientation: vertical;
-                                        hexpand: false;
-
-                                        Label term_view {
-                                            label: "Term>";
-                                            use-markup: true;
-                                            single-line-mode: true;
-                                            ellipsize: end;
-                                            xalign: 0;
-                                            hexpand: false;
-                                        }
-
-                                        Label pronunciation_view {
-                                            label: _("/Pronunciation/");
-                                            use-markup: true;
-                                            selectable: true;
-                                            ellipsize: end;
-                                            single-line-mode: true;
-                                            xalign: 0;
-                                            hexpand: false;
-                                        }
-                                    }
-
-                                    Button speak_button {
-                                        margin-start: 4;
-                                        margin-end: 12;
-                                        margin-top: 12;
-                                        margin-bottom: 12;
-                                        receives-default: true;
-                                        halign: center;
-                                        valign: center;
-                                        icon-name: "audio-volume-high-symbolic";
-                                        has-frame: false;
-                                        hexpand: false;
-                                        tooltip-text: _("Listen to Pronunciation");
-
-                                        styles [
-                                            "circular",
-                                        ]
-                                    }
-                                }
-
-                                ListBox definitions_listbox {
-                                    margin-start: 12;
-                                    margin-end: 12;
-                                    margin-bottom: 12;
+                            child: Viewport {
+                                child: ListBox history_listbox {
                                     selection-mode: none;
-                                    show-separators: false;
-                                    vexpand: true;
 
                                     styles [
-                                        "boxed-list-separate",
+                                        "navigation-sidebar",
                                     ]
-                                }
+                                };
                             };
-                        }
+                        };
+                    }
 
-                        Adw.ViewStackPage {
-                            name: "search_fail_page";
+                    Adw.ViewStackPage {
+                        name: "empty";
 
-                            child: Adw.StatusPage search_fail_status_page {
-                                vexpand: true;
+                        child: Adw.StatusPage {
+                            icon-name: "document-open-recent-symbolic";
+                            title: _("No recent searches or favorites");
+
+                            styles [
+                                "compact",
+                            ]
+                        };
+                    }
+                };
+            };
+
+            content: Adw.ToolbarView {
+                [top]
+                Adw.HeaderBar header_bar {
+                    centering-policy: strict;
+
+                    [title]
+                    Adw.Clamp title_clamp {
+                        tightening-threshold: 300;
+
+                        Box {
+                            hexpand: true;
+                            spacing: 4;
+
+                            Entry search_entry {
+                                hexpand: true;
+                                primary-icon-name: "edit-find-symbolic";
+                                activates-default: true;
+                            }
+
+                            Button search_button {
                                 icon-name: "edit-find-symbolic";
-                                title: _("No definition found");
+                                tooltip-text: _("Search");
 
-                                child: Label search_fail_description_label {
-                                    use-markup: true;
-                                    wrap: true;
-                                    selectable: true;
-                                };
-                            };
-                        }
-
-                        Adw.ViewStackPage {
-                            name: "network_fail_page";
-
-                            child: Adw.StatusPage network_fail_status_page {
-                                icon-name: "network-error-symbolic";
-                                title: _("Download failed");
-
-                                child: Box {
-                                    spacing: 12;
-                                    halign: center;
-
-                                    Button retry_button {
-                                        label: _("Retry");
-
-                                        styles [
-                                            "pill",
-                                            "suggested-action",
-                                        ]
-                                    }
-
-                                    Button exit_button {
-                                        label: _("Exit");
-
-                                        styles [
-                                            "pill",
-                                        ]
-                                    }
-                                };
-                            };
-                        }
-
-                        Adw.ViewStackPage {
-                            name: "spinner_page";
-
-                            child: Adw.Spinner {};
+                                styles [
+                                    "suggested-action",
+                                ]
+                            }
                         }
                     }
+
+                    ToggleButton split_view_toggle_button {
+                        icon-name: "sidebar-show-symbolic";
+                        tooltip-text: _("Show History");
+                    }
+
+                    [end]
+                    MenuButton wordbook_menu_button {
+                        menu-model: app-menu;
+                        receives-default: true;
+                        direction: none;
+                        tooltip-text: _("Main Menu");
+                    }
+                }
+
+                content: ScrolledWindow main_scroll {
+                    hexpand: true;
+                    vexpand: true;
+                    hscrollbar-policy: never;
+
+                    child: Adw.Clamp main_clamp {
+                        tightening-threshold: 500;
+
+                        Adw.ViewStack main_stack {
+                            Adw.ViewStackPage {
+                                name: "download_page";
+
+                                child: Adw.StatusPage download_status_page {
+                                    title: _("Setting things up…");
+                                    description: _("Downloading WordNet…");
+
+                                    child: Adw.Clamp {
+                                        tightening-threshold: 200;
+
+                                        ProgressBar loading_progress {
+                                            ellipsize: end;
+                                        }
+                                    };
+                                };
+                            }
+
+                            Adw.ViewStackPage {
+                                name: "welcome_page";
+
+                                child: Adw.StatusPage before_search_page {
+                                    icon-name: "dev.mufeed.Wordbook-symbolic";
+                                    title: _("Wordbook");
+                                    description: _("Look up definitions of any English term");
+                                };
+                            }
+
+                            Adw.ViewStackPage {
+                                name: "content_page";
+
+                                child: Box {
+                                    orientation: vertical;
+
+                                    Box {
+                                        hexpand: false;
+
+                                        Box {
+                                            margin-start: 18;
+                                            margin-end: 18;
+                                            margin-top: 12;
+                                            margin-bottom: 16;
+                                            orientation: vertical;
+                                            hexpand: false;
+
+                                            Label term_view {
+                                                label: "Term>";
+                                                use-markup: true;
+                                                single-line-mode: true;
+                                                ellipsize: end;
+                                                xalign: 0;
+                                                hexpand: false;
+                                            }
+
+                                            Label pronunciation_view {
+                                                label: _("/Pronunciation/");
+                                                use-markup: true;
+                                                selectable: true;
+                                                ellipsize: end;
+                                                single-line-mode: true;
+                                                xalign: 0;
+                                                hexpand: false;
+                                            }
+                                        }
+
+                                        Button speak_button {
+                                            margin-start: 4;
+                                            margin-end: 12;
+                                            margin-top: 12;
+                                            margin-bottom: 12;
+                                            receives-default: true;
+                                            halign: center;
+                                            valign: center;
+                                            icon-name: "audio-volume-high-symbolic";
+                                            has-frame: false;
+                                            hexpand: false;
+                                            tooltip-text: _("Listen to Pronunciation");
+
+                                            styles [
+                                                "circular",
+                                            ]
+                                        }
+                                    }
+
+                                    ListBox definitions_listbox {
+                                        margin-start: 12;
+                                        margin-end: 12;
+                                        margin-bottom: 12;
+                                        selection-mode: none;
+                                        show-separators: false;
+                                        vexpand: true;
+
+                                        styles [
+                                            "boxed-list-separate",
+                                        ]
+                                    }
+                                };
+                            }
+
+                            Adw.ViewStackPage {
+                                name: "search_fail_page";
+
+                                child: Adw.StatusPage search_fail_status_page {
+                                    vexpand: true;
+                                    icon-name: "edit-find-symbolic";
+                                    title: _("No definition found");
+
+                                    child: Label search_fail_description_label {
+                                        use-markup: true;
+                                        wrap: true;
+                                        selectable: true;
+                                    };
+                                };
+                            }
+
+                            Adw.ViewStackPage {
+                                name: "network_fail_page";
+
+                                child: Adw.StatusPage network_fail_status_page {
+                                    icon-name: "network-error-symbolic";
+                                    title: _("Download failed");
+
+                                    child: Box {
+                                        spacing: 12;
+                                        halign: center;
+
+                                        Button retry_button {
+                                            label: _("Retry");
+
+                                            styles [
+                                                "pill",
+                                                "suggested-action",
+                                            ]
+                                        }
+
+                                        Button exit_button {
+                                            label: _("Exit");
+
+                                            styles [
+                                                "pill",
+                                            ]
+                                        }
+                                    };
+                                };
+                            }
+
+                            Adw.ViewStackPage {
+                                name: "spinner_page";
+
+                                child: Adw.Spinner {};
+                            }
+                        }
+                    };
                 };
             };
         };
