@@ -130,9 +130,8 @@ class WordbookWindow(Adw.ApplicationWindow):
     _completion_request_count: int = 0
     _searched_term: str | None = None
     _search_history: Gio.ListStore | None = None
-    _search_queue: list[str] = []
-    _last_search_fail: bool = False
     _active_thread: threading.Thread | None = None
+    _search_cancellation_event: threading.Event | None = None
     _primary_clipboard_text: str | None = None
     _show_favorites_only: bool = False
 
@@ -298,78 +297,69 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._toggle_favorites_filter()
 
     def on_search_clicked(self, _button=None, pass_check=False, text=None):
-        """Initiates a search, adding the term to the processing queue."""
+        """Initiates a search, cancelling any previous search."""
+        self._clear_definitions()
+
         if text is None:
             text = self._search_entry.get_text().strip()
-        self._page_switch(Page.SPINNER)
-        self._add_to_queue(text, pass_check)
 
-    def threaded_search(self, pass_check=False):
+        if not text:
+            self._page_switch(Page.WELCOME)
+            return
+
+        if self._active_thread and self._active_thread.is_alive():
+            if self._search_cancellation_event:
+                self._search_cancellation_event.set()
+
+        self._page_switch(Page.SPINNER)
+
+        self._search_cancellation_event = threading.Event()
+        self._active_thread = threading.Thread(
+            target=self.threaded_search,
+            args=[text, pass_check, self._search_cancellation_event],
+            daemon=True,
+        )
+        self._active_thread.start()
+
+    def threaded_search(self, text, pass_check, cancellation_event):
         """
-        Manages a single thread to search for terms from the queue.
+        Performs the search in a background thread.
         This prevents the UI from freezing during network or intensive search operations.
         """
-        except_list = ("fortune -a", "cowfortune")
-        status = SearchStatus.NONE
-        while self._search_queue:
-            text = self._search_queue.pop(0)
-            orig_term = self._searched_term
-            self._searched_term = text
-            if text and (pass_check or not text == orig_term or text in except_list):
-                if text.strip():
-                    GLib.idle_add(self._clear_definitions)
+        if cancellation_event.is_set():
+            return
 
-                    out = self._search(text)
+        self._searched_term = text
 
-                    if out is None:
-                        status = SearchStatus.RESET
-                        continue
+        out = self._search(text)
 
-                    def validate_result(text, result_data) -> Literal[SearchStatus.SUCCESS]:
-                        if Settings.get().live_search:
-                            self._add_to_history_delayed(text)
-                        else:
-                            self._add_to_history(text)
+        if cancellation_event.is_set():
+            return
 
-                        GLib.idle_add(self._populate_definitions, result_data)
-                        return SearchStatus.SUCCESS
+        GLib.idle_add(self._on_search_finished, out)
 
-                    if out["result"] is not None:
-                        status = validate_result(text, out["result"])
-                    else:
-                        status = SearchStatus.FAILURE
-                        self._last_search_fail = True
-                        continue
+    def _on_search_finished(self, result):
+        """Handles the result of a search on the main thread."""
+        if not result:
+            self._page_switch(Page.WELCOME)
+            return
 
-                    term_view_text = out["term"].strip()
-                    GLib.idle_add(self._term_view.set_text, term_view_text)
-                    GLib.idle_add(self._term_view.set_tooltip_text, term_view_text)
-
-                    pron = out["pronunciation"].strip().replace("\n", "")
-                    GLib.idle_add(self._pronunciation_view.set_text, pron)
-                    GLib.idle_add(self._pronunciation_view.set_tooltip_text, pron)
-
-                    if text not in except_list:
-                        GLib.idle_add(self._speak_button.set_visible, True)
-
-                    self._last_search_fail = False
-                    continue
-
-                status = SearchStatus.RESET
-                continue
-
-            if text and text == orig_term and not self._last_search_fail:
-                status = SearchStatus.SUCCESS
-                continue
-
-            if text and text == orig_term and self._last_search_fail:
-                status = SearchStatus.FAILURE
-                continue
-
-            status = SearchStatus.RESET
+        status = result.get("status", SearchStatus.SUCCESS if result.get("result") else SearchStatus.FAILURE)
 
         if status == SearchStatus.SUCCESS:
+            self._populate_definitions(result["result"])
+            self._term_view.set_text(result["term"].strip())
+            self._term_view.set_tooltip_text(result["term"].strip())
+            self._pronunciation_view.set_text(result["pronunciation"].strip().replace("\n", ""))
+            self._pronunciation_view.set_tooltip_text(result["pronunciation"].strip().replace("\n", ""))
+            self._speak_button.set_visible(True)
             self._page_switch(Page.CONTENT)
+
+            if Settings.get().live_search:
+                self._add_to_history_delayed(result["term"])
+            else:
+                self._add_to_history(result["term"])
+
         elif status == SearchStatus.FAILURE:
             suggestions = process.extract(
                 self._searched_term,
@@ -386,14 +376,14 @@ class WordbookWindow(Adw.ApplicationWindow):
 
             if suggestion_links:
                 suggestions_markup = f"Did you mean: {', '.join(suggestion_links)}?"
-                GLib.idle_add(self._search_fail_description_label.set_markup, suggestions_markup)
-                GLib.idle_add(self._search_fail_description_label.show)
+                self._search_fail_description_label.set_markup(suggestions_markup)
+                self._search_fail_description_label.show()
             else:
-                GLib.idle_add(self._search_fail_description_label.set_markup, "")
-                GLib.idle_add(self._search_fail_description_label.hide)
+                self._search_fail_description_label.set_markup("")
+                self._search_fail_description_label.hide()
 
             self._page_switch(Page.SEARCH_FAIL)
-        elif status == SearchStatus.RESET:
+        else:  # RESET or other cases
             self._page_switch(Page.WELCOME)
 
         self._active_thread = None
@@ -570,16 +560,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Handles the retry button click on the network failure page."""
         self._wn_downloader.delete_wn()
         self._start_download()
-
-    def _add_to_queue(self, text: str, pass_check: bool = False):
-        """Adds a search term to the queue and starts the search thread if not running."""
-        if self._search_queue:
-            self._search_queue.pop(0)
-        self._search_queue.append(text)
-
-        if self._active_thread is None:
-            self._active_thread = threading.Thread(target=self.threaded_search, args=[pass_check], daemon=True)
-            self._active_thread.start()
 
     def _add_to_history(self, text):
         """Adds a term to the history, moving it to the top if it already exists."""
