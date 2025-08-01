@@ -662,6 +662,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         favorite_button: Gtk.ToggleButton = box.get_last_child()
         favorite_button.set_icon_name("starred-symbolic" if item.is_favorite else "non-starred-symbolic")
 
+        row.add_css_class("history-item")
         if item.is_favorite:
             row.add_css_class("favorite-item")
         else:
