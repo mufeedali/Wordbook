@@ -152,10 +152,6 @@ class Application(Adw.Application):
         about_window.set_transient_for(self.win)
         about_window.present()
 
-    def on_quit(self, _action, _param):
-        """Callback for the 'quit' action."""
-        self.quit()
-
     def setup_actions(self):
         """
         Creates and connects global application actions and keyboard shortcuts.
@@ -167,12 +163,10 @@ class Application(Adw.Application):
         about_action.connect("activate", self.on_about)
         self.add_action(about_action)
 
-        quit_action = Gio.SimpleAction.new("quit", None)
-        quit_action.connect("activate", self.on_quit)
-        self.add_action(quit_action)
-
-        self.set_accels_for_action("app.quit", ["<Primary>q", "Escape"])
+        self.set_accels_for_action("win.quit", ["<Primary>w", "<Primary>q", "Escape"])
         self.set_accels_for_action("win.search-selected", ["<Primary>s"])
         self.set_accels_for_action("win.random-word", ["<Primary>r"])
         self.set_accels_for_action("win.paste-search", ["<Primary><Shift>v"])
         self.set_accels_for_action("win.preferences", ["<Primary>comma"])
+        self.set_accels_for_action("win.toggle-sidebar", ["F9"])
+        self.set_accels_for_action("win.toggle-menu", ["F10"])

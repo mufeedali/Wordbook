@@ -22,7 +22,7 @@ from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
 
 if TYPE_CHECKING:
-    from typing import Any, Literal
+    from typing import Any
 
 
 class SearchStatus(Enum):
@@ -218,6 +218,16 @@ class WordbookWindow(Adw.ApplicationWindow):
         paste_search_action.connect("activate", self.on_paste_search)
         self.add_action(paste_search_action)
 
+        # Sidebar toggle action
+        toggle_sidebar_action = Gio.SimpleAction.new("toggle-sidebar", None)
+        toggle_sidebar_action.connect("activate", self.on_toggle_sidebar)
+        self.add_action(toggle_sidebar_action)
+
+        # Menu toggle action
+        toggle_menu_action = Gio.SimpleAction.new("toggle-menu", None)
+        toggle_menu_action.connect("activate", self.on_toggle_menu)
+        self.add_action(toggle_menu_action)
+
         preferences_action = Gio.SimpleAction.new("preferences", None)
         preferences_action.connect("activate", self.on_preferences)
         self.add_action(preferences_action)
@@ -234,6 +244,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         toggle_favorites_action = Gio.SimpleAction.new("toggle-favorites", None)
         toggle_favorites_action.connect("activate", self.on_toggle_favorites)
         self.add_action(toggle_favorites_action)
+
+        quit_action = Gio.SimpleAction.new("quit", None)
+        quit_action.connect("activate", lambda action, param: self.close())
+        self.add_action(quit_action)
 
         clipboard = self.get_primary_clipboard()
         clipboard.connect("changed", self.on_clipboard_changed)
@@ -546,6 +560,17 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Applies styling to newly added history rows."""
         if added > 0:
             GLib.idle_add(self._apply_styling_to_new_rows, store, position, added)
+
+    def on_toggle_sidebar(self, action, param):
+        """Action handler to toggle the sidebar."""
+        self._split_view_toggle_button.set_active(
+            not self._split_view_toggle_button.get_active()
+        )
+
+    def on_toggle_menu(self, action, param):
+        """Action handler to toggle the menu."""
+        self._menu_button.grab_focus()
+        self._menu_button.set_active(not self._menu_button.get_active())
 
     def _apply_styling_to_new_rows(self, store, position, added):
         """Waits for rows to be created, then applies styling."""

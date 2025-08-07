@@ -3,10 +3,10 @@
 Wordbook
 </h1>
 
-<p align="center">Look up definitions of any English term</p>
+<p align="center">Look up definitions of English terms</p>
 
 <p align="center">
-<img src="images/ss2.png?raw=true" alt="Searching (Light mode)" width="290">
+    <img title="Wordbook" src="screenshots/search-dark.png?raw=true">
 </p>
 
 <p align="center">
@@ -20,12 +20,6 @@ Wordbook
 * Live Search
 * Double click to search
 * Support for GNOME Dark Mode and launching app in dark mode.
-
-## Screenshots
-
-<img src="images/ss.png?raw=true" alt="Welcome screen (Light mode)" width="290"> <img src="images/ss2.png?raw=true" alt="Searching (Light mode)" width="290">
-
-<img src="images/ss1.png?raw=true" alt="Welcome screen (Dark mode)" width="290"> <img src="images/ss3.png?raw=true" alt="Searching (Dark mode)" width="290">
 
 ## Requirements
 

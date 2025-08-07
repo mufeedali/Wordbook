@@ -36,8 +36,18 @@ ShortcutsWindow help_overlay {
             }
 
             ShortcutsShortcut {
+                title: C_("shortcut window", "Toggle Sidebar");
+                action-name: "win.toggle-sidebar";
+            }
+
+            ShortcutsShortcut {
+                title: C_("shortcut window", "Show Menu");
+                action-name: "win.toggle-menu";
+            }
+
+            ShortcutsShortcut {
                 title: C_("shortcut window", "Quit");
-                action-name: "app.quit";
+                action-name: "win.quit";
             }
         }
     }
