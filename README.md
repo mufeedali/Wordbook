@@ -6,7 +6,7 @@ Wordbook
 <p align="center">Look up definitions of English terms</p>
 
 <p align="center">
-    <img title="Wordbook" src="screenshots/search-dark.png?raw=true">
+    <img title="Wordbook" src="screenshots/dark.png?raw=true">
 </p>
 
 <p align="center">

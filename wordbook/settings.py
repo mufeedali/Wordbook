@@ -81,8 +81,8 @@ class StateSettings(BaseModel):
     @classmethod
     def validate_history(cls, v: list[str]) -> list[str]:
         """Validate and limit history size."""
-        # Keep only last 10 items
-        return v[-10:] if len(v) > 10 else v
+        # Keep only last 20 items
+        return v[-20:] if len(v) > 20 else v
 
 
 class WordbookSettings(BaseModel):
@@ -226,7 +226,7 @@ class Settings:
     def history(self, value: list[str]) -> None:
         """Set search history."""
         # Validate and limit history
-        self._settings.state.history = value[-10:] if len(value) > 10 else value
+        self._settings.state.history = value[-20:] if len(value) > 20 else value
 
     def clear_history(self) -> None:
         """Clear search history."""

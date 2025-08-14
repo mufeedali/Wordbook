@@ -12,7 +12,7 @@ from gettext import gettext as _
 from html import escape
 from typing import TYPE_CHECKING
 
-from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from rapidfuzz import fuzz, process
 from wn import Error
 from wn.util import ProgressHandler
@@ -456,7 +456,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         width, height = self.get_default_size()
         settings_to_update = {
-            "history": history_list[-10:],
+            "history": history_list[-20:],
             "window_width": width,
             "window_height": height,
         }
@@ -629,11 +629,16 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Factory method to create a history row widget."""
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, visible=True, spacing=8)
 
-        content_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, visible=True)
+        content_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            visible=True,
+            tooltip_text=element.term,
+        )
         content_box.set_hexpand(True)
 
         label = Gtk.Label(
             label=element.term,
+            ellipsize=Pango.EllipsizeMode.END,
             margin_top=8,
             margin_bottom=8,
             margin_start=8,
