@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-10 18:31+0530\n"
+"POT-Creation-Date: 2025-08-14 11:52+0530\n"
 "PO-Revision-Date: 2023-02-18 22:39+0100\n"
 "Last-Translator: gregorni <gregorniehl@web.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -45,6 +45,15 @@ msgid "Search any word by double clicking on it"
 msgstr "Doppelklicken Sie Wörter, um sie zu suchen"
 
 #: data/resources/ui/settings_window.blp:31
+#, fuzzy
+msgid "Auto Paste on Launch"
+msgstr "Einfügen und Suchen"
+
+#: data/resources/ui/settings_window.blp:32
+msgid "Automatically paste and search clipboard content on launch"
+msgstr ""
+
+#: data/resources/ui/settings_window.blp:36
 msgid "Pronunciations Accent"
 msgstr "Akzent der Aussprache"
 
@@ -78,11 +87,26 @@ msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Ausgewählten Text Suchen"
 
+#: data/resources/ui/shortcuts_window.blp:39
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.blp:44
+msgctxt "shortcut window"
+msgid "Show Menu"
+msgstr ""
+
+#: data/resources/ui/shortcuts_window.blp:49
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr ""
+
 #: data/resources/ui/window.blp:9
 msgid "Paste & Search"
 msgstr "Einfügen & Suchen"
 
-#: data/resources/ui/window.blp:14
+#: data/resources/ui/window.blp:14 wordbook/window.py:211
 msgid "Search Selected Text"
 msgstr "Ausgewählten Text Suchen"
 
@@ -102,99 +126,133 @@ msgstr "_Tastenkürzel"
 msgid "_About Wordbook"
 msgstr "_Über Wordbook"
 
-#: data/resources/ui/window.blp:67
+#: data/resources/ui/window.blp:69
 msgid "History"
 msgstr "Verlauf"
 
-#: data/resources/ui/window.blp:125
+#: data/resources/ui/window.blp:75
+msgid "Show Favorites Only"
+msgstr ""
+
+#: data/resources/ui/window.blp:86
+#, fuzzy
+msgid "Clear History"
+msgstr "Verlauf"
+
+#: data/resources/ui/window.blp:122
+msgid "No recent searches or favorites"
+msgstr ""
+
+#: data/resources/ui/window.blp:153
 msgid "Search"
 msgstr "Suchen"
 
-#: data/resources/ui/window.blp:136
+#: data/resources/ui/window.blp:164
 msgid "Show History"
 msgstr "Verlauf anzeigen"
 
-#: data/resources/ui/window.blp:164
+#: data/resources/ui/window.blp:172
+msgid "Main Menu"
+msgstr ""
+
+#: data/resources/ui/window.blp:189
 msgid "Setting things up…"
 msgstr "Die App wird vorbereitet…"
 
-#: data/resources/ui/window.blp:165 wordbook/window.py:576
+#: data/resources/ui/window.blp:190 wordbook/window.py:787
 msgid "Downloading WordNet…"
 msgstr "WordNet wird heruntergeladen…"
 
-#: data/resources/ui/window.blp:182 wordbook/main.py:35 wordbook/main.py:84
-#: wordbook/main.py:117
+#: data/resources/ui/window.blp:207 wordbook/main.py:35 wordbook/main.py:95
+#: wordbook/main.py:143
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:183
+#: data/resources/ui/window.blp:208
 msgid "Look up definitions of any English term"
 msgstr "Schlagen Sie die Definitionen englischer Wörter nach"
 
-#: data/resources/ui/window.blp:214
-msgid "/Pronunciation/"
-msgstr "/Aussprache/"
-
-#: data/resources/ui/window.blp:235
+#: data/resources/ui/window.blp:269
 msgid "Listen to Pronunciation"
 msgstr "Aussprache anhören"
 
-#: data/resources/ui/window.blp:264
+#: data/resources/ui/window.blp:298
 msgid "No definition found"
 msgstr "Keine Definition gefunden"
 
-#: data/resources/ui/window.blp:273
+#: data/resources/ui/window.blp:313
 msgid "Download failed"
 msgstr "Download fehlgeschlagen"
 
-#: data/resources/ui/window.blp:280
+#: data/resources/ui/window.blp:320
 msgid "Retry"
 msgstr "Erneut versuchen"
 
-#: data/resources/ui/window.blp:289
+#: data/resources/ui/window.blp:329
 msgid "Exit"
 msgstr "Beenden"
 
-#: wordbook/main.py:119
+#: wordbook/main.py:145
 msgid "Look up definitions of any English term."
 msgstr "Schlagen Sie die Definitionen englischer Wörter nach."
 
-#: wordbook/main.py:121
+#: wordbook/main.py:147
 msgid "translator-credits"
 msgstr "gregorni https://gitlab.com/gregorni"
 
-#: wordbook/main.py:125
+#: wordbook/main.py:151
 msgid "Copyright © 2016-2025 Mufeed Ali"
 msgstr "Copyright © 2016-2025 Mufeed Ali"
 
-#: wordbook/window.py:420
-msgid "Ready."
-msgstr "Bereit."
+#: wordbook/window.py:83
+msgid "Building Database…"
+msgstr "Datenbank wird erstellt…"
 
-#: wordbook/window.py:445
+#: wordbook/window.py:303
+msgid "Wordlist Loading"
+msgstr ""
+
+#: wordbook/window.py:303
+msgid "The word list is still loading. Please try again in a moment."
+msgstr ""
+
+#: wordbook/window.py:496
+#, fuzzy
+msgid "History cleared"
+msgstr "Verlauf"
+
+#: wordbook/window.py:497
+msgid "Undo"
+msgstr ""
+
+#: wordbook/window.py:655
+msgid "Toggle Favorite"
+msgstr ""
+
+#: wordbook/window.py:712
 msgid "Dismiss"
 msgstr ""
 
-#: wordbook/window.py:529
+#: wordbook/window.py:738
 msgid "Invalid input"
 msgstr "Ungültige Eingabe"
 
-#: wordbook/window.py:530
+#: wordbook/window.py:739
 msgid "Nothing definable was found in your search input"
 msgstr "Es wurde keine Definition für Ihren Suchbegriff gefunden"
 
-#: wordbook/window.py:594
-msgid "Re-downloading WordNet database"
-msgstr "Lade die WordNet-Datenbank erneut herunter"
+#: wordbook/window.py:864
+msgid "Ready."
+msgstr "Bereit."
 
-#: wordbook/window.py:596
-msgid "Just a database upgrade."
-msgstr "Die Datenbank wird aktualisiert."
+#~ msgid "/Pronunciation/"
+#~ msgstr "/Aussprache/"
 
-#: wordbook/window.py:598
-msgid "This shouldn't happen too often."
-msgstr "Dies sollte nicht zu häufig passieren."
+#~ msgid "Re-downloading WordNet database"
+#~ msgstr "Lade die WordNet-Datenbank erneut herunter"
 
-#: wordbook/window.py:643
-msgid "Building Database…"
-msgstr "Datenbank wird erstellt…"
+#~ msgid "Just a database upgrade."
+#~ msgstr "Die Datenbank wird aktualisiert."
+
+#~ msgid "This shouldn't happen too often."
+#~ msgstr "Dies sollte nicht zu häufig passieren."
