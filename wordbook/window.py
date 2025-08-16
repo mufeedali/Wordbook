@@ -514,11 +514,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._clear_history_button.set_sensitive(has_history)
 
         # Switch the stack page to 'empty' if no history
-        self._history_stack.set_visible_child_name(
-            "list"
-            if has_history else
-            "empty"
-        )
+        self._history_stack.set_visible_child_name("list" if has_history else "empty")
 
     @staticmethod
     def _on_exit_clicked(_widget):
@@ -563,9 +559,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def on_toggle_sidebar(self, action, param):
         """Action handler to toggle the sidebar."""
-        self._split_view_toggle_button.set_active(
-            not self._split_view_toggle_button.get_active()
-        )
+        self._split_view_toggle_button.set_active(not self._split_view_toggle_button.get_active())
 
     def on_toggle_menu(self, action, param):
         """Action handler to toggle the menu."""
@@ -618,12 +612,17 @@ class WordbookWindow(Adw.ApplicationWindow):
         return False
 
     def _on_speak_clicked(self, _button):
-        """Callback for the speak button. Reads the current term aloud."""
-        base.read_term(
-            self._searched_term,
-            speed="120",
-            accent=Settings.get().pronunciations_accent.code,
-        )
+        """Callback for the speak button. Reads the current term aloud in a background thread."""
+
+        def speak():
+            if self._searched_term:
+                base.read_term(
+                    self._searched_term,
+                    speed=120,
+                    accent=Settings.get().pronunciations_accent.code,
+                )
+
+        threading.Thread(target=speak, daemon=True).start()
 
     def _create_history_label(self, element):
         """Factory method to create a history row widget."""
@@ -890,7 +889,9 @@ class WordbookWindow(Adw.ApplicationWindow):
             label=pos,
             xalign=0.0,
             use_markup=True,
-            css_classes=["pos-header",],
+            css_classes=[
+                "pos-header",
+            ],
         )
         pos_box.append(pos_header)
 
@@ -913,7 +914,9 @@ class WordbookWindow(Adw.ApplicationWindow):
                     use_markup=True,
                     xalign=0.0,
                     margin_top=8,
-                    css_classes=["synset-header",],
+                    css_classes=[
+                        "synset-header",
+                    ],
                 )
                 pos_box.append(synset_header)
 
@@ -928,7 +931,9 @@ class WordbookWindow(Adw.ApplicationWindow):
                     use_markup=True,
                     valign=Gtk.Align.START,
                     margin_top=2,
-                    css_classes=["definition-number",],
+                    css_classes=[
+                        "definition-number",
+                    ],
                 )
                 number_label.set_size_request(20, -1)
                 def_main_box.append(number_label)
@@ -945,7 +950,9 @@ class WordbookWindow(Adw.ApplicationWindow):
                     xalign=0.0,
                     selectable=True,
                     extra_menu=self._def_extra_menu_model,
-                    css_classes=["definition",],
+                    css_classes=[
+                        "definition",
+                    ],
                 )
 
                 click = Gtk.GestureClick.new()
@@ -1011,7 +1018,9 @@ class WordbookWindow(Adw.ApplicationWindow):
             label=f"{relation_type}:",
             xalign=0.0,
             valign=Gtk.Align.CENTER,
-            css_classes=["relation-type",],
+            css_classes=[
+                "relation-type",
+            ],
         )
         wrap_box.append(type_label)
 

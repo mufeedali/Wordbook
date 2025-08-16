@@ -172,7 +172,7 @@ class Application(Adw.Application):
         self.add_action(quit_action)
 
         self.set_accels_for_action("app.quit", ["<Primary>q"])
-        self.set_accels_for_action("win.quit", ["<Primary>w", "Escape"])
+        self.set_accels_for_action("win.quit", ["<Primary>w"])
         self.set_accels_for_action("win.search-selected", ["<Primary>s"])
         self.set_accels_for_action("win.random-word", ["<Primary>r"])
         self.set_accels_for_action("win.paste-search", ["<Primary><Shift>v"])
