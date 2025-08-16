@@ -79,3 +79,7 @@ just setup
 just develop-configure
 just local-run
 ```
+
+## Code of Conduct
+
+This project adheres to the [GNOME Code of Conduct](https://conduct.gnome.org/). By participating through any means, including PRs, Issues or Discussions, you are expected to uphold this code.
