@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-16 11:02+0530\n"
+"POT-Creation-Date: 2025-08-17 13:46+0530\n"
 "PO-Revision-Date: 2022-07-03 00:53+0200\n"
 "Last-Translator: Irénée Thirion <irenee.thirion@e.email>\n"
 "Language-Team: \n"
@@ -46,14 +46,17 @@ msgstr "Recherche par double-clic"
 msgid "Search any word by double clicking on it"
 msgstr "Recherchez n’importe quel mot en double-cliquant dessus"
 
+# llm-generated
 #: data/resources/ui/settings_window.blp:31
-#, fuzzy
 msgid "Auto Paste on Launch"
-msgstr "Copier et rechercher"
+msgstr "Collage automatique au lancement"
 
+# llm-generated
 #: data/resources/ui/settings_window.blp:32
 msgid "Automatically paste and search clipboard content on launch"
 msgstr ""
+"Coller et rechercher automatiquement le contenu du presse-papiers au "
+"lancement"
 
 #: data/resources/ui/settings_window.blp:36
 msgid "Pronunciations Accent"
@@ -89,20 +92,23 @@ msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Rechercher le texte sélectionné"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:39
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
-msgstr ""
+msgstr "Afficher/Masquer la barre latérale"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:44
 msgctxt "shortcut window"
 msgid "Show Menu"
-msgstr ""
+msgstr "Afficher le menu"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:49
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Quitter"
 
 #: data/resources/ui/window.blp:9
 msgid "Paste & Search"
@@ -132,18 +138,20 @@ msgstr "À _propos de Wordbook"
 msgid "History"
 msgstr "Historique"
 
+# llm-generated
 #: data/resources/ui/window.blp:75
 msgid "Show Favorites Only"
-msgstr ""
+msgstr "Afficher uniquement les favoris"
 
+# llm-generated
 #: data/resources/ui/window.blp:86
-#, fuzzy
 msgid "Clear History"
-msgstr "Historique"
+msgstr "Effacer l'historique"
 
+# llm-generated
 #: data/resources/ui/window.blp:122
 msgid "No recent searches or favorites"
-msgstr ""
+msgstr "Pas de recherches récentes ni de favoris"
 
 #: data/resources/ui/window.blp:153
 msgid "Search"
@@ -153,15 +161,16 @@ msgstr "Rechercher"
 msgid "Show History"
 msgstr "Afficher l’historique"
 
+# llm-generated
 #: data/resources/ui/window.blp:172
 msgid "Main Menu"
-msgstr ""
+msgstr "Menu principal"
 
 #: data/resources/ui/window.blp:189
 msgid "Setting things up…"
 msgstr "Préparation…"
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:786
+#: data/resources/ui/window.blp:190 wordbook/window.py:789
 msgid "Downloading WordNet…"
 msgstr "Téléchargement de WordNet…"
 
@@ -200,7 +209,7 @@ msgstr "Recherchez les définitions d’un terme anglais"
 
 #: wordbook/main.py:147
 msgid "translator-credits"
-msgstr ""
+msgstr "Irénée Thirion <irenee.thirion@e.email>"
 
 #: wordbook/main.py:151
 msgid "Copyright © 2016-2025 Mufeed Ali"
@@ -210,40 +219,47 @@ msgstr "Copyright © 2016-2025 Mufeed Ali"
 msgid "Building Database…"
 msgstr "Construction de la base de données…"
 
-#: wordbook/window.py:303
+# llm-generated
+#: wordbook/window.py:304
 msgid "Wordlist Loading"
-msgstr ""
+msgstr "Chargement de la liste de mots"
 
-#: wordbook/window.py:303
+# llm-generated
+#: wordbook/window.py:305
 msgid "The word list is still loading. Please try again in a moment."
 msgstr ""
+"La liste de mots est en cours de chargement. Veuillez réessayer dans un "
+"instant."
 
-#: wordbook/window.py:496
-#, fuzzy
+# llm-generated
+#: wordbook/window.py:499
 msgid "History cleared"
-msgstr "Historique"
+msgstr "Historique effacé"
 
-#: wordbook/window.py:497
+# llm-generated
+#: wordbook/window.py:500
 msgid "Undo"
-msgstr ""
+msgstr "Annuler"
 
-#: wordbook/window.py:654
+# llm-generated
+#: wordbook/window.py:657
 msgid "Toggle Favorite"
-msgstr ""
+msgstr "Ajouter/Retirer des favoris"
 
-#: wordbook/window.py:711
+# llm-generated
+#: wordbook/window.py:714
 msgid "Dismiss"
-msgstr ""
+msgstr "Rejeter"
 
-#: wordbook/window.py:737
+#: wordbook/window.py:740
 msgid "Invalid input"
 msgstr "Entrée invalide"
 
-#: wordbook/window.py:738
+#: wordbook/window.py:741
 msgid "Nothing definable was found in your search input"
 msgstr "Rien de définissable n’a été trouvé dans votre entrée de recherche"
 
-#: wordbook/window.py:863
+#: wordbook/window.py:866
 msgid "Ready."
 msgstr "Prêt."
 

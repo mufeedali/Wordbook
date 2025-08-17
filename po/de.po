@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-16 11:02+0530\n"
+"POT-Creation-Date: 2025-08-17 13:46+0530\n"
 "PO-Revision-Date: 2023-02-18 22:39+0100\n"
 "Last-Translator: gregorni <gregorniehl@web.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -44,14 +44,16 @@ msgstr "Doppelklick zum Suchen"
 msgid "Search any word by double clicking on it"
 msgstr "Doppelklicken Sie Wörter, um sie zu suchen"
 
+# llm-generated
 #: data/resources/ui/settings_window.blp:31
-#, fuzzy
 msgid "Auto Paste on Launch"
-msgstr "Einfügen und Suchen"
+msgstr "Beim Start automatisch einfügen"
 
+# llm-generated
 #: data/resources/ui/settings_window.blp:32
 msgid "Automatically paste and search clipboard content on launch"
 msgstr ""
+"Beim Start automatisch Inhalte aus der Zwischenablage einfügen und suchen"
 
 #: data/resources/ui/settings_window.blp:36
 msgid "Pronunciations Accent"
@@ -87,20 +89,23 @@ msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Ausgewählten Text Suchen"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:39
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
-msgstr ""
+msgstr "Seitenleiste ein-/ausblenden"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:44
 msgctxt "shortcut window"
 msgid "Show Menu"
-msgstr ""
+msgstr "Menü anzeigen"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:49
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "Beenden"
 
 #: data/resources/ui/window.blp:9
 msgid "Paste & Search"
@@ -130,18 +135,20 @@ msgstr "_Über Wordbook"
 msgid "History"
 msgstr "Verlauf"
 
+# llm-generated
 #: data/resources/ui/window.blp:75
 msgid "Show Favorites Only"
-msgstr ""
+msgstr "Nur Favoriten anzeigen"
 
+# llm-generated
 #: data/resources/ui/window.blp:86
-#, fuzzy
 msgid "Clear History"
-msgstr "Verlauf"
+msgstr "Verlauf löschen"
 
+# llm-generated
 #: data/resources/ui/window.blp:122
 msgid "No recent searches or favorites"
-msgstr ""
+msgstr "Keine letzten Suchen oder Favoriten"
 
 #: data/resources/ui/window.blp:153
 msgid "Search"
@@ -151,15 +158,16 @@ msgstr "Suchen"
 msgid "Show History"
 msgstr "Verlauf anzeigen"
 
+# llm-generated
 #: data/resources/ui/window.blp:172
 msgid "Main Menu"
-msgstr ""
+msgstr "Hauptmenü"
 
 #: data/resources/ui/window.blp:189
 msgid "Setting things up…"
 msgstr "Die App wird vorbereitet…"
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:786
+#: data/resources/ui/window.blp:190 wordbook/window.py:789
 msgid "Downloading WordNet…"
 msgstr "WordNet wird heruntergeladen…"
 
@@ -208,40 +216,47 @@ msgstr "Copyright © 2016-2025 Mufeed Ali"
 msgid "Building Database…"
 msgstr "Datenbank wird erstellt…"
 
-#: wordbook/window.py:303
+# llm-generated
+#: wordbook/window.py:304
 msgid "Wordlist Loading"
-msgstr ""
+msgstr "Wortliste wird geladen"
 
-#: wordbook/window.py:303
+# llm-generated
+#: wordbook/window.py:305
 msgid "The word list is still loading. Please try again in a moment."
 msgstr ""
+"Die Wortliste wird noch geladen. Bitte versuchen Sie es in einem Moment "
+"erneut."
 
-#: wordbook/window.py:496
-#, fuzzy
+# llm-generated
+#: wordbook/window.py:499
 msgid "History cleared"
-msgstr "Verlauf"
+msgstr "Verlauf gelöscht"
 
-#: wordbook/window.py:497
+# llm-generated
+#: wordbook/window.py:500
 msgid "Undo"
-msgstr ""
+msgstr "Rückgängig"
 
-#: wordbook/window.py:654
+# llm-generated
+#: wordbook/window.py:657
 msgid "Toggle Favorite"
-msgstr ""
+msgstr "Zu Favoriten hinzufügen/entfernen"
 
-#: wordbook/window.py:711
+# llm-generated
+#: wordbook/window.py:714
 msgid "Dismiss"
-msgstr ""
+msgstr "Schließen"
 
-#: wordbook/window.py:737
+#: wordbook/window.py:740
 msgid "Invalid input"
 msgstr "Ungültige Eingabe"
 
-#: wordbook/window.py:738
+#: wordbook/window.py:741
 msgid "Nothing definable was found in your search input"
 msgstr "Es wurde keine Definition für Ihren Suchbegriff gefunden"
 
-#: wordbook/window.py:863
+#: wordbook/window.py:866
 msgid "Ready."
 msgstr "Bereit."
 

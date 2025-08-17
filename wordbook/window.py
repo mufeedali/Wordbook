@@ -300,7 +300,10 @@ class WordbookWindow(Adw.ApplicationWindow):
             random_word = random.choice(self._wn_wordlist).replace("_", " ")
             self.trigger_search(random_word)
         else:
-            self._new_error(_("Wordlist Loading"), _("The word list is still loading. Please try again in a moment."))
+            self._new_error(
+                _("Wordlist Loading"),
+                _("The word list is still loading. Please try again in a moment."),
+            )
 
     def on_search_selected(self, _action, _param):
         """Callback for the 'search-selected' action. Searches for the currently selected text."""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-16 11:02+0530\n"
+"POT-Creation-Date: 2025-08-17 13:46+0530\n"
 "PO-Revision-Date: 2024-05-11 15:18+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
 "Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
@@ -47,14 +47,15 @@ msgstr "डबल क्लिक पर खोजें"
 msgid "Search any word by double clicking on it"
 msgstr "किसी भी शब्द पर डबल क्लिक करके उसे खोजें"
 
+# llm-generated
 #: data/resources/ui/settings_window.blp:31
-#, fuzzy
 msgid "Auto Paste on Launch"
-msgstr "पेस्ट करें और खोजें"
+msgstr "लॉन्च पर ऑटो पेस्ट"
 
+# llm-generated
 #: data/resources/ui/settings_window.blp:32
 msgid "Automatically paste and search clipboard content on launch"
-msgstr ""
+msgstr "लॉन्च पर क्लिपबोर्ड सामग्री को स्वचालित रूप से चिपकाएँ और खोजें"
 
 #: data/resources/ui/settings_window.blp:36
 msgid "Pronunciations Accent"
@@ -90,20 +91,23 @@ msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "चयनित पाठ खोजें"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:39
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
-msgstr ""
+msgstr "साइडबार दिखाएँ/छुपाएँ"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:44
 msgctxt "shortcut window"
 msgid "Show Menu"
-msgstr ""
+msgstr "मेन्यू दिखाएँ"
 
+# llm-generated
 #: data/resources/ui/shortcuts_window.blp:49
 msgctxt "shortcut window"
 msgid "Quit"
-msgstr ""
+msgstr "बाहर निकलें"
 
 #: data/resources/ui/window.blp:9
 msgid "Paste & Search"
@@ -133,18 +137,20 @@ msgstr "Wordbook के बारे में (_A)"
 msgid "History"
 msgstr "इतिहास"
 
+# llm-generated
 #: data/resources/ui/window.blp:75
 msgid "Show Favorites Only"
-msgstr ""
+msgstr "केवल पसंदीदा दिखाएँ"
 
+# llm-generated
 #: data/resources/ui/window.blp:86
-#, fuzzy
 msgid "Clear History"
-msgstr "इतिहास"
+msgstr "इतिहास साफ़ करें"
 
+# llm-generated
 #: data/resources/ui/window.blp:122
 msgid "No recent searches or favorites"
-msgstr ""
+msgstr "कोई हाल की खोज या पसंदीदा नहीं"
 
 #: data/resources/ui/window.blp:153
 msgid "Search"
@@ -154,15 +160,16 @@ msgstr "खोजें"
 msgid "Show History"
 msgstr "इतिहास दिखाएं"
 
+# llm-generated
 #: data/resources/ui/window.blp:172
 msgid "Main Menu"
-msgstr ""
+msgstr "मुख्य मेन्यू"
 
 #: data/resources/ui/window.blp:189
 msgid "Setting things up…"
 msgstr "चीज़ें निर्धारित की जा रही हैं…"
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:786
+#: data/resources/ui/window.blp:190 wordbook/window.py:789
 msgid "Downloading WordNet…"
 msgstr "WordNet डाउनलोड हो रहा है…"
 
@@ -197,7 +204,7 @@ msgstr "बाहर निकलें"
 
 #: wordbook/main.py:145
 msgid "Look up definitions of any English term."
-msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें।"
+msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें"
 
 #: wordbook/main.py:147
 msgid "translator-credits"
@@ -211,40 +218,45 @@ msgstr "कॉपीराइट © 2016-2025 मुफ़ीद अली"
 msgid "Building Database…"
 msgstr "डेटाबेस का निर्माण…"
 
-#: wordbook/window.py:303
+# llm-generated
+#: wordbook/window.py:304
 msgid "Wordlist Loading"
-msgstr ""
+msgstr "शब्दसूची लोड हो रही है"
 
-#: wordbook/window.py:303
+# llm-generated
+#: wordbook/window.py:305
 msgid "The word list is still loading. Please try again in a moment."
-msgstr ""
+msgstr "शब्द सूची अभी भी लोड हो रही है। कृपया कुछ देर में पुन: प्रयास करें।"
 
-#: wordbook/window.py:496
-#, fuzzy
+# llm-generated
+#: wordbook/window.py:499
 msgid "History cleared"
-msgstr "इतिहास"
+msgstr "इतिहास साफ़ हो गया"
 
-#: wordbook/window.py:497
+# llm-generated
+#: wordbook/window.py:500
 msgid "Undo"
-msgstr ""
+msgstr "पूर्ववत् करें"
 
-#: wordbook/window.py:654
+# llm-generated
+#: wordbook/window.py:657
 msgid "Toggle Favorite"
-msgstr ""
+msgstr "पसंदीदा में जोड़ें/हटाएँ"
 
-#: wordbook/window.py:711
+# llm-generated
+#: wordbook/window.py:714
 msgid "Dismiss"
-msgstr ""
+msgstr "खारिज करें"
 
-#: wordbook/window.py:737
+#: wordbook/window.py:740
 msgid "Invalid input"
 msgstr "अमान्य आगत"
 
-#: wordbook/window.py:738
+#: wordbook/window.py:741
 msgid "Nothing definable was found in your search input"
 msgstr "आपके खोज आगत में कुछ भी निश्चित नहीं मिला"
 
-#: wordbook/window.py:863
+#: wordbook/window.py:866
 msgid "Ready."
 msgstr "तैयार।"
 
