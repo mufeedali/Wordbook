@@ -61,7 +61,7 @@ class WordbookSearchService:
         self._results = {}
         for term in terms:
             try:
-                definitionResult = base.get_definition(term, "", "", wn.Wordnet(base.WN_DB_VERSION))["result"]
+                definitionResult = base.get_definition(term, wn.Wordnet(base.WN_DB_VERSION))["result"]
                 if definitionResult:
                     for resultArray in definitionResult.values():
                         if resultArray:
