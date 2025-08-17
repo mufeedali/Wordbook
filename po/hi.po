@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-14 11:52+0530\n"
+"POT-Creation-Date: 2025-08-16 11:02+0530\n"
 "PO-Revision-Date: 2024-05-11 15:18+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
 "Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Setting things up…"
 msgstr "चीज़ें निर्धारित की जा रही हैं…"
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:787
+#: data/resources/ui/window.blp:190 wordbook/window.py:786
 msgid "Downloading WordNet…"
 msgstr "WordNet डाउनलोड हो रहा है…"
 
@@ -228,23 +228,23 @@ msgstr "इतिहास"
 msgid "Undo"
 msgstr ""
 
-#: wordbook/window.py:655
+#: wordbook/window.py:654
 msgid "Toggle Favorite"
 msgstr ""
 
-#: wordbook/window.py:712
+#: wordbook/window.py:711
 msgid "Dismiss"
 msgstr ""
 
-#: wordbook/window.py:738
+#: wordbook/window.py:737
 msgid "Invalid input"
 msgstr "अमान्य आगत"
 
-#: wordbook/window.py:739
+#: wordbook/window.py:738
 msgid "Nothing definable was found in your search input"
 msgstr "आपके खोज आगत में कुछ भी निश्चित नहीं मिला"
 
-#: wordbook/window.py:864
+#: wordbook/window.py:863
 msgid "Ready."
 msgstr "तैयार।"
 

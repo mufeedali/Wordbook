@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-14 11:52+0530\n"
+"POT-Creation-Date: 2025-08-16 11:02+0530\n"
 "PO-Revision-Date: 2022-09-19 20:14+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch\n"
@@ -160,7 +160,7 @@ msgstr ""
 msgid "Setting things up…"
 msgstr "Bezig met voorbereiden…"
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:787
+#: data/resources/ui/window.blp:190 wordbook/window.py:786
 msgid "Downloading WordNet…"
 msgstr "Bezig met ophalen van WordNet…"
 
@@ -226,23 +226,23 @@ msgstr "Geschiedenis"
 msgid "Undo"
 msgstr ""
 
-#: wordbook/window.py:655
+#: wordbook/window.py:654
 msgid "Toggle Favorite"
 msgstr ""
 
-#: wordbook/window.py:712
+#: wordbook/window.py:711
 msgid "Dismiss"
 msgstr ""
 
-#: wordbook/window.py:738
+#: wordbook/window.py:737
 msgid "Invalid input"
 msgstr "Ongeldige invoer"
 
-#: wordbook/window.py:739
+#: wordbook/window.py:738
 msgid "Nothing definable was found in your search input"
 msgstr "Er is geen betekenis aangetroffen van de door u gezochte term"
 
-#: wordbook/window.py:864
+#: wordbook/window.py:863
 msgid "Ready."
 msgstr "Klaar voor gebruik."
 
