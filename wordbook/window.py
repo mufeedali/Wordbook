@@ -9,7 +9,6 @@ import threading
 import time
 from enum import Enum, auto
 from gettext import gettext as _
-from html import escape
 from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
@@ -948,7 +947,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                 )
 
                 def_label = Gtk.Label(
-                    label=escape(synset["definition"]),
+                    label=synset["definition"],
                     wrap=True,
                     xalign=0.0,
                     selectable=True,
