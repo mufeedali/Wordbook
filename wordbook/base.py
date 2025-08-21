@@ -161,10 +161,9 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
         A dictionary with the processed definition data ('term', 'result').
     """
     first_match: str | None = None
-    exact_match_found: bool = False
     result_dict: dict[str, Any] = {pos: [] for pos in POS_MAP.values()}
 
-    synsets = wn_instance.synsets(term)
+    synsets = wn_instance.synsets(term.lower())
 
     if not synsets:
         clean_def = {"term": term, "result": None}
@@ -182,11 +181,8 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
             continue  # Skip synsets with no lemmas
 
         matched_lemma = _find_best_lemma_match(term, lemmas)
-        has_exact_match = any(lemma.lower().replace("_", " ").strip() == term.lower().strip() for lemma in lemmas)
-        if first_match is None or (has_exact_match and not exact_match_found):
+        if first_match is None:
             first_match = matched_lemma
-            if has_exact_match:
-                exact_match_found = True
 
         related_lemmas = _extract_related_lemmas(synset, matched_lemma)
 
