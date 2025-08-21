@@ -43,6 +43,27 @@
     </screenshots>
 
     <releases>
+        <release version="0.5.0" date="2025-08-22">
+            <description>
+                <ul>
+                    <li>Significant UI changes</li>
+                    <li>Added Favorites</li>
+                    <li>Added "Did you mean" suggestions for typos</li>
+                    <li>Added a context menu action to search for selected text</li>
+                    <li>Added support for auto-pasting clipboard content on launch</li>
+                    <li>Improved persistent history management</li>
+                    <li>Added GNOME Search Provider integration</li>
+                    <li>The app now remembers window dimensions</li>
+                    <li>Several performance and responsiveness improvements</li>
+                    <li>Improved keyboard navigation and accessibility</li>
+                    <li>Several bug fixes</li>
+                    <li>Added Italian and Hindi translations</li>
+                    <li>Updated translations for German, French, Dutch, Russian, and Turkish</li>
+                    <li>Ported the UI to use Blueprint</li>
+                    <li>BREAKING: Settings schema has changed</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.4.0" date="2023-09-25">
             <description translate="no">
                 <ul>
