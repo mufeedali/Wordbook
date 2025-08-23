@@ -14,7 +14,8 @@
             <li>Fully offline after initial data download</li>
             <li>Pronunciations</li>
             <li>Random Word</li>
-            <li>Live Search</li>
+            <li>Favorites</li>
+            <li>History</li>
             <li>Double click to search</li>
             <li>Dark mode</li>
         </ul>
@@ -28,7 +29,7 @@
     <url type="bugtracker">https://github.com/mufeedali/Wordbook/issues</url>
     <url type="vcs-browser">https://github.com/mufeedali/Wordbook</url>
     <url type="translate">https://github.com/mufeedali/Wordbook/tree/main/po</url>
-    <url type="donation">https://liberapay.com/mufeedali/donate</url>
+    <url type="donation">https://github.com/sponsors/mufeedali</url>
     <content_rating type="oars-1.1" />
     <launchable type="desktop-id">@app-id@.desktop</launchable>
     <translation type="gettext">wordbook</translation>

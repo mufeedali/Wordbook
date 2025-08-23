@@ -5,8 +5,8 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">Wordbook</name>
-  <shortdesc xml:lang="en">Look up definitions for English words</shortdesc>
-  <homepage rdf:resource="https://github.com/mufeedali/Wordbook" />
+  <shortdesc xml:lang="en">Look up definitions for words</shortdesc>
+  <homepage rdf:resource="https://apps.gnome.org/Wordbook" />
   <bug-database rdf:resource="https://github.com/mufeedali/Wordbook/issues" />
   <programming-language>Python</programming-language>
   <license rdf:resource="https://www.gnu.org/licenses/gpl-3.0.html" />

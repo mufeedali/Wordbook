@@ -24,10 +24,13 @@ Wordbook
 ## Requirements
 
 * GTK 4.6+ [Arch: `gtk4`]
-* libadwaita 1.1.0+ [Arch: `libadwaita`]
+* libadwaita 1.7.0+ [Arch: `libadwaita`]
 * Python 3 [Arch: `python`]
-* Standalone WordNet Python module [Arch AUR: `python-wn`]
-* Python GObject [Arch: `python-gobject`]
+* Python modules:
+    * Standalone WordNet Python module [Arch AUR: `python-wn`]
+    * RapidFuzz [Arch: `python-rapidfuzz`]
+    * Pydantic [Arch: `python-pydantic`]
+    * Python GObject [Arch: `python-gobject`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 ## Installation
