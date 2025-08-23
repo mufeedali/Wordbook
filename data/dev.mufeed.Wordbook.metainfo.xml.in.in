@@ -44,6 +44,13 @@
     </screenshots>
 
     <releases>
+        <release version="0.5.1" date="2025-08-23">
+            <description>
+                <ul>
+                    <li>Updated some metadata and docs</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.5.0" date="2025-08-22">
             <description>
                 <ul>
