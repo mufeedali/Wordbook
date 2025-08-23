@@ -203,7 +203,7 @@ msgid "Exit"
 msgstr "बाहर निकलें"
 
 #: wordbook/main.py:145
-msgid "Look up definitions of any English term."
+msgid "Look up definitions for words"
 msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें"
 
 #: wordbook/main.py:147

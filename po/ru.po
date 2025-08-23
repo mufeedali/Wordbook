@@ -202,7 +202,7 @@ msgid "Exit"
 msgstr "Выйти"
 
 #: wordbook/main.py:145
-msgid "Look up definitions of any English term."
+msgid "Look up definitions for words"
 msgstr "Поиск определений любых английских терминов."
 
 #: wordbook/main.py:147

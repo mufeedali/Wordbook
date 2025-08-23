@@ -201,7 +201,7 @@ msgid "Exit"
 msgstr "Beenden"
 
 #: wordbook/main.py:145
-msgid "Look up definitions of any English term."
+msgid "Look up definitions for words"
 msgstr "Schlagen Sie die Definitionen englischer Wörter nach."
 
 #: wordbook/main.py:147

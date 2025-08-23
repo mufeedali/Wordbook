@@ -3,7 +3,7 @@
 Wordbook
 </h1>
 
-<p align="center">Look up definitions of English terms</p>
+<p align="center">Look up definitions for words</p>
 
 <p align="center">
     <img title="Wordbook" src="screenshots/dark.png?raw=true">

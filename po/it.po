@@ -193,7 +193,7 @@ msgid "Exit"
 msgstr "Uscita"
 
 #: wordbook/main.py:145
-msgid "Look up definitions of any English term."
+msgid "Look up definitions for words"
 msgstr "Cerca le definizioni di qualsiasi termine inglese."
 
 #: wordbook/main.py:147

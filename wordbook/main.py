@@ -142,7 +142,7 @@ class Application(Adw.Application):
         about_window.set_application_icon(Gio.Application.get_default().app_id)
         about_window.set_application_name(_("Wordbook"))
         about_window.set_version(Gio.Application.get_default().version)
-        about_window.set_comments(_("Look up definitions of any English term."))
+        about_window.set_comments(_("Look up definitions for words"))
         about_window.set_developer_name("Mufeed Ali")
         about_window.set_translator_credits(_("translator-credits"))
         about_window.set_license_type(Gtk.License.GPL_3_0)

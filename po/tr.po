@@ -203,7 +203,7 @@ msgid "Exit"
 msgstr "Çıkış"
 
 #: wordbook/main.py:145
-msgid "Look up definitions of any English term."
+msgid "Look up definitions for words"
 msgstr "Herhangi bir İngilizce terimin tanımını ara."
 
 #: wordbook/main.py:147

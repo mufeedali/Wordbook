@@ -7,7 +7,7 @@
   <name xml:lang="en">Wordbook</name>
   <shortdesc xml:lang="en">Look up definitions for English words</shortdesc>
   <homepage rdf:resource="https://github.com/mufeedali/Wordbook" />
-  <bug-database rdf:resource="https://codeberg.org/valos/Komikku/issues" />
+  <bug-database rdf:resource="https://github.com/mufeedali/Wordbook/issues" />
   <programming-language>Python</programming-language>
   <license rdf:resource="https://www.gnu.org/licenses/gpl-3.0.html" />
 
