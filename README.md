@@ -57,31 +57,27 @@ On NixOS, Wordbook can be installed using the Nix package manager as shown above
   ];
 ```
 
-### From Source
+## Contributing
 
-To install, first make sure of the dependencies as listed above. You can use `just` to make the process easy.
+Contributions are welcome. There are many ways to contribute:
 
-```bash
-just setup
-just install
-```
+1. Open GitHub issues to report bugs or for feature requests.
+2. Develop a feature or a bug fix. It would be best to open an issue or discussion first before developing a feature.
+3. Add new translations or improve existing translations.
 
-Without `just`:
-```bash
-mkdir -p _build
-meson setup . _build
-ninja -C _build install
-```
+### Development
 
-For a local build with debugging enabled:
+The best way to work with Wordbook is to either use [GNOME Builder](https://apps.gnome.org/Builder/) or to use [flatplay](https://github.com/mufeedali/flatplay) with your editor of choice.
 
-```bash
-just run
-# OR
-just setup
-just develop-configure
-just local-run
-```
+### Translations
+
+The easiest way to contribute to translations right now is to do one of the following:
+
+1. Approve the LLM-generated translations by removing the line that says `# llm-generated`.
+2. Replacing the LLM-generated translations.
+3. Improving the human-translated strings.
+
+The LLM-generated translations are to try and ease the burden on translators. The idea is to have temporary translations until a human can review them. All strings translated by LLMs are tagged as `llm-generated`.
 
 ## Code of Conduct
 
