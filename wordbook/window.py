@@ -173,6 +173,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_fail_description_label.connect("activate-link", self._on_link_activated)
         self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
+        self._search_entry.connect("icon-press", self._on_entry_icon_clicked)
         self._speak_button.connect("clicked", self._on_speak_clicked)
         self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
@@ -476,6 +477,10 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         if Settings.get().live_search:
             GLib.idle_add(self.on_search_clicked)
+
+    def _on_entry_icon_clicked(self, _widget, icon_position):
+        if icon_position == Gtk.EntryIconPosition.SECONDARY:
+            self._search_entry.set_text("")
 
     def _on_clear_history(self, _widget):
         """Clears non-favorited items from the search history."""

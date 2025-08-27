@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-17 13:46+0530\n"
+"POT-Creation-Date: 2025-08-27 13:36+0530\n"
 "PO-Revision-Date: 2022-08-27 14:57+0300\n"
 "Last-Translator: Danila Daniilov <hdsujnb@gmail.com>\n"
 "Language-Team: \n"
@@ -150,54 +150,59 @@ msgstr "Очистить историю"
 msgid "No recent searches or favorites"
 msgstr "Нет недавних поисков или избранного"
 
-#: data/resources/ui/window.blp:153
+# llm-generated
+#: data/resources/ui/window.blp:152
+msgid "Clear"
+msgstr "Очистить"
+
+#: data/resources/ui/window.blp:157
 msgid "Search"
 msgstr "Поиск"
 
-#: data/resources/ui/window.blp:164
+#: data/resources/ui/window.blp:168
 msgid "Show History"
 msgstr "Показать историю"
 
 # llm-generated
-#: data/resources/ui/window.blp:172
+#: data/resources/ui/window.blp:176
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: data/resources/ui/window.blp:189
+#: data/resources/ui/window.blp:193
 msgid "Setting things up…"
 msgstr "Настройка..."
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:789
+#: data/resources/ui/window.blp:194 wordbook/window.py:793
 msgid "Downloading WordNet…"
 msgstr "Загрузка WordNet..."
 
 # llm-generated
-#: data/resources/ui/window.blp:207 wordbook/main.py:35 wordbook/main.py:95
+#: data/resources/ui/window.blp:211 wordbook/main.py:35 wordbook/main.py:95
 #: wordbook/main.py:143
 msgid "Wordbook"
 msgstr "Словник"
 
-#: data/resources/ui/window.blp:208
+#: data/resources/ui/window.blp:212
 msgid "Look up definitions of any English term"
 msgstr "Поиск определений любых английских терминов"
 
-#: data/resources/ui/window.blp:269
+#: data/resources/ui/window.blp:273
 msgid "Listen to Pronunciation"
 msgstr "Прослушать Произношение"
 
-#: data/resources/ui/window.blp:298
+#: data/resources/ui/window.blp:302
 msgid "No definition found"
 msgstr "Определение не найдено"
 
-#: data/resources/ui/window.blp:313
+#: data/resources/ui/window.blp:317
 msgid "Download failed"
 msgstr "Ошибка загрузки"
 
-#: data/resources/ui/window.blp:320
+#: data/resources/ui/window.blp:324
 msgid "Retry"
 msgstr "Попробовать снова"
 
-#: data/resources/ui/window.blp:329
+#: data/resources/ui/window.blp:333
 msgid "Exit"
 msgstr "Выйти"
 
@@ -214,7 +219,7 @@ msgstr "hdsujnb"
 msgid "Copyright © 2016-2025 Mufeed Ali"
 msgstr "© 2016-2025 Mufeed Ali"
 
-#: wordbook/window.py:83
+#: wordbook/window.py:82
 msgid "Building Database…"
 msgstr "Создание базы данных..."
 
@@ -229,34 +234,34 @@ msgid "The word list is still loading. Please try again in a moment."
 msgstr "Список слов всё ещё загружается. Повторите попытку через минуту."
 
 # llm-generated
-#: wordbook/window.py:499
+#: wordbook/window.py:503
 msgid "History cleared"
 msgstr "История очищена"
 
 # llm-generated
-#: wordbook/window.py:500
+#: wordbook/window.py:504
 msgid "Undo"
 msgstr "Отменить"
 
 # llm-generated
-#: wordbook/window.py:657
+#: wordbook/window.py:661
 msgid "Toggle Favorite"
 msgstr "Добавить/убрать из избранного"
 
 # llm-generated
-#: wordbook/window.py:714
+#: wordbook/window.py:718
 msgid "Dismiss"
 msgstr "Закрыть"
 
-#: wordbook/window.py:740
+#: wordbook/window.py:744
 msgid "Invalid input"
 msgstr "Неправильный ввод"
 
-#: wordbook/window.py:741
+#: wordbook/window.py:745
 msgid "Nothing definable was found in your search input"
 msgstr "В результате поиска ничего не было найдено"
 
-#: wordbook/window.py:866
+#: wordbook/window.py:870
 msgid "Ready."
 msgstr "Готово."
 

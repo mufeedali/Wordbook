@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-17 13:46+0530\n"
+"POT-Creation-Date: 2025-08-27 13:36+0530\n"
 "PO-Revision-Date: 2024-05-11 15:18+0530\n"
 "Last-Translator: Scrambled777 <weblate.scrambled777@simplelogin.com>\n"
 "Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
@@ -152,53 +152,58 @@ msgstr "इतिहास साफ़ करें"
 msgid "No recent searches or favorites"
 msgstr "कोई हाल की खोज या पसंदीदा नहीं"
 
-#: data/resources/ui/window.blp:153
+# llm-generated
+#: data/resources/ui/window.blp:152
+msgid "Clear"
+msgstr "साफ़ करें"
+
+#: data/resources/ui/window.blp:157
 msgid "Search"
 msgstr "खोजें"
 
-#: data/resources/ui/window.blp:164
+#: data/resources/ui/window.blp:168
 msgid "Show History"
 msgstr "इतिहास दिखाएं"
 
 # llm-generated
-#: data/resources/ui/window.blp:172
+#: data/resources/ui/window.blp:176
 msgid "Main Menu"
 msgstr "मुख्य मेन्यू"
 
-#: data/resources/ui/window.blp:189
+#: data/resources/ui/window.blp:193
 msgid "Setting things up…"
 msgstr "चीज़ें निर्धारित की जा रही हैं…"
 
-#: data/resources/ui/window.blp:190 wordbook/window.py:789
+#: data/resources/ui/window.blp:194 wordbook/window.py:793
 msgid "Downloading WordNet…"
 msgstr "WordNet डाउनलोड हो रहा है…"
 
-#: data/resources/ui/window.blp:207 wordbook/main.py:35 wordbook/main.py:95
+#: data/resources/ui/window.blp:211 wordbook/main.py:35 wordbook/main.py:95
 #: wordbook/main.py:143
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:208
+#: data/resources/ui/window.blp:212
 msgid "Look up definitions of any English term"
 msgstr "किसी भी अंग्रेजी शब्द की परिभाषा देखें"
 
-#: data/resources/ui/window.blp:269
+#: data/resources/ui/window.blp:273
 msgid "Listen to Pronunciation"
 msgstr "उच्चारण सुनें"
 
-#: data/resources/ui/window.blp:298
+#: data/resources/ui/window.blp:302
 msgid "No definition found"
 msgstr "कोई परिभाषा नहीं मिली"
 
-#: data/resources/ui/window.blp:313
+#: data/resources/ui/window.blp:317
 msgid "Download failed"
 msgstr "डाउनलोड विफल"
 
-#: data/resources/ui/window.blp:320
+#: data/resources/ui/window.blp:324
 msgid "Retry"
 msgstr "पुन: प्रयास करें"
 
-#: data/resources/ui/window.blp:329
+#: data/resources/ui/window.blp:333
 msgid "Exit"
 msgstr "बाहर निकलें"
 
@@ -214,7 +219,7 @@ msgstr "Scrambled777 <weblate.scrambled777@simplelogin.com>"
 msgid "Copyright © 2016-2025 Mufeed Ali"
 msgstr "कॉपीराइट © 2016-2025 मुफ़ीद अली"
 
-#: wordbook/window.py:83
+#: wordbook/window.py:82
 msgid "Building Database…"
 msgstr "डेटाबेस का निर्माण…"
 
@@ -229,34 +234,34 @@ msgid "The word list is still loading. Please try again in a moment."
 msgstr "शब्द सूची अभी भी लोड हो रही है। कृपया कुछ देर में पुन: प्रयास करें।"
 
 # llm-generated
-#: wordbook/window.py:499
+#: wordbook/window.py:503
 msgid "History cleared"
 msgstr "इतिहास साफ़ हो गया"
 
 # llm-generated
-#: wordbook/window.py:500
+#: wordbook/window.py:504
 msgid "Undo"
 msgstr "पूर्ववत् करें"
 
 # llm-generated
-#: wordbook/window.py:657
+#: wordbook/window.py:661
 msgid "Toggle Favorite"
 msgstr "पसंदीदा में जोड़ें/हटाएँ"
 
 # llm-generated
-#: wordbook/window.py:714
+#: wordbook/window.py:718
 msgid "Dismiss"
 msgstr "खारिज करें"
 
-#: wordbook/window.py:740
+#: wordbook/window.py:744
 msgid "Invalid input"
 msgstr "अमान्य आगत"
 
-#: wordbook/window.py:741
+#: wordbook/window.py:745
 msgid "Nothing definable was found in your search input"
 msgstr "आपके खोज आगत में कुछ भी निश्चित नहीं मिला"
 
-#: wordbook/window.py:866
+#: wordbook/window.py:870
 msgid "Ready."
 msgstr "तैयार।"
 

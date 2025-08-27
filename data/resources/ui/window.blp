@@ -145,7 +145,11 @@ template $WordbookWindow: Adw.ApplicationWindow {
                             Entry search_entry {
                                 hexpand: true;
                                 primary-icon-name: "edit-find-symbolic";
+                                primary-icon-activatable: false;
+                                primary-icon-sensitive: false;
                                 activates-default: true;
+                                secondary-icon-name: "edit-clear-symbolic";
+                                secondary-icon-tooltip-text: _("Clear");
                             }
 
                             Button search_button {
