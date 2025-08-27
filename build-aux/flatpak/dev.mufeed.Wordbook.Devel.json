@@ -1,5 +1,5 @@
 {
-  "id": "dev.mufeed.Wordbook",
+  "id": "dev.mufeed.Wordbook.Devel",
   "runtime": "org.gnome.Platform",
   "runtime-version": "master",
   "sdk": "org.gnome.Sdk",
