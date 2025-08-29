@@ -225,8 +225,7 @@ class Settings:
     @history.setter
     def history(self, value: list[str]) -> None:
         """Set search history."""
-        # Validate and limit history
-        self._settings.state.history = value[-20:] if len(value) > 20 else value
+        self._settings.state.history = value
 
     def clear_history(self) -> None:
         """Clear search history."""

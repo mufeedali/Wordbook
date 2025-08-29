@@ -459,7 +459,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         width, height = self.get_default_size()
         settings_to_update = {
-            "history": history_list[-20:],
+            "history": history_list,
             "window_width": width,
             "window_height": height,
         }
