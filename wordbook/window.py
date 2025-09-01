@@ -410,7 +410,13 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def trigger_search(self, text):
         """A convenience method to trigger a search from other parts of the app."""
+        # Temporarily block the changed signal to prevent live search triggering
+        GLib.idle_add(self._search_entry.handler_block_by_func, self._on_entry_changed)
+        # Set text
         GLib.idle_add(self._search_entry.set_text, text)
+        # Re-enable the changed signal
+        GLib.idle_add(self._search_entry.handler_unblock_by_func, self._on_entry_changed)
+        # Perform the actual search
         GLib.idle_add(self.on_search_clicked, None, False, text)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
