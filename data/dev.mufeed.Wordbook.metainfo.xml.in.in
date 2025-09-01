@@ -44,6 +44,16 @@
     </screenshots>
 
     <releases>
+        <release version="0.6.0" date="2025-09-01">
+            <description>
+                <ul>
+                    <li>Added a clear button for search</li>
+                    <li>Added a small delay for live search</li>
+                    <li>Added duplicate checks for related words</li>
+                    <li>Added Occitan translation</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.5.1" date="2025-08-23">
             <description>
                 <ul>

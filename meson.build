@@ -1,6 +1,6 @@
 project(
     'wordbook',
-    version: '0.5.1',
+    version: '0.6.0',
     meson_version: '>= 0.59.0',
     default_options: [ 'warning_level=2',
                      ],
