@@ -482,6 +482,10 @@ class WordbookWindow(Adw.ApplicationWindow):
                 daemon=True,
             ).start()
 
+        # Show/hide clear button based on whether there's text
+        text = self._search_entry.get_text()
+        self._search_entry.props.secondary_icon_name = "edit-clear-symbolic" if text else ""
+
         if Settings.get().live_search:
             if self._live_search_delay_timer is not None:
                 GLib.source_remove(self._live_search_delay_timer)
