@@ -139,6 +139,9 @@ class WordbookWindow(Adw.ApplicationWindow):
     _history_delay_timer = None
     _pending_history_text = None
 
+    # A timer for live search to avoid searching on every keystroke.
+    _live_search_delay_timer = None
+
     # A flag to queue auto-pasting until the window is active.
     _auto_paste_queued: bool = False
 
@@ -450,6 +453,10 @@ class WordbookWindow(Adw.ApplicationWindow):
             GLib.source_remove(self._history_delay_timer)
             self._history_delay_timer = None
 
+        if self._live_search_delay_timer is not None:
+            GLib.source_remove(self._live_search_delay_timer)
+            self._live_search_delay_timer = None
+
         history_list = []
         if self._search_history:
             for i in range(self._search_history.get_n_items()):
@@ -476,7 +483,9 @@ class WordbookWindow(Adw.ApplicationWindow):
             ).start()
 
         if Settings.get().live_search:
-            GLib.idle_add(self.on_search_clicked)
+            if self._live_search_delay_timer is not None:
+                GLib.source_remove(self._live_search_delay_timer)
+            self._live_search_delay_timer = GLib.timeout_add(400, self._execute_delayed_search)
 
     def _on_entry_icon_clicked(self, _widget, icon_position):
         if icon_position == Gtk.EntryIconPosition.SECONDARY:
@@ -616,6 +625,12 @@ class WordbookWindow(Adw.ApplicationWindow):
             self._pending_history_text = None
 
         self._history_delay_timer = None
+        return False
+
+    def _execute_delayed_search(self):
+        """Executes the delayed search."""
+        self.on_search_clicked()
+        self._live_search_delay_timer = None
         return False
 
     def _on_speak_clicked(self, _button):
