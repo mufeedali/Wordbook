@@ -126,6 +126,17 @@ def _find_best_lemma_match(term: str, lemmas: list[str]) -> str:
     return _normalize_lemma(lemmas[0]) if lemmas else ""
 
 
+def _get_lemmas_from_related(matched_lemma: str, synset: wn.Synset, relation: str) -> list[str]:
+    """Get normalized lemmas from a relation group."""
+    target_list: list[str] = []
+    for related_synset in synset.get_related(relation):
+        for lemma in related_synset.lemmas():
+            normalized_lemma = _normalize_lemma(lemma)
+            if normalized_lemma.lower() != matched_lemma.lower() and normalized_lemma not in target_list:
+                target_list.append(normalized_lemma)
+    return target_list
+
+
 def _extract_related_lemmas(synset: wn.Synset, matched_lemma: str) -> dict[str, list[str]]:
     """Extracts synonyms, antonyms, similar terms, and 'also sees'."""
     related: dict[str, list[str]] = {"syn": [], "ant": [], "sim": [], "also_sees": []}
@@ -140,11 +151,8 @@ def _extract_related_lemmas(synset: wn.Synset, matched_lemma: str) -> dict[str, 
             if ant_name not in related["ant"]:
                 related["ant"].append(ant_name)
 
-    for sim_synset in synset.get_related("similar"):
-        related["sim"].extend(_normalize_lemma(lemma) for lemma in sim_synset.lemmas())
-
-    for also_synset in synset.get_related("also"):
-        related["also_sees"].extend(_normalize_lemma(lemma) for lemma in also_synset.lemmas())
+    related["sim"] = _get_lemmas_from_related(matched_lemma, synset, "similar")
+    related["also_sees"] = _get_lemmas_from_related(matched_lemma, synset, "also")
 
     return related
 
