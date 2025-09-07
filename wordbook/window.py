@@ -499,7 +499,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_entry_icon_clicked(self, _widget, icon_position):
         if icon_position == Gtk.EntryIconPosition.SECONDARY:
-            self._search_entry.set_text("")
+            self.trigger_search("")
 
     def _on_clear_history(self, _widget):
         """Clears non-favorited items from the search history."""
