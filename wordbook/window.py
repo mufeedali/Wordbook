@@ -905,7 +905,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Clears all definitions from the listbox."""
         while (child := self._definitions_listbox.get_first_child()) is not None:
             self._definitions_listbox.remove(child)
-
+    
+    def click_search(self,_click, n_press, _x, _y,word):
+        """for searching when word is clicked"""
+        self.trigger_search(word)
+        
     def _create_definition_widget(self, pos: str, synsets: list[dict[str, Any]]) -> Gtk.Widget:
         """Creates a widget to display definitions for a specific part of speech."""
         pos_box = Gtk.Box(
@@ -975,24 +979,37 @@ class WordbookWindow(Adw.ApplicationWindow):
                     spacing=6,
                     hexpand=True,
                 )
-
-                def_label = Gtk.Label(
-                    label=synset["definition"],
-                    wrap=True,
-                    xalign=0.0,
-                    selectable=True,
-                    extra_menu=self._def_extra_menu_model,
-                    css_classes=[
-                        "definition",
-                    ],
-                )
-
-                click = Gtk.GestureClick.new()
-                click.connect("pressed", self._on_def_press_event)
-                click.connect("stopped", self._on_def_stop_event)
-                def_label.add_controller(click)
-
-                content_box.append(def_label)
+                
+                Definion_sentence = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                Current_line = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+                line_len = 0
+                for word in synset["definition"].split(" "):
+                    def_label = Gtk.Label(
+                        label=word,
+                        wrap=True,
+                        xalign=0.0,
+                        selectable=True,
+                        extra_menu=self._def_extra_menu_model,
+                        css_classes=[
+                            "definition",
+                        ],
+                    )
+                    click = Gtk.GestureClick.new()
+                    click.connect("pressed", self._on_def_press_event)
+                    click.connect("stopped", self._on_def_stop_event)
+                    click.connect("pressed", self.click_search, word)
+                    if line_len + len(word) > 40:
+                        Definion_sentence.append(Current_line)
+                        Current_line = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+                        line_len = 0
+                    
+                    def_label.add_controller(click)
+                    Current_line.append(def_label)
+                    line_len += len(word)
+                    Current_line.append(Gtk.Label(label=" "))
+                    line_len += 1
+                Definion_sentence.append(Current_line)
+                content_box.append(Definion_sentence)
 
                 for example in synset.get("examples", []):
                     example_label = Gtk.Label(
