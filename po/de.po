@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-27 13:36+0530\n"
+"POT-Creation-Date: 2025-10-23 21:29+0530\n"
 "PO-Revision-Date: 2023-02-18 22:39+0100\n"
 "Last-Translator: gregorni <gregorniehl@web.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -16,93 +16,93 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/resources/ui/settings_window.blp:10
+#: data/resources/ui/settings-window.blp:10
 msgid "Appearance"
 msgstr "Erscheinungsbild"
 
-#: data/resources/ui/settings_window.blp:13
+#: data/resources/ui/settings-window.blp:13
 msgid "Force Dark Mode"
 msgstr "Dunkelmodus benutzen"
 
-#: data/resources/ui/settings_window.blp:18
+#: data/resources/ui/settings-window.blp:18
 msgid "Behavior"
 msgstr "Verhalten"
 
-#: data/resources/ui/settings_window.blp:21
+#: data/resources/ui/settings-window.blp:21
 msgid "Live Search"
 msgstr "Live-Suche"
 
-#: data/resources/ui/settings_window.blp:22
+#: data/resources/ui/settings-window.blp:22
 msgid "Show definition as the terms are typed in"
 msgstr "Zeigt Ergebnisse an, während der Suchbegriff eingegeben wird"
 
-#: data/resources/ui/settings_window.blp:26
+#: data/resources/ui/settings-window.blp:26
 msgid "Double Click Search"
 msgstr "Doppelklick zum Suchen"
 
-#: data/resources/ui/settings_window.blp:27
+#: data/resources/ui/settings-window.blp:27
 msgid "Search any word by double clicking on it"
 msgstr "Doppelklicken Sie Wörter, um sie zu suchen"
 
 # llm-generated
-#: data/resources/ui/settings_window.blp:31
+#: data/resources/ui/settings-window.blp:31
 msgid "Auto Paste on Launch"
 msgstr "Beim Start automatisch einfügen"
 
 # llm-generated
-#: data/resources/ui/settings_window.blp:32
+#: data/resources/ui/settings-window.blp:32
 msgid "Automatically paste and search clipboard content on launch"
 msgstr ""
 "Beim Start automatisch Inhalte aus der Zwischenablage einfügen und suchen"
 
-#: data/resources/ui/settings_window.blp:36
+#: data/resources/ui/settings-window.blp:36
 msgid "Pronunciations Accent"
 msgstr "Akzent der Aussprache"
 
-#: data/resources/ui/shortcuts_window.blp:11
+#: data/resources/ui/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Allgemein"
 
-#: data/resources/ui/shortcuts_window.blp:14
+#: data/resources/ui/shortcuts-dialog.blp:9
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Tastenkürzel anzeigen"
 
-#: data/resources/ui/shortcuts_window.blp:19
+#: data/resources/ui/shortcuts-dialog.blp:14
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: data/resources/ui/shortcuts_window.blp:24
+#: data/resources/ui/shortcuts-dialog.blp:19
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr "Einfügen und Suchen"
 
-#: data/resources/ui/shortcuts_window.blp:29
+#: data/resources/ui/shortcuts-dialog.blp:24
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr "Zufälliges Wort"
 
-#: data/resources/ui/shortcuts_window.blp:34
+#: data/resources/ui/shortcuts-dialog.blp:29
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Ausgewählten Text Suchen"
 
 # llm-generated
-#: data/resources/ui/shortcuts_window.blp:39
+#: data/resources/ui/shortcuts-dialog.blp:34
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
 msgstr "Seitenleiste ein-/ausblenden"
 
 # llm-generated
-#: data/resources/ui/shortcuts_window.blp:44
+#: data/resources/ui/shortcuts-dialog.blp:39
 msgctxt "shortcut window"
 msgid "Show Menu"
 msgstr "Menü anzeigen"
 
 # llm-generated
-#: data/resources/ui/shortcuts_window.blp:49
+#: data/resources/ui/shortcuts-dialog.blp:44
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Beenden"
@@ -111,7 +111,7 @@ msgstr "Beenden"
 msgid "Paste & Search"
 msgstr "Einfügen & Suchen"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:211
+#: data/resources/ui/window.blp:14 wordbook/window.py:214
 msgid "Search Selected Text"
 msgstr "Ausgewählten Text Suchen"
 
@@ -151,57 +151,57 @@ msgid "No recent searches or favorites"
 msgstr "Keine letzten Suchen oder Favoriten"
 
 # llm-generated
-#: data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:151
 msgid "Clear"
 msgstr "Löschen"
 
-#: data/resources/ui/window.blp:157
+#: data/resources/ui/window.blp:156
 msgid "Search"
 msgstr "Suchen"
 
-#: data/resources/ui/window.blp:168
+#: data/resources/ui/window.blp:167
 msgid "Show History"
 msgstr "Verlauf anzeigen"
 
 # llm-generated
-#: data/resources/ui/window.blp:176
+#: data/resources/ui/window.blp:175
 msgid "Main Menu"
 msgstr "Hauptmenü"
 
-#: data/resources/ui/window.blp:193
+#: data/resources/ui/window.blp:192
 msgid "Setting things up…"
 msgstr "Die App wird vorbereitet…"
 
-#: data/resources/ui/window.blp:194 wordbook/window.py:793
+#: data/resources/ui/window.blp:193 wordbook/window.py:818
 msgid "Downloading WordNet…"
 msgstr "WordNet wird heruntergeladen…"
 
-#: data/resources/ui/window.blp:211 wordbook/main.py:35 wordbook/main.py:95
+#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
 #: wordbook/main.py:143
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:212
+#: data/resources/ui/window.blp:211
 msgid "Look up definitions of any English term"
 msgstr "Schlagen Sie die Definitionen englischer Wörter nach"
 
-#: data/resources/ui/window.blp:273
+#: data/resources/ui/window.blp:272
 msgid "Listen to Pronunciation"
 msgstr "Aussprache anhören"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:301
 msgid "No definition found"
 msgstr "Keine Definition gefunden"
 
-#: data/resources/ui/window.blp:317
+#: data/resources/ui/window.blp:316
 msgid "Download failed"
 msgstr "Download fehlgeschlagen"
 
-#: data/resources/ui/window.blp:324
+#: data/resources/ui/window.blp:323
 msgid "Retry"
 msgstr "Erneut versuchen"
 
-#: data/resources/ui/window.blp:333
+#: data/resources/ui/window.blp:332
 msgid "Exit"
 msgstr "Beenden"
 
@@ -213,7 +213,12 @@ msgstr "Schlagen Sie die Definitionen englischer Wörter nach."
 msgid "translator-credits"
 msgstr "gregorni https://gitlab.com/gregorni"
 
-#: wordbook/main.py:151
+# llm-generated
+#: wordbook/main.py:150
+msgid "Source Code"
+msgstr "Quellcode"
+
+#: wordbook/main.py:152
 msgid "Copyright © 2016-2025 Mufeed Ali"
 msgstr "Copyright © 2016-2025 Mufeed Ali"
 
@@ -222,46 +227,46 @@ msgid "Building Database…"
 msgstr "Datenbank wird erstellt…"
 
 # llm-generated
-#: wordbook/window.py:304
+#: wordbook/window.py:307
 msgid "Wordlist Loading"
 msgstr "Wortliste wird geladen"
 
 # llm-generated
-#: wordbook/window.py:305
+#: wordbook/window.py:308
 msgid "The word list is still loading. Please try again in a moment."
 msgstr ""
 "Die Wortliste wird noch geladen. Bitte versuchen Sie es in einem Moment "
 "erneut."
 
 # llm-generated
-#: wordbook/window.py:503
+#: wordbook/window.py:522
 msgid "History cleared"
 msgstr "Verlauf gelöscht"
 
 # llm-generated
-#: wordbook/window.py:504
+#: wordbook/window.py:523
 msgid "Undo"
 msgstr "Rückgängig"
 
 # llm-generated
-#: wordbook/window.py:661
+#: wordbook/window.py:686
 msgid "Toggle Favorite"
 msgstr "Zu Favoriten hinzufügen/entfernen"
 
 # llm-generated
-#: wordbook/window.py:718
+#: wordbook/window.py:743
 msgid "Dismiss"
 msgstr "Schließen"
 
-#: wordbook/window.py:744
+#: wordbook/window.py:769
 msgid "Invalid input"
 msgstr "Ungültige Eingabe"
 
-#: wordbook/window.py:745
+#: wordbook/window.py:770
 msgid "Nothing definable was found in your search input"
 msgstr "Es wurde keine Definition für Ihren Suchbegriff gefunden"
 
-#: wordbook/window.py:870
+#: wordbook/window.py:895
 msgid "Ready."
 msgstr "Bereit."
 

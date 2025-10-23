@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-27 13:36+0530\n"
+"POT-Creation-Date: 2025-10-23 21:29+0530\n"
 "PO-Revision-Date: 2025-08-24 22:32+0200\n"
 "Last-Translator: Quentin PAGÈS\n"
 "Language-Team: \n"
@@ -18,87 +18,87 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.7\n"
 
-#: data/resources/ui/settings_window.blp:10
+#: data/resources/ui/settings-window.blp:10
 msgid "Appearance"
 msgstr "Aparéncia"
 
-#: data/resources/ui/settings_window.blp:13
+#: data/resources/ui/settings-window.blp:13
 msgid "Force Dark Mode"
 msgstr "Forçar lo mòde escur"
 
-#: data/resources/ui/settings_window.blp:18
+#: data/resources/ui/settings-window.blp:18
 msgid "Behavior"
 msgstr "Compòrtament"
 
-#: data/resources/ui/settings_window.blp:21
+#: data/resources/ui/settings-window.blp:21
 msgid "Live Search"
 msgstr "Recèrca en dirèct"
 
-#: data/resources/ui/settings_window.blp:22
+#: data/resources/ui/settings-window.blp:22
 msgid "Show definition as the terms are typed in"
 msgstr "Afichar la definicion quand òm pica lo tèrme"
 
-#: data/resources/ui/settings_window.blp:26
+#: data/resources/ui/settings-window.blp:26
 msgid "Double Click Search"
 msgstr "Recèrca en doble clic"
 
-#: data/resources/ui/settings_window.blp:27
+#: data/resources/ui/settings-window.blp:27
 msgid "Search any word by double clicking on it"
 msgstr "Recercar quin mot que siá en lo doble clicant"
 
-#: data/resources/ui/settings_window.blp:31
+#: data/resources/ui/settings-window.blp:31
 msgid "Auto Paste on Launch"
 msgstr "Pegament auto al lançament"
 
-#: data/resources/ui/settings_window.blp:32
+#: data/resources/ui/settings-window.blp:32
 msgid "Automatically paste and search clipboard content on launch"
 msgstr "Pegar automaticament e recercar dins lo quichapapièrs al lançament"
 
-#: data/resources/ui/settings_window.blp:36
+#: data/resources/ui/settings-window.blp:36
 msgid "Pronunciations Accent"
 msgstr "Accent de la prononciacion"
 
-#: data/resources/ui/shortcuts_window.blp:11
+#: data/resources/ui/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
 msgid "General"
 msgstr "General"
 
-#: data/resources/ui/shortcuts_window.blp:14
+#: data/resources/ui/shortcuts-dialog.blp:9
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Afichar los acorchis"
 
-#: data/resources/ui/shortcuts_window.blp:19
+#: data/resources/ui/shortcuts-dialog.blp:14
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "Preferéncias"
 
-#: data/resources/ui/shortcuts_window.blp:24
+#: data/resources/ui/shortcuts-dialog.blp:19
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr "Pegar e recercar"
 
-#: data/resources/ui/shortcuts_window.blp:29
+#: data/resources/ui/shortcuts-dialog.blp:24
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr "Mot aleatòri"
 
-#: data/resources/ui/shortcuts_window.blp:34
+#: data/resources/ui/shortcuts-dialog.blp:29
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "Recercar lo tèxte seleccionat"
 
-#: data/resources/ui/shortcuts_window.blp:39
+#: data/resources/ui/shortcuts-dialog.blp:34
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
 msgstr "Afichar o amagar lo panèl lateral"
 
-#: data/resources/ui/shortcuts_window.blp:44
+#: data/resources/ui/shortcuts-dialog.blp:39
 msgctxt "shortcut window"
 msgid "Show Menu"
 msgstr "Mostrar lo menú"
 
-#: data/resources/ui/shortcuts_window.blp:49
+#: data/resources/ui/shortcuts-dialog.blp:44
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Quitar"
@@ -107,7 +107,7 @@ msgstr "Quitar"
 msgid "Paste & Search"
 msgstr "Pegar e recercar"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:211
+#: data/resources/ui/window.blp:14 wordbook/window.py:214
 msgid "Search Selected Text"
 msgstr "Recercar lo tèxte seleccionat"
 
@@ -144,56 +144,56 @@ msgid "No recent searches or favorites"
 msgstr "Cap de recèrcas recentas o de favorits"
 
 # llm-generated
-#: data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:151
 msgid "Clear"
 msgstr "Escafar"
 
-#: data/resources/ui/window.blp:157
+#: data/resources/ui/window.blp:156
 msgid "Search"
 msgstr "Recercar"
 
-#: data/resources/ui/window.blp:168
+#: data/resources/ui/window.blp:167
 msgid "Show History"
 msgstr "Visualizar l'istoric"
 
-#: data/resources/ui/window.blp:176
+#: data/resources/ui/window.blp:175
 msgid "Main Menu"
 msgstr "Menú principal"
 
-#: data/resources/ui/window.blp:193
+#: data/resources/ui/window.blp:192
 msgid "Setting things up…"
 msgstr "Configuracions de las causas…"
 
-#: data/resources/ui/window.blp:194 wordbook/window.py:793
+#: data/resources/ui/window.blp:193 wordbook/window.py:818
 msgid "Downloading WordNet…"
 msgstr "Telecargament de WordNet…"
 
-#: data/resources/ui/window.blp:211 wordbook/main.py:35 wordbook/main.py:95
+#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
 #: wordbook/main.py:143
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:212
+#: data/resources/ui/window.blp:211
 msgid "Look up definitions of any English term"
 msgstr "Consultar la definicion de quin tèrme anglés que siá"
 
-#: data/resources/ui/window.blp:273
+#: data/resources/ui/window.blp:272
 msgid "Listen to Pronunciation"
 msgstr "Escotar la prononciacion"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:301
 msgid "No definition found"
 msgstr "Cap de definicion pas trobada"
 
-#: data/resources/ui/window.blp:317
+#: data/resources/ui/window.blp:316
 msgid "Download failed"
 msgstr "Fracàs del telecargament"
 
-#: data/resources/ui/window.blp:324
+#: data/resources/ui/window.blp:323
 msgid "Retry"
 msgstr "Tornar ensajar"
 
-#: data/resources/ui/window.blp:333
+#: data/resources/ui/window.blp:332
 msgid "Exit"
 msgstr "Quitar"
 
@@ -205,7 +205,12 @@ msgstr "Consultar las definicions de mots"
 msgid "translator-credits"
 msgstr "Quentin PAGÈS"
 
-#: wordbook/main.py:151
+# llm-generated
+#: wordbook/main.py:150
+msgid "Source Code"
+msgstr "Còdi sorgent"
+
+#: wordbook/main.py:152
 msgid "Copyright © 2016-2025 Mufeed Ali"
 msgstr "Copyright © 2016-2025 Mufeed Ali"
 
@@ -213,38 +218,38 @@ msgstr "Copyright © 2016-2025 Mufeed Ali"
 msgid "Building Database…"
 msgstr "Construccion de la basa de donadas…"
 
-#: wordbook/window.py:304
+#: wordbook/window.py:307
 msgid "Wordlist Loading"
 msgstr "Cargament de la lista de mots"
 
-#: wordbook/window.py:305
+#: wordbook/window.py:308
 msgid "The word list is still loading. Please try again in a moment."
 msgstr "La lista de mots es encara a cargar. Tornatz ensajar dins un moment."
 
-#: wordbook/window.py:503
+#: wordbook/window.py:522
 msgid "History cleared"
 msgstr "Istoric escafat"
 
-#: wordbook/window.py:504
+#: wordbook/window.py:523
 msgid "Undo"
 msgstr "Desfar"
 
-#: wordbook/window.py:661
+#: wordbook/window.py:686
 msgid "Toggle Favorite"
 msgstr "Alternar marcatge en favorit per la seleccion"
 
-#: wordbook/window.py:718
+#: wordbook/window.py:743
 msgid "Dismiss"
 msgstr "Ignorar"
 
-#: wordbook/window.py:744
+#: wordbook/window.py:769
 msgid "Invalid input"
 msgstr "Entrada incorrècta"
 
-#: wordbook/window.py:745
+#: wordbook/window.py:770
 msgid "Nothing definable was found in your search input"
 msgstr "Res de definible es estat trobat dins vòstra recèrca"
 
-#: wordbook/window.py:870
+#: wordbook/window.py:895
 msgid "Ready."
 msgstr "Lèst."

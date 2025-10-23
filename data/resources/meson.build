@@ -3,8 +3,8 @@ gnome = import('gnome')
 
 blueprints = custom_target('blueprints',
   input: files(
-    'ui/shortcuts_window.blp',
-    'ui/settings_window.blp',
+    'ui/shortcuts-dialog.blp',
+    'ui/settings-window.blp',
     'ui/window.blp',
   ),
   output: '.',

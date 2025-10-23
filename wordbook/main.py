@@ -138,7 +138,7 @@ class Application(Adw.Application):
 
     def on_about(self, _action, _param):
         """Callback for the 'about' action to display the application's about window."""
-        about_window = Adw.AboutWindow()
+        about_window = Adw.AboutDialog()
         about_window.set_application_icon(Gio.Application.get_default().app_id)
         about_window.set_application_name(_("Wordbook"))
         about_window.set_version(Gio.Application.get_default().version)
@@ -146,11 +146,11 @@ class Application(Adw.Application):
         about_window.set_developer_name("Mufeed Ali")
         about_window.set_translator_credits(_("translator-credits"))
         about_window.set_license_type(Gtk.License.GPL_3_0)
-        about_window.set_website("https://github.com/mufeedali/Wordbook")
+        about_window.set_website("https://apps.gnome.org/Wordbook")
+        about_window.add_link(_("Source Code"), "https://github.com/mufeedali/Wordbook")
         about_window.set_issue_url("https://github.com/mufeedali/Wordbook/issues")
         about_window.set_copyright(_("Copyright © 2016-2025 Mufeed Ali"))
-        about_window.set_transient_for(self.win)
-        about_window.present()
+        about_window.present(self.win)
 
     def on_quit(self, _action, _param):
         """Callback for the 'quit' action."""

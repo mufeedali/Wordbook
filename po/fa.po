@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-27 13:36+0530\n"
+"POT-Creation-Date: 2025-10-23 21:29+0530\n"
 "PO-Revision-Date: 2025-09-01 21:24+0330\n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: \n"
@@ -18,87 +18,87 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.7\n"
 
-#: data/resources/ui/settings_window.blp:10
+#: data/resources/ui/settings-window.blp:10
 msgid "Appearance"
 msgstr "ظاهر"
 
-#: data/resources/ui/settings_window.blp:13
+#: data/resources/ui/settings-window.blp:13
 msgid "Force Dark Mode"
 msgstr "اجبار به حالت تیره"
 
-#: data/resources/ui/settings_window.blp:18
+#: data/resources/ui/settings-window.blp:18
 msgid "Behavior"
 msgstr "رفتار"
 
-#: data/resources/ui/settings_window.blp:21
+#: data/resources/ui/settings-window.blp:21
 msgid "Live Search"
 msgstr "جست‌وجوی زنده"
 
-#: data/resources/ui/settings_window.blp:22
+#: data/resources/ui/settings-window.blp:22
 msgid "Show definition as the terms are typed in"
 msgstr "نمایش معنی همزمان با نوشتن عبارت"
 
-#: data/resources/ui/settings_window.blp:26
+#: data/resources/ui/settings-window.blp:26
 msgid "Double Click Search"
 msgstr "جست‌وجوی دوبار کلیکی"
 
-#: data/resources/ui/settings_window.blp:27
+#: data/resources/ui/settings-window.blp:27
 msgid "Search any word by double clicking on it"
 msgstr "جست‌وجوی واژه‌ها با دوبار کلیک کردن رویشان"
 
-#: data/resources/ui/settings_window.blp:31
+#: data/resources/ui/settings-window.blp:31
 msgid "Auto Paste on Launch"
 msgstr "جایگذاری خودکار هنگام اجرا"
 
-#: data/resources/ui/settings_window.blp:32
+#: data/resources/ui/settings-window.blp:32
 msgid "Automatically paste and search clipboard content on launch"
 msgstr "جایگذاری خودکار و جست‌وجوی محتوای تخته‌گیره هنگام اجرا"
 
-#: data/resources/ui/settings_window.blp:36
+#: data/resources/ui/settings-window.blp:36
 msgid "Pronunciations Accent"
 msgstr "لهجهٔ گویش"
 
-#: data/resources/ui/shortcuts_window.blp:11
+#: data/resources/ui/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
 msgid "General"
 msgstr "عمومی"
 
-#: data/resources/ui/shortcuts_window.blp:14
+#: data/resources/ui/shortcuts-dialog.blp:9
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "نمایش میان‌برها"
 
-#: data/resources/ui/shortcuts_window.blp:19
+#: data/resources/ui/shortcuts-dialog.blp:14
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "ترجیحات"
 
-#: data/resources/ui/shortcuts_window.blp:24
+#: data/resources/ui/shortcuts-dialog.blp:19
 msgctxt "shortcut window"
 msgid "Paste and Search"
 msgstr "جایگذاری و جست‌وجو"
 
-#: data/resources/ui/shortcuts_window.blp:29
+#: data/resources/ui/shortcuts-dialog.blp:24
 msgctxt "shortcut window"
 msgid "Random Word"
 msgstr "واژهٔ کاتوره‌ای"
 
-#: data/resources/ui/shortcuts_window.blp:34
+#: data/resources/ui/shortcuts-dialog.blp:29
 msgctxt "shortcut window"
 msgid "Search Selected Text"
 msgstr "جست‌وجوی متن گزیده"
 
-#: data/resources/ui/shortcuts_window.blp:39
+#: data/resources/ui/shortcuts-dialog.blp:34
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
 msgstr "تغییر وضعیت نوار کناری"
 
-#: data/resources/ui/shortcuts_window.blp:44
+#: data/resources/ui/shortcuts-dialog.blp:39
 msgctxt "shortcut window"
 msgid "Show Menu"
 msgstr "نمایش فهرست"
 
-#: data/resources/ui/shortcuts_window.blp:49
+#: data/resources/ui/shortcuts-dialog.blp:44
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "خروج"
@@ -107,7 +107,7 @@ msgstr "خروج"
 msgid "Paste & Search"
 msgstr "جایگذاری و جست‌وجو"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:211
+#: data/resources/ui/window.blp:14 wordbook/window.py:214
 msgid "Search Selected Text"
 msgstr "جست‌وجوی متن گزیده"
 
@@ -143,56 +143,56 @@ msgstr "پاک‌سازی تاریخچه"
 msgid "No recent searches or favorites"
 msgstr "بدون جست‌وجوهای اخیر یا محبوب"
 
-#: data/resources/ui/window.blp:152
+#: data/resources/ui/window.blp:151
 msgid "Clear"
 msgstr "پاک سازی"
 
-#: data/resources/ui/window.blp:157
+#: data/resources/ui/window.blp:156
 msgid "Search"
 msgstr "جست‌وجو"
 
-#: data/resources/ui/window.blp:168
+#: data/resources/ui/window.blp:167
 msgid "Show History"
 msgstr "نمایش تاریخچه"
 
-#: data/resources/ui/window.blp:176
+#: data/resources/ui/window.blp:175
 msgid "Main Menu"
 msgstr "فهرست اصلی"
 
-#: data/resources/ui/window.blp:193
+#: data/resources/ui/window.blp:192
 msgid "Setting things up…"
 msgstr "برپا کردن چیزها…"
 
-#: data/resources/ui/window.blp:194 wordbook/window.py:793
+#: data/resources/ui/window.blp:193 wordbook/window.py:818
 msgid "Downloading WordNet…"
 msgstr "بار گرفتن وردنت…"
 
-#: data/resources/ui/window.blp:211 wordbook/main.py:35 wordbook/main.py:95
+#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
 #: wordbook/main.py:143
 msgid "Wordbook"
 msgstr "واژه‌نامه"
 
-#: data/resources/ui/window.blp:212
+#: data/resources/ui/window.blp:211
 msgid "Look up definitions of any English term"
 msgstr "جست‌وجوی معنی عبارت‌های انگلیسی"
 
-#: data/resources/ui/window.blp:273
+#: data/resources/ui/window.blp:272
 msgid "Listen to Pronunciation"
 msgstr "شنیدن گویش"
 
-#: data/resources/ui/window.blp:302
+#: data/resources/ui/window.blp:301
 msgid "No definition found"
 msgstr "هیچ معنی‌ای پیدا نشد"
 
-#: data/resources/ui/window.blp:317
+#: data/resources/ui/window.blp:316
 msgid "Download failed"
 msgstr "بارگیری شکست خورد"
 
-#: data/resources/ui/window.blp:324
+#: data/resources/ui/window.blp:323
 msgid "Retry"
 msgstr "تلاش دوباره"
 
-#: data/resources/ui/window.blp:333
+#: data/resources/ui/window.blp:332
 msgid "Exit"
 msgstr "خروج"
 
@@ -204,7 +204,12 @@ msgstr "جست‌وجوی معنی واژه‌ها"
 msgid "translator-credits"
 msgstr "دانیال بهزادی <dani.behzi@ubuntu.com>"
 
-#: wordbook/main.py:151
+#: wordbook/main.py:150
+#, fuzzy
+msgid "Source Code"
+msgstr "اجبار به حالت تیره"
+
+#: wordbook/main.py:152
 msgid "Copyright © 2016-2025 Mufeed Ali"
 msgstr "حق رونوشت © ۲۰۱۶-۲۰۲۵ مفید علی"
 
@@ -212,38 +217,38 @@ msgstr "حق رونوشت © ۲۰۱۶-۲۰۲۵ مفید علی"
 msgid "Building Database…"
 msgstr "ساختن پایگاه داده…"
 
-#: wordbook/window.py:304
+#: wordbook/window.py:307
 msgid "Wordlist Loading"
 msgstr "بار کردن سیاههٔ واژگان"
 
-#: wordbook/window.py:305
+#: wordbook/window.py:308
 msgid "The word list is still loading. Please try again in a moment."
 msgstr "سیاههٔ واژگان هنوز دارد بار می‌شود. لطفاً کمی بعد دوباره تلاش کنید."
 
-#: wordbook/window.py:503
+#: wordbook/window.py:522
 msgid "History cleared"
 msgstr "تاریخچه پاک شد"
 
-#: wordbook/window.py:504
+#: wordbook/window.py:523
 msgid "Undo"
 msgstr "برگردان"
 
-#: wordbook/window.py:661
+#: wordbook/window.py:686
 msgid "Toggle Favorite"
 msgstr "تغییر وضعیت برگزیده‌ها"
 
-#: wordbook/window.py:718
+#: wordbook/window.py:743
 msgid "Dismiss"
 msgstr "دورانداختن"
 
-#: wordbook/window.py:744
+#: wordbook/window.py:769
 msgid "Invalid input"
 msgstr "ورودی نامعتبر"
 
-#: wordbook/window.py:745
+#: wordbook/window.py:770
 msgid "Nothing definable was found in your search input"
 msgstr "چیز قابل تعریفی در ورودی جست‌وجویتان پیدا نشد"
 
-#: wordbook/window.py:870
+#: wordbook/window.py:895
 msgid "Ready."
 msgstr "آماده."

@@ -25,7 +25,7 @@
     </developer>
     <update_contact>me@mufeed.dev</update_contact>
 
-    <url type="homepage">https://github.com/mufeedali/Wordbook</url>
+    <url type="homepage">https://apps.gnome.org/Wordbook</url>
     <url type="bugtracker">https://github.com/mufeedali/Wordbook/issues</url>
     <url type="vcs-browser">https://github.com/mufeedali/Wordbook</url>
     <url type="translate">https://github.com/mufeedali/Wordbook/tree/main/po</url>

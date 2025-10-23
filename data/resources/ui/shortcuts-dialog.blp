@@ -1,0 +1,48 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ShortcutsDialog shortcuts_dialog {
+    Adw.ShortcutsSection {
+        title: C_("shortcut window", "General");
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Show Shortcuts");
+            action-name: "app.shortcuts";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Preferences");
+            action-name: "win.preferences";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Paste and Search");
+            action-name: "win.paste-search";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Random Word");
+            action-name: "win.random-word";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Search Selected Text");
+            action-name: "win.search-selected";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Toggle Sidebar");
+            action-name: "win.toggle-sidebar";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Show Menu");
+            action-name: "win.toggle-menu";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Quit");
+            action-name: "win.quit";
+        }
+    }
+}
