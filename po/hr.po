@@ -1,0 +1,252 @@
+# Croatian translation for wordbook.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the wordbook package.
+# Milo Ivir <mail@milotype.de>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wordbook\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"PO-Revision-Date: 2025-10-28 00:55+0100\n"
+"Last-Translator: Milo Ivir <mail@mivirtype.de>\n"
+"Language-Team: \n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+
+#: data/resources/ui/settings-window.blp:10
+msgid "Appearance"
+msgstr "Izgled"
+
+#: data/resources/ui/settings-window.blp:13
+msgid "Force Dark Mode"
+msgstr "Prisili tamni način rada"
+
+#: data/resources/ui/settings-window.blp:18
+msgid "Behavior"
+msgstr "Ponašanje"
+
+#: data/resources/ui/settings-window.blp:21
+msgid "Live Search"
+msgstr "Pretraživanje u živo"
+
+#: data/resources/ui/settings-window.blp:22
+msgid "Show definition as the terms are typed in"
+msgstr "Prikazuje definicije tijekom utipkavanja pojmova"
+
+#: data/resources/ui/settings-window.blp:26
+msgid "Double Click Search"
+msgstr "Pretraživanje dvostrukim klikom"
+
+#: data/resources/ui/settings-window.blp:27
+msgid "Search any word by double clicking on it"
+msgstr "Traži bilo koju riječ dvostrukim klikom na nju"
+
+#: data/resources/ui/settings-window.blp:31
+msgid "Auto Paste on Launch"
+msgstr "Automatsko lijepljenje pri pokretanju"
+
+#: data/resources/ui/settings-window.blp:32
+msgid "Automatically paste and search clipboard content on launch"
+msgstr "Automatski zalijepi i pretraži sadržaj međuspremnika pri pokretanju"
+
+#: data/resources/ui/settings-window.blp:36
+msgid "Pronunciations Accent"
+msgstr "Naglasak izgovora"
+
+#: data/resources/ui/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Općenito"
+
+#: data/resources/ui/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Prikaži prečace"
+
+#: data/resources/ui/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Postavke"
+
+#: data/resources/ui/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "Zalijepi i traži"
+
+#: data/resources/ui/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "Slučajna riječ"
+
+#: data/resources/ui/shortcuts-dialog.blp:29
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "Traži odabrani tekst"
+
+#: data/resources/ui/shortcuts-dialog.blp:34
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr "Uključi/Isključi bočnu traku"
+
+#: data/resources/ui/shortcuts-dialog.blp:39
+msgctxt "shortcut window"
+msgid "Show Menu"
+msgstr "Prikaži izbornik"
+
+#: data/resources/ui/shortcuts-dialog.blp:44
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Zatvori aplikaciju"
+
+#: data/resources/ui/window.blp:9
+msgid "Paste & Search"
+msgstr "Zalijepi i traži"
+
+#: data/resources/ui/window.blp:14 wordbook/window.py:214
+msgid "Search Selected Text"
+msgstr "Traži odabrani tekst"
+
+#: data/resources/ui/window.blp:19
+msgid "_Random Word"
+msgstr "_Slučajna riječ"
+
+#: data/resources/ui/window.blp:28
+msgid "_Preferences"
+msgstr "_Postavke"
+
+#: data/resources/ui/window.blp:33
+msgid "_Keyboard Shortcuts"
+msgstr "_Tipkovni prečaci"
+
+#: data/resources/ui/window.blp:38
+msgid "_About Wordbook"
+msgstr "_O aplikaciji Wordbook"
+
+#: data/resources/ui/window.blp:69
+msgid "History"
+msgstr "Povijest"
+
+#: data/resources/ui/window.blp:75
+msgid "Show Favorites Only"
+msgstr "Prikaži samo favorite"
+
+#: data/resources/ui/window.blp:86
+msgid "Clear History"
+msgstr "Izbriši povijest"
+
+#: data/resources/ui/window.blp:122
+msgid "No recent searches or favorites"
+msgstr "Nema nedavnih pretraživanja ili favorita"
+
+#: data/resources/ui/window.blp:151
+msgid "Clear"
+msgstr "Izbriši"
+
+#: data/resources/ui/window.blp:156
+msgid "Search"
+msgstr "Pretraga"
+
+#: data/resources/ui/window.blp:167
+msgid "Show History"
+msgstr "Prikaži povijest"
+
+#: data/resources/ui/window.blp:175
+msgid "Main Menu"
+msgstr "Glavni izbornik"
+
+#: data/resources/ui/window.blp:192
+msgid "Setting things up…"
+msgstr "Postavljanje …"
+
+#: data/resources/ui/window.blp:193 wordbook/window.py:818
+msgid "Downloading WordNet…"
+msgstr "Preuzimanje WordNeta …"
+
+#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
+#: wordbook/main.py:143
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.blp:211
+msgid "Look up definitions of any English term"
+msgstr "Pregledaj definicije bilo kojeg engleskog pojma"
+
+#: data/resources/ui/window.blp:272
+msgid "Listen to Pronunciation"
+msgstr "Slušaj izgovor"
+
+#: data/resources/ui/window.blp:301
+msgid "No definition found"
+msgstr "Nije pronađena nijedna definicija"
+
+#: data/resources/ui/window.blp:316
+msgid "Download failed"
+msgstr "Preuzimanje nije uspjelo"
+
+#: data/resources/ui/window.blp:323
+msgid "Retry"
+msgstr "Pokušaj ponovo"
+
+#: data/resources/ui/window.blp:332
+msgid "Exit"
+msgstr "Zatvori aplikaciju"
+
+#: wordbook/main.py:145
+msgid "Look up definitions for words"
+msgstr "Pregledaj definicije za riječi"
+
+#: wordbook/main.py:147
+msgid "translator-credits"
+msgstr "Milo Ivir <mail@milotype.de>"
+
+#: wordbook/main.py:150
+msgid "Source Code"
+msgstr "Izvorni kod"
+
+#: wordbook/main.py:152
+msgid "Copyright © 2016-2025 Mufeed Ali"
+msgstr "Autorska prava © 2016. – 2025. Mufeed Ali"
+
+#: wordbook/window.py:82
+msgid "Building Database…"
+msgstr "Izgradnja baze podataka …"
+
+#: wordbook/window.py:307
+msgid "Wordlist Loading"
+msgstr "Učitavanje popisa riječi"
+
+#: wordbook/window.py:308
+msgid "The word list is still loading. Please try again in a moment."
+msgstr "Popis riječi se još uvijek učitava. Pokušaj ponovo za koji trenutak."
+
+#: wordbook/window.py:522
+msgid "History cleared"
+msgstr "Povijest je izbrisana"
+
+#: wordbook/window.py:523
+msgid "Undo"
+msgstr "Poništi"
+
+#: wordbook/window.py:686
+msgid "Toggle Favorite"
+msgstr "Uključi/Isključi favorit"
+
+#: wordbook/window.py:743
+msgid "Dismiss"
+msgstr "Odbaci"
+
+#: wordbook/window.py:769
+msgid "Invalid input"
+msgstr "Nevaljan unos"
+
+#: wordbook/window.py:770
+msgid "Nothing definable was found in your search input"
+msgstr "U unosu pretrage nije ništa npronađeno što bi se moglo definirati"
+
+#: wordbook/window.py:895
+msgid "Ready."
+msgstr "Spremno."
