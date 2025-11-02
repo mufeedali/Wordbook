@@ -239,7 +239,7 @@ def get_pronunciation(term: str, accent: str = "us") -> str | None:
         stdout, stderr = process.communicate(timeout=5)
 
         if process.returncode == 0 and stdout:
-            ipa_pronunciation = stdout.strip().replace("\n", " ").replace("  ", " ")
+            ipa_pronunciation = stdout.strip().replace("\n", " ").replace("  ", " ").replace("ᵻ", "ɪ") # Dictionary like "ɪ"
             return f"/{ipa_pronunciation.strip('/')}/"
 
         utils.log_warning(f"espeak-ng failed for term '{term}'. RC: {process.returncode}. Stderr: {stderr.strip()}")
