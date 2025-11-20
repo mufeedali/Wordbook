@@ -1,0 +1,253 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the wordbook package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: wordbook\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"PO-Revision-Date: 2025-11-20 18:48+0700\n"
+"Last-Translator: loccun <huynhloc.contact@gmail.com>\n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: data/resources/ui/settings-window.blp:10
+msgid "Appearance"
+msgstr "Giao Diện"
+
+#: data/resources/ui/settings-window.blp:13
+msgid "Force Dark Mode"
+msgstr "Bắt Buộc Chế Độ Tối"
+
+#: data/resources/ui/settings-window.blp:18
+msgid "Behavior"
+msgstr "Hành Vi"
+
+#: data/resources/ui/settings-window.blp:21
+msgid "Live Search"
+msgstr "Tìm Kiếm Trực Tiếp"
+
+#: data/resources/ui/settings-window.blp:22
+msgid "Show definition as the terms are typed in"
+msgstr "Hiển thị định nghĩa khi nhập từ"
+
+#: data/resources/ui/settings-window.blp:26
+msgid "Double Click Search"
+msgstr "Nhấp Đúp Để Tìm Kiếm"
+
+#: data/resources/ui/settings-window.blp:27
+msgid "Search any word by double clicking on it"
+msgstr "Nhấp đúp vào từ để tìm kiếm"
+
+#: data/resources/ui/settings-window.blp:31
+msgid "Auto Paste on Launch"
+msgstr "Tự Dán khi Khởi Chạy"
+
+#: data/resources/ui/settings-window.blp:32
+msgid "Automatically paste and search clipboard content on launch"
+msgstr "Tự động dán và tìm kiếm nội dung bộ nhớ tạm khi khởi chạy"
+
+#: data/resources/ui/settings-window.blp:36
+msgid "Pronunciations Accent"
+msgstr "Giọng Phát Âm"
+
+#: data/resources/ui/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Chung"
+
+#: data/resources/ui/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Hiển Thị Phím Tắt"
+
+#: data/resources/ui/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Tùy Chọn"
+
+#: data/resources/ui/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "Dán và Tìm Kiếm"
+
+#: data/resources/ui/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "Từ Ngẫu Nhiên"
+
+#: data/resources/ui/shortcuts-dialog.blp:29
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "Tìm Văn Bản Đã Chọn"
+
+#: data/resources/ui/shortcuts-dialog.blp:34
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr "Bật/Tắt Thanh Bên"
+
+#: data/resources/ui/shortcuts-dialog.blp:39
+msgctxt "shortcut window"
+msgid "Show Menu"
+msgstr "Hiển Thị Menu"
+
+#: data/resources/ui/shortcuts-dialog.blp:44
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Thoát"
+
+#: data/resources/ui/window.blp:9
+msgid "Paste & Search"
+msgstr "Dán & Tìm Kiếm"
+
+#: data/resources/ui/window.blp:14 wordbook/window.py:214
+msgid "Search Selected Text"
+msgstr "Tìm Văn Bản Đã Chọn"
+
+#: data/resources/ui/window.blp:19
+msgid "_Random Word"
+msgstr "Từ _Ngẫu Nhiên"
+
+#: data/resources/ui/window.blp:28
+msgid "_Preferences"
+msgstr "_Tùy Chọn"
+
+#: data/resources/ui/window.blp:33
+msgid "_Keyboard Shortcuts"
+msgstr "_Phím Tắt"
+
+#: data/resources/ui/window.blp:38
+msgid "_About Wordbook"
+msgstr "_Giới Thiệu Wordbook"
+
+#: data/resources/ui/window.blp:69
+msgid "History"
+msgstr "Lịch Sử"
+
+#: data/resources/ui/window.blp:75
+msgid "Show Favorites Only"
+msgstr "Chỉ Hiển Thị Mục Yêu Thích"
+
+#: data/resources/ui/window.blp:86
+msgid "Clear History"
+msgstr "Xóa Lịch Sử"
+
+#: data/resources/ui/window.blp:122
+msgid "No recent searches or favorites"
+msgstr "Không có tìm kiếm gần đây hoặc mục yêu thích"
+
+#: data/resources/ui/window.blp:151
+msgid "Clear"
+msgstr "Xóa"
+
+#: data/resources/ui/window.blp:156
+msgid "Search"
+msgstr "Tìm"
+
+#: data/resources/ui/window.blp:167
+msgid "Show History"
+msgstr "Hiển Thị Lịch Sử"
+
+#: data/resources/ui/window.blp:175
+msgid "Main Menu"
+msgstr "Menu Chính"
+
+#: data/resources/ui/window.blp:192
+msgid "Setting things up…"
+msgstr "Đang thiết lập…"
+
+#: data/resources/ui/window.blp:193 wordbook/window.py:818
+msgid "Downloading WordNet…"
+msgstr "Đang Tải WordNet…"
+
+#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
+#: wordbook/main.py:143
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.blp:211
+msgid "Look up definitions of any English term"
+msgstr "Tra định nghĩa của bất kỳ từ tiếng Anh nào"
+
+#: data/resources/ui/window.blp:272
+msgid "Listen to Pronunciation"
+msgstr "Nghe cách Phát Âm"
+
+#: data/resources/ui/window.blp:301
+msgid "No definition found"
+msgstr "Không tìm thấy định nghĩa"
+
+#: data/resources/ui/window.blp:316
+msgid "Download failed"
+msgstr "Tải xuống thất bại"
+
+#: data/resources/ui/window.blp:323
+msgid "Retry"
+msgstr "Thử lại"
+
+#: data/resources/ui/window.blp:332
+msgid "Exit"
+msgstr "Thoát"
+
+#: wordbook/main.py:145
+msgid "Look up definitions for words"
+msgstr "Tra định nghĩa cho từ"
+
+#: wordbook/main.py:147
+msgid "translator-credits"
+msgstr "ghi-công-dịch-giả"
+
+#: wordbook/main.py:150
+msgid "Source Code"
+msgstr "Mã Nguồn"
+
+#: wordbook/main.py:152
+msgid "Copyright © 2016-2025 Mufeed Ali"
+msgstr "Bản quyền © 2016-2025 Mufeed Ali"
+
+#: wordbook/window.py:82
+msgid "Building Database…"
+msgstr "Đang Xây Dựng Cơ Sở Dữ Liệu…"
+
+#: wordbook/window.py:307
+msgid "Wordlist Loading"
+msgstr "Đang Tải Danh Sách Từ"
+
+#: wordbook/window.py:308
+msgid "The word list is still loading. Please try again in a moment."
+msgstr "Danh sách từ vẫn đang tải. Vui lòng thử lại sau vài giây."
+
+#: wordbook/window.py:522
+msgid "History cleared"
+msgstr "Đã xóa lịch sử"
+
+#: wordbook/window.py:523
+msgid "Undo"
+msgstr "Hoàn Tác"
+
+#: wordbook/window.py:686
+msgid "Toggle Favorite"
+msgstr "Bật/Tắt Yêu Thích"
+
+#: wordbook/window.py:743
+msgid "Dismiss"
+msgstr "Đóng"
+
+#: wordbook/window.py:769
+msgid "Invalid input"
+msgstr "Dữ liệu nhập không hợp lệ"
+
+#: wordbook/window.py:770
+msgid "Nothing definable was found in your search input"
+msgstr "Không tìm thấy gì có thể định nghĩa trong nội dung tìm kiếm của bạn"
+
+#: wordbook/window.py:895
+msgid "Ready."
+msgstr "Sẵn sàng."
