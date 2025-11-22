@@ -11,6 +11,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, GLib, Gtk  # noqa
 
 from wordbook import base, utils  # noqa
+from wordbook.constants import RES_PATH  # noqa
 from wordbook.window import WordbookWindow  # noqa
 from wordbook.settings import Settings  # noqa
 
@@ -79,7 +80,7 @@ class Application(Adw.Application):
 
     def do_startup(self):
         """GApplication lifecycle method for one-time setup, like setting resource paths."""
-        self.set_resource_base_path(utils.RES_PATH)
+        self.set_resource_base_path(RES_PATH)
         Adw.Application.do_startup(self)
 
     def do_activate(self):

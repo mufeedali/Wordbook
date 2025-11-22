@@ -6,17 +6,16 @@ from __future__ import annotations
 import random
 import sys
 import threading
-import time
 from enum import Enum, auto
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from rapidfuzz import fuzz, process
-from wn import Error
-from wn.util import ProgressHandler
 
 from wordbook import base, utils
+from wordbook.constants import RES_PATH, WN_FILE_VERSION
+from wordbook.database import DatabaseManager
 from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
 
@@ -33,8 +32,7 @@ class SearchStatus(Enum):
 
 class Page(str, Enum):
     CONTENT = "content_page"
-    DOWNLOAD = "download_page"
-    NETWORK_FAIL = "network_fail_page"
+    DB_ERROR = "db_error_page"
     SEARCH_FAIL = "search_fail_page"
     SPINNER = "spinner_page"
     WELCOME = "welcome_page"
@@ -50,51 +48,11 @@ class HistoryObject(GObject.Object):
         self.is_favorite = is_favorite
 
 
-class ProgressUpdater(ProgressHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._last_update_time = 0
-        self._update_interval = 0.1  # 100ms
-
-    def update(self, n: int = 1, force: bool = False):
-        """Update the progress bar, but throttle UI updates to avoid performance issues."""
-        self.kwargs["count"] += n
-
-        current_time = time.time()
-        if not force and (current_time - self._last_update_time) < self._update_interval:
-            return
-
-        self._last_update_time = current_time
-
-        if self.kwargs["total"] > 0:
-            progress_fraction = self.kwargs["count"] / self.kwargs["total"]
-            GLib.idle_add(
-                Gio.Application.get_default().win.loading_progress.set_fraction,
-                progress_fraction,
-            )
-
-    @staticmethod
-    def flash(message):
-        """Update the progress label on the download page."""
-        if message == "Database":
-            GLib.idle_add(
-                Gio.Application.get_default().win.download_status_page.set_description,
-                _("Building Database…"),
-            )
-        else:
-            GLib.idle_add(
-                Gio.Application.get_default().win.download_status_page.set_description,
-                message,
-            )
-
-
-@Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
+@Gtk.Template(resource_path=f"{RES_PATH}/ui/window.ui")
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
     search_button: Gtk.Button = Gtk.Template.Child("search_button")  # type: ignore
-    download_status_page: Adw.StatusPage = Gtk.Template.Child("download_status_page")  # type: ignore
-    loading_progress: Gtk.ProgressBar = Gtk.Template.Child("loading_progress")  # type: ignore
 
     _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")  # type: ignore
     _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")  # type: ignore
@@ -111,17 +69,15 @@ class WordbookWindow(Adw.ApplicationWindow):
     _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")  # type: ignore
     _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
     _term_view: Gtk.Label = Gtk.Template.Child("term_view")  # type: ignore
-    _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")  # type: ignore
+    _db_error_status_page: Adw.StatusPage = Gtk.Template.Child("db_error_status_page")  # type: ignore
     _search_fail_status_page: Adw.StatusPage = Gtk.Template.Child("search_fail_status_page")  # type: ignore
     _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")  # type: ignore
-    _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")  # type: ignore
     _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
     _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")  # type: ignore
     _favorites_filter_button: Gtk.ToggleButton = Gtk.Template.Child("favorites_filter_button")  # type: ignore
 
     _style_manager: Adw.StyleManager | None = None
 
-    _wn_downloader: base.WordnetDownloader = base.WordnetDownloader()
     _wn_instance: base.wn.Wordnet | None = None
     _wn_wordlist: list[str] = []
 
@@ -178,7 +134,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_entry.connect("changed", self._on_entry_changed)
         self._search_entry.connect("icon-press", self._on_entry_icon_clicked)
         self._speak_button.connect("clicked", self._on_speak_clicked)
-        self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
         self._clear_history_button.connect("clicked", self._on_clear_history)
 
@@ -191,7 +146,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         self._style_manager = self.get_application().get_style_manager()
 
-        self._dl_wn()
+        self._setup_wn()
 
         # FIXME: Remove use of EntryCompletion
         self.completer = Gtk.EntryCompletion()
@@ -601,11 +556,6 @@ class WordbookWindow(Adw.ApplicationWindow):
                 self._update_row_visuals(row, item)
         return False
 
-    def _on_retry_clicked(self, _widget):
-        """Handles the retry button click on the network failure page."""
-        self._wn_downloader.delete_wn()
-        self._start_download()
-
     def _add_to_history(self, text):
         """Adds a term to the history, moving it to the top if it already exists."""
         for i in range(self._search_history.get_n_items()):
@@ -800,38 +750,48 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._split_view_toggle_button.set_sensitive(status)
         self._menu_button.set_sensitive(status)
 
-    def _dl_wn(self):
+    def _setup_wn(self):
         """
-        Manages the WordNet data download and initialization process.
+        Manages the WordNet database setup and initialization process.
         This is the main entry point for the application's data setup.
         """
         self._set_header_sensitive(False)
 
-        if self._wn_downloader.check_status():
-            self._init_wordnet()
-        else:
-            self._start_download()
+        # Show spinner page during setup
+        self._page_switch(Page.SPINNER)
 
-    def _start_download(self):
-        """Starts the WordNet download process in a background thread."""
-        self._page_switch(Page.DOWNLOAD)
-        self.download_status_page.set_description(_("Downloading WordNet…"))
-        threading.Thread(target=self._download_wordnet_thread, daemon=True).start()
+        # Setup database in a background thread
+        threading.Thread(target=self._setup_database_thread, daemon=True).start()
+
+    def _setup_database_thread(self):
+        """Setup database in a background thread."""
+        try:
+            # Try to setup database (extract if needed)
+            if not DatabaseManager.setup(WN_FILE_VERSION):
+                # Database setup failed
+                GLib.idle_add(self._on_database_setup_failed)
+                return
+
+            # Database ready, initialize WordNet
+            GLib.idle_add(self._init_wordnet)
+
+        except Exception as e:
+            utils.log_error(f"Database setup failed: {e}")
+            GLib.idle_add(self._on_database_setup_failed)
+
+    def _on_database_setup_failed(self):
+        """Handle database setup failure."""
+        self._page_switch(Page.DB_ERROR)
 
     def _init_wordnet(self):
         """Initializes the WordNet instance, handling potential failures."""
 
         def handle_init_failure():
             """Callback passed to the backend to handle initialization failures."""
-            GLib.idle_add(self._handle_init_failure)
+            GLib.idle_add(self._on_database_setup_failed)
 
         wn_future = base.get_wn_instance(handle_init_failure)
         wn_future.add_done_callback(self._on_wordnet_init_complete)
-
-    def _handle_init_failure(self):
-        """Handles WordNet initialization failure by deleting the data and re-downloading."""
-        self._wn_downloader.delete_wn()
-        self._start_download()
 
     def _on_wordnet_init_complete(self, future):
         """Callback for when WordNet initialization is complete."""
@@ -841,8 +801,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         try:
             self._wn_instance = future.result()
             if not self._wn_instance:
-                utils.log_warning("WordNet instance is None, triggering download")
-                self._handle_init_failure()
+                utils.log_warning("WordNet instance is None")
+                self._on_database_setup_failed()
                 return
 
             self._complete_initialization()
@@ -852,7 +812,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         except Exception as e:
             utils.log_warning(f"Error getting WordNet instance: {e}")
-            self._handle_init_failure()
+            self._on_database_setup_failed()
 
     def _on_wordlist_loaded(self, future):
         """Callback for when the wordlist has been loaded."""
@@ -881,25 +841,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         elif Settings.get().auto_paste_on_launch or self.auto_paste_requested:
             self.queue_auto_paste()
         self._search_entry.grab_focus_without_selecting()
-
-    def _download_wordnet_thread(self):
-        """Downloads WordNet data in a background thread."""
-        try:
-            self._wn_downloader.download(ProgressUpdater)
-            GLib.idle_add(self._on_download_complete)
-        except Error as err:
-            GLib.idle_add(self._on_download_failed, err)
-
-    def _on_download_complete(self):
-        """Callback for successful WordNet download."""
-        self.download_status_page.set_title(_("Ready."))
-        self._init_wordnet()
-
-    def _on_download_failed(self, error):
-        """Callback for failed WordNet download."""
-        self._network_fail_status_page.set_description(f"<small><tt>Error: {error}</tt></small>")
-        utils.log_warning(error)
-        self._page_switch(Page.NETWORK_FAIL)
 
     def _clear_definitions(self) -> None:
         """Clears all definitions from the listbox."""

@@ -19,12 +19,9 @@ from gi.repository import GLib
 if TYPE_CHECKING:
     from logging import Logger
 
-RES_PATH = "/dev/mufeed/Wordbook"
-
 CONFIG_DIR: str = os.path.join(GLib.get_user_config_dir(), "wordbook")
 CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.conf")
 DATA_DIR: str = os.path.join(GLib.get_user_data_dir(), "wordbook")
-WN_DIR: str = os.path.join(DATA_DIR, "wn")
 
 logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
 LOGGER: Logger = logging.getLogger()

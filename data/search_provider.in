@@ -16,7 +16,7 @@ localedir = "@localedir@"
 from wordbook import base, utils
 import wn
 
-wn.config.data_directory = os.path.join(utils.WN_DIR)
+wn.config.data_directory = base.WN_DIR
 wn.config.allow_multithreading = True
 
 dbus_interface_description = """

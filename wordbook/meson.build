@@ -35,11 +35,13 @@ run_target('run',
 wordbook_sources = [
   '__init__.py',
   'base.py',
+  'database.py',
   'main.py',
   'settings.py',
   'settings_window.py',
   'utils.py',
   'window.py',
+  'constants.py',
 ]
 
 install_data(wordbook_sources, install_dir: moduledir)

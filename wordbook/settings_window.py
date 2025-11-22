@@ -6,12 +6,13 @@ import os
 from gi.repository import Adw, Gtk
 
 from wordbook import utils
+from wordbook.constants import RES_PATH
 from wordbook.settings import PronunciationAccent, Settings
 
 PATH: str = os.path.dirname(__file__)
 
 
-@Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings-window.ui")
+@Gtk.Template(resource_path=f"{RES_PATH}/ui/settings-window.ui")
 class SettingsDialog(Adw.PreferencesDialog):
     """A dialog window that allows the user to customize Wordbook."""
 

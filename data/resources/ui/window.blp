@@ -186,23 +186,6 @@ template $WordbookWindow: Adw.ApplicationWindow {
 
                         Adw.ViewStack main_stack {
                             Adw.ViewStackPage {
-                                name: "download_page";
-
-                                child: Adw.StatusPage download_status_page {
-                                    title: _("Setting things up…");
-                                    description: _("Downloading WordNet…");
-
-                                    child: Adw.Clamp {
-                                        tightening-threshold: 200;
-
-                                        ProgressBar loading_progress {
-                                            ellipsize: end;
-                                        }
-                                    };
-                                };
-                            }
-
-                            Adw.ViewStackPage {
                                 name: "welcome_page";
 
                                 child: Adw.StatusPage before_search_page {
@@ -309,32 +292,19 @@ template $WordbookWindow: Adw.ApplicationWindow {
                             }
 
                             Adw.ViewStackPage {
-                                name: "network_fail_page";
+                                name: "db_error_page";
 
-                                child: Adw.StatusPage network_fail_status_page {
-                                    icon-name: "network-error-symbolic";
-                                    title: _("Download failed");
+                                child: Adw.StatusPage db_error_status_page {
+                                    icon-name: "dialog-error-symbolic";
+                                    title: _("Database not found");
+                                    description: _("Installation is incomplete. Please reinstall Wordbook.");
 
-                                    child: Box {
-                                        spacing: 12;
-                                        halign: center;
+                                    child: Button exit_button {
+                                        label: _("Exit");
 
-                                        Button retry_button {
-                                            label: _("Retry");
-
-                                            styles [
-                                                "pill",
-                                                "suggested-action",
-                                            ]
-                                        }
-
-                                        Button exit_button {
-                                            label: _("Exit");
-
-                                            styles [
-                                                "pill",
-                                            ]
-                                        }
+                                        styles [
+                                            "pill",
+                                        ]
                                     };
                                 };
                             }

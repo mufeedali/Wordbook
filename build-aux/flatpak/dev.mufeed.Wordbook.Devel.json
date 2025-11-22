@@ -5,7 +5,6 @@
   "sdk": "org.gnome.Sdk",
   "command": "wordbook",
   "finish-args": [
-    "--share=network",
     "--socket=pulseaudio",
     "--share=ipc",
     "--device=dri",
@@ -52,7 +51,7 @@
       "name": "python3-modules",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" \"pydantic\" \"rapidfuzz\" --no-build-isolation"
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" \"pydantic\" \"rapidfuzz\" \"backports.zstd\" --no-build-isolation"
       ],
       "sources": [
         {
@@ -143,6 +142,33 @@
           "url": "https://files.pythonhosted.org/packages/59/cf/c3ac8c80d8ced6c1f99b5d9674d397ce5d0e9d0939d788d67c010e19c65f/rapidfuzz-3.13.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
           "sha256": "0da54aa8547b3c2c188db3d1c7eb4d1bb6dd80baa8cdaeaec3d1da3346ec9caa",
           "only-arches": ["aarch64"]
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/11/c3/e31b4e591daec3eab2446db971f275d349aad36041236d5f067ab20fa1a9/backports_zstd-1.0.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "d90cfb475d6d08c596ae77a7009cdda7374ecd79354fd75185cf029bf2204620",
+          "only-arches": ["x86_64"]
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/f8/bc/ea32d4698fac21fe6cc08a124ae21daa41be03f788f244791c47e31a4360/backports_zstd-1.0.0-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "a31220e8544c2194c4a7c3bd9f7fb0eee3c0ce5f8306e55df762428159ff0512",
+          "only-arches": ["aarch64"]
+        }
+      ]
+    },
+    {
+      "name": "wordnet-database",
+      "buildsystem": "simple",
+      "build-commands": [
+        "install -Dm644 wn-oewn-2024.db.zst /app/share/wordbook/wn-oewn-2024.db.zst"
+      ],
+      "sources": [
+        {
+          "type": "file",
+          "url": "https://github.com/mufeedali/Wordbook/releases/download/0.6.0/wn.db.zst",
+          "sha256": "2b0a58348621016652e70985baf6de992875162e0f5d3ffe62e9c26185a28d68",
+          "dest-filename": "wn-oewn-2024.db.zst"
         }
       ]
     },
