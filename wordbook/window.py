@@ -20,6 +20,8 @@ from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
 
 if TYPE_CHECKING:
+    from wordbook.main import Application
+
     from typing import Any
 
 
@@ -110,7 +112,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.lookup_term = term
         self.auto_paste_requested = auto_paste_requested
 
-        app = self.get_application()
+        app: Application | None = self.get_application()
+        if not app:
+            # Error out here
+            utils.log_error("Failed to get application instance in WordbookWindow.__init__")
+            return
+
         if app.development_mode:
             self.get_style_context().add_class("devel")
         self.set_default_icon_name(app.app_id)
@@ -207,7 +214,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         quit_action.connect("activate", lambda action, param: self.close())
         self.add_action(quit_action)
 
-        clipboard = self.get_primary_clipboard()
+        clipboard: Gdk.Clipboard = self.get_primary_clipboard()
         clipboard.connect("changed", self.on_clipboard_changed)
 
     def on_clipboard_changed(self, clipboard: Gdk.Clipboard | None):
@@ -215,17 +222,21 @@ class WordbookWindow(Adw.ApplicationWindow):
         clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
         def on_selection(_clipboard, result):
+            search_selected_action = self.lookup_action("search-selected")
+            if not search_selected_action:
+                return
+
             try:
                 text = clipboard.read_text_finish(result)
                 if text and text.strip():
                     self._primary_clipboard_text = text.replace("         ", "").replace("\n", "")
-                    self.lookup_action("search-selected").props.enabled = True
+                    search_selected_action.props.enabled = True
                 else:
                     self._primary_clipboard_text = None
-                    self.lookup_action("search-selected").props.enabled = False
-            except GLib.GError:
+                    search_selected_action.props.enabled = False
+            except GLib.Error:
                 self._primary_clipboard_text = None
-                self.lookup_action("search-selected").props.enabled = False
+                search_selected_action.props.enabled = False
 
         cancellable = Gio.Cancellable()
         clipboard.read_text_async(cancellable, on_selection)
@@ -241,7 +252,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                     text = base.clean_search_terms(text)
                 if text and text.strip():
                     self.trigger_search(text)
-            except GLib.GError:
+            except GLib.Error:
                 pass  # Ignore errors from empty or non-text clipboard
 
         cancellable = Gio.Cancellable()
@@ -384,10 +395,17 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_def_stop_event(self, _click):
         """Handles the second part of a double-click, triggering a search if detected."""
         if self._doubled:
-            clipboard = Gdk.Display.get_default().get_primary_clipboard()
+            display: Gdk.Display | None = Gdk.Display.get_default()
+            if not display:
+                return
+
+            clipboard: Gdk.Clipboard = display.get_primary_clipboard()
 
             def on_paste(_clipboard, result):
                 text = clipboard.read_text_finish(result)
+                if not text:
+                    return
+
                 text = base.clean_search_terms(text)
                 if text and text.strip():
                     self.trigger_search(text)
