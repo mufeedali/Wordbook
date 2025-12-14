@@ -13,15 +13,14 @@ from pathlib import Path
 import wn
 import wn.util
 from rich.console import Console
-
 from rich.progress import (
+    BarColumn,
+    DownloadColumn,
     Progress,
     SpinnerColumn,
     TextColumn,
-    BarColumn,
-    DownloadColumn,
-    TransferSpeedColumn,
     TimeRemainingColumn,
+    TransferSpeedColumn,
 )
 
 if sys.version_info >= (3, 14):
@@ -29,11 +28,13 @@ if sys.version_info >= (3, 14):
 else:
     import backports.zstd as zstd
 
+
+# Add project root to sys.path to allow importing wordbook
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from wordbook.constants import WN_DB_VERSION, WN_FILE_VERSION
 
 console = Console()
-
-
 _progress_context = None
 
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import hashlib
 import json
