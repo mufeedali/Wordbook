@@ -81,7 +81,9 @@ def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> 
     Returns:
         A dictionary containing the definition data with pronunciation information.
     """
-    definition_data = get_definition(term, wn_instance)
+    with WN_DATABASE_LOCK:
+        definition_data = get_definition(term, wn_instance)
+
     pronunciation_term = definition_data.get("term") or term
     pron = get_pronunciation(pronunciation_term, accent)
     final_pron = pron if pron and not pron.isspace() else "Pronunciation unavailable (is espeak-ng installed?)"
@@ -320,17 +322,19 @@ def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
         with WN_DATABASE_LOCK:
             words = list(wn_instance.words())
 
-        # Process lemmas one by one
-        # This allows other WordNet actions to interrupt
+        # Process lemmas in chunks
+        # This allows other WordNet actions to interrupt between chunks
         wn_lemmas = []
-        for word in words:
-            try:
-                with WN_DATABASE_LOCK:
-                    lemma = word.lemma()
-                wn_lemmas.append(lemma)
-            except Exception as e:
-                utils.log_warning(f"Error getting lemma for word {e}")
-                continue
+        chunk_size = 1000
+        for i in range(0, len(words), chunk_size):
+            chunk = words[i : i + chunk_size]
+            with WN_DATABASE_LOCK:
+                for word in chunk:
+                    try:
+                        wn_lemmas.append(word.lemma())
+                    except Exception as e:
+                        utils.log_warning(f"Error getting lemma for word {e}")
+                        continue
 
         utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas).")
         return wn_lemmas
@@ -356,9 +360,8 @@ def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dic
     if text and not text.isspace():
         cleaned_text = clean_search_terms(text)
         if cleaned_text:
-            with WN_DATABASE_LOCK:
-                definition_data = fetch_definition(cleaned_text, wn_instance, accent=accent)
-                return definition_data
+            definition_data = fetch_definition(cleaned_text, wn_instance, accent=accent)
+            return definition_data
         else:
             utils.log_info(f"Input '{text}' became empty after cleaning.")
             return None

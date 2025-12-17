@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import bisect
 import random
 import sys
 import threading
@@ -20,9 +21,9 @@ from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
 
 if TYPE_CHECKING:
-    from wordbook.main import Application
-
     from typing import Any
+
+    from wordbook.main import Application
 
 
 class SearchStatus(Enum):
@@ -453,11 +454,11 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_entry_changed(self, _entry):
         """Handles text changes in the search entry, triggering live search and completions."""
+        self._completion_text = _entry.get_text()
         self._completion_request_count += 1
         if self._completion_request_count == 1:
             threading.Thread(
                 target=self._update_completions,
-                args=[self._search_entry.get_text()],
                 daemon=True,
             ).start()
 
@@ -740,21 +741,30 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._searched_term = None
         return None
 
-    def _update_completions(self, text):
+    def _update_completions(self):
         """Updates the search entry's completion model based on the current text."""
         while self._completion_request_count > 0:
+            text = self._completion_text
             completer_liststore = Gtk.ListStore(str)
             _complete_list = []
 
             if self._wn_wordlist:
-                for item in self._wn_wordlist:
+                search_term = text.lower().replace(" ", "_")
+                start_idx = bisect.bisect_left(self._wn_wordlist, search_term, key=str.lower)
+
+                for i in range(start_idx, len(self._wn_wordlist)):
                     if len(_complete_list) >= 10:
                         break
-                    item = item.replace("_", " ")
-                    if item.lower().startswith(text.lower()) and item not in _complete_list:
-                        _complete_list.append(item)
 
-            _complete_list = sorted(_complete_list, key=str.casefold)
+                    original_word = self._wn_wordlist[i]
+
+                    if not original_word.lower().startswith(search_term):
+                        break
+
+                    display_word = original_word.replace("_", " ")
+                    if display_word not in _complete_list:
+                        _complete_list.append(display_word)
+
             for item in _complete_list:
                 completer_liststore.append((item,))
 
@@ -846,6 +856,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_wordlist_loaded_success(self, wordlist):
         """Handles successful wordlist loading."""
+        wordlist.sort(key=str.lower)
         self._wn_wordlist = wordlist
         utils.log_info(f"Wordlist loaded with {len(self._wn_wordlist)} words. Completions now available.")
 
