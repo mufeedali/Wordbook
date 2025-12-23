@@ -13,6 +13,7 @@ from pathlib import Path
 from gi.repository import GLib
 
 from wordbook import utils
+from wordbook.constants import WN_FILE_VERSION
 
 # Import appropriate zstd module based on Python version
 if sys.version_info >= (3, 14):
@@ -25,17 +26,14 @@ class DatabaseManager:
     """Manages pre-built WordNet database extraction and versioning."""
 
     @staticmethod
-    def find_compressed_db(version: str) -> Path | None:
+    def find_compressed_db() -> Path | None:
         """
         Search system data directories for versioned compressed database.
-
-        Args:
-            version: The file version string (e.g., "oewn-2024")
 
         Returns:
             Path to compressed database if found, None otherwise.
         """
-        filename = f"wn-{version}.db.zst"
+        filename = f"wn-{WN_FILE_VERSION}.db.zst"
 
         for data_dir in GLib.get_system_data_dirs():
             db_path = Path(data_dir) / "wordbook" / filename
@@ -43,51 +41,42 @@ class DatabaseManager:
                 utils.log_info(f"Found compressed database: {db_path}")
                 return db_path
 
-        utils.log_warning(f"No compressed database found for version {version}")
+        utils.log_warning(f"No compressed database found for version {WN_FILE_VERSION}")
         return None
 
     @staticmethod
-    def get_extracted_db_path(version: str) -> Path:
+    def get_extracted_db_path() -> Path:
         """
         Get the path where the extracted database should exist.
-
-        Args:
-            version: The file version string (e.g., "oewn-2024")
 
         Returns:
             Path to extracted database.
         """
-        return Path(utils.DATA_DIR) / f"wn-{version}" / "wn.db"
+        return Path(utils.DATA_DIR) / f"wn-{WN_FILE_VERSION}" / "wn.db"
 
     @staticmethod
-    def needs_extraction(version: str) -> bool:
+    def needs_extraction() -> bool:
         """
         Check if database needs to be extracted.
-
-        Args:
-            version: The file version string (e.g., "oewn-2024")
 
         Returns:
             True if extraction is needed, False otherwise.
         """
-        db_path = DatabaseManager.get_extracted_db_path(version)
+        db_path = DatabaseManager.get_extracted_db_path()
         exists = db_path.exists()
 
         if not exists:
-            utils.log_info(f"Database extraction needed for version {version}")
+            utils.log_info(f"Database extraction needed for version {WN_FILE_VERSION}")
 
         return not exists
 
     @staticmethod
-    def cleanup_old_versions(current_version: str) -> None:
+    def cleanup_old_versions() -> None:
         """
         Remove old database directories for versions other than current.
-
-        Args:
-            current_version: The current file version string to preserve.
         """
         data_dir = Path(utils.DATA_DIR)
-        current_dir_name = f"wn-{current_version}"
+        current_dir_name = f"wn-{WN_FILE_VERSION}"
 
         if not data_dir.exists():
             return
@@ -102,19 +91,18 @@ class DatabaseManager:
                     utils.log_error(f"Failed to remove old database directory {item}: {e}")
 
     @staticmethod
-    def extract_database(compressed_path: Path, version: str) -> bool:
+    def extract_database(compressed_path: Path) -> bool:
         """
         Extract compressed database to user data directory.
 
         Args:
             compressed_path: Path to the compressed .zst file
-            version: The file version string (e.g., "oewn-2024")
 
         Returns:
             True if extraction succeeded, False otherwise.
         """
         try:
-            db_path = DatabaseManager.get_extracted_db_path(version)
+            db_path = DatabaseManager.get_extracted_db_path()
             db_path.parent.mkdir(parents=True, exist_ok=True)
 
             utils.log_info(f"Extracting database from {compressed_path} to {db_path}")
@@ -132,30 +120,27 @@ class DatabaseManager:
             return False
 
     @staticmethod
-    def setup(version: str) -> bool:
+    def setup() -> bool:
         """
         Main entry point for database setup.
         Checks if extraction is needed, cleans up old versions, and extracts if necessary.
-
-        Args:
-            version: The file version string (e.g., "oewn-2024")
 
         Returns:
             True if database is ready for use, False otherwise.
         """
         # Check if extraction needed
-        if not DatabaseManager.needs_extraction(version):
+        if not DatabaseManager.needs_extraction():
             utils.log_info("Database already up to date")
             return True
 
         # Find compressed DB in system directories
-        compressed_db = DatabaseManager.find_compressed_db(version)
+        compressed_db = DatabaseManager.find_compressed_db()
         if not compressed_db:
             utils.log_error("No compressed database found - installation may be incomplete")
             return False
 
         # Clean up old versions before extracting new one
-        DatabaseManager.cleanup_old_versions(version)
+        DatabaseManager.cleanup_old_versions()
 
         # Extract new version
-        return DatabaseManager.extract_database(compressed_db, version)
+        return DatabaseManager.extract_database(compressed_db)

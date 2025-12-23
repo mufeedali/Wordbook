@@ -15,7 +15,7 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from rapidfuzz import fuzz, process
 
 from wordbook import base, utils
-from wordbook.constants import RES_PATH, WN_FILE_VERSION
+from wordbook.constants import RES_PATH
 from wordbook.database import DatabaseManager
 from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
@@ -795,7 +795,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Setup database in a background thread."""
         try:
             # Try to setup database (extract if needed)
-            if not DatabaseManager.setup(WN_FILE_VERSION):
+            if not DatabaseManager.setup():
                 # Database setup failed
                 GLib.idle_add(self._on_database_setup_failed)
                 return
@@ -1036,7 +1036,12 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_word_button_clicked(self, _button: Gtk.Button, word: str) -> None:
         """Handles clicks on related word buttons, triggering a new search."""
         self._search_entry.set_text(word)
-        self._search_entry.emit("activate")
+
+        if Settings.get().live_search and self._live_search_delay_timer is not None:
+            GLib.source_remove(self._live_search_delay_timer)
+            self._live_search_delay_timer = None
+
+        self.on_search_clicked()
 
     def _populate_definitions(self, result: dict[str, Any]) -> None:
         """Populates the definitions listbox with the search results."""

@@ -152,14 +152,13 @@
       "name": "wordnet-database",
       "buildsystem": "simple",
       "build-commands": [
-        "install -Dm644 wn-oewn-2024.db.zst /app/share/wordbook/wn-oewn-2024.db.zst"
+        "install -Dm644 wn-oewn-2024-0.14.0.db.zst /app/share/wordbook/wn-oewn-2024-0.14.0.db.zst"
       ],
       "sources": [
         {
           "type": "file",
-          "url": "https://github.com/mufeedali/Wordbook/releases/download/0.6.0/wn.db.zst",
-          "sha256": "2b0a58348621016652e70985baf6de992875162e0f5d3ffe62e9c26185a28d68",
-          "dest-filename": "wn-oewn-2024.db.zst"
+          "url": "https://github.com/mufeedali/Wordbook/releases/download/0.6.0/wn-oewn-2024-0.14.0.db.zst",
+          "sha256": "2b0a58348621016652e70985baf6de992875162e0f5d3ffe62e9c26185a28d68"
         }
       ]
     },

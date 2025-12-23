@@ -47,13 +47,24 @@ class RichProgressHandler(wn.util.ProgressHandler):
         if _progress_context is not None:
             total = kwargs.get("total", 0)
             message = kwargs.get("message", "Processing")
-            self.task_id = _progress_context.add_task(f"[cyan]{message}", total=total or None)
+            task_key = f"_task_{message}"
+            if not hasattr(_progress_context, task_key):
+                # HACK: Ensure "Read" task is created before "Database" task
+                # wn seems to return the wrong order right now.
+                if message == "Database" and not hasattr(_progress_context, "_task_Read"):
+                    _progress_context._task_Read = _progress_context.add_task("[cyan]Read", total=None, visible=False)
+                self.task_id = _progress_context.add_task(f"[cyan]{message}", total=total or None, visible=False)
+                setattr(_progress_context, task_key, self.task_id)
+            else:
+                self.task_id = getattr(_progress_context, task_key)
+                if total:
+                    _progress_context.update(self.task_id, total=total or None)
 
     def update(self, n: int = 1, force: bool = False):
         """Update progress by n bytes."""
         super().update(n, force)
         if _progress_context is not None and self.task_id is not None:
-            _progress_context.advance(self.task_id, n)
+            _progress_context.update(self.task_id, advance=n, visible=True)
 
     def set(self, **kwargs):
         """Update handler parameters."""
