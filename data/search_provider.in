@@ -13,6 +13,8 @@ from gi.repository import GLib, Gio
 pkgdatadir = "@pkgdatadir@"
 localedir = "@localedir@"
 
+sys.path.insert(1, pkgdatadir)
+
 from wordbook import base, utils
 import wn
 

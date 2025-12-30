@@ -320,21 +320,7 @@ def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
     try:
         # Get all words first
         with WN_DATABASE_LOCK:
-            words = list(wn_instance.words())
-
-        # Process lemmas in chunks
-        # This allows other WordNet actions to interrupt between chunks
-        wn_lemmas = []
-        chunk_size = 1000
-        for i in range(0, len(words), chunk_size):
-            chunk = words[i : i + chunk_size]
-            with WN_DATABASE_LOCK:
-                for word in chunk:
-                    try:
-                        wn_lemmas.append(word.lemma())
-                    except Exception as e:
-                        utils.log_warning(f"Error getting lemma for word {e}")
-                        continue
+            wn_lemmas = wn_instance.lemmas()
 
         utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas).")
         return wn_lemmas

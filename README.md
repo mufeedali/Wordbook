@@ -25,12 +25,12 @@ Wordbook
 
 * GTK 4.6+ [Arch: `gtk4`]
 * libadwaita 1.7.0+ [Arch: `libadwaita`]
-* Python 3 [Arch: `python`]
+* Python 3.12+ [Arch: `python`]
 * Python modules:
-    * Standalone WordNet Python module [Arch AUR: `python-wn`]
     * RapidFuzz [Arch: `python-rapidfuzz`]
     * Pydantic [Arch: `python-pydantic`]
     * Python GObject [Arch: `python-gobject`]
+    * ONLY if using Python versions older than 3.14, backports.zstd [Arch: `python-backports-zstd`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 ## Installation
@@ -57,7 +57,15 @@ On NixOS, Wordbook can be installed using the Nix package manager as shown above
   ];
 ```
 
-If you are a packager looking into packaging Wordbook for your distribution, please refer to the [PACKAGING.md](PACKAGING.md) file for some important information.
+## Building from Source
+
+To build Wordbook from source, use Meson:
+
+```bash
+meson setup builddir
+meson compile -C builddir
+meson install -C builddir
+```
 
 ## Contributing
 

@@ -10,7 +10,7 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
-PACKAGES = ["wn", "pydantic", "rapidfuzz", "backports.zstd"]
+PACKAGES = ["pydantic", "rapidfuzz", "backports.zstd"]
 PYTHON_VERSION = "3.13"
 ABI = "cp313"
 ARCHES = {

@@ -47,7 +47,7 @@ moduledir = join_paths(pkgdatadir, meson.project_name())
 
 if get_option('profile') == 'development'
   profile = 'Devel'
-  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
+  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD', check: false).stdout().strip()
   application_id = '@0@.@1@'.format(base_id, profile)
 else
   profile = ''
@@ -63,3 +63,8 @@ gnome.post_install(
   glib_compile_schemas: true,
   update_desktop_database: true,
 )
+
+# Setup development environment
+devenv = environment()
+devenv.append('PYTHONPATH', join_paths(meson.project_source_root(), 'subprojects', 'wn'))
+meson.add_devenv(devenv)

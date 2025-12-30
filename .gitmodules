@@ -1,0 +1,3 @@
+[submodule "subprojects/wn"]
+	path = subprojects/wn
+	url = https://github.com/mufeedali/wn.git

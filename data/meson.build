@@ -1,6 +1,20 @@
 subdir('icons')
 subdir('resources')
 
+if get_option('install_wn_db')
+  custom_target('wn-db',
+    output: 'wn.db.zst',
+    command: [
+      find_program('python3'),
+      join_paths(meson.project_source_root(), 'scripts', 'generate-wn-db.py'),
+      '--output', '@OUTPUT@'
+    ],
+    install: true,
+    install_dir: pkgdatadir,
+    console: true,
+  )
+endif
+
 # Desktop file
 desktop_conf = configuration_data()
 desktop_conf.set('app-id', application_id)

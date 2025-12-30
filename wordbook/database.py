@@ -6,6 +6,7 @@ Database management for pre-built WordNet databases.
 Handles extraction, versioning, and cleanup of compressed database files.
 """
 
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -33,7 +34,14 @@ class DatabaseManager:
         Returns:
             Path to compressed database if found, None otherwise.
         """
-        filename = f"wn-{WN_FILE_VERSION}.db.zst"
+        filename = "wn.db.zst"
+
+        # Check development environment first
+        if "MESON_SOURCE_ROOT" in os.environ:
+            dev_db_path = Path(os.environ["MESON_SOURCE_ROOT"]) / "data" / filename
+            if dev_db_path.is_file():
+                utils.log_info(f"Found compressed database (dev): {dev_db_path}")
+                return dev_db_path
 
         for data_dir in GLib.get_system_data_dirs():
             db_path = Path(data_dir) / "wordbook" / filename

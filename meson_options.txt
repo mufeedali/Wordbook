@@ -8,3 +8,10 @@ option(
   value: 'default',
   description: 'The build profile for Wordbook. One of "default" or "development".'
 )
+
+option(
+  'install_wn_db',
+  type: 'boolean',
+  value: true,
+  description: 'Install the WordNet database file'
+)

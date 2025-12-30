@@ -45,3 +45,9 @@ wordbook_sources = [
 ]
 
 install_data(wordbook_sources, install_dir: moduledir)
+
+install_subdir(
+  join_paths(meson.project_source_root(), 'subprojects/wn/wn'),
+  install_dir: pkgdatadir,
+  exclude_directories: ['__pycache__']
+)

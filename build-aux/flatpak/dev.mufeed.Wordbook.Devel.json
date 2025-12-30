@@ -52,18 +52,13 @@
       "name": "python3-modules",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" \"pydantic\" \"rapidfuzz\" \"backports.zstd\" --no-build-isolation"
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pydantic\" \"rapidfuzz\" \"backports.zstd\" --no-build-isolation"
       ],
       "sources": [
         {
           "type": "file",
           "url": "https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl",
           "sha256": "1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/7f/9c/36c5c37947ebfb8c7f22e0eb6e4d188ee2d53aa3880f3f2744fb894f0cb1/anyio-4.12.0-py3-none-any.whl",
-          "sha256": "dad2376a628f98eeca4881fc56cd06affd18f659b17a747d3ff0307ced94b1bb"
         },
         {
           "type": "file",
@@ -76,31 +71,6 @@
           "url": "https://files.pythonhosted.org/packages/2c/74/a7ae8e421ccb779130d64745d3191daf6da02f37bf7cf099dc10d688d14e/backports_zstd-1.2.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
           "sha256": "4e7340a7fb7bac7607382554b138ae8dbffda0b8af72ce5c639fb86b49a3b2e4",
           "only-arches": ["x86_64"]
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/70/7d/9bc192684cea499815ff478dfcdc13835ddf401365057044fb721ec6bddb/certifi-2025.11.12-py3-none-any.whl",
-          "sha256": "97de8790030bbd5c2d96b7ec782fc2f7820ef8dba6db909ccf95449f2d062d4b"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl",
-          "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl",
-          "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl",
-          "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/0e/61/66938bbb5fc52dbdf84594873d5b51fb1f7c7794e9c0f5bd885f30bc507b/idna-3.11-py3-none-any.whl",
-          "sha256": "771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea"
         },
         {
           "type": "file",
@@ -140,32 +110,32 @@
           "type": "file",
           "url": "https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl",
           "sha256": "4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/25/0e/0655e4f0d8ffdf8216c17a7278eaad04a1a3fa7a0545ca293d5cf5ce4f0c/wn-0.14.0-py3-none-any.whl",
-          "sha256": "535dd9731f24c8cea8ec661744ac7575d05a5607258f5fcc56d1b18bf3164b7f"
         }
       ]
     },
     {
-      "name": "wordnet-database",
+      "name": "wordnet-data",
       "buildsystem": "simple",
       "build-commands": [
-        "install -Dm644 wn-oewn-2024-0.14.0.db.zst /app/share/wordbook/wn-oewn-2024-0.14.0.db.zst"
+        "python3 scripts/generate-wn-db.py --source-file english-wordnet-2024.xml.gz --output wn.db.zst",
+        "install -Dm644 wn.db.zst /app/share/wordbook/wn.db.zst"
       ],
       "sources": [
         {
+          "type": "dir",
+          "path": "../../."
+        },
+        {
           "type": "file",
-          "url": "https://github.com/mufeedali/Wordbook/releases/download/0.6.0/wn-oewn-2024-0.14.0.db.zst",
-          "sha256": "2b0a58348621016652e70985baf6de992875162e0f5d3ffe62e9c26185a28d68"
+          "url": "https://github.com/globalwordnet/english-wordnet/releases/download/2024-edition/english-wordnet-2024.xml.gz",
+          "sha256": "3649b4bea17b2ef424e423299d36f3cc09e52cfa1d9edbd2f733419c0df84182"
         }
       ]
     },
     {
       "name": "wordbook",
       "buildsystem": "meson",
-      "config-opts": ["-Dprofile=development"],
+      "config-opts": ["-Dprofile=development", "-Dinstall_wn_db=false"],
       "sources": [
         {
           "type": "dir",
