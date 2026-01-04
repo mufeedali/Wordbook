@@ -3,7 +3,7 @@ subdir('resources')
 
 if get_option('install_wn_db')
   custom_target('wn-db',
-    output: 'wn.db.zst',
+    output: 'wn-@0@.db.zst'.format(wn_version),
     command: [
       find_program('python3'),
       join_paths(meson.project_source_root(), 'scripts', 'generate-wn-db.py'),

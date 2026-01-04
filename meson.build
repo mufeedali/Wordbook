@@ -54,6 +54,15 @@ else
   application_id = base_id
 endif
 
+git = find_program('git', required: false)
+wn_version = 'unknown'
+if git.found()
+  wn_res = run_command(git, '-C', join_paths(meson.project_source_root(), 'subprojects/wn'), 'rev-parse', '--short', 'HEAD', check: false)
+  if wn_res.returncode() == 0
+    wn_version = wn_res.stdout().strip()
+  endif
+endif
+
 subdir('data')
 subdir('wordbook')
 subdir('po')

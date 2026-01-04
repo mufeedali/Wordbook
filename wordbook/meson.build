@@ -14,6 +14,7 @@ conf.set_quoted('localedir', join_paths(get_option('prefix'), get_option('locale
 conf.set_quoted('pkgdatadir', pkgdatadir)
 conf.set('datadir', get_option('datadir'))
 conf.set('prefix', get_option('prefix'))
+conf.set('WN_FILE_VERSION', wn_version)
 
 configure_file(
   input: 'wordbook.in',
@@ -21,6 +22,14 @@ configure_file(
   configuration: conf,
   install: true,
   install_dir: get_option('bindir')
+)
+
+configure_file(
+  input: 'constants.py.in',
+  output: 'constants.py',
+  configuration: conf,
+  install: true,
+  install_dir: moduledir
 )
 
 program_executable = join_paths(
@@ -41,7 +50,6 @@ wordbook_sources = [
   'settings_window.py',
   'utils.py',
   'window.py',
-  'constants.py',
 ]
 
 install_data(wordbook_sources, install_dir: moduledir)

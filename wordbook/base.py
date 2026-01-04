@@ -27,12 +27,9 @@ from wordbook.constants import (
 
 POOL = ThreadPoolExecutor()
 
-# Global lock for WordNet database operations to prevent concurrent access.
-# This is critical for ensuring that wordlist loading and search operations
-# do not interfere with each other.
+# WordNet database access lock
 WN_DATABASE_LOCK = threading.Lock()
 
-# Versioned data directory for WordNet database
 WN_DIR: str = os.path.join(utils.DATA_DIR, f"wn-{WN_FILE_VERSION}")
 
 wn.config.data_directory = WN_DIR
@@ -292,7 +289,6 @@ def get_wn_instance(reloader: Callable[[], None]) -> wn.Wordnet:
         wn_instance: wn.Wordnet = wn.Wordnet(lexicon=WN_DB_VERSION)
         utils.log_info(f"WordNet instance ({WN_DB_VERSION}) created and ready.")
         return wn_instance
-
     except (wn.Error, wn.DatabaseError) as e:
         utils.log_error(f"WordNet initialization failed: {e}. Triggering reloader.")
         reloader()

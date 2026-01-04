@@ -34,11 +34,11 @@ class DatabaseManager:
         Returns:
             Path to compressed database if found, None otherwise.
         """
-        filename = "wn.db.zst"
+        filename = f"wn-{WN_FILE_VERSION}.db.zst"
 
-        # Check development environment first
         if "MESON_SOURCE_ROOT" in os.environ:
-            dev_db_path = Path(os.environ["MESON_SOURCE_ROOT"]) / "data" / filename
+            build_root = Path(os.environ.get("MESON_BUILD_ROOT", os.environ["MESON_SOURCE_ROOT"]))
+            dev_db_path = build_root / "data" / filename
             if dev_db_path.is_file():
                 utils.log_info(f"Found compressed database (dev): {dev_db_path}")
                 return dev_db_path
