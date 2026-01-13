@@ -12,19 +12,15 @@ from __future__ import annotations
 import logging
 import os
 import traceback
-from typing import TYPE_CHECKING
 
 from gi.repository import GLib
-
-if TYPE_CHECKING:
-    from logging import Logger
 
 CONFIG_DIR: str = os.path.join(GLib.get_user_config_dir(), "wordbook")
 CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.conf")
 DATA_DIR: str = os.path.join(GLib.get_user_data_dir(), "wordbook")
 
 logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
-LOGGER: Logger = logging.getLogger()
+LOGGER: logging.Logger = logging.getLogger()
 
 
 def log_init(debug: bool) -> None:
