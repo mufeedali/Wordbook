@@ -25,9 +25,9 @@ else:
     import backports.zstd as zstd
 
 # WordNet XML download URLs (primary + fallback)
+# 2025 doesn't have GitHub-hosted assets yet
 WORDNET_URLS = [
-    "https://github.com/globalwordnet/english-wordnet/releases/download/2024-edition/english-wordnet-2024.xml.gz",
-    "https://en-word.net/static/english-wordnet-2024.xml.gz",
+    "https://en-word.net/static/english-wordnet-2025-plus.xml.gz",
 ]
 
 
@@ -146,7 +146,9 @@ def main():
         metavar="LEVEL",
         help="Zstd level 1-22 (default: 15)",
     )
-    parser.add_argument("--source-file", type=Path, help="Path to local lexicon file (XML/GZ). If not provided, downloads from GitHub.")
+    parser.add_argument(
+        "--source-file", type=Path, help="Path to local lexicon file (XML/GZ). If not provided, downloads from GitHub."
+    )
     parser.add_argument("--output", type=Path, help="Output path for the compressed database")
 
     args = parser.parse_args()

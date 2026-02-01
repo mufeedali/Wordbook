@@ -117,8 +117,8 @@
       "name": "wordnet-data",
       "buildsystem": "simple",
       "build-commands": [
-        "python3 scripts/generate-wn-db.py --source-file english-wordnet-2024.xml.gz --output wn.db.zst",
-        "install -Dm644 wn.db.zst /app/share/wordbook/wn.db.zst"
+        "python3 scripts/generate-wn-db.py --source-file english-wordnet-2025-plus.xml.gz --output wn.db.zst",
+        "WN_VERSION=$(git -C subprojects/wn rev-parse --short HEAD) && install -Dm644 wn.db.zst /app/share/wordbook/wn-${WN_VERSION}.db.zst"
       ],
       "sources": [
         {
@@ -127,8 +127,8 @@
         },
         {
           "type": "file",
-          "url": "https://github.com/globalwordnet/english-wordnet/releases/download/2024-edition/english-wordnet-2024.xml.gz",
-          "sha256": "3649b4bea17b2ef424e423299d36f3cc09e52cfa1d9edbd2f733419c0df84182"
+          "url": "https://en-word.net/static/english-wordnet-2025-plus.xml.gz",
+          "sha256": "31f4af16c54b532fd5484d4cc33aee588a31bb5b70683ae8197842fde5b586bc"
         }
       ]
     },

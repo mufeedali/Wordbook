@@ -16,7 +16,6 @@ from gi.repository import GLib
 from wordbook import utils
 from wordbook.constants import WN_FILE_VERSION
 
-# Import appropriate zstd module based on Python version
 if sys.version_info >= (3, 14):
     from compression import zstd
 else:

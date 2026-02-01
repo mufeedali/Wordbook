@@ -10,7 +10,7 @@ Contains all pure constant values used throughout the application.
 RES_PATH = "/dev/mufeed/Wordbook"
 
 # WordNet database version information
-WN_DB_VERSION: str = "oewn:2024"
+WN_DB_VERSION: str = "oewn:2025+"
 WN_FILE_VERSION: str = "@WN_FILE_VERSION@"
 
 # Part of speech mapping from WordNet codes to human-readable names
