@@ -452,8 +452,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         }
         Settings.get().batch_update(settings_to_update)
 
-        base.POOL.shutdown(wait=False)
-
     def _on_entry_changed(self, _entry):
         """Handles text changes in the search entry, triggering live search and completions."""
         self._completion_text = _entry.get_text()
@@ -814,50 +812,17 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._page_switch(Page.DB_ERROR)
 
     def _init_wordnet(self):
-        """Initializes the WordNet instance, handling potential failures."""
-
-        def handle_init_failure():
-            """Callback passed to the backend to handle initialization failures."""
-            GLib.idle_add(self._on_database_setup_failed)
-
-        wn_future = base.get_wn_instance(handle_init_failure)
-        wn_future.add_done_callback(self._on_wordnet_init_complete)
-
-    def _on_wordnet_init_complete(self, future):
-        """Callback for when WordNet initialization is complete."""
-        if future.exception():
-            return  # Exception is handled by the reloader callback
-
-        try:
-            self._wn_instance = future.result()
-            if not self._wn_instance:
-                utils.log_warning("WordNet instance is None")
-                self._on_database_setup_failed()
-                return
-
-            self._complete_initialization()
-
-            wordlist_future = base.get_wn_wordlist(self._wn_instance)
-            wordlist_future.add_done_callback(self._on_wordlist_loaded)
-
-        except Exception as e:
-            utils.log_warning(f"Error getting WordNet instance: {e}")
+        self._wn_instance = base.get_wn_instance()
+        if not self._wn_instance:
             self._on_database_setup_failed()
-
-    def _on_wordlist_loaded(self, future):
-        """Callback for when the wordlist has been loaded."""
-        if future.exception():
-            utils.log_error(f"Error loading wordlist: {future.exception()}")
             return
 
-        try:
-            wordlist = future.result()
-            GLib.idle_add(self._on_wordlist_loaded_success, wordlist)
-        except Exception as e:
-            utils.log_error(f"Error getting wordlist result: {e}")
+        self._complete_initialization()
+        base.get_wn_wordlist(
+            self._wn_instance, lambda wordlist: GLib.idle_add(self._on_wordlist_loaded, wordlist)
+        )
 
-    def _on_wordlist_loaded_success(self, wordlist):
-        """Handles successful wordlist loading."""
+    def _on_wordlist_loaded(self, wordlist):
         wordlist.sort(key=str.lower)
         self._wn_wordlist = wordlist
         utils.log_info(f"Wordlist loaded with {len(self._wn_wordlist)} words. Completions now available.")

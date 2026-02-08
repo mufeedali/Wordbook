@@ -10,7 +10,6 @@ import os
 import subprocess
 import threading
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from typing import Any
 
@@ -25,27 +24,12 @@ from wordbook.constants import (
     WN_FILE_VERSION,
 )
 
-POOL = ThreadPoolExecutor()
-
-# WordNet database access lock
 WN_DATABASE_LOCK = threading.Lock()
 
 WN_DIR: str = os.path.join(utils.DATA_DIR, f"wn-{WN_FILE_VERSION}")
 
 wn.config.data_directory = WN_DIR
 wn.config.allow_multithreading = True
-
-
-def _threadpool(func: Callable) -> Callable:
-    """
-    Wraps around a function allowing it to run in a separate thread and
-    return a future object.
-    """
-
-    def wrap(*args: Any, **kwargs: Any) -> Any:
-        return (POOL).submit(func, *args, **kwargs)
-
-    return wrap
 
 
 def clean_search_terms(search_term: str) -> str:
@@ -271,58 +255,33 @@ def get_version_info(app_version: str) -> None:
         print(f"Could not retrieve espeak-ng version information (OS error: {ex})")
 
 
-@_threadpool
-def get_wn_instance(reloader: Callable[[], None]) -> wn.Wordnet:
-    """
-    Initializes the WordNet instance in a thread.
-
-    Handles potential WordNet database errors and triggers the reloader function.
-
-    Args:
-        reloader: A function to call if WordNet initialization fails (e.g., to trigger download).
-
-    Returns:
-        The initialized WordNet instance.
-    """
+def get_wn_instance() -> wn.Wordnet | None:
     utils.log_info("Initializing WordNet...")
     try:
-        wn_instance: wn.Wordnet = wn.Wordnet(lexicon=WN_DB_VERSION)
+        wn_instance = wn.Wordnet(lexicon=WN_DB_VERSION)
         utils.log_info(f"WordNet instance ({WN_DB_VERSION}) created and ready.")
         return wn_instance
     except (wn.Error, wn.DatabaseError) as e:
-        utils.log_error(f"WordNet initialization failed: {e}. Triggering reloader.")
-        reloader()
-        raise e
+        utils.log_error(f"WordNet initialization failed: {e}")
+        return None
     except Exception as e:
-        utils.log_error(f"Unexpected error during WordNet initialization: {e}. Retrying.")
-        reloader()
-        raise e
+        utils.log_error(f"Unexpected error during WordNet initialization: {e}")
+        return None
 
 
-@_threadpool
-def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
-    """
-    Fetches the word list from an initialized WordNet instance.
-    Uses _threadpool decorator to run in a separate thread.
-    Uses WN_DATABASE_LOCK for each individual lemma access to allow search operations to interrupt.
+def get_wn_wordlist(wn_instance: wn.Wordnet, on_complete: Callable[[list[str]], None]):
+    def fetch():
+        try:
+            with WN_DATABASE_LOCK:
+                lemmas = wn_instance.lemmas()
+            utils.log_info(f"WordNet wordlist fetched ({len(lemmas)} lemmas).")
+            on_complete(lemmas)
+        except Exception as e:
+            utils.log_error(f"Error fetching WordNet wordlist: {e}")
+            on_complete([])
 
-    Args:
-        wn_instance: The initialized WordNet instance.
-
-    Returns:
-        A list of lemmas from the WordNet database.
-    """
     utils.log_info("Fetching WordNet wordlist...")
-    try:
-        # Get all words first
-        with WN_DATABASE_LOCK:
-            wn_lemmas = wn_instance.lemmas()
-
-        utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas).")
-        return wn_lemmas
-    except Exception as e:
-        utils.log_error(f"Error fetching WordNet wordlist: {e}")
-        return []
+    threading.Thread(target=fetch, daemon=True).start()
 
 
 def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any] | None:
