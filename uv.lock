@@ -290,11 +290,10 @@ source = { editable = "subprojects/wn" }
 [package.metadata]
 requires-dist = [
     { name = "httpx", marker = "extra == 'download'" },
-    { name = "starlette", marker = "extra == 'web'" },
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "wn-editor", marker = "extra == 'editor'" },
 ]
-provides-extras = ["download", "editor", "web"]
+provides-extras = ["download", "editor"]
 
 [[package]]
 name = "wordbook"
@@ -315,7 +314,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "backports-zstd", marker = "python_full_version < '3.14'" },
+    { name = "backports-zstd", marker = "python_full_version < '3.14'", specifier = ">=1.2.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "rapidfuzz", specifier = ">=3.14.3" },
     { name = "wn", editable = "subprojects/wn" },

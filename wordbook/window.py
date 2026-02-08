@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import annotations
@@ -451,6 +451,8 @@ class WordbookWindow(Adw.ApplicationWindow):
             "window_height": height,
         }
         Settings.get().batch_update(settings_to_update)
+
+        base.POOL.shutdown(wait=False)
 
     def _on_entry_changed(self, _entry):
         """Handles text changes in the search entry, triggering live search and completions."""

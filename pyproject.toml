@@ -3,7 +3,7 @@ name = "Wordbook"
 dynamic = ["version"]
 requires-python = ">=3.12"
 dependencies = [
-    "backports.zstd; python_version < '3.14'",
+    "backports.zstd>=1.2.0; python_version < '3.14'",
     "pydantic>=2.12.5",
     "rapidfuzz>=3.14.3",
     "wn",

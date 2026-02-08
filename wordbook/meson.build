@@ -25,7 +25,7 @@ configure_file(
 )
 
 configure_file(
-  input: 'constants.py.in',
+  input: 'constants.py',
   output: 'constants.py',
   configuration: conf,
   install: true,

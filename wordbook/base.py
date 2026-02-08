@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
@@ -246,7 +246,7 @@ def get_pronunciation(term: str, accent: str = "us") -> str | None:
 def get_version_info(app_version: str) -> None:
     """Prints application and dependency version info to the console."""
     print(f"Wordbook - {app_version}")
-    print("Copyright 2016-2025 Mufeed Ali")
+    print("Copyright 2016-2026 Mufeed Ali")
     print()
     try:
         process = subprocess.Popen(

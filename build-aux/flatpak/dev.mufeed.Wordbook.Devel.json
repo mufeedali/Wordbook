@@ -127,7 +127,7 @@
         },
         {
           "type": "file",
-          "url": "https://en-word.net/static/english-wordnet-2025-plus.xml.gz",
+          "url": "https://github.com/globalwordnet/english-wordnet/releases/download/2025-edition/english-wordnet-2025-plus.xml.gz",
           "sha256": "31f4af16c54b532fd5484d4cc33aee588a31bb5b70683ae8197842fde5b586bc"
         }
       ]

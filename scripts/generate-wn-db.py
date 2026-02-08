@@ -25,8 +25,8 @@ else:
     import backports.zstd as zstd
 
 # WordNet XML download URLs (primary + fallback)
-# 2025 doesn't have GitHub-hosted assets yet
 WORDNET_URLS = [
+    "https://github.com/globalwordnet/english-wordnet/releases/download/2025-edition/english-wordnet-2025-plus.xml.gz",
     "https://en-word.net/static/english-wordnet-2025-plus.xml.gz",
 ]
 
