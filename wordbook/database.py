@@ -126,11 +126,7 @@ class DatabaseManager:
 
         except Exception as e:
             utils.log_error(f"Database extraction failed: {e}")
-            if tmp_path.exists():
-                try:
-                    tmp_path.unlink()
-                except OSError:
-                    pass
+            tmp_path.unlink(missing_ok=True)
             return False
 
     @staticmethod
