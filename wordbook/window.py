@@ -385,6 +385,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._active_thread = None
 
     def trigger_search(self, text):
+        if not text or not text.strip():
+            return
         self._search_entry.handler_block_by_func(self._on_entry_changed)
         self._search_entry.set_text(text)
         self._search_entry.handler_unblock_by_func(self._on_entry_changed)
@@ -751,11 +753,10 @@ class WordbookWindow(Adw.ApplicationWindow):
             with self._completion_lock:
                 text = self._completion_text
 
-            completer_liststore = Gtk.ListStore(str)
             complete_list = []
-            seen_lower = set()
 
-            if self._wn_wordlist:
+            if text and text.strip() and self._wn_wordlist:
+                seen_lower = set()
                 search_term = text.lower().replace(" ", "_")
                 start_idx = bisect.bisect_left(self._wn_wordlist, search_term, key=str.lower)
 
@@ -774,16 +775,23 @@ class WordbookWindow(Adw.ApplicationWindow):
                         seen_lower.add(display_lower)
                         complete_list.append(display_word)
 
-            for item in complete_list:
-                completer_liststore.append((item,))
-
-            GLib.idle_add(self.completer.set_model, completer_liststore)
-            GLib.idle_add(self.completer.complete)
-
             with self._completion_lock:
-                if self._completion_text == text:
-                    self._completion_pending = False
-                    break
+                if self._completion_text != text:
+                    continue
+
+                GLib.idle_add(self._update_completion_ui, complete_list)
+                self._completion_pending = False
+                break
+
+    def _update_completion_ui(self, items):
+        """Updates the completion model on the main thread."""
+        completer_liststore = Gtk.ListStore(str)
+        for item in items:
+            completer_liststore.append((item,))
+
+        self.completer.set_model(completer_liststore)
+        self.completer.complete()
+        return False
 
     def _set_header_sensitive(self, status):
         """Disables or enables header buttons during long-running operations."""
