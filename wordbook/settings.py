@@ -103,7 +103,7 @@ class Settings:
     def __init__(self):
         """Initialize settings."""
         self._autosave_disabled = True
-        self._config_file: Path = Path(utils.CONFIG_DIR) / "wordbook.json"
+        self._config_file: Path = Path(utils.CONFIG_FILE)
 
         # Ensure config directory exists
         os.makedirs(utils.CONFIG_DIR, exist_ok=True)

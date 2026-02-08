@@ -16,7 +16,7 @@ import traceback
 from gi.repository import GLib
 
 CONFIG_DIR: str = os.path.join(GLib.get_user_config_dir(), "wordbook")
-CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.conf")
+CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.json")
 DATA_DIR: str = os.path.join(GLib.get_user_data_dir(), "wordbook")
 
 logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")

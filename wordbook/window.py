@@ -55,53 +55,62 @@ class HistoryObject(GObject.Object):
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
-    search_button: Gtk.Button = Gtk.Template.Child("search_button")  # type: ignore
+    # Header Bar
+    search_button: Gtk.Button = Gtk.Template.Child("search_button")
+    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")
+    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")
+    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")
+    _split_view_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("split_view_toggle_button")
+    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")
 
-    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")  # type: ignore
-    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")  # type: ignore
-    _split_view_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("split_view_toggle_button")  # type: ignore
-    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")  # type: ignore
-    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")  # type: ignore
-    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")  # type: ignore
-    _main_split_view: Adw.OverlaySplitView = Gtk.Template.Child("main_split_view")  # type: ignore
-    _history_stack: Gtk.ListBox = Gtk.Template.Child("history_stack")  # type: ignore
-    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
-    _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")  # type: ignore
-    _toast_overlay: Adw.ToastOverlay = Gtk.Template.Child("toast_overlay")  # type: ignore
-    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
-    _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")  # type: ignore
-    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
-    _term_view: Gtk.Label = Gtk.Template.Child("term_view")  # type: ignore
-    _db_error_status_page: Adw.StatusPage = Gtk.Template.Child("db_error_status_page")  # type: ignore
-    _search_fail_status_page: Adw.StatusPage = Gtk.Template.Child("search_fail_status_page")  # type: ignore
-    _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")  # type: ignore
-    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
-    _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")  # type: ignore
-    _favorites_filter_button: Gtk.ToggleButton = Gtk.Template.Child("favorites_filter_button")  # type: ignore
+    # Sidebar (History)
+    _history_stack: Adw.ViewStack = Gtk.Template.Child("history_stack")
+    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")
+    _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")
+    _favorites_filter_button: Gtk.ToggleButton = Gtk.Template.Child("favorites_filter_button")
 
-    _style_manager: Adw.StyleManager | None = None
+    # Main Content
+    _main_split_view: Adw.OverlaySplitView = Gtk.Template.Child("main_split_view")
+    _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")
+    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")
+    _toast_overlay: Adw.ToastOverlay = Gtk.Template.Child("toast_overlay")
 
+    # Definition View
+    _term_view: Gtk.Label = Gtk.Template.Child("term_view")
+    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")
+    _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")
+
+    # Status Pages
+    _db_error_status_page: Adw.StatusPage = Gtk.Template.Child("db_error_status_page")
+    _search_fail_status_page: Adw.StatusPage = Gtk.Template.Child("search_fail_status_page")
+    _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")
+    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")
+
+    # Event Controllers
+    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")
+
+    # WordNet
     _wn_instance: base.wn.Wordnet | None = None
     _wn_wordlist: list[str] = []
 
-    _doubled: bool = False
-    _completion_request_count: int = 0
+    # Search
     _searched_term: str | None = None
-    _search_history: Gio.ListStore | None = None
     _active_thread: threading.Thread | None = None
     _search_cancellation_event: threading.Event | None = None
-    _primary_clipboard_text: str | None = None
-    _show_favorites_only: bool = False
+    _completion_request_count: int = 0
+    _completion_text: str = ""
+    _live_search_delay_timer = None
 
-    # A timer is used to delay adding terms to history during live search,
-    # preventing every keystroke from being saved.
+    # History
+    _search_history: Gio.ListStore | None = None
+    _show_favorites_only: bool = False
     _history_delay_timer = None
     _pending_history_text = None
 
-    # A timer for live search to avoid searching on every keystroke.
-    _live_search_delay_timer = None
-
-    # A flag to queue auto-pasting until the window is active.
+    # UI
+    _style_manager: Adw.StyleManager | None = None
+    _doubled: bool = False
+    _primary_clipboard_text: str | None = None
     _auto_paste_queued: bool = False
 
     def __init__(self, term="", auto_paste_requested=False, **kwargs):
@@ -813,9 +822,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             return
 
         self._complete_initialization()
-        base.get_wn_wordlist(
-            self._wn_instance, lambda wordlist: GLib.idle_add(self._on_wordlist_loaded, wordlist)
-        )
+        base.get_wn_wordlist(self._wn_instance, lambda wordlist: GLib.idle_add(self._on_wordlist_loaded, wordlist))
 
     def _on_wordlist_loaded(self, wordlist):
         wordlist.sort(key=str.lower)

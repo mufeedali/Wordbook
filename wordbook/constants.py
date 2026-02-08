@@ -3,8 +3,10 @@
 
 """Constants module for Wordbook."""
 
+
 def _define(val: str, default: str) -> str:
     return default if val.startswith("@") else val
+
 
 RES_PATH = "/dev/mufeed/Wordbook"
 
