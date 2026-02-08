@@ -283,7 +283,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Callback for the 'toggle-favorites' action. Toggles the history filter."""
         self._toggle_favorites_filter()
 
-    def on_search_clicked(self, _button=None, pass_check=False, text=None):
+    def on_search_clicked(self, _button=None, text=None):
         """Initiates a search, cancelling any previous search."""
         self._clear_definitions()
 
@@ -303,12 +303,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_cancellation_event = threading.Event()
         self._active_thread = threading.Thread(
             target=self.threaded_search,
-            args=[text, pass_check, self._search_cancellation_event],
+            args=[text, self._search_cancellation_event],
             daemon=True,
         )
         self._active_thread.start()
 
-    def threaded_search(self, text, pass_check, cancellation_event):
+    def threaded_search(self, text, cancellation_event):
         """
         Performs the search in a background thread.
         This prevents the UI from freezing during network or intensive search operations.
@@ -376,15 +376,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._active_thread = None
 
     def trigger_search(self, text):
-        """A convenience method to trigger a search from other parts of the app."""
-        # Temporarily block the changed signal to prevent live search triggering
-        GLib.idle_add(self._search_entry.handler_block_by_func, self._on_entry_changed)
-        # Set text
-        GLib.idle_add(self._search_entry.set_text, text)
-        # Re-enable the changed signal
-        GLib.idle_add(self._search_entry.handler_unblock_by_func, self._on_entry_changed)
-        # Perform the actual search
-        GLib.idle_add(self.on_search_clicked, None, False, text)
+        self._search_entry.handler_block_by_func(self._on_entry_changed)
+        self._search_entry.set_text(text)
+        self._search_entry.handler_unblock_by_func(self._on_entry_changed)
+        self.on_search_clicked(text=text)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         """Handles the first part of a double-click event on the definition view."""
