@@ -6,7 +6,7 @@ dependencies = [
     "backports.zstd>=1.2.0; python_version < '3.14'",
     "pydantic>=2.12.5",
     "rapidfuzz>=3.14.3",
-    "wn",
+    "wn>=1.0.0",
 ]
 
 [tool.uv]
