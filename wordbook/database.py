@@ -90,7 +90,7 @@ class DatabaseManager:
 
         for item in data_dir.iterdir():
             # Check if it's a wn-* directory and not the current version
-            if item.is_dir() and item.name.startswith("wn") and item.name != current_dir_name:
+            if item.is_dir() and item.name.startswith("wn-") and item.name != current_dir_name:
                 utils.log_info(f"Removing old database version: {item}")
                 try:
                     shutil.rmtree(item)
@@ -108,22 +108,29 @@ class DatabaseManager:
         Returns:
             True if extraction succeeded, False otherwise.
         """
+        db_path = DatabaseManager.get_extracted_db_path()
+        tmp_path = db_path.with_suffix(".tmp")
+
         try:
-            db_path = DatabaseManager.get_extracted_db_path()
             db_path.parent.mkdir(parents=True, exist_ok=True)
 
-            utils.log_info(f"Extracting database from {compressed_path} to {db_path}")
+            utils.log_info(f"Extracting database from {compressed_path} to {tmp_path}")
 
-            # Extract using zstd (same API for both compression.zstd and backports.zstd)
             with zstd.open(compressed_path, "rb") as src:
-                with open(db_path, "wb") as dst:
+                with open(tmp_path, "wb") as dst:
                     shutil.copyfileobj(src, dst)
 
+            os.replace(tmp_path, db_path)
             utils.log_info("Database extraction complete")
             return True
 
         except Exception as e:
             utils.log_error(f"Database extraction failed: {e}")
+            if tmp_path.exists():
+                try:
+                    tmp_path.unlink()
+                except OSError:
+                    pass
             return False
 
     @staticmethod

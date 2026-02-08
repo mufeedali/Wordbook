@@ -97,7 +97,8 @@ class WordbookWindow(Adw.ApplicationWindow):
     _searched_term: str | None = None
     _active_thread: threading.Thread | None = None
     _search_cancellation_event: threading.Event | None = None
-    _completion_request_count: int = 0
+    _completion_lock: threading.Lock
+    _completion_pending: bool = False
     _completion_text: str = ""
     _live_search_delay_timer = None
 
@@ -124,9 +125,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         app: Application | None = self.get_application()
         if not app:
-            # Error out here
-            utils.log_error("Failed to get application instance in WordbookWindow.__init__")
-            return
+            raise RuntimeError("Failed to get application instance in WordbookWindow.__init__")
 
         if app.development_mode:
             self.get_style_context().add_class("devel")
@@ -137,6 +136,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def setup_widgets(self):
         """Sets up widgets, binds models, and connects signal handlers."""
+        self._completion_lock = threading.Lock()
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._history_listbox.bind_model(self._search_history, self._create_history_label)
         self._history_listbox.connect("row-activated", self._on_history_item_activated)
@@ -325,17 +325,17 @@ class WordbookWindow(Adw.ApplicationWindow):
         if cancellation_event.is_set():
             return
 
-        self._searched_term = text
-
         out = self._search(text)
 
         if cancellation_event.is_set():
             return
 
-        GLib.idle_add(self._on_search_finished, out)
+        GLib.idle_add(self._on_search_finished, text, out)
 
-    def _on_search_finished(self, result):
+    def _on_search_finished(self, search_term, result):
         """Handles the result of a search on the main thread."""
+        self._searched_term = search_term
+
         if not result:
             self._page_switch(Page.WELCOME)
             return
@@ -458,13 +458,14 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_entry_changed(self, _entry):
         """Handles text changes in the search entry, triggering live search and completions."""
-        self._completion_text = _entry.get_text()
-        self._completion_request_count += 1
-        if self._completion_request_count == 1:
-            threading.Thread(
-                target=self._update_completions,
-                daemon=True,
-            ).start()
+        with self._completion_lock:
+            self._completion_text = _entry.get_text()
+            if not self._completion_pending:
+                self._completion_pending = True
+                threading.Thread(
+                    target=self._update_completions,
+                    daemon=True,
+                ).start()
 
         # Show/hide clear button based on whether there's text
         text = self._search_entry.get_text()
@@ -742,22 +743,24 @@ class WordbookWindow(Adw.ApplicationWindow):
                 _("Invalid input"),
                 _("Nothing definable was found in your search input"),
             )
-        self._searched_term = None
         return None
 
     def _update_completions(self):
         """Updates the search entry's completion model based on the current text."""
-        while self._completion_request_count > 0:
-            text = self._completion_text
+        while True:
+            with self._completion_lock:
+                text = self._completion_text
+
             completer_liststore = Gtk.ListStore(str)
-            _complete_list = []
+            complete_list = []
+            seen_lower = set()
 
             if self._wn_wordlist:
                 search_term = text.lower().replace(" ", "_")
                 start_idx = bisect.bisect_left(self._wn_wordlist, search_term, key=str.lower)
 
                 for i in range(start_idx, len(self._wn_wordlist)):
-                    if len(_complete_list) >= 10:
+                    if len(complete_list) >= 10:
                         break
 
                     original_word = self._wn_wordlist[i]
@@ -766,15 +769,21 @@ class WordbookWindow(Adw.ApplicationWindow):
                         break
 
                     display_word = original_word.replace("_", " ")
-                    if display_word not in _complete_list:
-                        _complete_list.append(display_word)
+                    display_lower = display_word.lower()
+                    if display_lower not in seen_lower:
+                        seen_lower.add(display_lower)
+                        complete_list.append(display_word)
 
-            for item in _complete_list:
+            for item in complete_list:
                 completer_liststore.append((item,))
 
-            self._completion_request_count -= 1
             GLib.idle_add(self.completer.set_model, completer_liststore)
             GLib.idle_add(self.completer.complete)
+
+            with self._completion_lock:
+                if self._completion_text == text:
+                    self._completion_pending = False
+                    break
 
     def _set_header_sensitive(self, status):
         """Disables or enables header buttons during long-running operations."""

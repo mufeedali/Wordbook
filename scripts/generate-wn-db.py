@@ -22,7 +22,12 @@ import wn.util
 if sys.version_info >= (3, 14):
     from compression import zstd
 else:
-    import backports.zstd as zstd
+    try:
+        import backports.zstd as zstd
+    except ImportError:
+        print("Error: 'backports.zstd' is required for Python < 3.14")
+        print("Install with: pip install backports.zstd")
+        sys.exit(1)
 
 # WordNet XML download URLs (primary + fallback)
 WORDNET_URLS = [
