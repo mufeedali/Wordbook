@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
@@ -12,22 +12,15 @@ from __future__ import annotations
 import logging
 import os
 import traceback
-from typing import TYPE_CHECKING
 
 from gi.repository import GLib
 
-if TYPE_CHECKING:
-    from logging import Logger
-
-RES_PATH = "/dev/mufeed/Wordbook"
-
 CONFIG_DIR: str = os.path.join(GLib.get_user_config_dir(), "wordbook")
-CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.conf")
+CONFIG_FILE: str = os.path.join(CONFIG_DIR, "wordbook.json")
 DATA_DIR: str = os.path.join(GLib.get_user_data_dir(), "wordbook")
-WN_DIR: str = os.path.join(DATA_DIR, "wn")
 
 logging.basicConfig(format="%(asctime)s - [%(levelname)s] [%(threadName)s] (%(module)s:%(lineno)d) %(message)s")
-LOGGER: Logger = logging.getLogger()
+LOGGER: logging.Logger = logging.getLogger()
 
 
 def log_init(debug: bool) -> None:

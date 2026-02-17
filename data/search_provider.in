@@ -1,7 +1,7 @@
 #!@PYTHON@
 
 # -*- coding: utf-8 -*-
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
@@ -13,10 +13,12 @@ from gi.repository import GLib, Gio
 pkgdatadir = "@pkgdatadir@"
 localedir = "@localedir@"
 
+sys.path.insert(1, pkgdatadir)
+
 from wordbook import base, utils
 import wn
 
-wn.config.data_directory = os.path.join(utils.WN_DIR)
+wn.config.data_directory = base.WN_DIR
 wn.config.allow_multithreading = True
 
 dbus_interface_description = """

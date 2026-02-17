@@ -5,7 +5,6 @@
   "sdk": "org.gnome.Sdk",
   "command": "wordbook",
   "finish-args": [
-    "--share=network",
     "--socket=pulseaudio",
     "--share=ipc",
     "--device=dri",
@@ -30,9 +29,10 @@
       "name": "pcaudiolib",
       "sources": [
         {
-          "type": "archive",
-          "url": "https://github.com/espeak-ng/pcaudiolib/archive/1.2.tar.gz",
-          "sha256": "44b9d509b9eac40a0c61585f756d76a7b555f732e8b8ae4a501c8819c59c6619"
+          "type": "git",
+          "url": "https://github.com/espeak-ng/pcaudiolib.git",
+          "tag": "1.3",
+          "commit": "e907571bad7dee296fb56a409a0f7c5a0c57d38a"
         }
       ]
     },
@@ -52,54 +52,9 @@
       "name": "python3-modules",
       "buildsystem": "simple",
       "build-commands": [
-        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"wn\" \"pydantic\" \"rapidfuzz\" --no-build-isolation"
+        "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"pydantic\" \"rapidfuzz\" \"backports.zstd\" --no-build-isolation"
       ],
       "sources": [
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/a1/ee/48ca1a7c89ffec8b6a0c5d02b89c305671d5ffd8d3c94acf8b8c408575bb/anyio-4.9.0-py3-none-any.whl",
-            "sha256": "9f76d541cad6e36af7beb62e978876f3b41e3e04f2c1fbf0884604c0a9c4d93c"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/84/ae/320161bd181fc06471eed047ecce67b693fd7515b16d495d8932db763426/certifi-2025.6.15-py3-none-any.whl",
-            "sha256": "2e0c7ce7cb5d8f8634ca55d2ba7e6ec2689a2fd6537d8dec1296a477a4910057"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl",
-            "sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl",
-            "sha256": "2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl",
-            "sha256": "d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl",
-            "sha256": "946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl",
-            "sha256": "2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/6e/c2/61d3e0f47e2b74ef40a68b9e6ad5984f6241a942f7cd3bbfbdbd03861ea9/tomli-2.2.1-py3-none-any.whl",
-            "sha256": "cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc"
-        },
-        {
-            "type": "file",
-            "url": "https://files.pythonhosted.org/packages/65/a8/d6cc78f0cb30434207be11f09e0b2f1271eac6acac935807a0d23896b9d5/wn-0.13.0-py3-none-any.whl",
-            "sha256": "ee1f2574078b592faa44ee254d4d8115ec951036800537f8915f201cb4d02541"
-        },
         {
           "type": "file",
           "url": "https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl",
@@ -107,29 +62,37 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/69/e0/552843e0d356fbb5256d21449fa957fa4eff3bbc135a74a691ee70c7c5da/typing_extensions-4.14.0-py3-none-any.whl",
-          "sha256": "a1514509136dd0b477638fc68d6a91497af5076466ad0fa6c338e44e359944af"
+          "url": "https://files.pythonhosted.org/packages/7b/7b/22998f691dc6e0c7e6fa81d611eb4b1f6a72fb27327f322366d4a7ca8fb3/backports_zstd-1.3.0-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "ddc874638abf03ea1ff3b0525b4a26a8d0adf7cb46a448c3449f08e4abc276b3",
+          "only-arches": ["aarch64"]
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/17/69/cd203477f944c353c31bade965f880aa1061fd6bf05ded0726ca845b6ff7/typing_inspection-0.4.1-py3-none-any.whl",
-          "sha256": "389055682238f53b04f7badcb49b989835495a96700ced5dab2d8feae4b26f51"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/6a/c0/ec2b1c8712ca690e5d61979dee872603e92b8a32f94cc1b72d53beab008a/pydantic-2.11.7-py3-none-any.whl",
-          "sha256": "dde5df002701f6de26248661f6835bbe296a47bf73990135c7d07ce741b9623b"
-        },
-        {
-          "type": "file",
-          "url": "https://files.pythonhosted.org/packages/eb/3c/f4abd740877a35abade05e437245b192f9d0ffb48bbbbd708df33d3cda37/pydantic_core-2.33.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-          "sha256": "9fdac5d6ffa1b5a83bca06ffe7583f5576555e6c8b3a91fbd25ea7780f825f7d",
+          "url": "https://files.pythonhosted.org/packages/82/a2/ac67e79e137eb98aead66c7162bafe3cffcb82ef9cdeb6367ec18d88fbce/backports_zstd-1.3.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "9c4c7bcda5619a754726e7f5b391827f5efbe4bed8e62e9ec7490d42bff18aa6",
           "only-arches": ["x86_64"]
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/6f/5e/a0a7b8885c98889a18b6e376f344da1ef323d270b44edf8174d6bce4d622/pydantic_core-2.33.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
-          "sha256": "0a9f2c9dd19656823cb8250b0724ee9c60a82f3cdf68a080979d13092a3b0fef",
+          "url": "https://files.pythonhosted.org/packages/5a/87/b70ad306ebb6f9b585f114d0ac2137d792b48be34d732d60e597c2f8465a/pydantic-2.12.5-py3-none-any.whl",
+          "sha256": "e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/15/df/a4c740c0943e93e6500f9eb23f4ca7ec9bf71b19e608ae5b579678c8d02f/pydantic_core-2.41.5-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "0cbaad15cb0c90aa221d43c00e77bb33c93e8d36e0bf74760cd00e732d10a6a0",
+          "only-arches": ["aarch64"]
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/cf/4e/35a80cae583a37cf15604b44240e45c05e04e86f9cfd766623149297e971/pydantic_core-2.41.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+          "sha256": "406bf18d345822d6c21366031003612b9c77b3e29ffdb0f612367352aab7d586",
+          "only-arches": ["x86_64"]
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/59/cf/c3ac8c80d8ced6c1f99b5d9674d397ce5d0e9d0939d788d67c010e19c65f/rapidfuzz-3.13.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+          "sha256": "0da54aa8547b3c2c188db3d1c7eb4d1bb6dd80baa8cdaeaec3d1da3346ec9caa",
           "only-arches": ["aarch64"]
         },
         {
@@ -140,16 +103,39 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/59/cf/c3ac8c80d8ced6c1f99b5d9674d397ce5d0e9d0939d788d67c010e19c65f/rapidfuzz-3.13.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
-          "sha256": "0da54aa8547b3c2c188db3d1c7eb4d1bb6dd80baa8cdaeaec3d1da3346ec9caa",
-          "only-arches": ["aarch64"]
+          "url": "https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl",
+          "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548"
+        },
+        {
+          "type": "file",
+          "url": "https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl",
+          "sha256": "4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7"
+        }
+      ]
+    },
+    {
+      "name": "wordnet-data",
+      "buildsystem": "simple",
+      "build-commands": [
+        "python3 scripts/generate-wn-db.py --source-file english-wordnet-2025-plus.xml.gz --output wn.db.zst",
+        "WN_VERSION=$(git -C subprojects/wn rev-parse --short HEAD) && install -Dm644 wn.db.zst /app/share/wordbook/wn-${WN_VERSION}.db.zst"
+      ],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "../../."
+        },
+        {
+          "type": "file",
+          "url": "https://github.com/globalwordnet/english-wordnet/releases/download/2025-edition/english-wordnet-2025-plus.xml.gz",
+          "sha256": "31f4af16c54b532fd5484d4cc33aee588a31bb5b70683ae8197842fde5b586bc"
         }
       ]
     },
     {
       "name": "wordbook",
       "buildsystem": "meson",
-      "config-opts": ["-Dprofile=development"],
+      "config-opts": ["-Dprofile=development", "-Dinstall_wn_db=false"],
       "sources": [
         {
           "type": "dir",

@@ -1,17 +1,24 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gtk
 
 from wordbook import utils
+from wordbook.constants import RES_PATH
 from wordbook.settings import PronunciationAccent, Settings
+
+if TYPE_CHECKING:
+    from wordbook.window import WordbookWindow
 
 PATH: str = os.path.dirname(__file__)
 
 
-@Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/settings-window.ui")
+@Gtk.Template(resource_path=f"{RES_PATH}/ui/settings-window.ui")
 class SettingsDialog(Adw.PreferencesDialog):
     """A dialog window that allows the user to customize Wordbook."""
 
@@ -24,11 +31,11 @@ class SettingsDialog(Adw.PreferencesDialog):
     _auto_paste_switch: Adw.SwitchRow = Gtk.Template.Child("auto_paste_switch")
     _pronunciations_accent_row: Adw.ComboRow = Gtk.Template.Child("pronunciations_accent_row")
 
-    def __init__(self, parent: Adw.ApplicationWindow, **kwargs):
+    def __init__(self, parent: WordbookWindow, **kwargs):
         """Initializes the Settings window, loads current settings, and connects signals."""
         super().__init__(**kwargs)
 
-        self.parent = parent
+        self.parent: WordbookWindow = parent
 
         self.load_settings()
 

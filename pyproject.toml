@@ -3,9 +3,10 @@ name = "Wordbook"
 dynamic = ["version"]
 requires-python = ">=3.12"
 dependencies = [
-    "rapidfuzz>=3.13.0",
-    "pydantic>=2.11.5",
-    "wn>=0.11.0",
+    "backports.zstd>=1.2.0; python_version < '3.14'",
+    "pydantic>=2.12.5",
+    "rapidfuzz>=3.14.3",
+    "wn>=1.0.0",
 ]
 
 [tool.uv]
@@ -32,8 +33,10 @@ reportMissingModuleSource = "none"
 
 [dependency-groups]
 dev = [
-    "basedpyright>=1.29.2",
-    "pip>=25.0.1",
-    "pygobject-stubs>=2.12.0",
-    "requirements-parser>=0.11.0",
+    "pip>=25.3",
+    "pygobject-stubs>=2.16.0",
+    "ty>=0.0.8",
 ]
+
+[tool.uv.sources]
+wn = { path = "subprojects/wn", editable = true }

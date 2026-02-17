@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
@@ -10,56 +10,26 @@ import os
 import subprocess
 import threading
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
-from shutil import rmtree
 from typing import Any
 
 import wn
 
 from wordbook import utils
+from wordbook.constants import (
+    POS_MAP,
+    SEARCH_TERM_CLEANUP_CHARS,
+    SEARCH_TERM_REPLACE_CHARS,
+    WN_DB_VERSION,
+    WN_FILE_VERSION,
+)
 
-POOL = ThreadPoolExecutor()
-WN_DB_VERSION: str = "oewn:2024"
-
-# Global lock for WordNet database operations to prevent concurrent access.
-# This is critical for ensuring that wordlist loading and search operations
-# do not interfere with each other.
 WN_DATABASE_LOCK = threading.Lock()
 
-wn.config.data_directory = os.path.join(utils.WN_DIR)
+WN_DIR: str = os.path.join(utils.DATA_DIR, f"wn-{WN_FILE_VERSION}")
+
+wn.config.data_directory = WN_DIR
 wn.config.allow_multithreading = True
-
-POS_MAP: dict[str, str] = {
-    "s": "adjective",
-    "n": "noun",
-    "v": "verb",
-    "r": "adverb",
-    "a": "adjective",  # Note: 'a' and 's' both map to adjective
-    "t": "phrase",
-    "c": "conjunction",
-    "p": "adposition",
-    "x": "other",
-    "u": "unknown",
-}
-
-DARK_MODE_SENTENCE_COLOR = "cyan"
-LIGHT_MODE_SENTENCE_COLOR = "blue"
-
-SEARCH_TERM_CLEANUP_CHARS = '<>"-?`![](){}/:;,'
-SEARCH_TERM_REPLACE_CHARS = ["(", ")", "<", ">", "[", "]", "&", "\\", "\n"]
-
-
-def _threadpool(func: Callable) -> Callable:
-    """
-    Wraps around a function allowing it to run in a separate thread and
-    return a future object.
-    """
-
-    def wrap(*args: Any, **kwargs: Any) -> Any:
-        return (POOL).submit(func, *args, **kwargs)
-
-    return wrap
 
 
 def clean_search_terms(search_term: str) -> str:
@@ -77,7 +47,7 @@ def create_required_dirs() -> None:
     """Make required directories if they don't already exist."""
     os.makedirs(utils.CONFIG_DIR, exist_ok=True)
     os.makedirs(utils.DATA_DIR, exist_ok=True)
-    os.makedirs(utils.WN_DIR, exist_ok=True)
+    os.makedirs(WN_DIR, exist_ok=True)
 
 
 def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any]:
@@ -92,7 +62,9 @@ def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> 
     Returns:
         A dictionary containing the definition data with pronunciation information.
     """
-    definition_data = get_definition(term, wn_instance)
+    with WN_DATABASE_LOCK:
+        definition_data = get_definition(term, wn_instance)
+
     pronunciation_term = definition_data.get("term") or term
     pron = get_pronunciation(pronunciation_term, accent)
     final_pron = pron if pron and not pron.isspace() else "Pronunciation unavailable (is espeak-ng installed?)"
@@ -258,7 +230,7 @@ def get_pronunciation(term: str, accent: str = "us") -> str | None:
 def get_version_info(app_version: str) -> None:
     """Prints application and dependency version info to the console."""
     print(f"Wordbook - {app_version}")
-    print("Copyright 2016-2025 Mufeed Ali")
+    print("Copyright 2016-2026 Mufeed Ali")
     print()
     try:
         process = subprocess.Popen(
@@ -283,71 +255,33 @@ def get_version_info(app_version: str) -> None:
         print(f"Could not retrieve espeak-ng version information (OS error: {ex})")
 
 
-@_threadpool
-def get_wn_instance(reloader: Callable[[], None]) -> wn.Wordnet:
-    """
-    Initializes the WordNet instance in a thread.
-
-    Handles potential WordNet database errors and triggers the reloader function.
-
-    Args:
-        reloader: A function to call if WordNet initialization fails (e.g., to trigger download).
-
-    Returns:
-        The initialized WordNet instance.
-    """
+def get_wn_instance() -> wn.Wordnet | None:
     utils.log_info("Initializing WordNet...")
     try:
-        wn_instance: wn.Wordnet = wn.Wordnet(lexicon=WN_DB_VERSION)
+        wn_instance = wn.Wordnet(lexicon=WN_DB_VERSION)
         utils.log_info(f"WordNet instance ({WN_DB_VERSION}) created and ready.")
         return wn_instance
-
     except (wn.Error, wn.DatabaseError) as e:
-        utils.log_error(f"WordNet initialization failed: {e}. Triggering reloader.")
-        reloader()
-        raise e
+        utils.log_error(f"WordNet initialization failed: {e}")
+        return None
     except Exception as e:
-        utils.log_error(f"Unexpected error during WordNet initialization: {e}. Retrying.")
-        reloader()
-        raise e
+        utils.log_error(f"Unexpected error during WordNet initialization: {e}")
+        return None
 
 
-@_threadpool
-def get_wn_wordlist(wn_instance: wn.Wordnet) -> list[str]:
-    """
-    Fetches the word list from an initialized WordNet instance.
-    Uses _threadpool decorator to run in a separate thread.
-    Uses WN_DATABASE_LOCK for each individual lemma access to allow search operations to interrupt.
+def get_wn_wordlist(wn_instance: wn.Wordnet, on_complete: Callable[[list[str]], None]):
+    def fetch():
+        try:
+            with WN_DATABASE_LOCK:
+                lemmas = wn_instance.lemmas()
+            utils.log_info(f"WordNet wordlist fetched ({len(lemmas)} lemmas).")
+            on_complete(lemmas)
+        except Exception as e:
+            utils.log_error(f"Error fetching WordNet wordlist: {e}")
+            on_complete([])
 
-    Args:
-        wn_instance: The initialized WordNet instance.
-
-    Returns:
-        A list of lemmas from the WordNet database.
-    """
     utils.log_info("Fetching WordNet wordlist...")
-    try:
-        # Get all words first
-        with WN_DATABASE_LOCK:
-            words = list(wn_instance.words())
-
-        # Process lemmas one by one
-        # This allows other WordNet actions to interrupt
-        wn_lemmas = []
-        for word in words:
-            try:
-                with WN_DATABASE_LOCK:
-                    lemma = word.lemma()
-                wn_lemmas.append(lemma)
-            except Exception as e:
-                utils.log_warning(f"Error getting lemma for word {e}")
-                continue
-
-        utils.log_info(f"WordNet wordlist fetched ({len(wn_lemmas)} lemmas).")
-        return wn_lemmas
-    except Exception as e:
-        utils.log_error(f"Error fetching WordNet wordlist: {e}")
-        return []
+    threading.Thread(target=fetch, daemon=True).start()
 
 
 def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any] | None:
@@ -367,9 +301,8 @@ def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dic
     if text and not text.isspace():
         cleaned_text = clean_search_terms(text)
         if cleaned_text:
-            with WN_DATABASE_LOCK:
-                definition_data = fetch_definition(cleaned_text, wn_instance, accent=accent)
-                return definition_data
+            definition_data = fetch_definition(cleaned_text, wn_instance, accent=accent)
+            return definition_data
         else:
             utils.log_info(f"Input '{text}' became empty after cleaning.")
             return None
@@ -402,48 +335,3 @@ def read_term(text: str, speed: int = 120, accent: str = "us") -> None:
         utils.log_error(f"espeak-ng timed out while trying to read term: '{text}'")
     except OSError as ex:
         utils.log_error(f"OS error executing espeak-ng to read term '{text}': {ex}")
-
-
-class WordnetDownloader:
-    @staticmethod
-    def check_status() -> bool:
-        """
-        Checks if the primary WordNet database file exists.
-        """
-        db_path = os.path.join(utils.WN_DIR, "wn.db")
-        utils.log_info(f"Checking for WordNet DB at: {db_path}")
-        return os.path.isfile(db_path)
-
-    @staticmethod
-    def download(progress_handler: Callable[[int, int], None] | None = None) -> None:
-        """
-        Downloads the specified WordNet database version using wn.download.
-
-        Removes the temporary 'downloads' directory first if it exists.
-
-        Args:
-            progress_handler: An optional callback function for progress updates.
-        """
-        download_dir = os.path.join(utils.WN_DIR, "downloads")
-        if os.path.isdir(download_dir):
-            utils.log_info(f"Removing existing temporary download directory: {download_dir}")
-            rmtree(download_dir)
-
-        utils.log_info(f"Starting download of WordNet version: {WN_DB_VERSION}")
-        try:
-            _ = wn.download(WN_DB_VERSION, progress_handler=progress_handler)
-            utils.log_info(f"WordNet download completed for {WN_DB_VERSION}.")
-        except Exception as e:
-            utils.log_error(f"WordNet download failed for {WN_DB_VERSION}: {e}")
-            raise
-
-    @staticmethod
-    def delete_wn() -> None:
-        """
-        Deletes the WordNet data directory.
-        """
-        try:
-            utils.log_info(f"Deleting WordNet data directory: {utils.WN_DIR}")
-            rmtree(utils.WN_DIR)
-        except OSError as e:
-            utils.log_error(f"Failed to delete WordNet data directory '{utils.WN_DIR}': {e}")

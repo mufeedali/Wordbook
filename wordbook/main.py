@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gettext import gettext as _
@@ -11,6 +11,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, GLib, Gtk  # noqa
 
 from wordbook import base, utils  # noqa
+from wordbook.constants import RES_PATH  # noqa
 from wordbook.window import WordbookWindow  # noqa
 from wordbook.settings import Settings  # noqa
 
@@ -79,7 +80,7 @@ class Application(Adw.Application):
 
     def do_startup(self):
         """GApplication lifecycle method for one-time setup, like setting resource paths."""
-        self.set_resource_base_path(utils.RES_PATH)
+        self.set_resource_base_path(RES_PATH)
         Adw.Application.do_startup(self)
 
     def do_activate(self):
@@ -88,7 +89,7 @@ class Application(Adw.Application):
 
         It ensures a window is created (if it doesn't exist) and presented.
         """
-        self.win = self.get_active_window()
+        self.win: WordbookWindow | None = self.get_active_window()
         if not self.win:
             self.win = WordbookWindow(
                 application=self,
@@ -139,9 +140,9 @@ class Application(Adw.Application):
     def on_about(self, _action, _param):
         """Callback for the 'about' action to display the application's about window."""
         about_window = Adw.AboutDialog()
-        about_window.set_application_icon(Gio.Application.get_default().app_id)
+        about_window.set_application_icon(self.app_id)
         about_window.set_application_name(_("Wordbook"))
-        about_window.set_version(Gio.Application.get_default().version)
+        about_window.set_version(self.version)
         about_window.set_comments(_("Look up definitions for words"))
         about_window.set_developer_name("Mufeed Ali")
         about_window.set_translator_credits(_("translator-credits"))
@@ -149,7 +150,7 @@ class Application(Adw.Application):
         about_window.set_website("https://apps.gnome.org/Wordbook")
         about_window.add_link(_("Source Code"), "https://github.com/mufeedali/Wordbook")
         about_window.set_issue_url("https://github.com/mufeedali/Wordbook/issues")
-        about_window.set_copyright(_("Copyright © 2016-2025 Mufeed Ali"))
+        about_window.set_copyright(_("Copyright © 2016-2026 Mufeed Ali"))
         about_window.present(self.win)
 
     def on_quit(self, _action, _param):

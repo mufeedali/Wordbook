@@ -25,12 +25,12 @@ Wordbook
 
 * GTK 4.6+ [Arch: `gtk4`]
 * libadwaita 1.7.0+ [Arch: `libadwaita`]
-* Python 3 [Arch: `python`]
+* Python 3.12+ [Arch: `python`]
 * Python modules:
-    * Standalone WordNet Python module [Arch AUR: `python-wn`]
     * RapidFuzz [Arch: `python-rapidfuzz`]
     * Pydantic [Arch: `python-pydantic`]
     * Python GObject [Arch: `python-gobject`]
+    * ONLY if using Python versions older than 3.14, backports.zstd [Arch: `python-backports-zstd`]
 * eSpeak-ng (For pronunciations and audio) [Arch: `espeak-ng`]
 
 ## Installation
@@ -47,7 +47,7 @@ This method can be used anywhere the Nix package manager is installed.
 
 ### Using distro-specific packages
 
-Right now, Wordbook is only packaged for Arch through the AUR as [`wordbook`](https://aur.archlinux.org/packages/wordbook).
+Wordbook is packaged for Arch through the AUR as [`wordbook`](https://aur.archlinux.org/packages/wordbook).
 
 On NixOS, Wordbook can be installed using the Nix package manager as shown above. Additionally, the following code can be added to your NixOS configuration file, usually located in `/etc/nixos/configuration.nix`.
 
@@ -55,6 +55,16 @@ On NixOS, Wordbook can be installed using the Nix package manager as shown above
   environment.systemPackages = [
     pkgs.wordbook
   ];
+```
+
+## Building from Source
+
+To build Wordbook from source, use Meson:
+
+```bash
+meson setup builddir
+meson compile -C builddir
+meson install -C builddir
 ```
 
 ## Contributing

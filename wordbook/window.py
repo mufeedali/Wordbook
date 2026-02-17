@@ -1,27 +1,29 @@
-# SPDX-FileCopyrightText: 2016-2025 Mufeed Ali <me@mufeed.dev>
+# SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import annotations
 
+import bisect
 import random
 import sys
 import threading
-import time
 from enum import Enum, auto
 from gettext import gettext as _
 from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango
 from rapidfuzz import fuzz, process
-from wn import Error
-from wn.util import ProgressHandler
 
 from wordbook import base, utils
+from wordbook.constants import RES_PATH
+from wordbook.database import DatabaseManager
 from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
 
 if TYPE_CHECKING:
     from typing import Any
+
+    from wordbook.main import Application
 
 
 class SearchStatus(Enum):
@@ -33,8 +35,7 @@ class SearchStatus(Enum):
 
 class Page(str, Enum):
     CONTENT = "content_page"
-    DOWNLOAD = "download_page"
-    NETWORK_FAIL = "network_fail_page"
+    DB_ERROR = "db_error_page"
     SEARCH_FAIL = "search_fail_page"
     SPINNER = "spinner_page"
     WELCOME = "welcome_page"
@@ -50,99 +51,67 @@ class HistoryObject(GObject.Object):
         self.is_favorite = is_favorite
 
 
-class ProgressUpdater(ProgressHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._last_update_time = 0
-        self._update_interval = 0.1  # 100ms
-
-    def update(self, n: int = 1, force: bool = False):
-        """Update the progress bar, but throttle UI updates to avoid performance issues."""
-        self.kwargs["count"] += n
-
-        current_time = time.time()
-        if not force and (current_time - self._last_update_time) < self._update_interval:
-            return
-
-        self._last_update_time = current_time
-
-        if self.kwargs["total"] > 0:
-            progress_fraction = self.kwargs["count"] / self.kwargs["total"]
-            GLib.idle_add(
-                Gio.Application.get_default().win.loading_progress.set_fraction,
-                progress_fraction,
-            )
-
-    @staticmethod
-    def flash(message):
-        """Update the progress label on the download page."""
-        if message == "Database":
-            GLib.idle_add(
-                Gio.Application.get_default().win.download_status_page.set_description,
-                _("Building Database…"),
-            )
-        else:
-            GLib.idle_add(
-                Gio.Application.get_default().win.download_status_page.set_description,
-                message,
-            )
-
-
-@Gtk.Template(resource_path=f"{utils.RES_PATH}/ui/window.ui")
+@Gtk.Template(resource_path=f"{RES_PATH}/ui/window.ui")
 class WordbookWindow(Adw.ApplicationWindow):
     __gtype_name__ = "WordbookWindow"
 
-    search_button: Gtk.Button = Gtk.Template.Child("search_button")  # type: ignore
-    download_status_page: Adw.StatusPage = Gtk.Template.Child("download_status_page")  # type: ignore
-    loading_progress: Gtk.ProgressBar = Gtk.Template.Child("loading_progress")  # type: ignore
+    # Header Bar
+    search_button: Gtk.Button = Gtk.Template.Child("search_button")
+    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")
+    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")
+    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")
+    _split_view_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("split_view_toggle_button")
+    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")
 
-    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")  # type: ignore
-    _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")  # type: ignore
-    _split_view_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("split_view_toggle_button")  # type: ignore
-    _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")  # type: ignore
-    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")  # type: ignore
-    _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")  # type: ignore
-    _main_split_view: Adw.OverlaySplitView = Gtk.Template.Child("main_split_view")  # type: ignore
-    _history_stack: Gtk.ListBox = Gtk.Template.Child("history_stack")  # type: ignore
-    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")  # type: ignore
-    _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")  # type: ignore
-    _toast_overlay: Adw.ToastOverlay = Gtk.Template.Child("toast_overlay")  # type: ignore
-    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")  # type: ignore
-    _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")  # type: ignore
-    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")  # type: ignore
-    _term_view: Gtk.Label = Gtk.Template.Child("term_view")  # type: ignore
-    _network_fail_status_page: Adw.StatusPage = Gtk.Template.Child("network_fail_status_page")  # type: ignore
-    _search_fail_status_page: Adw.StatusPage = Gtk.Template.Child("search_fail_status_page")  # type: ignore
-    _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")  # type: ignore
-    _retry_button: Gtk.Button = Gtk.Template.Child("retry_button")  # type: ignore
-    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")  # type: ignore
-    _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")  # type: ignore
-    _favorites_filter_button: Gtk.ToggleButton = Gtk.Template.Child("favorites_filter_button")  # type: ignore
+    # Sidebar (History)
+    _history_stack: Adw.ViewStack = Gtk.Template.Child("history_stack")
+    _history_listbox: Gtk.ListBox = Gtk.Template.Child("history_listbox")
+    _clear_history_button: Gtk.Button = Gtk.Template.Child("clear_history_button")
+    _favorites_filter_button: Gtk.ToggleButton = Gtk.Template.Child("favorites_filter_button")
 
-    _style_manager: Adw.StyleManager | None = None
+    # Main Content
+    _main_split_view: Adw.OverlaySplitView = Gtk.Template.Child("main_split_view")
+    _main_stack: Adw.ViewStack = Gtk.Template.Child("main_stack")
+    _main_scroll: Gtk.ScrolledWindow = Gtk.Template.Child("main_scroll")
+    _toast_overlay: Adw.ToastOverlay = Gtk.Template.Child("toast_overlay")
 
-    _wn_downloader: base.WordnetDownloader = base.WordnetDownloader()
+    # Definition View
+    _term_view: Gtk.Label = Gtk.Template.Child("term_view")
+    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")
+    _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")
+
+    # Status Pages
+    _db_error_status_page: Adw.StatusPage = Gtk.Template.Child("db_error_status_page")
+    _search_fail_status_page: Adw.StatusPage = Gtk.Template.Child("search_fail_status_page")
+    _search_fail_description_label: Gtk.Label = Gtk.Template.Child("search_fail_description_label")
+    _exit_button: Gtk.Button = Gtk.Template.Child("exit_button")
+
+    # Event Controllers
+    _key_ctrlr: Gtk.EventControllerKey = Gtk.Template.Child("key_ctrlr")
+
+    # WordNet
     _wn_instance: base.wn.Wordnet | None = None
     _wn_wordlist: list[str] = []
 
-    _doubled: bool = False
-    _completion_request_count: int = 0
+    # Search
     _searched_term: str | None = None
-    _search_history: Gio.ListStore | None = None
     _active_thread: threading.Thread | None = None
     _search_cancellation_event: threading.Event | None = None
-    _primary_clipboard_text: str | None = None
-    _show_favorites_only: bool = False
+    _completion_lock: threading.Lock
+    _completion_pending: bool = False
+    _completion_text: str = ""
+    _live_search_delay_timer = None
 
-    # A timer is used to delay adding terms to history during live search,
-    # preventing every keystroke from being saved.
+    # History
+    _search_history: Gio.ListStore | None = None
+    _show_favorites_only: bool = False
     _history_delay_timer = None
     _pending_history_text = None
 
-    # A timer for live search to avoid searching on every keystroke.
-    _live_search_delay_timer = None
-
-    # A flag to queue auto-pasting until the window is active.
+    # UI
+    _style_manager: Adw.StyleManager | None = None
+    _doubled: bool = False
+    _primary_clipboard_text: str | None = None
     _auto_paste_queued: bool = False
 
     def __init__(self, term="", auto_paste_requested=False, **kwargs):
@@ -154,7 +123,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.lookup_term = term
         self.auto_paste_requested = auto_paste_requested
 
-        app = self.get_application()
+        app: Application | None = self.get_application()
+        if not app:
+            raise RuntimeError("Failed to get application instance in WordbookWindow.__init__")
+
         if app.development_mode:
             self.get_style_context().add_class("devel")
         self.set_default_icon_name(app.app_id)
@@ -164,6 +136,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def setup_widgets(self):
         """Sets up widgets, binds models, and connects signal handlers."""
+        self._completion_lock = threading.Lock()
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._history_listbox.bind_model(self._search_history, self._create_history_label)
         self._history_listbox.connect("row-activated", self._on_history_item_activated)
@@ -178,7 +151,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_entry.connect("changed", self._on_entry_changed)
         self._search_entry.connect("icon-press", self._on_entry_icon_clicked)
         self._speak_button.connect("clicked", self._on_speak_clicked)
-        self._retry_button.connect("clicked", self._on_retry_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
         self._clear_history_button.connect("clicked", self._on_clear_history)
 
@@ -191,7 +163,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         self._style_manager = self.get_application().get_style_manager()
 
-        self._dl_wn()
+        self._setup_wn()
 
         # FIXME: Remove use of EntryCompletion
         self.completer = Gtk.EntryCompletion()
@@ -252,7 +224,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         quit_action.connect("activate", lambda action, param: self.close())
         self.add_action(quit_action)
 
-        clipboard = self.get_primary_clipboard()
+        clipboard: Gdk.Clipboard = self.get_primary_clipboard()
         clipboard.connect("changed", self.on_clipboard_changed)
 
     def on_clipboard_changed(self, clipboard: Gdk.Clipboard | None):
@@ -260,17 +232,21 @@ class WordbookWindow(Adw.ApplicationWindow):
         clipboard = Gdk.Display.get_default().get_primary_clipboard()
 
         def on_selection(_clipboard, result):
+            search_selected_action = self.lookup_action("search-selected")
+            if not search_selected_action:
+                return
+
             try:
                 text = clipboard.read_text_finish(result)
                 if text and text.strip():
                     self._primary_clipboard_text = text.replace("         ", "").replace("\n", "")
-                    self.lookup_action("search-selected").props.enabled = True
+                    search_selected_action.props.enabled = True
                 else:
                     self._primary_clipboard_text = None
-                    self.lookup_action("search-selected").props.enabled = False
-            except GLib.GError:
+                    search_selected_action.props.enabled = False
+            except GLib.Error:
                 self._primary_clipboard_text = None
-                self.lookup_action("search-selected").props.enabled = False
+                search_selected_action.props.enabled = False
 
         cancellable = Gio.Cancellable()
         clipboard.read_text_async(cancellable, on_selection)
@@ -286,7 +262,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                     text = base.clean_search_terms(text)
                 if text and text.strip():
                     self.trigger_search(text)
-            except GLib.GError:
+            except GLib.Error:
                 pass  # Ignore errors from empty or non-text clipboard
 
         cancellable = Gio.Cancellable()
@@ -316,7 +292,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Callback for the 'toggle-favorites' action. Toggles the history filter."""
         self._toggle_favorites_filter()
 
-    def on_search_clicked(self, _button=None, pass_check=False, text=None):
+    def on_search_clicked(self, _button=None, text=None):
         """Initiates a search, cancelling any previous search."""
         self._clear_definitions()
 
@@ -336,12 +312,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_cancellation_event = threading.Event()
         self._active_thread = threading.Thread(
             target=self.threaded_search,
-            args=[text, pass_check, self._search_cancellation_event],
+            args=[text, self._search_cancellation_event],
             daemon=True,
         )
         self._active_thread.start()
 
-    def threaded_search(self, text, pass_check, cancellation_event):
+    def threaded_search(self, text, cancellation_event):
         """
         Performs the search in a background thread.
         This prevents the UI from freezing during network or intensive search operations.
@@ -349,17 +325,17 @@ class WordbookWindow(Adw.ApplicationWindow):
         if cancellation_event.is_set():
             return
 
-        self._searched_term = text
-
         out = self._search(text)
 
         if cancellation_event.is_set():
             return
 
-        GLib.idle_add(self._on_search_finished, out)
+        GLib.idle_add(self._on_search_finished, text, out)
 
-    def _on_search_finished(self, result):
+    def _on_search_finished(self, search_term, result):
         """Handles the result of a search on the main thread."""
+        self._searched_term = search_term
+
         if not result:
             self._page_switch(Page.WELCOME)
             return
@@ -409,15 +385,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._active_thread = None
 
     def trigger_search(self, text):
-        """A convenience method to trigger a search from other parts of the app."""
-        # Temporarily block the changed signal to prevent live search triggering
-        GLib.idle_add(self._search_entry.handler_block_by_func, self._on_entry_changed)
-        # Set text
-        GLib.idle_add(self._search_entry.set_text, text)
-        # Re-enable the changed signal
-        GLib.idle_add(self._search_entry.handler_unblock_by_func, self._on_entry_changed)
-        # Perform the actual search
-        GLib.idle_add(self.on_search_clicked, None, False, text)
+        if not text or not text.strip():
+            return
+        self._search_entry.handler_block_by_func(self._on_entry_changed)
+        self._search_entry.set_text(text)
+        self._search_entry.handler_unblock_by_func(self._on_entry_changed)
+        self.on_search_clicked(text=text)
 
     def _on_def_press_event(self, _click, n_press, _x, _y):
         """Handles the first part of a double-click event on the definition view."""
@@ -429,10 +402,17 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_def_stop_event(self, _click):
         """Handles the second part of a double-click, triggering a search if detected."""
         if self._doubled:
-            clipboard = Gdk.Display.get_default().get_primary_clipboard()
+            display: Gdk.Display | None = Gdk.Display.get_default()
+            if not display:
+                return
+
+            clipboard: Gdk.Clipboard = display.get_primary_clipboard()
 
             def on_paste(_clipboard, result):
                 text = clipboard.read_text_finish(result)
+                if not text:
+                    return
+
                 text = base.clean_search_terms(text)
                 if text and text.strip():
                     self.trigger_search(text)
@@ -480,13 +460,14 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_entry_changed(self, _entry):
         """Handles text changes in the search entry, triggering live search and completions."""
-        self._completion_request_count += 1
-        if self._completion_request_count == 1:
-            threading.Thread(
-                target=self._update_completions,
-                args=[self._search_entry.get_text()],
-                daemon=True,
-            ).start()
+        with self._completion_lock:
+            self._completion_text = _entry.get_text()
+            if not self._completion_pending:
+                self._completion_pending = True
+                threading.Thread(
+                    target=self._update_completions,
+                    daemon=True,
+                ).start()
 
         # Show/hide clear button based on whether there's text
         text = self._search_entry.get_text()
@@ -600,11 +581,6 @@ class WordbookWindow(Adw.ApplicationWindow):
             if row:
                 self._update_row_visuals(row, item)
         return False
-
-    def _on_retry_clicked(self, _widget):
-        """Handles the retry button click on the network failure page."""
-        self._wn_downloader.delete_wn()
-        self._start_download()
 
     def _add_to_history(self, text):
         """Adds a term to the history, moving it to the top if it already exists."""
@@ -769,30 +745,53 @@ class WordbookWindow(Adw.ApplicationWindow):
                 _("Invalid input"),
                 _("Nothing definable was found in your search input"),
             )
-        self._searched_term = None
         return None
 
-    def _update_completions(self, text):
+    def _update_completions(self):
         """Updates the search entry's completion model based on the current text."""
-        while self._completion_request_count > 0:
-            completer_liststore = Gtk.ListStore(str)
-            _complete_list = []
+        while True:
+            with self._completion_lock:
+                text = self._completion_text
 
-            if self._wn_wordlist:
-                for item in self._wn_wordlist:
-                    if len(_complete_list) >= 10:
+            complete_list = []
+
+            if text and text.strip() and self._wn_wordlist:
+                seen_lower = set()
+                search_term = text.lower().replace(" ", "_")
+                start_idx = bisect.bisect_left(self._wn_wordlist, search_term, key=str.lower)
+
+                for i in range(start_idx, len(self._wn_wordlist)):
+                    if len(complete_list) >= 10:
                         break
-                    item = item.replace("_", " ")
-                    if item.lower().startswith(text.lower()) and item not in _complete_list:
-                        _complete_list.append(item)
 
-            _complete_list = sorted(_complete_list, key=str.casefold)
-            for item in _complete_list:
-                completer_liststore.append((item,))
+                    original_word = self._wn_wordlist[i]
 
-            self._completion_request_count -= 1
-            GLib.idle_add(self.completer.set_model, completer_liststore)
-            GLib.idle_add(self.completer.complete)
+                    if not original_word.lower().startswith(search_term):
+                        break
+
+                    display_word = original_word.replace("_", " ")
+                    display_lower = display_word.lower()
+                    if display_lower not in seen_lower:
+                        seen_lower.add(display_lower)
+                        complete_list.append(display_word)
+
+            with self._completion_lock:
+                if self._completion_text != text:
+                    continue
+
+                GLib.idle_add(self._update_completion_ui, complete_list)
+                self._completion_pending = False
+                break
+
+    def _update_completion_ui(self, items):
+        """Updates the completion model on the main thread."""
+        completer_liststore = Gtk.ListStore(str)
+        for item in items:
+            completer_liststore.append((item,))
+
+        self.completer.set_model(completer_liststore)
+        self.completer.complete()
+        return False
 
     def _set_header_sensitive(self, status):
         """Disables or enables header buttons during long-running operations."""
@@ -800,74 +799,50 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._split_view_toggle_button.set_sensitive(status)
         self._menu_button.set_sensitive(status)
 
-    def _dl_wn(self):
+    def _setup_wn(self):
         """
-        Manages the WordNet data download and initialization process.
+        Manages the WordNet database setup and initialization process.
         This is the main entry point for the application's data setup.
         """
         self._set_header_sensitive(False)
 
-        if self._wn_downloader.check_status():
-            self._init_wordnet()
-        else:
-            self._start_download()
+        # Show spinner page during setup
+        self._page_switch(Page.SPINNER)
 
-    def _start_download(self):
-        """Starts the WordNet download process in a background thread."""
-        self._page_switch(Page.DOWNLOAD)
-        self.download_status_page.set_description(_("Downloading WordNet…"))
-        threading.Thread(target=self._download_wordnet_thread, daemon=True).start()
+        # Setup database in a background thread
+        threading.Thread(target=self._setup_database_thread, daemon=True).start()
 
-    def _init_wordnet(self):
-        """Initializes the WordNet instance, handling potential failures."""
-
-        def handle_init_failure():
-            """Callback passed to the backend to handle initialization failures."""
-            GLib.idle_add(self._handle_init_failure)
-
-        wn_future = base.get_wn_instance(handle_init_failure)
-        wn_future.add_done_callback(self._on_wordnet_init_complete)
-
-    def _handle_init_failure(self):
-        """Handles WordNet initialization failure by deleting the data and re-downloading."""
-        self._wn_downloader.delete_wn()
-        self._start_download()
-
-    def _on_wordnet_init_complete(self, future):
-        """Callback for when WordNet initialization is complete."""
-        if future.exception():
-            return  # Exception is handled by the reloader callback
-
+    def _setup_database_thread(self):
+        """Setup database in a background thread."""
         try:
-            self._wn_instance = future.result()
-            if not self._wn_instance:
-                utils.log_warning("WordNet instance is None, triggering download")
-                self._handle_init_failure()
+            # Try to setup database (extract if needed)
+            if not DatabaseManager.setup():
+                # Database setup failed
+                GLib.idle_add(self._on_database_setup_failed)
                 return
 
-            self._complete_initialization()
-
-            wordlist_future = base.get_wn_wordlist(self._wn_instance)
-            wordlist_future.add_done_callback(self._on_wordlist_loaded)
+            # Database ready, initialize WordNet
+            GLib.idle_add(self._init_wordnet)
 
         except Exception as e:
-            utils.log_warning(f"Error getting WordNet instance: {e}")
-            self._handle_init_failure()
+            utils.log_error(f"Database setup failed: {e}")
+            GLib.idle_add(self._on_database_setup_failed)
 
-    def _on_wordlist_loaded(self, future):
-        """Callback for when the wordlist has been loaded."""
-        if future.exception():
-            utils.log_error(f"Error loading wordlist: {future.exception()}")
+    def _on_database_setup_failed(self):
+        """Handle database setup failure."""
+        self._page_switch(Page.DB_ERROR)
+
+    def _init_wordnet(self):
+        self._wn_instance = base.get_wn_instance()
+        if not self._wn_instance:
+            self._on_database_setup_failed()
             return
 
-        try:
-            wordlist = future.result()
-            GLib.idle_add(self._on_wordlist_loaded_success, wordlist)
-        except Exception as e:
-            utils.log_error(f"Error getting wordlist result: {e}")
+        self._complete_initialization()
+        base.get_wn_wordlist(self._wn_instance, lambda wordlist: GLib.idle_add(self._on_wordlist_loaded, wordlist))
 
-    def _on_wordlist_loaded_success(self, wordlist):
-        """Handles successful wordlist loading."""
+    def _on_wordlist_loaded(self, wordlist):
+        wordlist.sort(key=str.lower)
         self._wn_wordlist = wordlist
         utils.log_info(f"Wordlist loaded with {len(self._wn_wordlist)} words. Completions now available.")
 
@@ -881,25 +856,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         elif Settings.get().auto_paste_on_launch or self.auto_paste_requested:
             self.queue_auto_paste()
         self._search_entry.grab_focus_without_selecting()
-
-    def _download_wordnet_thread(self):
-        """Downloads WordNet data in a background thread."""
-        try:
-            self._wn_downloader.download(ProgressUpdater)
-            GLib.idle_add(self._on_download_complete)
-        except Error as err:
-            GLib.idle_add(self._on_download_failed, err)
-
-    def _on_download_complete(self):
-        """Callback for successful WordNet download."""
-        self.download_status_page.set_title(_("Ready."))
-        self._init_wordnet()
-
-    def _on_download_failed(self, error):
-        """Callback for failed WordNet download."""
-        self._network_fail_status_page.set_description(f"<small><tt>Error: {error}</tt></small>")
-        utils.log_warning(error)
-        self._page_switch(Page.NETWORK_FAIL)
 
     def _clear_definitions(self) -> None:
         """Clears all definitions from the listbox."""
@@ -1066,7 +1022,12 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_word_button_clicked(self, _button: Gtk.Button, word: str) -> None:
         """Handles clicks on related word buttons, triggering a new search."""
         self._search_entry.set_text(word)
-        self._search_entry.emit("activate")
+
+        if Settings.get().live_search and self._live_search_delay_timer is not None:
+            GLib.source_remove(self._live_search_delay_timer)
+            self._live_search_delay_timer = None
+
+        self.on_search_clicked()
 
     def _populate_definitions(self, result: dict[str, Any]) -> None:
         """Populates the definitions listbox with the search results."""

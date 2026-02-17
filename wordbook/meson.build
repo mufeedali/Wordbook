@@ -14,6 +14,7 @@ conf.set_quoted('localedir', join_paths(get_option('prefix'), get_option('locale
 conf.set_quoted('pkgdatadir', pkgdatadir)
 conf.set('datadir', get_option('datadir'))
 conf.set('prefix', get_option('prefix'))
+conf.set('WN_FILE_VERSION', wn_version)
 
 configure_file(
   input: 'wordbook.in',
@@ -21,6 +22,14 @@ configure_file(
   configuration: conf,
   install: true,
   install_dir: get_option('bindir')
+)
+
+configure_file(
+  input: 'constants.py',
+  output: 'constants.py',
+  configuration: conf,
+  install: true,
+  install_dir: moduledir
 )
 
 program_executable = join_paths(
@@ -35,6 +44,7 @@ run_target('run',
 wordbook_sources = [
   '__init__.py',
   'base.py',
+  'database.py',
   'main.py',
   'settings.py',
   'settings_window.py',
@@ -43,3 +53,9 @@ wordbook_sources = [
 ]
 
 install_data(wordbook_sources, install_dir: moduledir)
+
+install_subdir(
+  join_paths(meson.project_source_root(), 'subprojects/wn/wn'),
+  install_dir: pkgdatadir,
+  exclude_directories: ['__pycache__']
+)
