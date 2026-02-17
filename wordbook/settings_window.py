@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 
 from gi.repository import Adw, Gtk
 
-from wordbook import utils
 from wordbook.constants import RES_PATH
 from wordbook.settings import PronunciationAccent, Settings
 

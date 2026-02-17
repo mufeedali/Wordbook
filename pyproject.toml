@@ -33,9 +33,9 @@ reportMissingModuleSource = "none"
 
 [dependency-groups]
 dev = [
-    "pip>=25.3",
+    "pip>=26.0.1",
     "pygobject-stubs>=2.16.0",
-    "ty>=0.0.8",
+    "ty>=0.0.17",
 ]
 
 [tool.uv.sources]
