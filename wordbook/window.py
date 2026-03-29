@@ -330,6 +330,15 @@ class WordbookWindow(Adw.ApplicationWindow):
         if cancellation_event.is_set():
             return
 
+        if out is not None and not out.get("result"):
+            out["suggestions"] = process.extract(
+                text,
+                self._wn_wordlist if self._wn_wordlist else [],
+                limit=5,
+                scorer=fuzz.QRatio,
+                score_cutoff=70,
+            ) if len(text) > 2 else []
+
         GLib.idle_add(self._on_search_finished, text, out)
 
     def _on_search_finished(self, search_term, result):
@@ -357,12 +366,7 @@ class WordbookWindow(Adw.ApplicationWindow):
                 self._add_to_history(result["term"])
 
         elif status == SearchStatus.FAILURE:
-            suggestions = process.extract(
-                self._searched_term,
-                self._wn_wordlist if self._wn_wordlist else [],
-                limit=5,
-                scorer=fuzz.QRatio,
-            )
+            suggestions = result.get("suggestions", [])
 
             suggestion_links = [
                 f'<a href="search;{suggestion.replace("_", " ")}">{suggestion.replace("_", " ")}</a>'
@@ -559,6 +563,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         if history_object:
             self.trigger_search(history_object.term)
 
+            if self._main_split_view.get_collapsed():
+                self._main_split_view.set_show_sidebar(False)
+
     def _on_history_items_changed(self, store, position, removed, added):
         """Applies styling to newly added history rows."""
         if added > 0:
@@ -593,6 +600,10 @@ class WordbookWindow(Adw.ApplicationWindow):
         is_favorite = Settings.get().is_favorite(text)
         history_object = HistoryObject(text, is_favorite)
         self._search_history.insert(0, history_object)
+
+        if self._search_history:
+            while self._search_history.get_n_items() > 50:
+                self._search_history.remove(self._search_history.get_n_items() - 1)
 
         self._update_clear_button_sensitivity()
 

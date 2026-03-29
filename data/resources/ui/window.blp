@@ -44,6 +44,8 @@ menu app-menu {
 template $WordbookWindow: Adw.ApplicationWindow {
     default-width: 800;
     default-height: 600;
+    width-request: 360;
+    height-request: 280;
     focus-widget: search_entry;
     default-widget: search_button;
     icon-name: "accesories-dictionary";
@@ -75,6 +77,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                         tooltip-text: _("Show Favorites Only");
                         action-name: "win.toggle-favorites";
 
+                        accessibility {
+                            label: _("Show Favorites Only");
+                        }
+
                         styles [
                             "flat",
                         ]
@@ -85,6 +91,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                         icon-name: "user-trash-symbolic";
                         tooltip-text: _("Clear History");
                         sensitive: false;
+
+                        accessibility {
+                            label: _("Clear History");
+                        }
 
                         styles [
                             "flat",
@@ -155,6 +165,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                 icon-name: "edit-find-symbolic";
                                 tooltip-text: _("Search");
 
+                                accessibility {
+                                    label: _("Search");
+                                }
+
                                 styles [
                                     "suggested-action",
                                 ]
@@ -165,6 +179,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                     ToggleButton split_view_toggle_button {
                         icon-name: "sidebar-show-symbolic";
                         tooltip-text: _("Show History");
+
+                        accessibility {
+                            label: _("Show History");
+                        }
                     }
 
                     [end]
@@ -173,6 +191,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                         receives-default: true;
                         direction: none;
                         tooltip-text: _("Main Menu");
+
+                        accessibility {
+                            label: _("Main Menu");
+                        }
                     }
                 }
 
@@ -253,6 +275,10 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                             has-frame: false;
                                             hexpand: false;
                                             tooltip-text: _("Listen to Pronunciation");
+
+                                            accessibility {
+                                                label: _("Listen to Pronunciation");
+                                            }
 
                                             styles [
                                                 "circular",

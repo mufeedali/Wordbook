@@ -62,8 +62,7 @@ def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> 
     Returns:
         A dictionary containing the definition data with pronunciation information.
     """
-    with WN_DATABASE_LOCK:
-        definition_data = get_definition(term, wn_instance)
+    definition_data = get_definition(term, wn_instance)
 
     pronunciation_term = definition_data.get("term") or term
     pron = get_pronunciation(pronunciation_term, accent)
@@ -143,7 +142,8 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
     first_match: str | None = None
     result_dict: dict[str, Any] = {pos: [] for pos in POS_MAP.values()}
 
-    synsets = wn_instance.synsets(term.lower())
+    with WN_DATABASE_LOCK:
+        synsets = wn_instance.synsets(term.lower())
 
     if not synsets:
         clean_def = {"term": term, "result": None}

@@ -26,11 +26,6 @@ dependency('libadwaita-1', version: '>=1.0')
 dependency('glib-2.0')
 dependency('pygobject-3.0', version: '>= 3.29.1')
 
-glib_compile_resources = find_program('glib-compile-resources', required: true)
-glib_compile_schemas = find_program('glib-compile-schemas', required: true)
-desktop_file_validate = find_program('desktop-file-validate', required: false)
-appstreamcli = find_program('appstreamcli', required: false)
-
 version = meson.project_version()
 version_array = version.split('.')
 major_version = version_array[0].to_int()

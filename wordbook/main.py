@@ -73,7 +73,7 @@ class Application(Adw.Application):
         )
 
         Adw.StyleManager.get_default().set_color_scheme(
-            Adw.ColorScheme.FORCE_DARK if Settings.get().gtk_dark_ui else Adw.ColorScheme.PREFER_LIGHT
+            Adw.ColorScheme.FORCE_DARK if Settings.get().gtk_dark_ui else Adw.ColorScheme.DEFAULT
         )
 
         base.create_required_dirs()

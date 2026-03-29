@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
 import traceback
 
 from gi.repository import GLib
@@ -35,38 +36,43 @@ def log_init(debug: bool) -> None:
 def log_critical(message: str) -> None:
     """Log a critical error. If called inside an except block, logs the traceback."""
     LOGGER.critical(message)
-    trace = traceback.format_exc()
-    if "NoneType: None" not in trace:
-        LOGGER.critical(trace)
+    if sys.exc_info()[0] is not None:
+        trace = traceback.format_exc()
+        if "NoneType: None" not in trace:
+            LOGGER.critical(trace)
 
 
 def log_debug(message: str) -> None:
     """Log a debug message. If called inside an except block, logs the traceback."""
     LOGGER.debug(message)
-    trace = traceback.format_exc()
-    if "NoneType: None" not in trace:
-        LOGGER.debug(trace)
+    if sys.exc_info()[0] is not None:
+        trace = traceback.format_exc()
+        if "NoneType: None" not in trace:
+            LOGGER.debug(trace)
 
 
 def log_error(message: str) -> None:
     """Log an error. If called inside an except block, logs the traceback."""
     LOGGER.error(message)
-    trace = traceback.format_exc()
-    if "NoneType: None" not in trace:
-        LOGGER.error(trace)
+    if sys.exc_info()[0] is not None:
+        trace = traceback.format_exc()
+        if "NoneType: None" not in trace:
+            LOGGER.error(trace)
 
 
 def log_info(message: str) -> None:
     """Log an info message. If called inside an except block, logs the traceback."""
     LOGGER.info(message)
-    trace = traceback.format_exc()
-    if "NoneType: None" not in trace:
-        LOGGER.info(trace)
+    if sys.exc_info()[0] is not None:
+        trace = traceback.format_exc()
+        if "NoneType: None" not in trace:
+            LOGGER.info(trace)
 
 
 def log_warning(message: str) -> None:
     """Log a warning. If called inside an except block, logs the traceback."""
     LOGGER.warning(message)
-    trace = traceback.format_exc()
-    if "NoneType: None" not in trace:
-        LOGGER.warning(trace)
+    if sys.exc_info()[0] is not None:
+        trace = traceback.format_exc()
+        if "NoneType: None" not in trace:
+            LOGGER.warning(trace)
