@@ -1,0 +1,254 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the wordbook package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# yu Qin <imqin_yu@outlook.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wordbook\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"PO-Revision-Date: 2026-03-31 22:05+0800\n"
+"Last-Translator: yu Qin <imqin_yu@outlook.com>\n"
+"Language-Team: Chinese (China)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 50.0\n"
+
+#: data/resources/ui/settings-window.blp:10
+msgid "Appearance"
+msgstr "外观"
+
+#: data/resources/ui/settings-window.blp:13
+msgid "Force Dark Mode"
+msgstr "强制深色模式"
+
+#: data/resources/ui/settings-window.blp:18
+msgid "Behavior"
+msgstr "行为"
+
+#: data/resources/ui/settings-window.blp:21
+msgid "Live Search"
+msgstr "实时搜索"
+
+#: data/resources/ui/settings-window.blp:22
+msgid "Show definition as the terms are typed in"
+msgstr "输入术语时显示定义"
+
+#: data/resources/ui/settings-window.blp:26
+msgid "Double Click Search"
+msgstr "双击搜索"
+
+#: data/resources/ui/settings-window.blp:27
+msgid "Search any word by double clicking on it"
+msgstr "通过双击搜索任意词语"
+
+#: data/resources/ui/settings-window.blp:31
+msgid "Auto Paste on Launch"
+msgstr "在启动时自动粘贴"
+
+#: data/resources/ui/settings-window.blp:32
+msgid "Automatically paste and search clipboard content on launch"
+msgstr "在启动时自动粘贴并搜索剪贴板内容"
+
+#: data/resources/ui/settings-window.blp:36
+msgid "Pronunciations Accent"
+msgstr "口音"
+
+#: data/resources/ui/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "General"
+msgstr "常规"
+
+#: data/resources/ui/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "显示键盘快捷键"
+
+#: data/resources/ui/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "首选项"
+
+#: data/resources/ui/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Paste and Search"
+msgstr "粘贴并搜索"
+
+#: data/resources/ui/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Random Word"
+msgstr "随机词语"
+
+#: data/resources/ui/shortcuts-dialog.blp:29
+msgctxt "shortcut window"
+msgid "Search Selected Text"
+msgstr "搜索已选文本"
+
+#: data/resources/ui/shortcuts-dialog.blp:34
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr "显示侧边栏"
+
+#: data/resources/ui/shortcuts-dialog.blp:39
+msgctxt "shortcut window"
+msgid "Show Menu"
+msgstr "显示菜单"
+
+#: data/resources/ui/shortcuts-dialog.blp:44
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "退出"
+
+#: data/resources/ui/window.blp:9
+msgid "Paste & Search"
+msgstr "粘贴并搜索"
+
+#: data/resources/ui/window.blp:14 wordbook/window.py:214
+msgid "Search Selected Text"
+msgstr "搜索已选文本"
+
+#: data/resources/ui/window.blp:19
+msgid "_Random Word"
+msgstr "随机词语(_R)"
+
+#: data/resources/ui/window.blp:28
+msgid "_Preferences"
+msgstr "首选项(_P)"
+
+#: data/resources/ui/window.blp:33
+msgid "_Keyboard Shortcuts"
+msgstr "键盘快捷键(_K)"
+
+#: data/resources/ui/window.blp:38
+msgid "_About Wordbook"
+msgstr "关于 Wordbook(_A)"
+
+#: data/resources/ui/window.blp:69
+msgid "History"
+msgstr "历史记录"
+
+#: data/resources/ui/window.blp:75
+msgid "Show Favorites Only"
+msgstr "仅显示收藏"
+
+#: data/resources/ui/window.blp:86
+msgid "Clear History"
+msgstr "清除历史记录"
+
+#: data/resources/ui/window.blp:122
+msgid "No recent searches or favorites"
+msgstr "无最近搜索或收藏"
+
+#: data/resources/ui/window.blp:151
+msgid "Clear"
+msgstr "清除"
+
+#: data/resources/ui/window.blp:156
+msgid "Search"
+msgstr "搜索"
+
+#: data/resources/ui/window.blp:167
+msgid "Show History"
+msgstr "显示历史记录"
+
+#: data/resources/ui/window.blp:175
+msgid "Main Menu"
+msgstr "主菜单"
+
+#: data/resources/ui/window.blp:192
+msgid "Setting things up…"
+msgstr "正在初始化…"
+
+#: data/resources/ui/window.blp:193 wordbook/window.py:818
+msgid "Downloading WordNet…"
+msgstr "正在下载 WordNet…"
+
+#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
+#: wordbook/main.py:143
+msgid "Wordbook"
+msgstr "Wordbook"
+
+#: data/resources/ui/window.blp:211
+msgid "Look up definitions of any English term"
+msgstr "查找任何英文术语的定义"
+
+#: data/resources/ui/window.blp:272
+msgid "Listen to Pronunciation"
+msgstr "听发音"
+
+#: data/resources/ui/window.blp:301
+msgid "No definition found"
+msgstr "未找到定义"
+
+#: data/resources/ui/window.blp:316
+msgid "Download failed"
+msgstr "下载失败"
+
+#: data/resources/ui/window.blp:323
+msgid "Retry"
+msgstr "重试"
+
+#: data/resources/ui/window.blp:332
+msgid "Exit"
+msgstr "退出"
+
+#: wordbook/main.py:145
+msgid "Look up definitions for words"
+msgstr "查找词语的定义"
+
+#: wordbook/main.py:147
+msgid "translator-credits"
+msgstr "秦宇"
+
+#: wordbook/main.py:150
+msgid "Source Code"
+msgstr "源代码"
+
+#: wordbook/main.py:152
+msgid "Copyright © 2016-2025 Mufeed Ali"
+msgstr "Copyright © 2016-2025 Mufeed Ali"
+
+#: wordbook/window.py:82
+msgid "Building Database…"
+msgstr "正在建立数据库…"
+
+#: wordbook/window.py:307
+msgid "Wordlist Loading"
+msgstr "正在加载词汇表"
+
+#: wordbook/window.py:308
+msgid "The word list is still loading. Please try again in a moment."
+msgstr "词汇表仍在加载。请稍后再试。"
+
+#: wordbook/window.py:522
+msgid "History cleared"
+msgstr "历史记录已清除"
+
+#: wordbook/window.py:523
+msgid "Undo"
+msgstr "撤销"
+
+#: wordbook/window.py:686
+msgid "Toggle Favorite"
+msgstr "显示收藏"
+
+#: wordbook/window.py:743
+msgid "Dismiss"
+msgstr "关闭"
+
+#: wordbook/window.py:769
+msgid "Invalid input"
+msgstr "无效输入"
+
+#: wordbook/window.py:770
+msgid "Nothing definable was found in your search input"
+msgstr "在您的搜索输入中未找到任何可定义的内容"
+
+#: wordbook/window.py:895
+msgid "Ready."
+msgstr "就绪。"
