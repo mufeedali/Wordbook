@@ -31,14 +31,14 @@ listbox row.favorite-item:selected {
     color: @accent_color;
 }
 
-.term-view,
 .pos-header {
     font-size: large;
     font-weight: bold;
 }
 
-.pronunciation-view {
+.pronunciation-inline {
     font-style: italic;
+    font-size: 0.95em;
 }
 
 .relation-type,

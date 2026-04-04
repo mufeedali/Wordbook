@@ -59,7 +59,6 @@ class WordbookWindow(Adw.ApplicationWindow):
     search_button: Gtk.Button = Gtk.Template.Child("search_button")
     _title_clamp: Adw.Clamp = Gtk.Template.Child("title_clamp")
     _search_entry: Gtk.Entry = Gtk.Template.Child("search_entry")
-    _speak_button: Gtk.Button = Gtk.Template.Child("speak_button")
     _split_view_toggle_button: Gtk.ToggleButton = Gtk.Template.Child("split_view_toggle_button")
     _menu_button: Gtk.MenuButton = Gtk.Template.Child("wordbook_menu_button")
 
@@ -76,8 +75,6 @@ class WordbookWindow(Adw.ApplicationWindow):
     _toast_overlay: Adw.ToastOverlay = Gtk.Template.Child("toast_overlay")
 
     # Definition View
-    _term_view: Gtk.Label = Gtk.Template.Child("term_view")
-    _pronunciation_view: Gtk.Label = Gtk.Template.Child("pronunciation_view")
     _definitions_listbox: Gtk.ListBox = Gtk.Template.Child("definitions_listbox")
 
     # Status Pages
@@ -150,7 +147,6 @@ class WordbookWindow(Adw.ApplicationWindow):
         self.search_button.connect("clicked", self.on_search_clicked)
         self._search_entry.connect("changed", self._on_entry_changed)
         self._search_entry.connect("icon-press", self._on_entry_icon_clicked)
-        self._speak_button.connect("clicked", self._on_speak_clicked)
         self._exit_button.connect("clicked", self._on_exit_clicked)
         self._clear_history_button.connect("clicked", self._on_clear_history)
 
@@ -292,8 +288,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         """Callback for the 'toggle-favorites' action. Toggles the history filter."""
         self._toggle_favorites_filter()
 
-    def on_search_clicked(self, _button=None, text=None):
+    def on_search_clicked(self, _button=None, text=None, update_history: bool = True):
         """Initiates a search, cancelling any previous search."""
+        if self._live_search_delay_timer is not None:
+            GLib.source_remove(self._live_search_delay_timer)
+            self._live_search_delay_timer = None
+
         self._clear_definitions()
 
         if text is None:
@@ -312,12 +312,12 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._search_cancellation_event = threading.Event()
         self._active_thread = threading.Thread(
             target=self.threaded_search,
-            args=[text, self._search_cancellation_event],
+            args=[text, self._search_cancellation_event, update_history],
             daemon=True,
         )
         self._active_thread.start()
 
-    def threaded_search(self, text, cancellation_event):
+    def threaded_search(self, text, cancellation_event, update_history: bool):
         """
         Performs the search in a background thread.
         This prevents the UI from freezing during network or intensive search operations.
@@ -339,9 +339,9 @@ class WordbookWindow(Adw.ApplicationWindow):
                 score_cutoff=70,
             ) if len(text) > 2 else []
 
-        GLib.idle_add(self._on_search_finished, text, out)
+        GLib.idle_add(self._on_search_finished, text, out, update_history)
 
-    def _on_search_finished(self, search_term, result):
+    def _on_search_finished(self, search_term, result, update_history: bool = True):
         """Handles the result of a search on the main thread."""
         self._searched_term = search_term
 
@@ -353,17 +353,13 @@ class WordbookWindow(Adw.ApplicationWindow):
 
         if status == SearchStatus.SUCCESS:
             self._populate_definitions(result["result"])
-            self._term_view.set_text(result["term"].strip())
-            self._term_view.set_tooltip_text(result["term"].strip())
-            self._pronunciation_view.set_text(result["pronunciation"].strip().replace("\n", ""))
-            self._pronunciation_view.set_tooltip_text(result["pronunciation"].strip().replace("\n", ""))
-            self._speak_button.set_visible(True)
             self._page_switch(Page.CONTENT)
 
-            if Settings.get().live_search:
-                self._add_to_history_delayed(result["term"])
-            else:
-                self._add_to_history(result["term"])
+            if update_history:
+                if Settings.get().live_search:
+                    self._add_to_history_delayed(result["term"])
+                else:
+                    self._add_to_history(result["term"])
 
         elif status == SearchStatus.FAILURE:
             suggestions = result.get("suggestions", [])
@@ -387,6 +383,18 @@ class WordbookWindow(Adw.ApplicationWindow):
             self._page_switch(Page.WELCOME)
 
         self._active_thread = None
+
+    def refresh_current_search_pronunciations(self) -> None:
+        """Refreshes the visible search result after accent changes without touching history."""
+        visible_page = self._main_stack.get_visible_child_name()
+
+        if not self._searched_term:
+            return
+
+        if visible_page != Page.CONTENT.value:
+            return
+
+        self.on_search_clicked(text=self._searched_term, update_history=False)
 
     def trigger_search(self, text):
         if not text or not text.strip():
@@ -626,22 +634,185 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _execute_delayed_search(self):
         """Executes the delayed search."""
-        self.on_search_clicked()
         self._live_search_delay_timer = None
+        self.on_search_clicked()
         return False
 
-    def _on_speak_clicked(self, _button):
-        """Callback for the speak button. Reads the current term aloud in a background thread."""
+    def _on_speak_lemma_clicked(self, _button: Gtk.Button, lemma: str, ipa: str | None = None) -> None:
+        """Callback to read a specific lemma aloud, using its wn format IPA."""
+        accent = Settings.get().pronunciations_accent.code
 
         def speak():
-            if self._searched_term:
-                base.read_term(
-                    self._searched_term,
-                    speed=120,
-                    accent=Settings.get().pronunciations_accent.code,
-                )
+            base.read_term(lemma, speed=120, accent=accent, ipa=ipa)
 
         threading.Thread(target=speak, daemon=True).start()
+
+    def _append_pronunciation_controls(
+        self,
+        box: Gtk.Box,
+        pron: base.PronunciationInfo | None,
+        lemma: str,
+    ) -> None:
+        if not pron or not pron.ipa:
+            return
+
+        ipa_label = Gtk.Label(
+            label=pron.ipa,
+            selectable=True,
+            valign=Gtk.Align.CENTER,
+            css_classes=["pronunciation-inline", "dim-label"],
+        )
+        box.append(ipa_label)
+
+        controls_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=2,
+            valign=Gtk.Align.CENTER,
+        )
+
+        play_btn = Gtk.Button(
+            icon_name="audio-volume-high-symbolic",
+            valign=Gtk.Align.CENTER,
+            tooltip_text=_("Listen to Pronunciation"),
+            css_classes=["flat", "circular"],
+        )
+        play_btn.connect("clicked", self._on_speak_lemma_clicked, lemma, None if pron.is_fallback else pron.ipa)
+        controls_box.append(play_btn)
+
+        if pron.is_fallback:
+            controls_box.append(self._create_espeak_info_button())
+
+        box.append(controls_box)
+
+    def _create_header_row(
+        self,
+        label_text: str,
+        label_css_class: str,
+        pron: base.PronunciationInfo | None,
+        lemma: str,
+    ) -> Gtk.Box:
+        """Creates a row: [header label] [IPA (dimmed)] [play btn] [info btn?]"""
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8, valign=Gtk.Align.CENTER)
+
+        header_label = Gtk.Label(
+            label=label_text,
+            use_markup=True,
+            xalign=0.0,
+            hexpand=True,
+            css_classes=[label_css_class],
+        )
+        box.append(header_label)
+
+        self._append_pronunciation_controls(box, pron, lemma)
+
+        return box
+
+    def _create_definition_row(self, synset: dict[str, Any], definition_number: int) -> Gtk.Box:
+        def_main_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=12,
+        )
+
+        number_label = Gtk.Label(
+            label=str(definition_number),
+            use_markup=True,
+            valign=Gtk.Align.START,
+            margin_top=2,
+            css_classes=[
+                "definition-number",
+            ],
+        )
+        number_label.set_size_request(20, -1)
+        def_main_box.append(number_label)
+
+        content_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=6,
+            hexpand=True,
+        )
+
+        def_label = Gtk.Label(
+            label=synset["definition"],
+            wrap=True,
+            xalign=0.0,
+            selectable=True,
+            extra_menu=self._def_extra_menu_model,
+            css_classes=[
+                "definition",
+            ],
+        )
+
+        click = Gtk.GestureClick.new()
+        click.connect("pressed", self._on_def_press_event)
+        click.connect("stopped", self._on_def_stop_event)
+        def_label.add_controller(click)
+
+        content_box.append(def_label)
+
+        for example in synset.get("examples", []):
+            example_label = Gtk.Label(
+                label=example,
+                wrap=True,
+                xalign=0.0,
+                selectable=True,
+                extra_menu=self._def_extra_menu_model,
+            )
+            example_label.add_css_class("example-text")
+
+            click = Gtk.GestureClick.new()
+            click.connect("pressed", self._on_def_press_event)
+            click.connect("stopped", self._on_def_stop_event)
+            example_label.add_controller(click)
+
+            content_box.append(example_label)
+
+        for relation_type, relation_key in [
+            ("Synonyms", "syn"),
+            ("Antonyms", "ant"),
+            ("Similar to", "sim"),
+            ("Also see", "also_sees"),
+        ]:
+            words = synset.get(relation_key, [])
+            if words:
+                relation_box = self._create_relation_widget(relation_type, words)
+                if relation_box:
+                    content_box.append(relation_box)
+
+        def_main_box.append(content_box)
+        return def_main_box
+
+    @staticmethod
+    def _create_definition_separator() -> Gtk.Separator:
+        return Gtk.Separator(
+            margin_top=8,
+            margin_bottom=8,
+            margin_start=32,
+        )
+
+    def _create_espeak_info_button(self) -> Gtk.MenuButton:
+        label = Gtk.Label(
+            label=_(
+                "Pronunciation was generated by espeak-ng"
+                " as a fallback and may be inaccurate."
+            ),
+            wrap=True,
+            max_width_chars=30,
+            margin_top=8,
+            margin_bottom=8,
+            margin_start=8,
+            margin_end=8,
+        )
+        popover = Gtk.Popover()
+        popover.set_child(label)
+
+        btn = Gtk.MenuButton(
+            icon_name="dialog-information-symbolic",
+            popover=popover,
+            valign=Gtk.Align.CENTER,
+            tooltip_text=_("Pronunciation accuracy note"),
+            css_classes=["flat", "circular"],
+        )
+        return btn
 
     def _create_history_label(self, element):
         """Factory method to create a history row widget."""
@@ -884,121 +1055,47 @@ class WordbookWindow(Adw.ApplicationWindow):
             margin_end=12,
         )
 
-        pos_header = Gtk.Label(
-            label=pos,
-            xalign=0.0,
-            use_markup=True,
-            css_classes=[
-                "pos-header",
-            ],
+        pos_box.append(
+            Gtk.Label(
+                label=pos,
+                xalign=0.0,
+                use_markup=True,
+                css_classes=["pos-header"],
+            )
         )
-        pos_box.append(pos_header)
 
-        synset_groups: dict[str, list[dict[str, Any]]] = {}
-        for synset in sorted(synsets, key=lambda k: k["name"]):
-            name = synset["name"]
-            if name not in synset_groups:
-                synset_groups[name] = []
-            synset_groups[name].append(synset)
+        lemma_groups = base.group_synsets_by_lemma(synsets)
 
-        overall_definition_number = 1
-        total_synsets = len([s for group in synset_groups.values() for s in group])
+        for lemma_group in lemma_groups:
+            lemma_box = Gtk.Box(
+                orientation=Gtk.Orientation.VERTICAL,
+                spacing=8,
+            )
 
-        for synset_name, group_synsets in synset_groups.items():
-            definition_number = 1
-
-            if len(synset_groups) > 1:
-                synset_header = Gtk.Label(
-                    label=synset_name,
-                    use_markup=True,
-                    xalign=0.0,
-                    margin_top=8,
-                    css_classes=[
-                        "synset-header",
-                    ],
-                )
-                pos_box.append(synset_header)
-
-            for synset in group_synsets:
-                def_main_box = Gtk.Box(
-                    orientation=Gtk.Orientation.HORIZONTAL,
-                    spacing=12,
-                )
-
-                number_label = Gtk.Label(
-                    label=str(definition_number),
-                    use_markup=True,
-                    valign=Gtk.Align.START,
-                    margin_top=2,
-                    css_classes=[
-                        "definition-number",
-                    ],
-                )
-                number_label.set_size_request(20, -1)
-                def_main_box.append(number_label)
-
-                content_box = Gtk.Box(
+            for pronunciation_group in lemma_group.pronunciation_groups:
+                pronunciation_box = Gtk.Box(
                     orientation=Gtk.Orientation.VERTICAL,
-                    spacing=6,
-                    hexpand=True,
+                    spacing=4,
                 )
 
-                def_label = Gtk.Label(
-                    label=synset["definition"],
-                    wrap=True,
-                    xalign=0.0,
-                    selectable=True,
-                    extra_menu=self._def_extra_menu_model,
-                    css_classes=[
-                        "definition",
-                    ],
-                )
-
-                click = Gtk.GestureClick.new()
-                click.connect("pressed", self._on_def_press_event)
-                click.connect("stopped", self._on_def_stop_event)
-                def_label.add_controller(click)
-
-                content_box.append(def_label)
-
-                for example in synset.get("examples", []):
-                    example_label = Gtk.Label(
-                        label=example,
-                        wrap=True,
-                        xalign=0.0,
-                        selectable=True,
-                        extra_menu=self._def_extra_menu_model,
+                pronunciation_box.append(
+                    self._create_header_row(
+                        lemma_group.lemma,
+                        "synset-header",
+                        pronunciation_group.pronunciation,
+                        lemma_group.lemma,
                     )
-                    example_label.add_css_class("example-text")
+                )
 
-                    click = Gtk.GestureClick.new()
-                    click.connect("pressed", self._on_def_press_event)
-                    click.connect("stopped", self._on_def_stop_event)
-                    example_label.add_controller(click)
+                for definition_number, synset in enumerate(pronunciation_group.synsets, start=1):
+                    pronunciation_box.append(self._create_definition_row(synset, definition_number))
 
-                    content_box.append(example_label)
+                    if definition_number < len(pronunciation_group.synsets):
+                        pronunciation_box.append(self._create_definition_separator())
 
-                for relation_type, relation_key in [
-                    ("Synonyms", "syn"),
-                    ("Antonyms", "ant"),
-                    ("Similar to", "sim"),
-                    ("Also see", "also_sees"),
-                ]:
-                    words = synset.get(relation_key, [])
-                    if words:
-                        relation_box = self._create_relation_widget(relation_type, words)
-                        if relation_box:
-                            content_box.append(relation_box)
+                lemma_box.append(pronunciation_box)
 
-                def_main_box.append(content_box)
-                pos_box.append(def_main_box)
-
-                if overall_definition_number < total_synsets:
-                    spacer = Gtk.Separator(margin_top=4, margin_bottom=4)
-                    pos_box.append(spacer)
-
-                definition_number += 1
-                overall_definition_number += 1
+            pos_box.append(lemma_box)
 
         return pos_box
 

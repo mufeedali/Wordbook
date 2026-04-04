@@ -163,6 +163,7 @@ template $WordbookWindow: Adw.ApplicationWindow {
 
                             Button search_button {
                                 icon-name: "edit-find-symbolic";
+                                receives-default: true;
                                 tooltip-text: _("Search");
 
                                 accessibility {
@@ -223,73 +224,12 @@ template $WordbookWindow: Adw.ApplicationWindow {
                                 child: Box {
                                     orientation: vertical;
 
-                                    Box {
-                                        hexpand: false;
-
-                                        Box {
-                                            margin-start: 18;
-                                            margin-end: 18;
-                                            margin-top: 12;
-                                            margin-bottom: 16;
-                                            orientation: vertical;
-                                            hexpand: false;
-
-                                            Label term_view {
-                                                label: "Term";
-                                                use-markup: true;
-                                                selectable: true;
-                                                single-line-mode: true;
-                                                ellipsize: end;
-                                                xalign: 0;
-                                                hexpand: false;
-
-                                                styles [
-                                                    "term-view",
-                                                ]
-                                            }
-
-                                            Label pronunciation_view {
-                                                label: "/Pronunciation/";
-                                                use-markup: true;
-                                                selectable: true;
-                                                ellipsize: end;
-                                                single-line-mode: true;
-                                                xalign: 0;
-                                                hexpand: false;
-
-                                                styles [
-                                                    "pronunciation-view",
-                                                ]
-                                            }
-                                        }
-
-                                        Button speak_button {
-                                            margin-start: 4;
-                                            margin-end: 12;
-                                            margin-top: 12;
-                                            margin-bottom: 12;
-                                            receives-default: true;
-                                            halign: center;
-                                            valign: center;
-                                            icon-name: "audio-volume-high-symbolic";
-                                            has-frame: false;
-                                            hexpand: false;
-                                            tooltip-text: _("Listen to Pronunciation");
-
-                                            accessibility {
-                                                label: _("Listen to Pronunciation");
-                                            }
-
-                                            styles [
-                                                "circular",
-                                            ]
-                                        }
-                                    }
 
                                     ListBox definitions_listbox {
                                         margin-start: 12;
                                         margin-end: 12;
                                         margin-bottom: 12;
+                                        margin-top: 8;
                                         selection-mode: none;
                                         show-separators: false;
                                         vexpand: true;

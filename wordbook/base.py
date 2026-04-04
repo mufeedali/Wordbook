@@ -10,6 +10,7 @@ import os
 import subprocess
 import threading
 from collections.abc import Callable
+from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any
 
@@ -43,6 +44,98 @@ def clean_search_terms(search_term: str) -> str:
     return text
 
 
+@dataclass
+class PronunciationInfo:
+    ipa: str
+    is_fallback: bool = False
+
+
+@dataclass
+class PronunciationGroup:
+    pronunciation: PronunciationInfo | None
+    synsets: list[dict[str, Any]]
+
+
+@dataclass
+class LemmaGroup:
+    lemma: str
+    pronunciation_groups: list[PronunciationGroup]
+
+
+def _normalize_pronunciation_variety(variety: str | None) -> str:
+    if not variety:
+        return ""
+    return variety.strip().casefold()
+
+
+def _pronunciation_group_key(pronunciation: PronunciationInfo | None) -> tuple[str, bool]:
+    if pronunciation is None:
+        return ("", False)
+    return (pronunciation.ipa, pronunciation.is_fallback)
+
+
+def group_synsets_by_lemma(synsets: list[dict[str, Any]]) -> list[LemmaGroup]:
+    lemma_groups: dict[str, dict[tuple[str, bool], list[dict[str, Any]]]] = {}
+
+    for synset in synsets:
+        lemma = synset["name"]
+        pronunciation = synset.get("pronunciation")
+        pronunciation_groups = lemma_groups.setdefault(lemma, {})
+        pronunciation_groups.setdefault(_pronunciation_group_key(pronunciation), []).append(synset)
+
+    return [
+        LemmaGroup(
+            lemma=lemma,
+            pronunciation_groups=[
+                PronunciationGroup(
+                    pronunciation=group_synsets[0].get("pronunciation"),
+                    synsets=group_synsets,
+                )
+                for group_synsets in pronunciation_groups.values()
+            ],
+        )
+        for lemma, pronunciation_groups in lemma_groups.items()
+    ]
+
+
+def ipa_to_espeak(ipa_string: str) -> str:
+    s = ipa_string.strip().strip("/[]")
+
+    mapping = {
+        "ˈ": "'", "ˌ": ",", "ː": ":", ".": "", "‿": "", "|": "", "‖": "",
+        "tʃ": "tS", "dʒ": "dZ",
+        "eɪ": "eI", "aɪ": "aI", "ɔɪ": "OI", "aʊ": "aU", "oʊ": "oU", "əʊ": "@U",
+        "ɪə": "I@", "eə": "e@", "ɛə": "e@", "ʊə": "U@",
+        "iː": "i:", "ɑː": "A:", "ɔː": "O:", "uː": "u:", "ɜː": "3:",
+        "ɚ": "@r", "ɝ": "3r",
+        "ɪ": "I", "ɛ": "E", "e": "e", "æ": "a", "ɑ": "A", "ɒ": "0", "ɔ": "O",
+        "ʊ": "U", "ʌ": "V", "ɜ": "3", "ə": "@", "ɐ": "@", "a": "a",
+        "θ": "T", "ð": "D", "ʃ": "S", "ʒ": "Z", "ŋ": "N", "ɹ": "r", "ɾ": "4",
+        "ɫ": "l", "ʔ": "?", "ʍ": "W", "x": "x", "ç": "C",
+    }
+
+    for ipa_sym, esp_sym in sorted(mapping.items(), key=lambda x: len(x[0]), reverse=True):
+        s = s.replace(ipa_sym, esp_sym)
+
+    s = "".join(c for c in s if ord(c) < 128)
+    return f"[[{s}]]"
+
+
+def _pick_pronunciation(prons: list[wn.Pronunciation], accent: str) -> PronunciationInfo | None:
+    if not prons:
+        return None
+
+    requested_variety = _normalize_pronunciation_variety(accent)
+
+    for p in prons:
+        pronunciation_variety = _normalize_pronunciation_variety(p.variety)
+        if pronunciation_variety and pronunciation_variety == requested_variety:
+            return PronunciationInfo(ipa=p.value)
+
+    p = prons[0]
+    return PronunciationInfo(ipa=p.value)
+
+
 def create_required_dirs() -> None:
     """Make required directories if they don't already exist."""
     os.makedirs(utils.CONFIG_DIR, exist_ok=True)
@@ -60,21 +153,38 @@ def fetch_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> 
         accent: The espeak-ng accent code.
 
     Returns:
-        A dictionary containing the definition data with pronunciation information.
+        A dictionary containing the definition data without a top-level pronunciation.
     """
-    definition_data = get_definition(term, wn_instance)
+    with WN_DATABASE_LOCK:
+        definition_data = get_definition(term, wn_instance, accent=accent)
 
-    pronunciation_term = definition_data.get("term") or term
-    pron = get_pronunciation(pronunciation_term, accent)
-    final_pron = pron if pron and not pron.isspace() else "Pronunciation unavailable (is espeak-ng installed?)"
+    result = definition_data.get("result")
+    resolved_term = definition_data.get("term", term)
 
-    final_data: dict[str, Any] = {
-        "term": definition_data.get("term", term),
-        "pronunciation": final_pron,
-        "result": definition_data.get("result"),
-    }
+    if not result or not resolved_term:
+        return definition_data
 
-    return final_data
+    normalized_resolved_term = resolved_term.casefold()
+    needs_fallback = any(
+        synset_data.get("pronunciation") is None and synset_data["name"].casefold() == normalized_resolved_term
+        for pos_synsets in result.values()
+        for synset_data in pos_synsets
+    )
+
+    if not needs_fallback:
+        return definition_data
+
+    fallback_ipa = get_pronunciation(resolved_term, accent)
+    if not fallback_ipa:
+        return definition_data
+
+    fallback_pronunciation = PronunciationInfo(ipa=fallback_ipa, is_fallback=True)
+    for pos_synsets in result.values():
+        for synset_data in pos_synsets:
+            if synset_data.get("pronunciation") is None and synset_data["name"].casefold() == normalized_resolved_term:
+                synset_data["pronunciation"] = fallback_pronunciation
+
+    return definition_data
 
 
 def _normalize_lemma(lemma: str) -> str:
@@ -128,13 +238,14 @@ def _extract_related_lemmas(synset: wn.Synset, matched_lemma: str) -> dict[str, 
     return related
 
 
-def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
+def get_definition(term: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any]:
     """
     Gets the definition from WordNet, processes it, and prepares data structure.
 
     Args:
         term: The term to define.
         wn_instance: The initialized Wordnet instance.
+        accent: The espeak-ng accent code.
 
     Returns:
         A dictionary with the processed definition data ('term', 'result').
@@ -142,8 +253,7 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
     first_match: str | None = None
     result_dict: dict[str, Any] = {pos: [] for pos in POS_MAP.values()}
 
-    with WN_DATABASE_LOCK:
-        synsets = wn_instance.synsets(term.lower())
+    synsets = wn_instance.synsets(term.lower())
 
     if not synsets:
         clean_def = {"term": term, "result": None}
@@ -164,12 +274,20 @@ def get_definition(term: str, wn_instance: wn.Wordnet) -> dict[str, Any]:
         if first_match is None:
             first_match = matched_lemma
 
+        wn_pron = None
+        for word in synset.words():
+            if _normalize_lemma(word.lemma(data=False)).lower() == matched_lemma.lower():
+                form = word.lemma(data=True)
+                wn_pron = _pick_pronunciation(form.pronunciations(), accent)
+                break
+
         related_lemmas = _extract_related_lemmas(synset, matched_lemma)
 
         synset_data: dict[str, Any] = {
             "name": matched_lemma,
             "definition": synset.definition() or "No definition available.",
             "examples": synset.examples() or [],
+            "pronunciation": wn_pron,
             **related_lemmas,
         }
 
@@ -192,7 +310,7 @@ def get_pronunciation(term: str, accent: str = "us") -> str | None:
         accent: The espeak-ng accent code (e.g., "us", "gb").
 
     Returns:
-        The pronunciation in IPA format (e.g., "/tˈɛst/"), or None if espeak-ng fails.
+        The pronunciation in IPA format without wrapper slashes, or None if espeak-ng fails.
     """
     try:
         process = subprocess.Popen(
@@ -212,7 +330,7 @@ def get_pronunciation(term: str, accent: str = "us") -> str | None:
 
         if process.returncode == 0 and stdout:
             ipa_pronunciation = stdout.strip().replace("\n", " ").replace("  ", " ")
-            return f"/{ipa_pronunciation.strip('/')}/"
+            return ipa_pronunciation.strip("/")
 
         utils.log_warning(f"espeak-ng failed for term '{term}'. RC: {process.returncode}. Stderr: {stderr.strip()}")
         return None
@@ -287,7 +405,6 @@ def get_wn_wordlist(wn_instance: wn.Wordnet, on_complete: Callable[[list[str]], 
 def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dict[str, Any] | None:
     """
     Determines colors, handles special commands (fortune, exit), and fetches definitions.
-    Uses WN_DATABASE_LOCK to prevent concurrent access with wordlist loading.
 
     Args:
         text: The input text (search term or command).
@@ -311,7 +428,7 @@ def format_output(text: str, wn_instance: wn.Wordnet, accent: str = "us") -> dic
         return None
 
 
-def read_term(text: str, speed: int = 120, accent: str = "us") -> None:
+def read_term(text: str, speed: int = 120, accent: str = "us", ipa: str | None = None) -> None:
     """
     Uses espeak-ng to speak the given text aloud.
 
@@ -319,10 +436,16 @@ def read_term(text: str, speed: int = 120, accent: str = "us") -> None:
         text: The text to speak.
         speed: Speaking speed (words per minute).
         accent: The espeak-ng accent code.
+        ipa: The IPA string to use for pronunciation (if available).
     """
+    if ipa:
+        phoneme_input = ipa_to_espeak(ipa)
+    else:
+        phoneme_input = text
+
     try:
         subprocess.run(
-            ["espeak-ng", "-s", str(speed), "-v", f"en-{accent}", text],
+            ["espeak-ng", "-s", str(speed), "-v", f"en-{accent}", phoneme_input],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
             check=False,

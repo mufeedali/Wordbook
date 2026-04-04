@@ -71,10 +71,17 @@ class SettingsDialog(Adw.PreferencesDialog):
         """Callback for the 'auto-paste on launch' switch. Saves the new state."""
         Settings.get().auto_paste_on_launch = switch.get_active()
 
-    @staticmethod
-    def _on_pronunciations_accent_activate(row, _gparam):
+    def _on_pronunciations_accent_activate(self, row, _gparam):
         """Callback for the pronunciation accent dropdown. Saves the new selection."""
-        Settings.get().pronunciations_accent = PronunciationAccent.from_index(row.get_selected())
+        settings = Settings.get()
+        previous_accent = settings.pronunciations_accent
+        new_accent = PronunciationAccent.from_index(row.get_selected())
+
+        if new_accent == previous_accent:
+            return
+
+        settings.pronunciations_accent = new_accent
+        self.parent.refresh_current_search_pronunciations()
 
     @staticmethod
     def _on_dark_ui_switch_activate(switch, _gparam):
