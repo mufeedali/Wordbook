@@ -660,7 +660,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             label=pron.ipa,
             selectable=True,
             valign=Gtk.Align.CENTER,
-            css_classes=["pronunciation-inline", "dim-label"],
+            css_classes=["dimmed"],
         )
         box.append(ipa_label)
 
@@ -692,7 +692,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         lemma: str,
     ) -> Gtk.Box:
         """Creates a row: [header label] [IPA (dimmed)] [play btn] [info btn?]"""
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8, valign=Gtk.Align.CENTER)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4, valign=Gtk.Align.CENTER)
 
         header_label = Gtk.Label(
             label=label_text,

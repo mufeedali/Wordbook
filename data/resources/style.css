@@ -36,11 +36,6 @@ listbox row.favorite-item:selected {
     font-weight: bold;
 }
 
-.pronunciation-inline {
-    font-style: italic;
-    font-size: 0.95em;
-}
-
 .relation-type,
 .definition-number,
 .synset-header {
