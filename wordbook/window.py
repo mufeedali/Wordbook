@@ -17,6 +17,7 @@ from rapidfuzz import fuzz, process
 from wordbook import base, utils
 from wordbook.constants import RES_PATH
 from wordbook.database import DatabaseManager
+from wordbook.search_completion import SearchCompletion
 from wordbook.settings import Settings
 from wordbook.settings_window import SettingsDialog
 
@@ -94,9 +95,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     _searched_term: str | None = None
     _active_thread: threading.Thread | None = None
     _search_cancellation_event: threading.Event | None = None
-    _completion_lock: threading.Lock
-    _completion_pending: bool = False
-    _completion_text: str = ""
+    _completion: SearchCompletion
     _live_search_delay_timer = None
 
     # History
@@ -125,7 +124,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             raise RuntimeError("Failed to get application instance in WordbookWindow.__init__")
 
         if app.development_mode:
-            self.get_style_context().add_class("devel")
+            self.add_css_class("devel")
         self.set_default_icon_name(app.app_id)
 
         self.setup_widgets()
@@ -133,7 +132,6 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def setup_widgets(self):
         """Sets up widgets, binds models, and connects signal handlers."""
-        self._completion_lock = threading.Lock()
         self._search_history = Gio.ListStore.new(HistoryObject)
         self._history_listbox.bind_model(self._search_history, self._create_history_label)
         self._history_listbox.connect("row-activated", self._on_history_item_activated)
@@ -160,14 +158,13 @@ class WordbookWindow(Adw.ApplicationWindow):
         self._style_manager = self.get_application().get_style_manager()
 
         self._setup_wn()
-
-        # FIXME: Remove use of EntryCompletion
-        self.completer = Gtk.EntryCompletion()
-        self.completer.set_popup_single_match(True)
-        self.completer.set_text_column(0)
-        self.completer.set_popup_completion(not Settings.get().live_search)
-        self.completer.set_popup_set_width(True)
-        self._search_entry.set_completion(self.completer)
+        self._completion = SearchCompletion(
+            parent=self,
+            entry=self._search_entry,
+            item_provider=self._get_completion_items,
+            activate=self.trigger_search,
+        )
+        self.set_completion_enabled(not Settings.get().live_search)
 
         history_items = [HistoryObject(term, Settings.get().is_favorite(term)) for term in Settings.get().history]
         self._search_history.splice(0, 0, history_items)
@@ -182,6 +179,9 @@ class WordbookWindow(Adw.ApplicationWindow):
         item = Gio.MenuItem.new(_("Search Selected Text"), "win.search-selected")
         def_extra_menu_model.append_item(item)
         self._def_extra_menu_model = def_extra_menu_model
+
+    def set_completion_enabled(self, enabled: bool) -> None:
+        self._completion.set_enabled(enabled)
 
     def setup_actions(self):
         """Sets up the Gio actions and accelerators for the application window."""
@@ -272,7 +272,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     def on_random_word(self, _action, _param):
         """Callback for the 'random-word' action. Searches for a random word."""
         if self._wn_wordlist:
-            random_word = random.choice(self._wn_wordlist).replace("_", " ")
+            random_word = random.choice(self._wn_wordlist)
             self.trigger_search(random_word)
         else:
             self._new_error(
@@ -293,6 +293,8 @@ class WordbookWindow(Adw.ApplicationWindow):
         if self._live_search_delay_timer is not None:
             GLib.source_remove(self._live_search_delay_timer)
             self._live_search_delay_timer = None
+
+        self._completion.clear()
 
         self._clear_definitions()
 
@@ -331,13 +333,17 @@ class WordbookWindow(Adw.ApplicationWindow):
             return
 
         if out is not None and not out.get("result"):
-            out["suggestions"] = process.extract(
-                text,
-                self._wn_wordlist if self._wn_wordlist else [],
-                limit=5,
-                scorer=fuzz.QRatio,
-                score_cutoff=70,
-            ) if len(text) > 2 else []
+            out["suggestions"] = (
+                process.extract(
+                    text,
+                    self._wn_wordlist if self._wn_wordlist else [],
+                    limit=5,
+                    scorer=fuzz.QRatio,
+                    score_cutoff=70,
+                )
+                if len(text) > 2
+                else []
+            )
 
         GLib.idle_add(self._on_search_finished, text, out, update_history)
 
@@ -365,7 +371,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             suggestions = result.get("suggestions", [])
 
             suggestion_links = [
-                f'<a href="search;{suggestion.replace("_", " ")}">{suggestion.replace("_", " ")}</a>'
+                f'<a href="search;{suggestion}">{suggestion}</a>'
                 for suggestion, score, _ in suggestions
                 if score > 70
             ]
@@ -373,10 +379,10 @@ class WordbookWindow(Adw.ApplicationWindow):
             if suggestion_links:
                 suggestions_markup = f"Did you mean: {', '.join(suggestion_links)}?"
                 self._search_fail_description_label.set_markup(suggestions_markup)
-                self._search_fail_description_label.show()
+                self._search_fail_description_label.set_visible(True)
             else:
                 self._search_fail_description_label.set_markup("")
-                self._search_fail_description_label.hide()
+                self._search_fail_description_label.set_visible(False)
 
             self._page_switch(Page.SEARCH_FAIL)
         else:  # RESET or other cases
@@ -401,6 +407,7 @@ class WordbookWindow(Adw.ApplicationWindow):
             return
         self._search_entry.handler_block_by_func(self._on_entry_changed)
         self._search_entry.set_text(text)
+        self._search_entry.set_position(len(text))
         self._search_entry.handler_unblock_by_func(self._on_entry_changed)
         self.on_search_clicked(text=text)
 
@@ -472,18 +479,12 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _on_entry_changed(self, _entry):
         """Handles text changes in the search entry, triggering live search and completions."""
-        with self._completion_lock:
-            self._completion_text = _entry.get_text()
-            if not self._completion_pending:
-                self._completion_pending = True
-                threading.Thread(
-                    target=self._update_completions,
-                    daemon=True,
-                ).start()
+        text = _entry.get_text()
 
         # Show/hide clear button based on whether there's text
-        text = self._search_entry.get_text()
         self._search_entry.props.secondary_icon_name = "edit-clear-symbolic" if text else ""
+
+        self._completion.update(text)
 
         if Settings.get().live_search:
             if self._live_search_delay_timer is not None:
@@ -543,8 +544,7 @@ class WordbookWindow(Adw.ApplicationWindow):
     def _on_link_activated(self, _widget, data):
         """Handles clicks on hyperlinks in the UI, such as 'Did you mean' suggestions."""
         if data.startswith("search;"):
-            GLib.idle_add(self._search_entry.set_text, data[7:])
-            self.on_search_clicked(text=data[7:])
+            self.trigger_search(data[7:])
         return Gdk.EVENT_STOP
 
     def _on_key_pressed(self, _button, keyval, _keycode, state):
@@ -552,10 +552,11 @@ class WordbookWindow(Adw.ApplicationWindow):
         modifiers = state & Gtk.accelerator_get_default_mod_mask()
         shift_mask = Gdk.ModifierType.SHIFT_MASK
         unicode_key_val = Gdk.keyval_to_unicode(keyval)
+
         if (
             GLib.unichar_isgraph(chr(unicode_key_val))
             and modifiers in (shift_mask, 0)
-            and not self._search_entry.is_focus()
+            and not self._completion.entry_has_focus()
         ):
             self._search_entry.grab_focus_without_selecting()
             text = self._search_entry.get_text() + chr(unicode_key_val)
@@ -791,10 +792,7 @@ class WordbookWindow(Adw.ApplicationWindow):
 
     def _create_espeak_info_button(self) -> Gtk.MenuButton:
         label = Gtk.Label(
-            label=_(
-                "Pronunciation was generated by espeak-ng"
-                " as a fallback and may be inaccurate."
-            ),
+            label=_("Pronunciation was generated by espeak-ng as a fallback and may be inaccurate."),
             wrap=True,
             max_width_chars=30,
             margin_top=8,
@@ -929,51 +927,37 @@ class WordbookWindow(Adw.ApplicationWindow):
             )
         return None
 
-    def _update_completions(self):
-        """Updates the search entry's completion model based on the current text."""
-        while True:
-            with self._completion_lock:
-                text = self._completion_text
+    def _get_completion_items(self, text: str, limit: int) -> list[str]:
+        if limit <= 0 or not text.strip() or not self._wn_wordlist:
+            return []
 
-            complete_list = []
+        search_term = text.lstrip().casefold()
+        start_idx = bisect.bisect_left(self._wn_wordlist, search_term, key=str.casefold)
+        end_idx = bisect.bisect_right(
+            self._wn_wordlist, f"{search_term}{chr(sys.maxunicode)}", key=str.casefold
+        )
+        ranked_matches = []
+        seen_lower = set()
 
-            if text and text.strip() and self._wn_wordlist:
-                seen_lower = set()
-                search_term = text.lower().replace(" ", "_")
-                start_idx = bisect.bisect_left(self._wn_wordlist, search_term, key=str.lower)
+        for original_word in self._wn_wordlist[start_idx:end_idx]:
+            display_lower = original_word.casefold()
+            if display_lower in seen_lower:
+                continue
 
-                for i in range(start_idx, len(self._wn_wordlist)):
-                    if len(complete_list) >= 10:
-                        break
+            seen_lower.add(display_lower)
+            suffix = display_lower[len(search_term) :]
+            rank = (
+                sum(char == " " for char in suffix),
+                sum(not char.isalnum() for char in suffix),
+                int(original_word != display_lower),
+                len(suffix),
+                display_lower,
+            )
+            bisect.insort(ranked_matches, (rank, original_word))
+            if len(ranked_matches) > limit:
+                ranked_matches.pop()
 
-                    original_word = self._wn_wordlist[i]
-
-                    if not original_word.lower().startswith(search_term):
-                        break
-
-                    display_word = original_word.replace("_", " ")
-                    display_lower = display_word.lower()
-                    if display_lower not in seen_lower:
-                        seen_lower.add(display_lower)
-                        complete_list.append(display_word)
-
-            with self._completion_lock:
-                if self._completion_text != text:
-                    continue
-
-                GLib.idle_add(self._update_completion_ui, complete_list)
-                self._completion_pending = False
-                break
-
-    def _update_completion_ui(self, items):
-        """Updates the completion model on the main thread."""
-        completer_liststore = Gtk.ListStore(str)
-        for item in items:
-            completer_liststore.append((item,))
-
-        self.completer.set_model(completer_liststore)
-        self.completer.complete()
-        return False
+        return [word for _rank, word in ranked_matches]
 
     def _set_header_sensitive(self, status):
         """Disables or enables header buttons during long-running operations."""
@@ -1024,7 +1008,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         base.get_wn_wordlist(self._wn_instance, lambda wordlist: GLib.idle_add(self._on_wordlist_loaded, wordlist))
 
     def _on_wordlist_loaded(self, wordlist):
-        wordlist.sort(key=str.lower)
+        wordlist.sort(key=str.casefold)
         self._wn_wordlist = wordlist
         utils.log_info(f"Wordlist loaded with {len(self._wn_wordlist)} words. Completions now available.")
 

@@ -21,8 +21,8 @@ else
 endif
 
 dependency('gobject-introspection-1.0', version: '>= 1.35.0')
-dependency('gtk4', version: '>= 4.6')
-dependency('libadwaita-1', version: '>=1.0')
+dependency('gtk4', version: '>= 4.16')
+dependency('libadwaita-1', version: '>= 1.7')
 dependency('glib-2.0')
 dependency('pygobject-3.0', version: '>= 3.29.1')
 

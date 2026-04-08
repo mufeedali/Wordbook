@@ -23,7 +23,7 @@ Wordbook
 
 ## Requirements
 
-* GTK 4.6+ [Arch: `gtk4`]
+* GTK 4.16+ [Arch: `gtk4`]
 * libadwaita 1.7.0+ [Arch: `libadwaita`]
 * Python 3.12+ [Arch: `python`]
 * Python modules:

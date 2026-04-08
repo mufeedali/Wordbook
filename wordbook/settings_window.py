@@ -60,7 +60,7 @@ class SettingsDialog(Adw.PreferencesDialog):
 
     def _on_live_search_activate(self, switch, _gparam):
         """Callback for the 'live search' switch. Toggles UI elements and saves the new state."""
-        self.parent.completer.set_popup_completion(not switch.get_active())
+        self.parent.set_completion_enabled(not switch.get_active())
         self.parent.search_button.set_visible(not switch.get_active())
         if not switch.get_active():
             self.parent.set_default_widget(self.parent.search_button)

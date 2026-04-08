@@ -221,23 +221,18 @@ template $WordbookWindow: Adw.ApplicationWindow {
                             Adw.ViewStackPage {
                                 name: "content_page";
 
-                                child: Box {
-                                    orientation: vertical;
+                                child: ListBox definitions_listbox {
+                                    margin-start: 12;
+                                    margin-end: 12;
+                                    margin-bottom: 12;
+                                    margin-top: 8;
+                                    selection-mode: none;
+                                    show-separators: false;
+                                    vexpand: true;
 
-
-                                    ListBox definitions_listbox {
-                                        margin-start: 12;
-                                        margin-end: 12;
-                                        margin-bottom: 12;
-                                        margin-top: 8;
-                                        selection-mode: none;
-                                        show-separators: false;
-                                        vexpand: true;
-
-                                        styles [
-                                            "boxed-list-separate",
-                                        ]
-                                    }
+                                    styles [
+                                        "boxed-list-separate",
+                                    ]
                                 };
                             }
 

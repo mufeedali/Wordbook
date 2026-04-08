@@ -46,6 +46,7 @@ wordbook_sources = [
   'base.py',
   'database.py',
   'main.py',
+  'search_completion.py',
   'settings.py',
   'settings_window.py',
   'utils.py',
