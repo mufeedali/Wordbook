@@ -899,7 +899,7 @@ class WordbookWindow(Adw.ApplicationWindow):
         dialog.add_response("dismiss", _("Dismiss"))
         dialog.choose(self)
 
-    def _page_switch(self, page: str) -> bool:
+    def _page_switch(self, page: Page) -> bool:
         """Switches the visible page in the main stack."""
         utils.log_info(f"Switching to page: {page}")
         if page == "content_page":

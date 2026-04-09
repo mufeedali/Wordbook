@@ -200,11 +200,6 @@ class Settings:
         """Set pronunciations accent by enum value."""
         self._settings.behavior.pronunciations_accent = value.code
 
-    @property
-    def pronunciations_accent_enum(self) -> PronunciationAccent:
-        """Get pronunciations accent as enum."""
-        return PronunciationAccent.from_code(self._settings.behavior.pronunciations_accent)
-
     # Appearance settings properties
     @property
     def gtk_dark_ui(self) -> bool:

@@ -11,13 +11,10 @@ import urllib.request
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parent.parent
-sys.path.append(str(project_root))
+sys.path.insert(0, str(project_root / "subprojects" / "wn"))
 
-wn_submodule = project_root / "subprojects" / "wn"
-sys.path.insert(0, str(wn_submodule))
-
-import wn
-import wn.util
+import wn  # noqa: E402
+import wn.util  # noqa: E402
 
 if sys.version_info >= (3, 14):
     from compression import zstd
@@ -25,11 +22,10 @@ else:
     try:
         import backports.zstd as zstd
     except ImportError:
-        print("Error: 'backports.zstd' is required for Python < 3.14")
-        print("Install with: pip install backports.zstd")
-        sys.exit(1)
+        sys.exit("Error: 'backports.zstd' is required for Python < 3.14\nInstall with: pip install backports.zstd")
 
-# WordNet XML download URLs (primary + fallback)
+CHUNK_SIZE = 1024 * 1024
+
 WORDNET_URLS = [
     "https://github.com/globalwordnet/english-wordnet/releases/download/2025-edition/english-wordnet-2025-plus.xml.gz",
     "https://en-word.net/static/english-wordnet-2025-plus.xml.gz",
@@ -49,7 +45,6 @@ class ProgressHandler(wn.util.ProgressHandler):
         if total:
             count = self.kwargs.get("count", 0)
             percent = int((int(count) / int(total)) * 100)
-            # Only print at 10% intervals to avoid spam
             if percent // 10 > self._last_percent // 10:
                 self._last_percent = percent
                 message = self.kwargs.get("message", "Processing")
@@ -59,24 +54,22 @@ class ProgressHandler(wn.util.ProgressHandler):
         if message:
             print(f"  {message}")
 
-    def close(self):
-        pass
 
+def download_wordnet_xml(output_path: Path) -> bool:
+    """Download WordNet XML file using the configured fallback URLs."""
 
-def download_wordnet_xml(url: str, output_path: Path) -> bool:
-    """Download WordNet XML file from URL using urllib."""
-    try:
-        print(f"Downloading from {url}...")
+    for url in WORDNET_URLS:
+        try:
+            print(f"Downloading from {url}...")
+            request = urllib.request.Request(url, headers={"User-Agent": "Wordbook"})
 
-        request = urllib.request.Request(url, headers={"User-Agent": "Wordbook"})
-        with urllib.request.urlopen(request) as response:
-            total = int(response.headers.get("Content-Length", 0))
-            downloaded = 0
-            last_percent = -1
+            with urllib.request.urlopen(request) as response, output_path.open("wb") as file_handle:
+                total = int(response.headers.get("Content-Length", 0))
+                downloaded = 0
+                last_percent = -1
 
-            with open(output_path, "wb") as f:
-                while chunk := response.read(1024 * 1024):
-                    f.write(chunk)
+                while chunk := response.read(CHUNK_SIZE):
+                    file_handle.write(chunk)
                     downloaded += len(chunk)
                     if total:
                         percent = int((downloaded / total) * 100)
@@ -84,24 +77,12 @@ def download_wordnet_xml(url: str, output_path: Path) -> bool:
                             last_percent = percent
                             print(f"  Download: {percent}%")
 
-        print(f"✓ Downloaded to {output_path}")
-        return True
-    except Exception as e:
-        print(f"✗ Download failed: {e}")
-        return False
+            print(f"✓ Downloaded to {output_path}")
+            return True
+        except Exception as e:
+            print(f"✗ Download failed: {e}")
 
-
-def find_db_file(data_dir: Path) -> Path | None:
-    """Find wn.db in data directory."""
-    db_path = data_dir / "wn.db"
-    if db_path.exists():
-        return db_path
-
-    for db_file in data_dir.rglob("wn.db"):
-        return db_file
-
-    print(f"✗ wn.db not found in {data_dir}")
-    return None
+    return False
 
 
 def add_from_file(source_file: Path, data_dir: Path) -> bool:
@@ -120,19 +101,16 @@ def add_from_file(source_file: Path, data_dir: Path) -> bool:
 def compress_database(db_path: Path, output_path: Path, level: int = 15) -> bool:
     """Compress database with zstd."""
     try:
-        original_size = db_path.stat().st_size
-        original_mb = original_size / (1024 * 1024)
-
+        original_mb = db_path.stat().st_size / CHUNK_SIZE
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         print(f"Compressing {original_mb:.1f} MB (level {level})...")
         with open(db_path, "rb") as src, zstd.open(output_path, "wb", level=level) as dst:
-            while chunk := src.read(1024 * 1024):
+            while chunk := src.read(CHUNK_SIZE):
                 dst.write(chunk)
 
-        compressed_mb = output_path.stat().st_size / (1024 * 1024)
+        compressed_mb = output_path.stat().st_size / CHUNK_SIZE
         ratio = (1 - compressed_mb / original_mb) * 100
-
         print(f"✓ Compressed to {compressed_mb:.1f} MB ({ratio:.0f}% saved)")
         return True
 
@@ -157,42 +135,29 @@ def main():
     parser.add_argument("--output", type=Path, help="Output path for the compressed database")
 
     args = parser.parse_args()
-    if args.output:
-        output_path = args.output
-    else:
-        output_path = Path(__file__).parent.parent / "data" / "wn.db.zst"
+    output_path = args.output or project_root / "data" / "wn.db.zst"
+    source_label = args.source_file or f"{WORDNET_URLS[0]} (+ {len(WORDNET_URLS) - 1} fallback)"
 
     print("─" * 20 + " Wordbook Database Generator " + "─" * 20)
-    if args.source_file:
-        print(f"Source:      {args.source_file}")
-    else:
-        print(f"Source:      {WORDNET_URLS[0]} (+ {len(WORDNET_URLS) - 1} fallback)")
+    print(f"Source:      {source_label}")
     print(f"Output:      {output_path}")
     print(f"Compression: Level {args.compression_level}")
     print()
 
     with tempfile.TemporaryDirectory() as temp_dir_str:
         temp_dir = Path(temp_dir_str)
+        source_file = args.source_file or temp_dir / "english-wordnet.xml.gz"
 
-        if args.source_file:
-            source_file = args.source_file
-        else:
-            # Download the XML file, trying each URL until one succeeds
-            source_file = temp_dir / "english-wordnet.xml.gz"
-            downloaded = False
-            for url in WORDNET_URLS:
-                if download_wordnet_xml(url, source_file):
-                    downloaded = True
-                    break
-            if not downloaded:
-                print("✗ All download URLs failed")
-                return 1
+        if not args.source_file and not download_wordnet_xml(source_file):
+            print("✗ All download URLs failed")
+            return 1
 
         if not add_from_file(source_file, temp_dir):
             return 1
 
-        db_path = find_db_file(temp_dir)
+        db_path = next(temp_dir.rglob("wn.db"), None)
         if not db_path:
+            print(f"✗ wn.db not found in {temp_dir}")
             return 1
 
         if not compress_database(db_path, output_path, args.compression_level):

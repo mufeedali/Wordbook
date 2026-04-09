@@ -114,7 +114,7 @@ class Application(Adw.Application):
         options = command_line.get_options_dict().end().unpack()
         term = ""
 
-        if "verinfo" in options:
+        if "info" in options:
             base.get_version_info(self.version)
             return 0
 

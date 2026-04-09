@@ -116,9 +116,8 @@ class DatabaseManager:
 
             utils.log_info(f"Extracting database from {compressed_path} to {tmp_path}")
 
-            with zstd.open(compressed_path, "rb") as src:
-                with open(tmp_path, "wb") as dst:
-                    shutil.copyfileobj(src, dst)
+            with zstd.open(compressed_path, "rb") as src, open(tmp_path, "wb") as dst:
+                shutil.copyfileobj(src, dst)
 
             os.replace(tmp_path, db_path)
             utils.log_info("Database extraction complete")
