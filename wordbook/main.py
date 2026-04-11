@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2016-2026 Mufeed Ali <me@mufeed.dev>
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import signal
 from gettext import gettext as _
 
 import gi
@@ -72,16 +73,17 @@ class Application(Adw.Application):
             None,
         )
 
-        Adw.StyleManager.get_default().set_color_scheme(
-            Adw.ColorScheme.FORCE_DARK if Settings.get().gtk_dark_ui else Adw.ColorScheme.DEFAULT
-        )
-
         base.create_required_dirs()
 
     def do_startup(self):
         """GApplication lifecycle method for one-time setup, like setting resource paths."""
         self.set_resource_base_path(RES_PATH)
         Adw.Application.do_startup(self)
+        Adw.StyleManager.get_default().set_color_scheme(
+            Adw.ColorScheme.FORCE_DARK if Settings.get().gtk_dark_ui else Adw.ColorScheme.DEFAULT
+        )
+        GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, self.quit)
+        GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGTERM, self.quit)
 
     def do_activate(self):
         """
@@ -136,6 +138,12 @@ class Application(Adw.Application):
 
         self.activate()
         return 0
+
+    def do_shutdown(self):
+        """GApplication lifecycle method called on every clean shutdown path."""
+        if self.win is not None:
+            self.win.save_state()
+        Adw.Application.do_shutdown(self)
 
     def on_about(self, _action, _param):
         """Callback for the 'about' action to display the application's about window."""
