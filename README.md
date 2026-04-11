@@ -15,7 +15,11 @@ Wordbook
 
 ## Features
 
-* Fully offline after initial data download
+* Fully offline
+* Definitions
+* Examples
+* Word Relations (synonyms, antonyms, etc)
+* Pronunciations
 * Random Word
 * Live Search
 * Double click to search

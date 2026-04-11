@@ -5,21 +5,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-import os
 import sys
 import uuid
 from gi.repository import GLib, Gio
 
 pkgdatadir = "@pkgdatadir@"
-localedir = "@localedir@"
 
 sys.path.insert(1, pkgdatadir)
 
-from wordbook import base, utils
+from wordbook import base
 import wn
-
-wn.config.data_directory = base.WN_DIR
-wn.config.allow_multithreading = True
 
 dbus_interface_description = """
 <!DOCTYPE node PUBLIC
@@ -72,7 +67,7 @@ class WordbookSearchService:
                                 "name": result["name"],
                                 "definition": result["definition"],
                             }
-            except:
+            except Exception:
                 print("Error while searching, WordNet is probably not downloaded yet.")
 
         return self._results.keys()
@@ -96,8 +91,8 @@ class WordbookSearchService:
         return metas
 
     # Open clicked result in app
-    def ActivateResult(self, id, terms, timestamp):
-        GLib.spawn_async_with_pipes(None, ["@BIN@", "--look-up", id], None, GLib.SpawnFlags.SEARCH_PATH, None)
+    def ActivateResult(self, result_id, terms, timestamp):
+        GLib.spawn_async_with_pipes(None, ["@BIN@", "--look-up", result_id], None, GLib.SpawnFlags.SEARCH_PATH, None)
 
     # Open app on its current page
     def LaunchSearch(self, terms, timestamp):
@@ -107,8 +102,7 @@ class WordbookSearchService:
 # GIO application for search provider
 class WordbookSearchServiceApplication(Gio.Application):
     def __init__(self):
-        Gio.Application.__init__(
-            self,
+        super().__init__(
             application_id="@APP_ID@.SearchProvider",
             flags=Gio.ApplicationFlags.IS_SERVICE,
             inactivity_timeout=10000,
@@ -124,11 +118,10 @@ class WordbookSearchServiceApplication(Gio.Application):
                 interface_info=self.search_interface,
                 method_call_closure=self.on_dbus_method_call,
             )
-        except:
+        except Exception:
             self.quit()
             return False
-        finally:
-            return True
+        return True
 
     # Handle incoming method calls
     def on_dbus_method_call(self, connection, sender, object_path, interface_name, method_name, parameters, invocation):

@@ -11,7 +11,7 @@
             eSpeak.</p>
         <p>Features:</p>
         <ul>
-            <li>Fully offline after initial data download</li>
+            <li>Fully offline</li>
             <li>Pronunciations</li>
             <li>Random Word</li>
             <li>Favorites</li>
@@ -44,6 +44,19 @@
     </screenshots>
 
     <releases>
+        <release version="1.0.0" date="2026-04-11">
+            <description>
+                <ul>
+                    <li>Fully offline, now bundles WordNet</li>
+                    <li>Updated WordNet to OEWN 2025</li>
+                    <li>Improved completions</li>
+                    <li>Pronunciations from WordNet where possible</li>
+                    <li>Pronunciations-based grouping for homophones</li>
+                    <li>Several minor fixes and improvements</li>
+                    <li>Added translations: Persian, Croatian, Hungarian, Kazakh, Vietnamese, Simplified Chinese</li>
+                </ul>
+            </description>
+        </release>
         <release version="0.6.0" date="2025-09-01">
             <description>
                 <ul>
