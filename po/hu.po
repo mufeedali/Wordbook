@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"POT-Creation-Date: 2026-04-11 09:59+0530\n"
 "PO-Revision-Date: 2025-10-11 20:48+0200\n"
 "Last-Translator: Balázs Úr <ur.balazs@fsf.hu>\n"
 "Language-Team: Hungarian\n"
@@ -107,7 +107,7 @@ msgstr "Kilépés"
 msgid "Paste & Search"
 msgstr "Beillesztés és keresés"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:214
+#: data/resources/ui/window.blp:14 wordbook/window.py:178
 msgid "Search Selected Text"
 msgstr "Kijelölt szöveg keresése"
 
@@ -127,129 +127,133 @@ msgstr "_Gyorsbillentyűk"
 msgid "_About Wordbook"
 msgstr "A Szótár _névjegye"
 
-#: data/resources/ui/window.blp:69
+#: data/resources/ui/window.blp:71
 msgid "History"
 msgstr "Előzmények"
 
-#: data/resources/ui/window.blp:75
+#: data/resources/ui/window.blp:77 data/resources/ui/window.blp:81
 msgid "Show Favorites Only"
 msgstr "Csak kedvencek megjelenítése"
 
-#: data/resources/ui/window.blp:86
+#: data/resources/ui/window.blp:92 data/resources/ui/window.blp:96
 msgid "Clear History"
 msgstr "Előzmények törlése"
 
-#: data/resources/ui/window.blp:122
+#: data/resources/ui/window.blp:132
 msgid "No recent searches or favorites"
 msgstr "Nincsenek legutóbbi keresések vagy kedvencek"
 
-#: data/resources/ui/window.blp:151
+#: data/resources/ui/window.blp:161
 msgid "Clear"
 msgstr "Törlés"
 
-#: data/resources/ui/window.blp:156
+#: data/resources/ui/window.blp:167 data/resources/ui/window.blp:170
 msgid "Search"
 msgstr "Keresés"
 
-#: data/resources/ui/window.blp:167
+#: data/resources/ui/window.blp:182 data/resources/ui/window.blp:185
 msgid "Show History"
 msgstr "Előzmények megjelenítése"
 
-#: data/resources/ui/window.blp:175
+#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:197
 msgid "Main Menu"
 msgstr "Főmenü"
 
-#: data/resources/ui/window.blp:192
-msgid "Setting things up…"
-msgstr "Dolgok beállítása…"
-
-#: data/resources/ui/window.blp:193 wordbook/window.py:818
-msgid "Downloading WordNet…"
-msgstr "WordNet letöltése…"
-
-#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
-#: wordbook/main.py:143
+#: data/resources/ui/window.blp:216 wordbook/main.py:37 wordbook/main.py:98
+#: wordbook/main.py:152
 msgid "Wordbook"
 msgstr "Szótár"
 
-#: data/resources/ui/window.blp:211
+#: data/resources/ui/window.blp:217
 msgid "Look up definitions of any English term"
 msgstr "Bármely angol kifejezés meghatározásainak keresése"
 
-#: data/resources/ui/window.blp:272
-msgid "Listen to Pronunciation"
-msgstr "Kiejtés meghallgatása"
-
-#: data/resources/ui/window.blp:301
+#: data/resources/ui/window.blp:245
 msgid "No definition found"
 msgstr "Nem található meghatározás"
 
-#: data/resources/ui/window.blp:316
-msgid "Download failed"
-msgstr "A letöltés sikertelen"
+# llm-generated
+#: data/resources/ui/window.blp:260
+msgid "Database not found"
+msgstr "Az adatbázis nem található"
 
-#: data/resources/ui/window.blp:323
-msgid "Retry"
-msgstr "Újrapróbálás"
+# llm-generated
+#: data/resources/ui/window.blp:261
+msgid "Installation is incomplete. Please reinstall Wordbook."
+msgstr "A telepítés hiányos. Kérjük, telepítse újra a Szótárat."
 
-#: data/resources/ui/window.blp:332
+#: data/resources/ui/window.blp:264
 msgid "Exit"
 msgstr "Kilépés"
 
-#: wordbook/main.py:145
+#: wordbook/main.py:154
 msgid "Look up definitions for words"
 msgstr "Szavak meghatározásainak keresése"
 
-#: wordbook/main.py:147
+#: wordbook/main.py:156
 msgid "translator-credits"
 msgstr "Úr Balázs <balazs@urbalazs.hu>, 2025."
 
 # llm-generated
-#: wordbook/main.py:150
+#: wordbook/main.py:159
 msgid "Source Code"
 msgstr "Forráskód"
 
-#: wordbook/main.py:152
-msgid "Copyright © 2016-2025 Mufeed Ali"
-msgstr "Szerzői jog © 2016-2025 Mufeed Ali"
+#: wordbook/main.py:161
+msgid "Copyright © 2016-2026 Mufeed Ali"
+msgstr "Szerzői jog © 2016-2026 Mufeed Ali"
 
-#: wordbook/window.py:82
-msgid "Building Database…"
-msgstr "Adatbázis összeállítása…"
-
-#: wordbook/window.py:307
+#: wordbook/window.py:278
 msgid "Wordlist Loading"
 msgstr "Szólista betöltése"
 
-#: wordbook/window.py:308
+#: wordbook/window.py:279
 msgid "The word list is still loading. Please try again in a moment."
 msgstr ""
 "A szólista még betöltés alatt van. Próbálja meg újra egy pillanat múlva."
 
-#: wordbook/window.py:522
+#: wordbook/window.py:513
 msgid "History cleared"
 msgstr "Előzmények törölve"
 
-#: wordbook/window.py:523
+#: wordbook/window.py:514
 msgid "Undo"
 msgstr "Visszavonás"
 
-#: wordbook/window.py:686
+#: wordbook/window.py:674
+msgid "Listen to Pronunciation"
+msgstr "Kiejtés meghallgatása"
+
+#: wordbook/window.py:815
 msgid "Toggle Favorite"
 msgstr "Kedvencek be- és kikapcsolása"
 
-#: wordbook/window.py:743
+#: wordbook/window.py:872
 msgid "Dismiss"
 msgstr "Eltüntetés"
 
-#: wordbook/window.py:769
+#: wordbook/window.py:898
 msgid "Invalid input"
 msgstr "Érvénytelen bevitel"
 
-#: wordbook/window.py:770
+#: wordbook/window.py:899
 msgid "Nothing definable was found in your search input"
 msgstr "Semmi meghatározható nem található a keresési bevitelben"
 
-#: wordbook/window.py:895
-msgid "Ready."
-msgstr "Kész."
+#~ msgid "Setting things up…"
+#~ msgstr "Dolgok beállítása…"
+
+#~ msgid "Downloading WordNet…"
+#~ msgstr "WordNet letöltése…"
+
+#~ msgid "Download failed"
+#~ msgstr "A letöltés sikertelen"
+
+#~ msgid "Retry"
+#~ msgstr "Újrapróbálás"
+
+#~ msgid "Building Database…"
+#~ msgstr "Adatbázis összeállítása…"
+
+#~ msgid "Ready."
+#~ msgstr "Kész."

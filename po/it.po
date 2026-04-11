@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"POT-Creation-Date: 2026-04-11 09:59+0530\n"
 "PO-Revision-Date: 2023-10-01 08:26+0100\n"
 "Last-Translator: Albano Battistella <albanobattistella@gmail.com>\n"
 "Language-Team: italian <LL@li.org>\n"
@@ -106,7 +106,7 @@ msgstr "Esci"
 msgid "Paste & Search"
 msgstr "Incolla & Cerca"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:214
+#: data/resources/ui/window.blp:14 wordbook/window.py:178
 msgid "Search Selected Text"
 msgstr "Cerca testo selezionato"
 
@@ -126,137 +126,141 @@ msgstr "_Scorciatoie da tastiera"
 msgid "_About Wordbook"
 msgstr "_Informazioni su Wordbook"
 
-#: data/resources/ui/window.blp:69
+#: data/resources/ui/window.blp:71
 msgid "History"
 msgstr "Cronologia"
 
-#: data/resources/ui/window.blp:75
+#: data/resources/ui/window.blp:77 data/resources/ui/window.blp:81
 msgid "Show Favorites Only"
 msgstr "Mostra solo i preferiti"
 
 # llm-generated
-#: data/resources/ui/window.blp:86
+#: data/resources/ui/window.blp:92 data/resources/ui/window.blp:96
 msgid "Clear History"
 msgstr "Cancella cronologia"
 
-#: data/resources/ui/window.blp:122
+#: data/resources/ui/window.blp:132
 msgid "No recent searches or favorites"
 msgstr "Nessuna ricerca recente o preferito."
 
 # llm-generated
-#: data/resources/ui/window.blp:151
+#: data/resources/ui/window.blp:161
 msgid "Clear"
 msgstr "Cancella"
 
-#: data/resources/ui/window.blp:156
+#: data/resources/ui/window.blp:167 data/resources/ui/window.blp:170
 msgid "Search"
 msgstr "Cerca"
 
-#: data/resources/ui/window.blp:167
+#: data/resources/ui/window.blp:182 data/resources/ui/window.blp:185
 msgid "Show History"
 msgstr "Mostra Cronologia"
 
-#: data/resources/ui/window.blp:175
+#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:197
 msgid "Main Menu"
 msgstr "Menu principale"
 
-#: data/resources/ui/window.blp:192
-msgid "Setting things up…"
-msgstr "Impostazione delle cose…"
-
-#: data/resources/ui/window.blp:193 wordbook/window.py:818
-msgid "Downloading WordNet…"
-msgstr "Download di WordNet…"
-
-#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
-#: wordbook/main.py:143
+#: data/resources/ui/window.blp:216 wordbook/main.py:37 wordbook/main.py:98
+#: wordbook/main.py:152
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:211
+#: data/resources/ui/window.blp:217
 msgid "Look up definitions of any English term"
 msgstr "Cerca le definizioni di qualsiasi termine inglese"
 
-#: data/resources/ui/window.blp:272
-msgid "Listen to Pronunciation"
-msgstr "Ascolta la pronuncia"
-
-#: data/resources/ui/window.blp:301
+#: data/resources/ui/window.blp:245
 msgid "No definition found"
 msgstr "Nessuna definizione trovata"
 
-#: data/resources/ui/window.blp:316
-msgid "Download failed"
-msgstr "Download non riuscito"
+# llm-generated
+#: data/resources/ui/window.blp:260
+msgid "Database not found"
+msgstr "Database non trovato"
 
-#: data/resources/ui/window.blp:323
-msgid "Retry"
-msgstr "Riprova"
+# llm-generated
+#: data/resources/ui/window.blp:261
+msgid "Installation is incomplete. Please reinstall Wordbook."
+msgstr "L'installazione è incompleta. Si prega di reinstallare Wordbook."
 
-#: data/resources/ui/window.blp:332
+#: data/resources/ui/window.blp:264
 msgid "Exit"
 msgstr "Uscita"
 
-#: wordbook/main.py:145
+#: wordbook/main.py:154
 msgid "Look up definitions for words"
 msgstr "Cerca le definizioni di qualsiasi termine inglese."
 
-#: wordbook/main.py:147
+#: wordbook/main.py:156
 msgid "translator-credits"
 msgstr "Albano Battistella"
 
 # llm-generated
-#: wordbook/main.py:150
+#: wordbook/main.py:159
 msgid "Source Code"
 msgstr "Codice sorgente"
 
-#: wordbook/main.py:152
-msgid "Copyright © 2016-2025 Mufeed Ali"
-msgstr "Copyright © 2016-2025 Mufeed Ali"
+#: wordbook/main.py:161
+msgid "Copyright © 2016-2026 Mufeed Ali"
+msgstr "Copyright © 2016-2026 Mufeed Ali"
 
-#: wordbook/window.py:82
-msgid "Building Database…"
-msgstr "Creazione del database…"
-
-#: wordbook/window.py:307
+#: wordbook/window.py:278
 msgid "Wordlist Loading"
 msgstr "Caricamento della lista di parole."
 
-#: wordbook/window.py:308
+#: wordbook/window.py:279
 msgid "The word list is still loading. Please try again in a moment."
 msgstr "La lista di parole è ancora in caricamento. Riprova tra un momento."
 
 # llm-generated
-#: wordbook/window.py:522
+#: wordbook/window.py:513
 msgid "History cleared"
 msgstr "Cronologia cancellata"
 
 # llm-generated
-#: wordbook/window.py:523
+#: wordbook/window.py:514
 msgid "Undo"
 msgstr "Annulla"
 
+#: wordbook/window.py:674
+msgid "Listen to Pronunciation"
+msgstr "Ascolta la pronuncia"
+
 # llm-generated
-#: wordbook/window.py:686
+#: wordbook/window.py:815
 msgid "Toggle Favorite"
 msgstr "Aggiungi/Rimuovi dai preferiti"
 
 # llm-generated
-#: wordbook/window.py:743
+#: wordbook/window.py:872
 msgid "Dismiss"
 msgstr "Ignora"
 
-#: wordbook/window.py:769
+#: wordbook/window.py:898
 msgid "Invalid input"
 msgstr "Inserimento non valido"
 
-#: wordbook/window.py:770
+#: wordbook/window.py:899
 msgid "Nothing definable was found in your search input"
 msgstr "Non è stato trovato nulla di definibile nel tuo input di ricerca"
 
-#: wordbook/window.py:895
-msgid "Ready."
-msgstr "Pronto."
+#~ msgid "Setting things up…"
+#~ msgstr "Impostazione delle cose…"
+
+#~ msgid "Downloading WordNet…"
+#~ msgstr "Download di WordNet…"
+
+#~ msgid "Download failed"
+#~ msgstr "Download non riuscito"
+
+#~ msgid "Retry"
+#~ msgstr "Riprova"
+
+#~ msgid "Building Database…"
+#~ msgstr "Creazione del database…"
+
+#~ msgid "Ready."
+#~ msgstr "Pronto."
 
 #~ msgid "/Pronunciation/"
 #~ msgstr "/Pronuncia/"

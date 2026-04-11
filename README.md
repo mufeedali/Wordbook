@@ -84,8 +84,8 @@ The best way to work with Wordbook is to either use [GNOME Builder](https://apps
 The easiest way to contribute to translations right now is to do one of the following:
 
 1. Approve the LLM-generated translations by removing the line that says `# llm-generated`.
-2. Replacing the LLM-generated translations.
-3. Improving the human-translated strings.
+2. Replace the LLM-generated translations.
+3. Improve the human-translated strings.
 
 The LLM-generated translations are to try and ease the burden on translators. The idea is to have temporary translations until a human can review them. All strings translated by LLMs are tagged as `llm-generated`.
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"POT-Creation-Date: 2026-04-11 09:59+0530\n"
 "PO-Revision-Date: 2026-03-31 22:05+0800\n"
 "Last-Translator: yu Qin <imqin_yu@outlook.com>\n"
 "Language-Team: Chinese (China)\n"
@@ -108,7 +108,7 @@ msgstr "退出"
 msgid "Paste & Search"
 msgstr "粘贴并搜索"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:214
+#: data/resources/ui/window.blp:14 wordbook/window.py:178
 msgid "Search Selected Text"
 msgstr "搜索已选文本"
 
@@ -128,127 +128,131 @@ msgstr "键盘快捷键(_K)"
 msgid "_About Wordbook"
 msgstr "关于 Wordbook(_A)"
 
-#: data/resources/ui/window.blp:69
+#: data/resources/ui/window.blp:71
 msgid "History"
 msgstr "历史记录"
 
-#: data/resources/ui/window.blp:75
+#: data/resources/ui/window.blp:77 data/resources/ui/window.blp:81
 msgid "Show Favorites Only"
 msgstr "仅显示收藏"
 
-#: data/resources/ui/window.blp:86
+#: data/resources/ui/window.blp:92 data/resources/ui/window.blp:96
 msgid "Clear History"
 msgstr "清除历史记录"
 
-#: data/resources/ui/window.blp:122
+#: data/resources/ui/window.blp:132
 msgid "No recent searches or favorites"
 msgstr "无最近搜索或收藏"
 
-#: data/resources/ui/window.blp:151
+#: data/resources/ui/window.blp:161
 msgid "Clear"
 msgstr "清除"
 
-#: data/resources/ui/window.blp:156
+#: data/resources/ui/window.blp:167 data/resources/ui/window.blp:170
 msgid "Search"
 msgstr "搜索"
 
-#: data/resources/ui/window.blp:167
+#: data/resources/ui/window.blp:182 data/resources/ui/window.blp:185
 msgid "Show History"
 msgstr "显示历史记录"
 
-#: data/resources/ui/window.blp:175
+#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:197
 msgid "Main Menu"
 msgstr "主菜单"
 
-#: data/resources/ui/window.blp:192
-msgid "Setting things up…"
-msgstr "正在初始化…"
-
-#: data/resources/ui/window.blp:193 wordbook/window.py:818
-msgid "Downloading WordNet…"
-msgstr "正在下载 WordNet…"
-
-#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
-#: wordbook/main.py:143
+#: data/resources/ui/window.blp:216 wordbook/main.py:37 wordbook/main.py:98
+#: wordbook/main.py:152
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:211
+#: data/resources/ui/window.blp:217
 msgid "Look up definitions of any English term"
 msgstr "查找任何英文术语的定义"
 
-#: data/resources/ui/window.blp:272
-msgid "Listen to Pronunciation"
-msgstr "听发音"
-
-#: data/resources/ui/window.blp:301
+#: data/resources/ui/window.blp:245
 msgid "No definition found"
 msgstr "未找到定义"
 
-#: data/resources/ui/window.blp:316
-msgid "Download failed"
-msgstr "下载失败"
+# llm-generated
+#: data/resources/ui/window.blp:260
+msgid "Database not found"
+msgstr "未找到数据库"
 
-#: data/resources/ui/window.blp:323
-msgid "Retry"
-msgstr "重试"
+# llm-generated
+#: data/resources/ui/window.blp:261
+msgid "Installation is incomplete. Please reinstall Wordbook."
+msgstr "安装不完整。请重新安装 Wordbook。"
 
-#: data/resources/ui/window.blp:332
+#: data/resources/ui/window.blp:264
 msgid "Exit"
 msgstr "退出"
 
-#: wordbook/main.py:145
+#: wordbook/main.py:154
 msgid "Look up definitions for words"
 msgstr "查找词语的定义"
 
-#: wordbook/main.py:147
+#: wordbook/main.py:156
 msgid "translator-credits"
 msgstr "秦宇"
 
-#: wordbook/main.py:150
+#: wordbook/main.py:159
 msgid "Source Code"
 msgstr "源代码"
 
-#: wordbook/main.py:152
-msgid "Copyright © 2016-2025 Mufeed Ali"
-msgstr "Copyright © 2016-2025 Mufeed Ali"
+#: wordbook/main.py:161
+msgid "Copyright © 2016-2026 Mufeed Ali"
+msgstr "Copyright © 2016-2026 Mufeed Ali"
 
-#: wordbook/window.py:82
-msgid "Building Database…"
-msgstr "正在建立数据库…"
-
-#: wordbook/window.py:307
+#: wordbook/window.py:278
 msgid "Wordlist Loading"
 msgstr "正在加载词汇表"
 
-#: wordbook/window.py:308
+#: wordbook/window.py:279
 msgid "The word list is still loading. Please try again in a moment."
 msgstr "词汇表仍在加载。请稍后再试。"
 
-#: wordbook/window.py:522
+#: wordbook/window.py:513
 msgid "History cleared"
 msgstr "历史记录已清除"
 
-#: wordbook/window.py:523
+#: wordbook/window.py:514
 msgid "Undo"
 msgstr "撤销"
 
-#: wordbook/window.py:686
+#: wordbook/window.py:674
+msgid "Listen to Pronunciation"
+msgstr "听发音"
+
+#: wordbook/window.py:815
 msgid "Toggle Favorite"
 msgstr "显示收藏"
 
-#: wordbook/window.py:743
+#: wordbook/window.py:872
 msgid "Dismiss"
 msgstr "关闭"
 
-#: wordbook/window.py:769
+#: wordbook/window.py:898
 msgid "Invalid input"
 msgstr "无效输入"
 
-#: wordbook/window.py:770
+#: wordbook/window.py:899
 msgid "Nothing definable was found in your search input"
 msgstr "在您的搜索输入中未找到任何可定义的内容"
 
-#: wordbook/window.py:895
-msgid "Ready."
-msgstr "就绪。"
+#~ msgid "Setting things up…"
+#~ msgstr "正在初始化…"
+
+#~ msgid "Downloading WordNet…"
+#~ msgstr "正在下载 WordNet…"
+
+#~ msgid "Download failed"
+#~ msgstr "下载失败"
+
+#~ msgid "Retry"
+#~ msgstr "重试"
+
+#~ msgid "Building Database…"
+#~ msgstr "正在建立数据库…"
+
+#~ msgid "Ready."
+#~ msgstr "就绪。"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordbook\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 21:29+0530\n"
+"POT-Creation-Date: 2026-04-11 09:59+0530\n"
 "PO-Revision-Date: 2025-11-20 18:48+0700\n"
 "Last-Translator: loccun <huynhloc.contact@gmail.com>\n"
 "Language-Team: \n"
@@ -107,7 +107,7 @@ msgstr "Thoát"
 msgid "Paste & Search"
 msgstr "Dán & Tìm Kiếm"
 
-#: data/resources/ui/window.blp:14 wordbook/window.py:214
+#: data/resources/ui/window.blp:14 wordbook/window.py:178
 msgid "Search Selected Text"
 msgstr "Tìm Văn Bản Đã Chọn"
 
@@ -127,127 +127,131 @@ msgstr "_Phím Tắt"
 msgid "_About Wordbook"
 msgstr "_Giới Thiệu Wordbook"
 
-#: data/resources/ui/window.blp:69
+#: data/resources/ui/window.blp:71
 msgid "History"
 msgstr "Lịch Sử"
 
-#: data/resources/ui/window.blp:75
+#: data/resources/ui/window.blp:77 data/resources/ui/window.blp:81
 msgid "Show Favorites Only"
 msgstr "Chỉ Hiển Thị Mục Yêu Thích"
 
-#: data/resources/ui/window.blp:86
+#: data/resources/ui/window.blp:92 data/resources/ui/window.blp:96
 msgid "Clear History"
 msgstr "Xóa Lịch Sử"
 
-#: data/resources/ui/window.blp:122
+#: data/resources/ui/window.blp:132
 msgid "No recent searches or favorites"
 msgstr "Không có tìm kiếm gần đây hoặc mục yêu thích"
 
-#: data/resources/ui/window.blp:151
+#: data/resources/ui/window.blp:161
 msgid "Clear"
 msgstr "Xóa"
 
-#: data/resources/ui/window.blp:156
+#: data/resources/ui/window.blp:167 data/resources/ui/window.blp:170
 msgid "Search"
 msgstr "Tìm"
 
-#: data/resources/ui/window.blp:167
+#: data/resources/ui/window.blp:182 data/resources/ui/window.blp:185
 msgid "Show History"
 msgstr "Hiển Thị Lịch Sử"
 
-#: data/resources/ui/window.blp:175
+#: data/resources/ui/window.blp:194 data/resources/ui/window.blp:197
 msgid "Main Menu"
 msgstr "Menu Chính"
 
-#: data/resources/ui/window.blp:192
-msgid "Setting things up…"
-msgstr "Đang thiết lập…"
-
-#: data/resources/ui/window.blp:193 wordbook/window.py:818
-msgid "Downloading WordNet…"
-msgstr "Đang Tải WordNet…"
-
-#: data/resources/ui/window.blp:210 wordbook/main.py:35 wordbook/main.py:95
-#: wordbook/main.py:143
+#: data/resources/ui/window.blp:216 wordbook/main.py:37 wordbook/main.py:98
+#: wordbook/main.py:152
 msgid "Wordbook"
 msgstr "Wordbook"
 
-#: data/resources/ui/window.blp:211
+#: data/resources/ui/window.blp:217
 msgid "Look up definitions of any English term"
 msgstr "Tra định nghĩa của bất kỳ từ tiếng Anh nào"
 
-#: data/resources/ui/window.blp:272
-msgid "Listen to Pronunciation"
-msgstr "Nghe cách Phát Âm"
-
-#: data/resources/ui/window.blp:301
+#: data/resources/ui/window.blp:245
 msgid "No definition found"
 msgstr "Không tìm thấy định nghĩa"
 
-#: data/resources/ui/window.blp:316
-msgid "Download failed"
-msgstr "Tải xuống thất bại"
+# llm-generated
+#: data/resources/ui/window.blp:260
+msgid "Database not found"
+msgstr "Không tìm thấy cơ sở dữ liệu"
 
-#: data/resources/ui/window.blp:323
-msgid "Retry"
-msgstr "Thử lại"
+# llm-generated
+#: data/resources/ui/window.blp:261
+msgid "Installation is incomplete. Please reinstall Wordbook."
+msgstr "Cài đặt chưa hoàn chỉnh. Vui lòng cài đặt lại Wordbook."
 
-#: data/resources/ui/window.blp:332
+#: data/resources/ui/window.blp:264
 msgid "Exit"
 msgstr "Thoát"
 
-#: wordbook/main.py:145
+#: wordbook/main.py:154
 msgid "Look up definitions for words"
 msgstr "Tra định nghĩa cho từ"
 
-#: wordbook/main.py:147
+#: wordbook/main.py:156
 msgid "translator-credits"
 msgstr "ghi-công-dịch-giả"
 
-#: wordbook/main.py:150
+#: wordbook/main.py:159
 msgid "Source Code"
 msgstr "Mã Nguồn"
 
-#: wordbook/main.py:152
-msgid "Copyright © 2016-2025 Mufeed Ali"
-msgstr "Bản quyền © 2016-2025 Mufeed Ali"
+#: wordbook/main.py:161
+msgid "Copyright © 2016-2026 Mufeed Ali"
+msgstr "Bản quyền © 2016-2026 Mufeed Ali"
 
-#: wordbook/window.py:82
-msgid "Building Database…"
-msgstr "Đang Xây Dựng Cơ Sở Dữ Liệu…"
-
-#: wordbook/window.py:307
+#: wordbook/window.py:278
 msgid "Wordlist Loading"
 msgstr "Đang Tải Danh Sách Từ"
 
-#: wordbook/window.py:308
+#: wordbook/window.py:279
 msgid "The word list is still loading. Please try again in a moment."
 msgstr "Danh sách từ vẫn đang tải. Vui lòng thử lại sau vài giây."
 
-#: wordbook/window.py:522
+#: wordbook/window.py:513
 msgid "History cleared"
 msgstr "Đã xóa lịch sử"
 
-#: wordbook/window.py:523
+#: wordbook/window.py:514
 msgid "Undo"
 msgstr "Hoàn Tác"
 
-#: wordbook/window.py:686
+#: wordbook/window.py:674
+msgid "Listen to Pronunciation"
+msgstr "Nghe cách Phát Âm"
+
+#: wordbook/window.py:815
 msgid "Toggle Favorite"
 msgstr "Bật/Tắt Yêu Thích"
 
-#: wordbook/window.py:743
+#: wordbook/window.py:872
 msgid "Dismiss"
 msgstr "Đóng"
 
-#: wordbook/window.py:769
+#: wordbook/window.py:898
 msgid "Invalid input"
 msgstr "Dữ liệu nhập không hợp lệ"
 
-#: wordbook/window.py:770
+#: wordbook/window.py:899
 msgid "Nothing definable was found in your search input"
 msgstr "Không tìm thấy gì có thể định nghĩa trong nội dung tìm kiếm của bạn"
 
-#: wordbook/window.py:895
-msgid "Ready."
-msgstr "Sẵn sàng."
+#~ msgid "Setting things up…"
+#~ msgstr "Đang thiết lập…"
+
+#~ msgid "Downloading WordNet…"
+#~ msgstr "Đang Tải WordNet…"
+
+#~ msgid "Download failed"
+#~ msgstr "Tải xuống thất bại"
+
+#~ msgid "Retry"
+#~ msgstr "Thử lại"
+
+#~ msgid "Building Database…"
+#~ msgstr "Đang Xây Dựng Cơ Sở Dữ Liệu…"
+
+#~ msgid "Ready."
+#~ msgstr "Sẵn sàng."
