@@ -36,9 +36,11 @@
 
     <screenshots>
         <screenshot type="default">
+            <caption>Light Mode</caption>
             <image>https://raw.githubusercontent.com/mufeedali/Wordbook/main/screenshots/light.png</image>
         </screenshot>
         <screenshot>
+            <caption>Dark Mode</caption>
             <image>https://raw.githubusercontent.com/mufeedali/Wordbook/main/screenshots/dark.png</image>
         </screenshot>
     </screenshots>
