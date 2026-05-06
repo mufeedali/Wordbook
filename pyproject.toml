@@ -33,7 +33,7 @@ reportMissingModuleSource = "none"
 
 [dependency-groups]
 dev = [
-    "pip>=26.0.1",
+    "pip>=26.1",
     "pygobject-stubs>=2.16.0",
     "ty>=0.0.17",
 ]
